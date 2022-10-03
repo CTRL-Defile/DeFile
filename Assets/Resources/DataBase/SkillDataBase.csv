@@ -1,0 +1,7 @@
+﻿ID,NameKor,SkillTag,SkillCannotTag,TargetGroup,TargetRange,TargetSortingBase,SkillRange,JudgmentTime,AfterDelay,SkillCenterPoint,SkillDuration,SkillRepeatCycle,AreaForm,AreaLength,AreaWidth,JudgmentGroup,MaximumJudgmentTargetCount,JudgmentTargetSortingBase,EffectType,BaseAmount,ApplyStatus,CoefficientAmount
+Int,String,String,String,String,Int,String,Float,Float,Float,String,Float,Float,String,Float,Float,String,Int,String,String,Float,String,Float
+ID,스킬명(한글),태그,불가태그,타겟진영,타겟 탐색범위,타겟 우선순위,스킬사용범위,판정시간,판정 후 경직시간,범위중심(Target/TargetPosition),스킬지속시간,스킬반복주기,범위형태,범위길이,범위폭,판정진영,최대 판정 대상갯수,판정 우선순위,피해속성,기본효과량,적용스테이터스,계수
+1111,asdasd,,,Enemy,10,DistanceAscending,1.7,0.6,1.06,Target,-,-,-,-,-,-,-,HealthPointAscending,PhysicDamage,10,AttackPower,0.2
+2222,회복스킬,,,Ally,10,HealthPointAscending,3,0.5,0.67,Target,-,-,-,-,-,-,-,HealthPointAscending,MagicRecovery,100,SpellPower,0.4
+3333,asdasd,,,Enemy,10,DistanceAscending,1.7,0.3,0.533,Target,-,-,-,-,-,-,-,HealthPointAscending,MagicDamage,100,AttackPower,0.2
+4444,asdasd,,,Enemy,10,DistanceAscending,1.7,2,1,Target,-,-,-,-,-,-,-,HealthPointAscending,PhysicDamage,100,AttackPower,0.4

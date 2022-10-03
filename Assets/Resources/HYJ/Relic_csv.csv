@@ -1,0 +1,9 @@
+ID,NAME,TYPE,EFFECT,VALUE_MIN,VALUE_MAX,LIMIT,TIER
+Int,String,String,String,Int,Int,Int,Int
+ID,이름,타입,효과,최소수치,최대수치,작용턴수,등급
+0,Mystery_Stone,PLAYER,CHANGE,0,0,3,1
+1,Low_SoulStone,PLAYER,SOUL,10,0,0,1
+2,Record_Stone,PLAYER,RECORD,10,0,0,1
+3,Search,SHADOW,SEARCH,0,0,0,1
+4,Oil,SHADOW,ATTACK,10,0,0,1
+5,Sabotage,SHADOW,CRITICAL,0,0,0,1

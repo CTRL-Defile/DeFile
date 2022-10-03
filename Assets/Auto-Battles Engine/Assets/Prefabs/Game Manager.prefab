@@ -1,0 +1,292 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2885990448085560704
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2885990448085560705}
+  - component: {fileID: 2885990448085560712}
+  - component: {fileID: 2885990448085560713}
+  - component: {fileID: 2885990448085560718}
+  - component: {fileID: 7467671530363206032}
+  - component: {fileID: 2885990448085560719}
+  - component: {fileID: 2885990448085560717}
+  - component: {fileID: 2885990448085560714}
+  - component: {fileID: 2885990448085560715}
+  - component: {fileID: 2885990448085560726}
+  - component: {fileID: 220177069}
+  - component: {fileID: 1972237852865926217}
+  m_Layer: 0
+  m_Name: Game Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2885990448085560705
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2885990448085560712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 465707f9c6671b0428a677019f5f2a8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inCombat: 0
+  _currentRound: 0
+  _rerollCost: 0
+  _startingGold: 0
+  _roundIsEnding: 0
+  _endRoundLeewayDuration: 0
+  _playerArmyWon: 0
+  _enemyArmyWon: 0
+--- !u!114 &2885990448085560713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5c07f77670603d428dcb894dc1a6732, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pawnClickedOn: {fileID: 0}
+  _pawnBeingDragged: {fileID: 0}
+  _pawnTransform: {fileID: 0}
+  _tileClickedOn: {fileID: 0}
+  _tileDraggedFrom: {fileID: 0}
+  _tileHoveredOver: {fileID: 0}
+  _hoveredOnTrash: 0
+  _lastMousePosition: {x: 0, y: 0, z: 0}
+  _isDraggingMouse: 0
+  _firstTouchTaken: 0
+  _zCameraOffset: 0
+--- !u!114 &2885990448085560718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7382f027e338b034e8904f6c2805f95e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentLevel: 0
+  _maxLevel: 0
+  _currentExperience: 0
+  _maxExperience: 0
+--- !u!114 &7467671530363206032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 377ea656ff2f40144bd357e2204d67d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentGold: 0
+--- !u!114 &2885990448085560719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a068a20c253e8c429d6b3188298485d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxArmySize: 0
+  _activePlayerPawns: []
+  _playerRoundStartRoster: []
+  _playerTotalRoster: []
+  _activeEnemyPawns: []
+  _enemyRoundStartRoster: []
+--- !u!114 &2885990448085560717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30bbe236b921a504dae519ff998828a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _chessBoardTransform: {fileID: 0}
+  _playerChessBoardTilePrefab: {fileID: 7645249022711201267, guid: 782b9802ab910a24f9f429928e596f5c,
+    type: 3}
+  _enemyChessBoardTilePrefab: {fileID: 5745031526819838908, guid: f024ac8d35ccc8f458d0bec664ed62ec,
+    type: 3}
+  _chessBoardTiles: []
+--- !u!114 &2885990448085560714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26c5506b117c21d418a966a149d6e99f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _benchSlotsCount: 8
+  _benchStartLocation: {fileID: 0}
+  _benchSlotScripts: []
+  _pawnsNeededForCombo: 0
+  _benchTilePrefab: {fileID: 2682278572457675709, guid: 887705293f4ef14428bd23abaa72f020,
+    type: 3}
+--- !u!114 &2885990448085560715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f99ec757893a79744a090ccf0f0006fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _shopSlotPrefab: {fileID: 7069288296669537869, guid: c425697cd79cd1f4a89a9f1e25b23679,
+    type: 3}
+  _shopSlotGrid: {fileID: 0}
+  _shopMenu:
+    isActive: 0
+    menuTransform: {fileID: 0}
+    activePosition: {fileID: 0}
+    hiddenPosition: {fileID: 0}
+  _shopSlotCount: 5
+  _shopSlots: []
+  txt_timer: {fileID: 0}
+  img_gage: {fileID: 0}
+  _currentLevelText: {fileID: 0}
+  _currentExpText: {fileID: 0}
+  _currentGoldText: {fileID: 0}
+  _trashPanel:
+    isActive: 0
+    menuTransform: {fileID: 0}
+    activePosition: {fileID: 0}
+    hiddenPosition: {fileID: 0}
+  _statsPanel:
+    isActive: 0
+    menuTransform: {fileID: 0}
+    activePosition: {fileID: 0}
+    hiddenPosition: {fileID: 0}
+  _tooltipPanelDesktop:
+    isActive: 0
+    menuTransform: {fileID: 0}
+    activePosition: {fileID: 0}
+    hiddenPosition: {fileID: 0}
+  _tooltipName: {fileID: 0}
+  _tooltipText: {fileID: 0}
+  _synergyPanel:
+    isActive: 0
+    menuTransform: {fileID: 0}
+    activePosition: {fileID: 0}
+    hiddenPosition: {fileID: 0}
+  _synergyWidgetPrefab: {fileID: 1670443474965627820, guid: 3dbf2333507c62b4d83ebd82c9b41012,
+    type: 3}
+  _synergyBubblePrefab: {fileID: 333683832956622441, guid: 16debbe9ef776c6439bb9fc4a5d9ad91,
+    type: 3}
+  _armyCountDisplay:
+    isActive: 0
+    menuTransform: {fileID: 0}
+    activePosition: {fileID: 0}
+    hiddenPosition: {fileID: 0}
+  _armyCountText: {fileID: 0}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  overArmySizeColor: {r: 1, g: 0, b: 0.033639908, a: 1}
+  underArmySizeColor: {r: 0.0567091, g: 0.990566, b: 0, a: 1}
+  _winnerMessagePanel:
+    isActive: 0
+    menuTransform: {fileID: 0}
+    activePosition: {fileID: 0}
+    hiddenPosition: {fileID: 0}
+  _winnerMessageText: {fileID: 0}
+  _currentRoundText: {fileID: 0}
+  _pawnHealthbarCanvas: {fileID: 0}
+--- !u!114 &2885990448085560726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 033443243e2dcdb419b6e6a86cdf88fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rosters:
+  - {fileID: 11400000, guid: a83056061e3983b49b3b12eaeae02b46, type: 2}
+  - {fileID: 11400000, guid: f5439c89158c1f64f965b6d58075df0a, type: 2}
+  - {fileID: 11400000, guid: 20032a33d8ab37c41b998123894d0b01, type: 2}
+  - {fileID: 11400000, guid: c8159971b474aa44ab9293545a5b513b, type: 2}
+  - {fileID: 11400000, guid: 0f067cf340af5ad42a8dea7e43e37711, type: 2}
+  - {fileID: 11400000, guid: 540585f7d3448864e876ebc1d4a45429, type: 2}
+  - {fileID: 11400000, guid: 73e65b583de77b647baae05d2e9e0d25, type: 2}
+  - {fileID: 11400000, guid: d77c5e0b379e36441b97545a4f44c661, type: 2}
+  - {fileID: 11400000, guid: 46a657b0b2ef5014a93a823772bed0be, type: 2}
+  - {fileID: 11400000, guid: 5bf30d216756a464b8b2bfc4769d206c, type: 2}
+--- !u!114 &220177069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2037a007175f551439ccc19c9b1f2d01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  synergies: []
+--- !u!114 &1972237852865926217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885990448085560704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e265f2b84249a7341b9b4c25ae202413, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _warriorSynergy: {fileID: 11400000, guid: 4ed067c15e154bd43bfe3600d3b17a1c, type: 2}
+  _orcSynergy: {fileID: 11400000, guid: 6a74a663c83aabb4eb0ea2cf4debad2b, type: 2}
+  _knightSynergy: {fileID: 11400000, guid: 201ee4f16f169574f85e118a6afc8d84, type: 2}
+  _humanSynergy: {fileID: 11400000, guid: 06fa0f2544e9ae148862226f7332f70e, type: 2}

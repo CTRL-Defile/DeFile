@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3f8f14a008e85458ac6287efa9cc88, type: 3}
+  m_Name: King - 3 Star
+  m_EditorClassIdentifier: 
+  name: King
+  icon: {fileID: 21300000, guid: 37dd01eebcf309a4db213dad34bfcc2f, type: 3}
+  pawn: {fileID: 6216694095769830663, guid: d2c9dedb692ccf44d9d43834460d72c1, type: 3}
+  starRating: 2
+  pawnQuality: 1
+  upgradedPawn: {fileID: 0}
+  origins: 01000000
+  classes: 0000000001000000
+  projectilePrefab: {fileID: 0}
+  minAttackDamage: 200
+  maxAttackDamage: 240
+  baseAttackTime: 1.5
+  attackPoint: 0.5
+  attackRange: 1
+  manaPerAttack: 10
+  moveSpeed: 11
+  health: 2000
+  mana: 100
+  armor: 15

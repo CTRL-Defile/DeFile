@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3f8f14a008e85458ac6287efa9cc88, type: 3}
+  m_Name: Commander - 2 Star
+  m_EditorClassIdentifier: 
+  name: Commander
+  icon: {fileID: 21300000, guid: 58c0d050fa8b3c74bbadbf9ab8e5a024, type: 3}
+  pawn: {fileID: 2341667580664231145, guid: 4dc5df3010b070448b2bd88519f41fce, type: 3}
+  starRating: 1
+  pawnQuality: 4
+  upgradedPawn: {fileID: 11400000, guid: 6678d2b2932e04247870e719842bae82, type: 2}
+  origins: 0100000000000000
+  classes: 0000000001000000
+  projectilePrefab: {fileID: 0}
+  minAttackDamage: 150
+  maxAttackDamage: 180
+  baseAttackTime: 2
+  attackPoint: 0.5
+  attackRange: 1
+  manaPerAttack: 10
+  moveSpeed: 12
+  health: 2000
+  mana: 100
+  armor: 13

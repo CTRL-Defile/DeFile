@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3f8f14a008e85458ac6287efa9cc88, type: 3}
+  m_Name: Swordsman - 1 Star
+  m_EditorClassIdentifier: 
+  name: Swordsman
+  icon: {fileID: 21300000, guid: 944d3d47ba3060b4b89181554151cf5f, type: 3}
+  pawn: {fileID: 3077562334488732511, guid: a50319068aeeea24fa0dda1b6329128a, type: 3}
+  starRating: 0
+  pawnQuality: 3
+  upgradedPawn: {fileID: 11400000, guid: 2209096d2661f3144a0b130ea540fc7c, type: 2}
+  origins: 01000000
+  classes: 0000000001000000
+  projectilePrefab: {fileID: 0}
+  minAttackDamage: 60
+  maxAttackDamage: 100
+  baseAttackTime: 1.1
+  attackPoint: 0.3
+  attackRange: 1
+  manaPerAttack: 10
+  moveSpeed: 20
+  health: 500
+  mana: 100
+  armor: 20

@@ -1,0 +1,7 @@
+﻿ID,NameKor,MaxHP,MaxMP,AttackPower,SpellPower,Defence,SpellResistance,CriticalChance,CriticalMultiplier,NormalSkillID,NormalSkillAnimation,SpecialSkillID,SpecialSkillAnimation,UnitVisualObjectPrefab,MoveAnimation,DeathAnimation
+Int,String,Float,Float,Float,Float,Float,Float,Float,Float,Int,String,Int,String,String,String,String
+ID,유닛명(한글),최대HP,최대MP,물리공격력,주문공격력,방어력,주문저항력,치명타확률,치명타배율,일반스킬,일반스킬애니메이션,특수스킬,특수스킬애니메이션,유닛모델링Prefab,이동애니메이션,사망애니메이션
+10001,테스트10001,350,100,100,200,150,300,0.5,2.5,1111,SliceAttack,3333,StabAttack,TreasureGoblinBlue,Run,Die
+10002,테스트10002,250,75,100,300,50,350,0.1,1.5,1111,StabAttack,2222,SpellCast,TreasureGoblinGreen,Walk,Die
+10003,테스트10003,300,100,100,200,100,200,0.4,2,1111,,3333,,BlueCube,,
+10004,테스트10004,500,125,80,200,300,300,0.2,1.5,1111,,4444,,RedCube,,

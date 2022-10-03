@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3f8f14a008e85458ac6287efa9cc88, type: 3}
+  m_Name: Linda - 2 Star
+  m_EditorClassIdentifier: 
+  name: Linda
+  icon: {fileID: 21300000, guid: a7a0cf4936b99254794984f552bf7e56, type: 3}
+  pawn: {fileID: 3727204620226448593, guid: 4478770b67da5fb4f9bde1b0758923b1, type: 3}
+  starRating: 1
+  pawnQuality: 2
+  upgradedPawn: {fileID: 11400000, guid: b33896697118a0f47a2ce7640b866e44, type: 2}
+  origins: 01000000
+  classes: 01000000
+  projectilePrefab: {fileID: 5117091171567575480, guid: f4c2f8e483d703a46a6826a1ef77de18,
+    type: 3}
+  minAttackDamage: 140
+  maxAttackDamage: 160
+  baseAttackTime: 1.7
+  attackPoint: 0.5
+  attackRange: 3
+  manaPerAttack: 10
+  moveSpeed: 10
+  health: 950
+  mana: 100
+  armor: 8

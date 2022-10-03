@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b076a515d63dae43aff1c16e84e5e9c, type: 3}
+  m_Name: Orc
+  m_EditorClassIdentifier: 
+  name: Orc
+  icon: {fileID: 21300000, guid: bbf8248a08107774c9151455c1328fc7, type: 3}
+  color: {r: 0.990566, g: 0.014017418, b: 0.014017418, a: 0}
+  totalBuffSize: 1
+  totalSynergySize: 2
+  enemyDebuff: 0
+  buffOneTooltip: Increase all Orc attack speed by 50%.
+  buffTwoTooltip: 
+  buffThreeTooltip: 

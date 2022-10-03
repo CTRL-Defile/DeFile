@@ -1,0 +1,39 @@
+Auto-Battles Engine Changelog
+
+Version 1.0.0 --12/17/19--
+-Initial Release!
+
+-----------------------------
+
+Version 1.0.1 --12/18/19--
+-No changes, update to EULA
+
+-----------------------------
+
+Version 1.0.2 --12/24/19--
+-Revisions to EULA
+
+-----------------------------
+
+Version 1.0.3 --12/28/19--
+-Updated Documentation to include 'Creating Animated Pawns' video
+-Added 'Base Pawn Controller' for use with animations
+-Added animation support to 'Movement' script
+
+-----------------------------
+
+Version 1.0.4 --1/1/20--
+-Updated Linda's icon
+-Changed position and size of pawn rank stars (size 15 -> 12.5, pos.y 6 -> -8.5)
+-Added stats panel
+-Added mobile support for stats panel and clicking/dragging pawns
+
+-----------------------------
+
+Version 1.1.0 --01/23/2020--
+-Added the 'Synergy' system!
+-Added new scripts 'Synergy' (Scriptable Object), 'SynergyManager', 'SynergyBuffsAndDebuffs', 'SynergyWidget', 'SynergyDatabase'
+-Added 4 new pawns! (Commander, Crossbow, Swordsman, Assassin)
+-Added 4 new synergies! (Human, Orc, Warrior, Knight)
+-Updated the computer rosters for rounds 1-5 and added new rounds for 6-10
+-Updated documentation with Synergy information
