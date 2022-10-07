@@ -4,15 +4,17 @@ using UnityEngine;
 
 public partial class HYJ_Map_Manager : MonoBehaviour
 {
+    [SerializeField] int Basic_initialize;
+
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
     object HYJ_Active_ActiveOn(params object[] _args)
     {
-        bool aa = (bool)_args[0];
+        bool isActive = (bool)_args[0];
 
         //
-        this.gameObject.SetActive(aa);
+        this.gameObject.SetActive(isActive);
 
         //
         return null;
@@ -22,30 +24,70 @@ public partial class HYJ_Map_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, HYJ_Active_ActiveOn);
-
-        HYJ_Cheapter_Start();
-        HYJ_Road_Start();
+        Basic_initialize = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        switch(Basic_initialize)
+        {
+            case -1:    break;
+            //
+            case 0:
+                {
+                    HYJ_Cheapter_Start();
+
+                    Basic_initialize = 1;
+                }
+                break;
+            case 1:
+                {
+                    HYJ_Road_Start();
+
+                    Basic_initialize = 2;
+                }
+                break;
+            case 2:
+                {
+                    Camera camera
+                        = (Camera)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                            HYJ_ScriptBridge_EVENT_TYPE.MASTER___UI__GET_CAMERA,
+                            0);
+
+                    if (camera != null)
+                    {
+                        this.transform.Find("Canvas").GetComponent<Canvas>().worldCamera = camera;
+
+                        Basic_initialize = 3;
+                    }
+                }
+                break;
+            case 3:
+                {
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, HYJ_Active_ActiveOn);
+
+                    this.gameObject.SetActive(false);
+
+                    Basic_initialize = -1;
+                }
+                break;
+        }
     }
 }
 
 partial class HYJ_Map_Manager
 {
+    [Header("==================================================")]
     [Header("CHEAPTER")]
-    const int Cheapter_x = 8;
-    const int Cheapter_y = 14;
-
     [SerializeField] int Cheapter_settingRootCount;
     [SerializeField] Transform Cheapter_viewPort;
     [SerializeField] GameObject Cheapter_stage;
     [SerializeField] int Cheapter_level;
     [SerializeField] List<HYJ_Map_Stage> Cheapter_stages;
+
+    const int Cheapter_x = 8;
+    const int Cheapter_y = 14;
 
     //////////  Getter & Setter //////////
 
@@ -288,6 +330,8 @@ partial class HYJ_Map_Manager
 
 partial class HYJ_Map_Manager
 {
+    [Header("==================================================")]
+    [Header("ROAD")]
     [SerializeField] Transform Road_parent;
     [SerializeField] List<GameObject> Road_roads;
 

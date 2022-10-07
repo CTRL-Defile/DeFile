@@ -43,10 +43,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Basic_phase = 0;
 
         //
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE, HYJ_Basic_GetPhase);
-        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON, HYJ_ActiveOn);
-
-        //this.HYJ_SetActive(false);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,   HYJ_Basic_GetPhase);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON,  HYJ_ActiveOn);
     }
 
     // Update is called once per frame
@@ -63,6 +61,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             case 0:
                 {
                     HYJ_Field_Init();
+
+                    //
+                    Basic_phase = 1;
+                }
+                break;
+            case 1:
+                {
+                    this.gameObject.SetActive(false);
 
                     //
                     Basic_phase = -1;

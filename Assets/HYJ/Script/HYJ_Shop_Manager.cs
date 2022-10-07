@@ -136,7 +136,12 @@ public partial class HYJ_Shop_Manager : MonoBehaviour
 
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SHOP___ACTIVE__ACTIVE_ON, HYJ_ActiveOn);
 
-                    this.HYJ_SetActive(false);
+                    this.transform.Find("Canvas").GetComponent<Canvas>().worldCamera
+                        = (Camera)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                            HYJ_ScriptBridge_EVENT_TYPE.MASTER___UI__GET_CAMERA,
+                            0);
+
+                    this.gameObject.SetActive(false);
                 }
                 break;
         }
