@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //
 using System;
+using TMPro;
+using System.Data.SqlTypes;
+using AutoBattles;
 
 public partial class HYJ_Battle_Manager : MonoBehaviour
 {
@@ -54,12 +58,17 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         {
             case -1:
                 {
-
+                    if (this.gameObject.activeSelf == true)
+                    {
+                        // battle active
+                        Basic_phase = 2;
+                    }
                 }
                 break;
             //
             case 0:
                 {
+                    Debug.Log("is Basic_phase == 0?");
                     HYJ_Field_Init();
 
                     //
@@ -68,10 +77,28 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 break;
             case 1:
                 {
+                    Debug.Log("this.gameObject : " + this.gameObject);    // Battle
                     this.gameObject.SetActive(false);
 
                     //
                     Basic_phase = -1;
+                }
+                break;
+
+                // 전투 준비
+            case 2:
+                {
+                    //Debug.Log("전투 준비..");
+                    if(!isUpdated)
+                        update_UnitList();
+
+                }
+                break;
+
+                // 전투 상태
+            case 3:
+                {
+
                 }
                 break;
         }
@@ -116,6 +143,7 @@ partial class HYJ_Battle_Manager
     [SerializeField] int Field_y;
 
     [SerializeField] List<HYJ_Battle_Manager_Line> Field_tiles;
+    [SerializeField] List<HYJ_Battle_Manager_Line> Stand_tiles;
 
     //////////  Getter & Setter //////////
     object HYJ_Field_GetFieldX(params object[] _args)
@@ -203,7 +231,9 @@ partial class HYJ_Battle_Manager
     //////////  Default Method  //////////
     void HYJ_Field_Init()
     {
+        // Field_parent 변수명임!!
         GameObject element = Field_parent.GetChild(0).gameObject;
+        GameObject std_element = Field_parent.GetChild(2).gameObject;
 
         Vector3 pos0 = element.transform.localPosition;
         Vector3 pos1 = Field_parent.GetChild(1).localPosition;
@@ -245,6 +275,28 @@ partial class HYJ_Battle_Manager
             Field_tiles.Add(line);
         }
 
+        // 대기열 8좌석 +@ ? 레벨업이나 유물로 늘어날 수 있음.
+        int Stand_X = 8;
+        Stand_tiles = new List<HYJ_Battle_Manager_Line>();
+        HYJ_Battle_Manager_Line std_line = new HYJ_Battle_Manager_Line();
+        for (int forX = 0; forX < Stand_X; forX++)
+        {
+            GameObject std_obj = Instantiate(std_element, Field_parent);
+            std_obj.SetActive(true);
+            std_obj.name = "stand_" + forX;
+
+            if (Field_y % 2 == 1)
+                std_obj.transform.localPosition = new Vector3(pos0.x + (pos1.x * 2.0f * forX), 0, pos0.z + (pos1.z * Field_y));
+            else
+                std_obj.transform.localPosition = new Vector3(-pos0.x + (pos1.x * 2.0f * forX), 0, pos0.z + (pos1.z * Field_y));
+
+            std_obj.transform.localScale = element.transform.localScale;
+            std_line.HYJ_Tile_Add(std_obj.transform);
+        }
+
+        Stand_tiles.Add(std_line);
+
+
         //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X,                HYJ_Field_GetFieldX             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y,                HYJ_Field_GetFieldY             );
@@ -258,3 +310,50 @@ partial class HYJ_Battle_Manager
 }
 
 #endregion
+
+
+public partial class HYJ_Battle_Manager : MonoBehaviour
+{
+    [SerializeField]
+    private GameObject[] Shop_UnitList = new GameObject[5];
+
+    bool isUpdated = false;
+
+    public void update_UnitList()
+    {
+        // Text, Image, Cost
+        var mon_list = new List<string>() { "Orc", "Bear" };
+
+        for (int i = 0; i < Shop_UnitList.Length; i++)
+        {
+            System.Random r = new System.Random();
+            int idx = r.Next(2);
+
+            Shop_UnitList[i].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = mon_list[idx].ToString();
+        }
+
+        isUpdated = true;
+    }
+
+
+    public void buy_Unit()
+    {
+        Debug.Log("Buy Unit..");
+
+        Instantiate(this.gameObject.transform.GetChild(2),
+            this.gameObject.transform.GetChild(1).gameObject.transform.Find("stand_0").localPosition,
+            Quaternion.identity);
+
+
+
+
+    }
+}
+
+
+
+
+public class LSY_Shop_UnitList
+{
+
+}

@@ -4,6 +4,7 @@ using UnityEngine;
 
 //
 using System;
+using UnityEngine.EventSystems;
 
 public partial class HYJ_Character : MonoBehaviour
 {
@@ -35,6 +36,7 @@ public partial class HYJ_Character : MonoBehaviour
             //
             case 0:
                 {
+                    // Battle_Manager.Basic_phase
                     int battlePhase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
 
                     if(battlePhase == -1)
@@ -103,7 +105,7 @@ partial class HYJ_Character
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
-
+    
     //////////  Default Method  //////////
 }
 
