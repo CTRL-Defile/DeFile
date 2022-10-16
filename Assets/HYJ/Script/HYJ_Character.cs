@@ -7,7 +7,7 @@ using System;
 
 public partial class HYJ_Character : MonoBehaviour
 {
-    [SerializeField] int Basic_phase;
+    [SerializeField] protected int Basic_phase;
 
     //////////  Getter & Setter //////////
 
@@ -17,7 +17,12 @@ public partial class HYJ_Character : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Basic_phase = 0;
+		// HP 테스트 용 초기화
+		Status_MaxHP = 100.0f;
+		Status_HP = 100.0f;
+        Status_atk = 10.0f;
+
+		Basic_phase = 0;
 
         HYJ_Action_Init();
     }
@@ -87,24 +92,34 @@ partial class HYJ_Character
 {
     [Header("==================================================")]
     [Header("STATUS")]
-    [SerializeField] int Status_HP;     // 체력
-    [SerializeField] int Status_MaxHP;  // 최대체력
-    [SerializeField] int Status_MP;     // 마나
-    [SerializeField] int Status_MaxMP;  // 최대마나
-
-    [SerializeField] int Status_atk;    // 공격력
-    [SerializeField] int Status_magic;  // 마력
-
-    [SerializeField] int Status_atkSpeed;   // 공속
-
-    [SerializeField] int Status_critValue;  // 치명타 수치
-    [SerializeField] int Status_critPer;    // 치명타 확률
+    [SerializeField] protected float Status_HP;     // 체력
+    [SerializeField] protected float Status_MaxHP;  // 최대체력
+    [SerializeField] protected int Status_MP;     // 마나
+    [SerializeField] protected int Status_MaxMP;  // 최대마나
+                     
+    [SerializeField] protected float Status_atk;    // 공격력
+    [SerializeField] protected int Status_magic;  // 마력
+                     
+    [SerializeField] protected int Status_atkSpeed;   // 공속
+                     
+    [SerializeField] protected int Status_critValue;  // 치명타 수치
+    [SerializeField] protected int Status_critPer;    // 치명타 확률
 
     //////////  Getter & Setter //////////
+    public float Stat_HP { get { return Status_HP; } set { Status_HP = value; } }
+	public float Stat_MaxHP { get { return Status_MaxHP; } set { Status_MaxHP = value; } }
+	public float Stat_Attack { get { return Status_atk; } set { Status_atk = value; } }
 
     //////////  Method          //////////
+    public void HitProcess(float Attack)
+    {
+        if (Status_HP >= Attack)
+            Status_HP -= Attack;
+        else if (Status_HP < Attack)
+            Status_HP = 0.0f;
+    }
 
-    //////////  Default Method  //////////
+	//////////  Default Method  //////////
 }
 
 #endregion
@@ -165,7 +180,7 @@ partial class HYJ_Character
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
-    void HYJ_AStar_Calc(
+    protected void HYJ_AStar_Calc(
         List<HYJ_Character_AStar> _tiles)
     {
         // 계산을 위한 AStar의 종류에 따라 계산할 방식을 정한다.    //
@@ -270,7 +285,7 @@ partial class HYJ_Character
 
     // 기준점의 위, 아래 계산
     // Y의 값이 홀수일 때와 짝수일 때에 따라 계산이 달라지기에 이를 보정하여 계산한다.
-    void HYJ_AStar_Calc_UpDown(
+    protected void HYJ_AStar_Calc_UpDown(
         List<HYJ_Character_AStar> _tiles,
         //
         HYJ_Character_AStar_TYPE _type, int _range, int _x, int _y)
@@ -315,7 +330,7 @@ partial class HYJ_Character
         }
     }
 
-    void HYJ_AStar_Calc_Setting(
+    protected void HYJ_AStar_Calc_Setting(
         List<HYJ_Character_AStar> _tiles,
         //
         HYJ_Character_AStar_TYPE _type, int _range, int _x, int _y)
@@ -348,7 +363,7 @@ partial class HYJ_Character
     }
 
     //////////  Default Method  //////////
-    void HYJ_Astar_Init()
+    protected void HYJ_Astar_Init()
     {
         AStar_tiles_distance = new List<HYJ_Character_AStar>();
         HYJ_Astar_Init_AStar(AStar_tiles_distance);
@@ -360,7 +375,7 @@ partial class HYJ_Character
         AStar_wait = new List<string>();
     }
 
-    void HYJ_Astar_Init_AStar(List<HYJ_Character_AStar> _tiles)
+    protected void HYJ_Astar_Init_AStar(List<HYJ_Character_AStar> _tiles)
     {
         int tilesCount = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILES_COUNT);
         for (int i = 0; i < tilesCount; i++)
@@ -393,32 +408,77 @@ public enum HYJ_Character_ACTION
     ATTACK  // 공격
 }
 
+public struct ANIMPARAM
+{
+	bool IsIdle;
+	bool IsRun_Forward;
+	bool IsAttack;
+	bool IsDie;
+
+    public ANIMPARAM(bool Idle, bool Run, bool Attack, bool Die)
+    {
+        this.IsIdle = Idle;
+		this.IsRun_Forward = Run;
+		this.IsAttack = Attack;
+        this.IsDie = Die;
+    }
+
+    public bool Idle
+    {
+        get { return IsIdle; }
+        set { IsIdle = value; }
+    }
+
+	public bool Run
+	{
+		get { return IsRun_Forward; }
+		set { IsRun_Forward = value; }
+	}
+
+	public bool Attack
+	{
+		get { return IsAttack; }
+		set { IsAttack = value; }
+	}
+
+	public bool Die
+	{
+		get { return IsDie; }
+		set { IsDie = value; }
+	}
+
+}
+
 partial class HYJ_Character
 {
     [Header("==================================================")]
     [Header("ACTION")]
-    [SerializeField] HYJ_Character_COMMAND Action_command;
-    [SerializeField] HYJ_Character_ACTION Action_action;
-    [SerializeField] object Action_target;
+    [SerializeField] protected HYJ_Character_COMMAND Action_command;
+    [SerializeField] protected HYJ_Character_ACTION Action_action;
+    [SerializeField] protected object Action_target;
 
     //
-    Vector3 Action_moveStartPos;
-    Vector3 Action_moveArrivePos;
-    float Action_moveTimer;
-    float Action_moveTimerMax;
 
-    //////////  Getter & Setter //////////
+   protected Vector3 Action_moveStartPos;
+   protected Vector3 Action_moveArrivePos;
+   protected float Action_moveTimer;
+   protected float Action_moveTimerMax;
+   protected HYJ_Character targetObj = null;
 
-    //////////  Method          //////////
+	protected ANIMPARAM AnimParam = new ANIMPARAM(true, false, false, false);
 
-    //////////  Default Method  //////////
-    void HYJ_Action_Init()
+	//////////  Getter & Setter //////////
+
+	//////////  Method          //////////
+
+	//////////  Default Method  //////////
+	protected void HYJ_Action_Init()
     {
         Action_command = HYJ_Character_COMMAND.AUTO;
         Action_action = HYJ_Character_ACTION.IDLE;
-    }
+	}
 
-    void HYJ_Action_Update()
+	protected void HYJ_Action_Update()
     {
         switch(Action_action)
         {
@@ -432,8 +492,8 @@ partial class HYJ_Character
         }
     }
 
-    // 대기중일 때
-    void HYJ_Action_Update_ACTION_IDLE()
+	// 대기중일 때
+	protected void HYJ_Action_Update_ACTION_IDLE()
     {
         switch (Action_command)
         {
@@ -441,8 +501,7 @@ partial class HYJ_Character
                 {
                     HYJ_AStar_Calc(AStar_tiles_distance);
 
-                    //
-                    HYJ_Character targetObj = null;
+                    //                    
                     int targetRange = 10000;
 
                     // 가장 가까운 적을 찾자
@@ -480,19 +539,28 @@ partial class HYJ_Character
                     if (targetRange <= 1)
                     {
                         Action_action = HYJ_Character_ACTION.ATTACK;
-                    }
+
+                        // Attack 공격 모션으로 변경
+                        AnimParam.Idle = false;
+                        AnimParam.Attack = true;
+
+					}
                     // 사거리 밖에 있으면 최단 거리로 찾아갑시다.
                     else
                     {
                         Action_action = HYJ_Character_ACTION.WALK_START;
-                    }
+
+						// 이동 모션으로 변경
+						AnimParam.Idle = false;
+						AnimParam.Run = true;
+					}
                 }
                 break;
         }
     }
 
-    // WALK
-    void HYJ_Action_Update_ACTION_WALK_START()
+	// WALK
+	protected void HYJ_Action_Update_ACTION_WALK_START()
     {
         // x, y 좌표
         // z    사거리
@@ -534,43 +602,48 @@ partial class HYJ_Character
         tile.HYJ_Basic_onUnit = this;
 
         Action_action = HYJ_Character_ACTION.WALK_SETTING;
-    }
+	}
 
-    void HYJ_Action_Update_ACTION_WALK_SETTING()
+	protected void HYJ_Action_Update_ACTION_WALK_SETTING()
     {
         //
         Action_moveStartPos = this.transform.localPosition;
         Action_moveArrivePos = ((HYJ_Battle_Tile)Action_target).transform.localPosition;
 
-        // 타이머 세팅
-        Action_moveTimer = 0.0f;
+		// 타이머 세팅
+		Action_moveTimer = 0.0f;
 
         float distance = Mathf.Sqrt(MathF.Pow(Action_moveStartPos.x - Action_moveArrivePos.x, 2) + MathF.Pow(Action_moveStartPos.y - Action_moveArrivePos.y, 2) + MathF.Pow(Action_moveStartPos.z - Action_moveArrivePos.z, 2));
         Action_moveTimerMax = distance / 1.0f;
 
         //
         Action_action = HYJ_Character_ACTION.WALK;
-    }
+	}
 
-    void HYJ_Action_Update_ACTION_WALK()
+	protected void HYJ_Action_Update_ACTION_WALK()
     {
         Action_moveTimer += Time.deltaTime;
 
         if (Action_moveTimer >= Action_moveTimerMax)
         {
-            this.transform.localPosition = Action_moveArrivePos;
-            Action_action = HYJ_Character_ACTION.IDLE;
+            this.transform.localPosition = Action_moveArrivePos;			
+			Action_action = HYJ_Character_ACTION.IDLE;
+
+            // Idle 모션으로 변경
+            AnimParam.Run = false;
+            AnimParam.Idle = true;
         }
         else
         {
-            this.transform.localPosition = Vector3.Lerp(Action_moveStartPos, Action_moveArrivePos, Action_moveTimer / Action_moveTimerMax);
-        }
+            this.transform.localPosition = Vector3.Lerp(Action_moveStartPos, Action_moveArrivePos, Action_moveTimer / Action_moveTimerMax);            
+		}
     }
 
     // ATTACK
-    void HYJ_Action_Update_ACTION_ATTACK()
+    protected void HYJ_Action_Update_ACTION_ATTACK()
     {
-    }
+		this.transform.LookAt(targetObj.transform, Vector3.up);
+	}
 }
 
 #endregion
