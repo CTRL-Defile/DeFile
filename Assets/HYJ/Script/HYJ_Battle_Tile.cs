@@ -43,12 +43,12 @@ partial class HYJ_Battle_Tile : MonoBehaviour
             detectedUnit.Add(other.gameObject);
             Basic_onUnit = other.GetComponent<HYJ_Character>();
 
-            other.gameObject.transform.position = this.gameObject.transform.position;
+            //other.gameObject.transform.position = this.gameObject.transform.position;
         }
         else
         {
             Debug.Log("isOverlap");
-            other.gameObject.transform.position = other.gameObject.GetComponent<HYJ_Character>().LSY_Unit_Position;
+            //other.gameObject.transform.position = other.gameObject.GetComponent<HYJ_Character>().LSY_Unit_Position;
         }
     }
     private void OnTriggerExit(Collider other)
