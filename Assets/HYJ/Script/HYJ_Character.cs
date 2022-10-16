@@ -4,13 +4,14 @@ using UnityEngine;
 
 //
 using System;
+using UnityEngine.EventSystems;
 
 public partial class HYJ_Character : MonoBehaviour
 {
     [SerializeField] protected int Basic_phase;
-
+    [SerializeField] Vector3 ori_Pos;
     //////////  Getter & Setter //////////
-
+    public Vector3 LSY_Unit_Position { get { return ori_Pos; } set { ori_Pos = value; } }
     //////////  Method          //////////
 
     //////////  Default Method  //////////
@@ -40,6 +41,7 @@ public partial class HYJ_Character : MonoBehaviour
             //
             case 0:
                 {
+                    // Battle_Manager.Basic_phase
                     int battlePhase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
 
                     if(battlePhase == -1)
@@ -501,7 +503,8 @@ partial class HYJ_Character
                 {
                     HYJ_AStar_Calc(AStar_tiles_distance);
 
-                    //                    
+                    //
+                    HYJ_Character targetObj = null;
                     int targetRange = 10000;
 
                     // 가장 가까운 적을 찾자
