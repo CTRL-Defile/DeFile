@@ -9,9 +9,9 @@ using UnityEngine.EventSystems;
 public partial class HYJ_Character : MonoBehaviour
 {
     [SerializeField] int Basic_phase;
-
+    [SerializeField] Vector3 ori_Pos;
     //////////  Getter & Setter //////////
-
+    public Vector3 LSY_Unit_Position { get { return ori_Pos; } set { ori_Pos = value; } }
     //////////  Method          //////////
 
     //////////  Default Method  //////////

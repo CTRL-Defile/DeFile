@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
 
-public class DragUnit : MonoBehaviour
+public class LSY_DragUnit : MonoBehaviour
 {
     /*
     GameObject objectHitPostion;
@@ -62,7 +63,7 @@ public class DragUnit : MonoBehaviour
     bool isHeld = false;
     private void Start()
     {
-        oriPos = this.gameObject.transform.position;
+        //oriPos = this.gameObject.transform.position;
     }
 
     private void Update()
@@ -87,33 +88,25 @@ public class DragUnit : MonoBehaviour
                     //{
                     //    return;
                     //}
-
+                    //oriPos = hit.transform.position;
                     selectedObject = hit.collider.gameObject;
+                    oriPos = selectedObject.transform.position;
                     Cursor.visible = false;
                 }
             }
-            //else
-            //{
-            //    Vector3 position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
-            //    Vector3 worldPosition = Camera.main.ScreenToWorldPoint(position);
-            //    selectedObject.transform.position = new Vector3(worldPosition.x, 0f, worldPosition.z);
-
-            //    selectedObject = null;
-            //    Cursor.visible = true;
-            //}
         }
 
-        if(Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0))
         {
             Debug.Log("bt up");
             isHeld = false;
+            //oriPos.y -= 0.25f;
             Vector3 position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
             Vector3 worldPosition = Camera.main.ScreenToWorldPoint(position);
-            selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y + 0f, worldPosition.z);
+            selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y, worldPosition.z);
 
             selectedObject = null;
             Cursor.visible = true;
-
         }
 
         if (selectedObject!=null)
@@ -121,7 +114,7 @@ public class DragUnit : MonoBehaviour
             Vector3 position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
             Vector3 worldPosition = Camera.main.ScreenToWorldPoint(position);
             selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y + 0.25f, worldPosition.z);
-            Debug.Log(oriPos.y);
+            //Debug.Log(selectedObject + " -> oriPos.y : " + oriPos.y);
         }
     }
 
@@ -140,11 +133,10 @@ public class DragUnit : MonoBehaviour
         Vector3 worldMousePosFar = Camera.main.ScreenToWorldPoint(screenMousePosFar);
         Vector3 worldMousePosNear = Camera.main.ScreenToWorldPoint(screenMousePosNear);
         RaycastHit hit;
-        int layerMask = 1 << LayerMask.NameToLayer("Store");
+        int layerMask = 1 << LayerMask.NameToLayer("Unit");
         Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out hit, 1000, layerMask);
 
         return hit;
     }
-
 
 }

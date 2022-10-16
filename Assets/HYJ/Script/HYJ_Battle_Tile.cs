@@ -23,4 +23,58 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     {
         
     }
+
+}
+
+
+partial class HYJ_Battle_Tile : MonoBehaviour
+{
+    //[Header("==================================================")]
+    //[Header("Unit Detect")]
+
+    [SerializeField]
+    private List<GameObject> detectedUnit = new List<GameObject>();
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(Basic_onUnit == null && detectedUnit.Count == 0)
+        {
+            Debug.Log("isEmpty");
+            detectedUnit.Add(other.gameObject);
+            Basic_onUnit = other.GetComponent<HYJ_Character>();
+
+            other.gameObject.transform.position = this.gameObject.transform.position;
+        }
+        else
+        {
+            Debug.Log("isOverlap");
+            other.gameObject.transform.position = other.gameObject.GetComponent<HYJ_Character>().LSY_Unit_Position;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        detectedUnit.Remove(other.gameObject);
+        Basic_onUnit = null;
+    }
+
+    private GameObject DetectUnitObject()
+    {
+        GameObject near_obj = null;
+
+        detectedUnit.ForEach ((obj) =>
+        {
+            if (near_obj == null)
+            {
+                near_obj = obj;
+            }
+            else if (Vector3.Distance(near_obj.transform.position, transform.position) >
+            Vector3.Distance(obj.transform.position, transform.position))
+            {
+                near_obj = obj;
+            }
+        });
+
+        return near_obj;
+    }
+
 }
