@@ -115,24 +115,46 @@ partial class HYJ_Player
 // 유닛(기물)에 대한 정보
 #region Unit
 
+// 아이템 정보를 모은 클래스
+[Serializable]
+public class HYJ_Player_Unit : IDisposable
+{
+    public string Data_name;  // 유닛의 DB이름
+
+    //////////  Getter & Setter //////////
+
+    //////////  Method          //////////
+    public void Dispose()
+    {
+
+    }
+
+    //////////  Default Method  //////////
+    public HYJ_Player_Unit(string _name)
+    {
+        Data_name = _name;
+    }
+}
+
 partial class HYJ_Player
 {
-    [SerializeField] List<string> Unit_waitUnits;
-    [SerializeField] List<string> Unit_fieldUnits;
+    [SerializeField] List<HYJ_Player_Unit> Unit_waitUnits;
+    [SerializeField] List<HYJ_Player_Unit> Unit_fieldUnits;
 
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
     // 유닛을 추가한다.
-    void HYJ_Unit_Insert()
+    void HYJ_Unit_Insert(string _name)
     {
-        Debug.Log("HYJ_Unit_Insert");
+        Unit_waitUnits.Add(new HYJ_Player_Unit(_name));
     }
 
     // 유닛을 추가한다.(외부에서 접근할 때 사용)
     object HYJ_Unit_Insert_Bridge(params object[] _args)
     {
-        HYJ_Unit_Insert();
+        string name = (string)_args[0];
+        HYJ_Unit_Insert(name);
 
         //
         return null;
@@ -141,6 +163,10 @@ partial class HYJ_Player
     //////////  Default Method  //////////
     void HYJ_Unit_Init()
     {
+        Unit_waitUnits = new List<HYJ_Player_Unit>();
+        Unit_fieldUnits = new List<HYJ_Player_Unit>();
+
+        //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__INSERT, HYJ_Unit_Insert_Bridge);
     }
 }
@@ -202,7 +228,7 @@ partial class HYJ_Player
                 break;
             case "ITEM":
                 {
-                    HYJ_Unit_Insert();
+                    HYJ_Unit_Insert(name);
                 }
                 break;
             case "POTION":
