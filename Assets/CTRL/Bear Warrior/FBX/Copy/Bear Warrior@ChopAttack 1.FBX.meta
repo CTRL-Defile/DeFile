@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 41909dfcb13fcde4caa6e1590c8aa09a
+guid: bf444abc48806434390112d5073c95b6
 ModelImporter:
   serializedVersion: 21202
   internalIDToNameTable:
@@ -457,8 +457,7 @@ ModelImporter:
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'RigNeck2'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'RigLLegAnkle'
       has scale animation that will be discarded.\n\t'RigRLegAnkle' has scale animation
-      that will be discarded.\nEvent NewEvent has a time (1.500000) outside the clip's
-      valid range (0.000000..1.000000). It will never be fired"
+      that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -483,7 +482,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
