@@ -410,47 +410,6 @@ public enum HYJ_Character_ACTION
     ATTACK  // 공격
 }
 
-public struct ANIMPARAM
-{
-	bool IsIdle;
-	bool IsRun_Forward;
-	bool IsAttack;
-	bool IsDie;
-
-    public ANIMPARAM(bool Idle, bool Run, bool Attack, bool Die)
-    {
-        this.IsIdle = Idle;
-		this.IsRun_Forward = Run;
-		this.IsAttack = Attack;
-        this.IsDie = Die;
-    }
-
-    public bool Idle
-    {
-        get { return IsIdle; }
-        set { IsIdle = value; }
-    }
-
-	public bool Run
-	{
-		get { return IsRun_Forward; }
-		set { IsRun_Forward = value; }
-	}
-
-	public bool Attack
-	{
-		get { return IsAttack; }
-		set { IsAttack = value; }
-	}
-
-	public bool Die
-	{
-		get { return IsDie; }
-		set { IsDie = value; }
-	}
-
-}
-
 partial class HYJ_Character
 {
     [Header("==================================================")]
@@ -466,8 +425,6 @@ partial class HYJ_Character
    protected float Action_moveTimer;
    protected float Action_moveTimerMax;
    protected HYJ_Character targetObj = null;
-
-	protected ANIMPARAM AnimParam = new ANIMPARAM(true, false, false, false);
 
 	//////////  Getter & Setter //////////
 
@@ -503,8 +460,7 @@ partial class HYJ_Character
                 {
                     HYJ_AStar_Calc(AStar_tiles_distance);
 
-                    //
-                    HYJ_Character targetObj = null;
+                    //                    
                     int targetRange = 10000;
 
                     // 가장 가까운 적을 찾자
@@ -543,19 +499,12 @@ partial class HYJ_Character
                     {
                         Action_action = HYJ_Character_ACTION.ATTACK;
 
-                        // Attack 공격 모션으로 변경
-                        AnimParam.Idle = false;
-                        AnimParam.Attack = true;
-
 					}
                     // 사거리 밖에 있으면 최단 거리로 찾아갑시다.
                     else
                     {
                         Action_action = HYJ_Character_ACTION.WALK_START;
 
-						// 이동 모션으로 변경
-						AnimParam.Idle = false;
-						AnimParam.Run = true;
 					}
                 }
                 break;
@@ -632,9 +581,6 @@ partial class HYJ_Character
             this.transform.localPosition = Action_moveArrivePos;			
 			Action_action = HYJ_Character_ACTION.IDLE;
 
-            // Idle 모션으로 변경
-            AnimParam.Run = false;
-            AnimParam.Idle = true;
         }
         else
         {

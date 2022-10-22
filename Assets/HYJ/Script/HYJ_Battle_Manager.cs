@@ -62,7 +62,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     if (this.gameObject.activeSelf == true)
                     {
                         // battle active
-                        Basic_phase = 2;
+                        Basic_phase = -1;
                     }
                 }
                 break;

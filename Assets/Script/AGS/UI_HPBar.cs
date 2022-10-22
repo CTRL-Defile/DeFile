@@ -12,14 +12,14 @@ public class UI_HPBar : MonoBehaviour
 
     RectTransform Trans;
 
-    public HYJ_Character Target_Obj;
+    public Character Target_Obj;
     public Slider HPBarSlider;
 
 	// Start is called before the first frame update
 	void Start()
     {
 		Trans = GetComponent<RectTransform>();
-        Target_Obj = gameObject.GetComponentInParent<HYJ_Character>();
+        Target_Obj = gameObject.GetComponentInParent<Character>();
         HPBarSlider = GetComponentInChildren<Slider>();
 	}
 
