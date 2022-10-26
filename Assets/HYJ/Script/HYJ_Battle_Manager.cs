@@ -408,7 +408,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
             Vector3 pos = Stand_tiles.HYJ_Data_Tile(pos_num).transform.position;
 
-            Instantiate(this.gameObject.transform.GetChild(2).gameObject.transform.GetChild(0),
+            GameObject unitData
+                = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                    HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
+                    //
+                    0);
+            Instantiate(unitData,
+                //this.gameObject.transform.GetChild(2).gameObject.transform.GetChild(0),
                 //this.gameObject.transform.GetChild(1).gameObject.transform.Find("stand_0").localPosition,
                 pos, Quaternion.identity, Unit_parent);
         }

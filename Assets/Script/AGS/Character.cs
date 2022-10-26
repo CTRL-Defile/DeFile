@@ -30,9 +30,9 @@ public partial class Character : MonoBehaviour
 	void Start()
     {
 		// HP 테스트 용 초기화
-		Status_MaxHP = 100.0f;
-		Status_HP = 50.0f;
-        Status_atk = 10.0f;		
+		//Status_MaxHP = 100.0f;
+		//Status_HP = 50.0f;
+        //Status_atk = 10.0f;		
 	}
 
 	private void Awake()

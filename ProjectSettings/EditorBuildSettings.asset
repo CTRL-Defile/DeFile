@@ -8,4 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/HYJ/HYJ.unity
     guid: d2be14d4130e73a49ae5313ec5146024
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 4348308922cc476428c1b6c997e28236,
+      type: 2}

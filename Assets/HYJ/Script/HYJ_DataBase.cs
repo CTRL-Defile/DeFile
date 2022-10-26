@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//
+using UnityEngine.AddressableAssets;
+
 public partial class HYJ_DataBase : MonoBehaviour
 {
     [SerializeField] int Basic_phase;
@@ -31,6 +34,7 @@ public partial class HYJ_DataBase : MonoBehaviour
         Basic_phase = 0;
 
         HYJ_Relic_Start();
+        HYJ_Unit_Start();
     }
 
     // Update is called once per frame
@@ -57,6 +61,14 @@ public partial class HYJ_DataBase : MonoBehaviour
                 }
                 break;
             case 2:
+                {
+                    if (HYJ_Unit_Init())
+                    {
+                        Basic_phase = 3;
+                    }
+                }
+                break;
+            case 3:
                 {
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BASIC__GET_IS_INITIALIZE, HYJ_Basic_GetIsInitialize);
 
@@ -225,40 +237,67 @@ partial class HYJ_DataBase
 
 partial class HYJ_DataBase
 {
-    [SerializeField] List<HYJ_Item> Unit_datas;
+    [SerializeField] GameObject Unit_datas;
     [SerializeField] int Unit_phase;
 
     //////////  Getter & Setter //////////
 
+    object HYJ_Unit_GetDataFromID(params object[] _args)
+    {
+
+        int id = (int)_args[0];
+
+        //
+        return Unit_datas.transform.Find("" + id).gameObject;
+    }
+
     //////////  Method          //////////
 
     //////////  Default Method  //////////
+    void HYJ_Unit_Start()
+    {
+        Unit_phase = 0;
+    }
+
     bool HYJ_Unit_Init()
     {
         switch (Unit_phase)
         {
             case 0:
                 {
-                    Unit_datas = new List<HYJ_Item>();
-
                     Unit_phase = 1;
+
+                    //
+                    Addressables.LoadAssetAsync<GameObject>("Assets/HYJ/Resource/Unit/UnitData.prefab").Completed +=
+                        (_handle) =>
+                        {
+                            Unit_datas = _handle.Result;
+
+                            //
+                            Unit_phase = 2;
+                        };
                 }
                 break;
             case 1:
                 {
-                    List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Relic_csv");
 
-                    //
-                    for (int i = 0; i < data.Count; i++)
-                    {
-                        Unit_datas.Add(new HYJ_Item(data[i]));
-                    }
-
-                    Unit_phase = 2;
                 }
                 break;
             case 2:
                 {
+                    List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_csv");
+
+                    //
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        Unit_datas.transform.Find("" + (int)data[i]["ID"]).GetComponent<Character>().HYJ_Status_SettingData(data[i]);
+                    }
+                    Unit_phase = 3;
+                }
+                break;
+            case 3:
+                {
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID, HYJ_Unit_GetDataFromID);
                     Unit_phase = -1;
                 }
                 break;

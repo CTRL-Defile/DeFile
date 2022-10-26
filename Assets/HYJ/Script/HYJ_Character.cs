@@ -90,22 +90,59 @@ partial class HYJ_Character
 // 버프나 아이템, 전투 등의 외부요소로 인해 변하는 수치들을 적재해주기 위해 사용되는 변수들
 #region STATUS
 
+[Serializable]
+public class CTRL_Character_Data : IDisposable
+{
+    public int Data_ID;
+    public List<HYJ_Item> Data_items;
+
+    //////////  Getter & Setter //////////
+
+    //////////  Method          //////////
+    public void Dispose()
+    {
+
+    }
+
+    //////////  Default Method  //////////
+    public CTRL_Character_Data()
+    {
+    }
+}
+
 partial class HYJ_Character
 {
     [Header("==================================================")]
     [Header("STATUS")]
-    [SerializeField] protected float Status_HP;     // 체력
-    [SerializeField] protected float Status_MaxHP;  // 최대체력
-    [SerializeField] protected int Status_MP;     // 마나
-    [SerializeField] protected int Status_MaxMP;  // 최대마나
-                     
-    [SerializeField] protected float Status_atk;    // 공격력
-    [SerializeField] protected int Status_magic;  // 마력
-                     
-    [SerializeField] protected int Status_atkSpeed;   // 공속
-                     
-    [SerializeField] protected int Status_critValue;  // 치명타 수치
-    [SerializeField] protected int Status_critPer;    // 치명타 확률
+    [SerializeField] protected CTRL_Character_Data Status_saveData;
+
+    [SerializeField] protected string Status_name;
+    // 속성
+    [SerializeField] protected string Status_race;
+    [SerializeField] protected string Status_job;
+    [SerializeField] protected string Status_affiliation;
+    // 조합
+    [SerializeField] protected int Status_mix;
+
+    [SerializeField] protected float    Status_HP;     // 체력
+    [SerializeField] protected float    Status_MaxHP;  // 최대체력
+    [SerializeField] protected int      Status_MP;     // 마나
+    [SerializeField] protected int      Status_MaxMP;  // 최대마나
+    [SerializeField] protected int      Status_startMp;
+
+    [SerializeField] protected float    Status_atk;    // 공격력
+    [SerializeField] protected int      Status_magic;  // 마력
+    [SerializeField] protected int      Status_atkRange;
+    [SerializeField] protected int      Status_atkPhysics;
+    [SerializeField] protected int      Status_atkSpell;
+    [SerializeField] protected float    Status_atkSpeed;
+    [SerializeField] protected int      Status_defence;
+    [SerializeField] protected int      Status_spellRegistance;
+    [SerializeField] protected float    Status_critPercent;
+    [SerializeField] protected float    Status_critValue;
+    // 스킬
+    [SerializeField] protected int Data_spell0;
+    [SerializeField] protected int Data_spell1;
 
     //////////  Getter & Setter //////////
     public float Stat_HP { get { return Status_HP; } set { Status_HP = value; } }
@@ -121,7 +158,33 @@ partial class HYJ_Character
             Status_HP = 0.0f;
     }
 
-	//////////  Default Method  //////////
+    public void HYJ_Status_SettingData(Dictionary<string, object> _data)
+    {
+        Status_name = (string)_data["NAME"];
+        // 속성
+        Status_race         = (string)_data["RACE"];
+        Status_job          = (string)_data["JOB"];
+        Status_affiliation  = (string)_data["AFFILIATION"];
+        // 조합
+        Status_mix = (int)_data["MIX"];
+        // 능력치
+        Status_MaxHP            = (int)_data["MAX_HP"];
+        Status_MaxMP            = (int)_data["MAX_MP"];
+        Status_startMp          = (int)_data["START_MP"];
+        Status_atkRange         = (int)_data["ATK_RANGE"];
+        Status_atkPhysics       = (int)_data["ATK_PHYSICS"];
+        Status_atkSpell         = (int)_data["ATK_SPELL"];
+        Status_atkSpeed         = (float)_data["ATK_SPEED"];
+        Status_defence          = (int)_data["DEFENCE"];
+        Status_spellRegistance  = (int)_data["SPELL_REGISTANCE"];
+        Status_critPercent      = (float)_data["CRIT_PERCENT"];
+        Status_critValue        = (float)_data["CRIT_VALUE"];
+        // 스킬
+        Data_spell0 = (int)_data["SPELL_0"];
+        Data_spell1 = (int)_data["SPELL_1"];
+    }
+
+    //////////  Default Method  //////////
 }
 
 #endregion
@@ -460,7 +523,7 @@ partial class HYJ_Character
                 {
                     HYJ_AStar_Calc(AStar_tiles_distance);
 
-                    //                    
+                    //
                     int targetRange = 10000;
 
                     // 가장 가까운 적을 찾자
@@ -498,6 +561,7 @@ partial class HYJ_Character
                     if (targetRange <= 1)
                     {
                         Action_action = HYJ_Character_ACTION.ATTACK;
+
 
 					}
                     // 사거리 밖에 있으면 최단 거리로 찾아갑시다.
@@ -580,7 +644,6 @@ partial class HYJ_Character
         {
             this.transform.localPosition = Action_moveArrivePos;			
 			Action_action = HYJ_Character_ACTION.IDLE;
-
         }
         else
         {
