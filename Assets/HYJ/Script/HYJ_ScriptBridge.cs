@@ -97,7 +97,7 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     //
     SHOP___ACTIVE__ACTIVE_ON,
     SHOP___RELIC__BUY,
-    SHOP___ITEM__BUY,
+    SHOP___UNIT__BUY,
     SHOP___POTION__BUY,
 
     //
@@ -121,7 +121,9 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
 
     DATABASE___POTION__GET_DATA_FROM_NAME,
 
+    DATABASE___UNIT__GET_DATA_COUNT,
     DATABASE___UNIT__GET_DATA_FROM_ID,
+    DATABASE___UNIT__GET_DATA_NAME,
 
     //
     TOPBAR___GOLD__VIEW_GOLD,

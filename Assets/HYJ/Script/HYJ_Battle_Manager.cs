@@ -408,18 +408,25 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
             Vector3 pos = Stand_tiles.HYJ_Data_Tile(pos_num).transform.position;
 
+            //Instantiate(
+            //    this.gameObject.transform.GetChild(2).gameObject.transform.GetChild(0),
+            //    //this.gameObject.transform.GetChild(1).gameObject.transform.Find("stand_0").localPosition,
+            //    pos, Quaternion.identity, Unit_parent);
+
+            // ---------- 빵재 수정 및 추가 ----------
+            // 요건 임시
             GameObject unitData
                 = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                     HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
                     //
                     0);
-            Instantiate(unitData,
-                //this.gameObject.transform.GetChild(2).gameObject.transform.GetChild(0),
-                //this.gameObject.transform.GetChild(1).gameObject.transform.Find("stand_0").localPosition,
-                pos, Quaternion.identity, Unit_parent);
+            Character character = Instantiate(unitData,
+                pos, Quaternion.identity, Unit_parent).GetComponent<Character>();
+            // 요게 진짜
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__INSERT,
+                unitData.name);
         }
-
-
     }
 }
 

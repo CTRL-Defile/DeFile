@@ -241,6 +241,10 @@ partial class HYJ_DataBase
     [SerializeField] int Unit_phase;
 
     //////////  Getter & Setter //////////
+    object HYJ_Unit_GetDataCount(params object[] _args)
+    {
+        return Unit_datas.transform.childCount;
+    }
 
     object HYJ_Unit_GetDataFromID(params object[] _args)
     {
@@ -249,6 +253,13 @@ partial class HYJ_DataBase
 
         //
         return Unit_datas.transform.Find("" + id).gameObject;
+    }
+
+    object HYJ_Unit_GetDataName(params object[] _args)
+    {
+        int count = (int)_args[0];
+
+        return Unit_datas.transform.GetChild(count).name;
     }
 
     //////////  Method          //////////
@@ -297,7 +308,9 @@ partial class HYJ_DataBase
                 break;
             case 3:
                 {
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID, HYJ_Unit_GetDataFromID);
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_COUNT,    HYJ_Unit_GetDataCount   );
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,  HYJ_Unit_GetDataFromID  );
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_NAME,     HYJ_Unit_GetDataName    );
                     Unit_phase = -1;
                 }
                 break;

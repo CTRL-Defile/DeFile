@@ -19,7 +19,7 @@ public partial class HYJ_Shop_Manager : MonoBehaviour
         if(aa)
         {
             HYJ_Relic_SettingBtns();
-            HYJ_Item_SettingBtns();
+            HYJ_Unit_SettingBtns();
             HYJ_Potion_SettingBtns();
         }
 
@@ -107,7 +107,7 @@ public partial class HYJ_Shop_Manager : MonoBehaviour
         Basic_phase = 0;
 
         HYJ_Relic_Start();
-        HYJ_Item_Start();
+        HYJ_Unit_Start();
         HYJ_Potion_Start();
     }
 
@@ -217,22 +217,22 @@ partial class HYJ_Shop_Manager
 
 #endregion
 
-#region ITEM
+#region UNIT
 
 partial class HYJ_Shop_Manager
 {
-    [Header("ITEM")]
+    [Header("UNIT")]
     [Header("INPUT")]
-    [SerializeField] Transform Item_parent;
-    [SerializeField] HYJ_Shop_Item Item_btn;
+    [SerializeField] Transform Unit_parent;
+    [SerializeField] HYJ_Shop_Item Unit_btn;
 
     [Header("SET")]
-    [SerializeField] List<HYJ_Shop_Button> Item_btns;
+    [SerializeField] List<HYJ_Shop_Button> Unit_btns;
 
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
-    object HYJ_Item_Buy(params object[] _args)
+    object HYJ_Unit_Buy(params object[] _args)
     {
         bool res = false;
 
@@ -247,7 +247,7 @@ partial class HYJ_Shop_Manager
                 //
                 HYJ_ScriptBridge_EVENT_TYPE.PLAYER___ITEM__INSERT,
                 //
-                "ITEM", name, 0);
+                "UNIT", name, 0);
 
             res = true;
         }
@@ -256,17 +256,31 @@ partial class HYJ_Shop_Manager
         return res;
     }
 
-    void HYJ_Item_SettingBtns()
+    void HYJ_Unit_SettingBtns()
     {
         HYJ_SettingBtns(
-            Item_btns,
-            6, Item_btn, Item_parent);
+            Unit_btns,
+            6, Unit_btn, Unit_parent);
+
+        //
+        int dataCount = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_COUNT);
+
+        for (int i = 0; i < Unit_btns.Count; i++)
+        {
+            string name
+                = (string)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                    HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_NAME,
+                    Random.Range(0, dataCount));
+
+            Unit_btns[i].HYJ_Info_DataSetting(name);
+            Unit_btns[i].gameObject.SetActive(true);
+        }
     }
 
     //////////  Default Method  //////////
-    void HYJ_Item_Start()
+    void HYJ_Unit_Start()
     {
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SHOP___ITEM__BUY, HYJ_Item_Buy);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SHOP___UNIT__BUY, HYJ_Unit_Buy);
     }
 }
 

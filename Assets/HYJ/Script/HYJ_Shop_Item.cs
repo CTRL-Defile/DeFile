@@ -28,7 +28,7 @@ public class HYJ_Shop_Item : HYJ_Shop_Button
     {
         bool isSuccess
             = (bool)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
-                HYJ_ScriptBridge_EVENT_TYPE.SHOP___ITEM__BUY,
+                HYJ_ScriptBridge_EVENT_TYPE.SHOP___UNIT__BUY,
                 Info_name);
 
         if (isSuccess)

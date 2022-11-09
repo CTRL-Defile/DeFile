@@ -1244,7 +1244,7 @@ MonoBehaviour:
   Relic_phase: 0
   Potion_datas: []
   Potion_phase: 0
-  Unit_datas: []
+  Unit_datas: {fileID: 0}
   Unit_phase: 0
 --- !u!114 &2049586986
 MonoBehaviour:
@@ -15746,15 +15746,31 @@ MonoBehaviour:
   ori_Pos: {x: 0, y: 0, z: 0}
   Info_faction: 0
   Info_DBNumber: 0
+  Status_saveData:
+    Data_ID: 0
+    Data_items: []
+  Status_name: 
+  Status_race: 
+  Status_job: 
+  Status_affiliation: 
+  Status_mix: 0
   Status_HP: 0
   Status_MaxHP: 0
   Status_MP: 0
   Status_MaxMP: 0
+  Status_startMp: 0
   Status_atk: 0
   Status_magic: 0
+  Status_atkRange: 0
+  Status_atkPhysics: 0
+  Status_atkSpell: 0
   Status_atkSpeed: 0
+  Status_defence: 0
+  Status_spellRegistance: 0
+  Status_critPercent: 0
   Status_critValue: 0
-  Status_critPer: 0
+  Data_spell0: 0
+  Data_spell1: 0
   AStar_tiles_distance: []
   AStar_tiles_field: []
   AStar_tiles_enemy: []
@@ -15878,15 +15894,31 @@ MonoBehaviour:
   ori_Pos: {x: 0, y: 0, z: 0}
   Info_faction: 1
   Info_DBNumber: 0
+  Status_saveData:
+    Data_ID: 0
+    Data_items: []
+  Status_name: 
+  Status_race: 
+  Status_job: 
+  Status_affiliation: 
+  Status_mix: 0
   Status_HP: 0
   Status_MaxHP: 0
   Status_MP: 0
   Status_MaxMP: 0
+  Status_startMp: 0
   Status_atk: 0
   Status_magic: 0
+  Status_atkRange: 0
+  Status_atkPhysics: 0
+  Status_atkSpell: 0
   Status_atkSpeed: 0
+  Status_defence: 0
+  Status_spellRegistance: 0
+  Status_critPercent: 0
   Status_critValue: 0
-  Status_critPer: 0
+  Data_spell0: 0
+  Data_spell1: 0
   AStar_tiles_distance: []
   AStar_tiles_field: []
   AStar_tiles_enemy: []
@@ -22632,8 +22664,8 @@ MonoBehaviour:
   Relic_parent: {fileID: 4853392099884339945}
   Relic_btn: {fileID: 5875599633768117212}
   Relic_btns: []
-  Item_parent: {fileID: 7438074803395893997}
-  Item_btn: {fileID: 5875599635159824653}
+  Unit_parent: {fileID: 7438074803395893997}
+  Unit_btn: {fileID: 5875599635159824653}
   Item_btns: []
   Potion_parent: {fileID: 7438074803695702178}
   Potion_btn: {fileID: 5875599633860705670}
