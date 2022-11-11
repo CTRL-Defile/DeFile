@@ -26,7 +26,7 @@ public partial class HYJ_Shop_Button : MonoBehaviour
         //
         object element = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
             //
-            HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_IS_ENOUGHT,
+            HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_IS_ENOUGH,
             //
             _gold);
         if (element != null)

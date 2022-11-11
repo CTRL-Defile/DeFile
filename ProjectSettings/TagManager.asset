@@ -9,8 +9,7 @@ TagManager:
   - StoreCamera
   - Field
   - Queue
-  - HitArea
-  - AttackArea
+  - Hit Area
   layers:
   - Default
   - TransparentFX

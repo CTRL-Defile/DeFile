@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 //
 using System;
@@ -9,6 +10,9 @@ using TMPro;
 using System.Data.SqlTypes;
 using AutoBattles;
 using JetBrains.Annotations;
+using Newtonsoft.Json.Linq;
+using UnityEngine.Diagnostics;
+using TMPro.Examples;
 
 public partial class HYJ_Battle_Manager : MonoBehaviour
 {
@@ -55,7 +59,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        switch(Basic_phase)
+        Shop_Coin.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD).ToString();
+
+        switch (Basic_phase)
         {
             case -1:
                 {
@@ -69,7 +75,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             //
             case 0:
                 {
-                    Debug.Log("is Basic_phase == 0?");
+                    //Debug.Log("is Basic_phase == 0?");
                     HYJ_Field_Init();
 
                     //
@@ -78,11 +84,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 break;
             case 1:
                 {
-                    Debug.Log("this.gameObject : " + this.gameObject);    // Battle
+                    //Debug.Log("this.gameObject : " + this.gameObject);    // Battle
                     this.gameObject.SetActive(false);
 
                     //
-                    Basic_phase = -1;
+                    Basic_phase = 2;
                 }
                 break;
 
@@ -90,8 +96,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             case 2:
                 {
                     //Debug.Log("전투 준비..");
-                    if(!isUpdated)
-                        LSY_update_UnitList();
+                    if(!UL_isInitialized)
+                        LSY_UnitList_Init();
 
                 }
                 break;
@@ -119,7 +125,8 @@ public class HYJ_Battle_Manager_Line
 
     public int HYJ_Data_GetCount() { return tiles.Count; }
 
-    public HYJ_Character HYJ_Data_GetUnitOnTile(int _count) { return tiles[_count].HYJ_Basic_onUnit; }
+    // HYJ_Character형에서 -> GameObject 형으로 수정. Battle_Tiles의 주석 참조.
+    public GameObject HYJ_Data_GetUnitOnTile(int _count) { return tiles[_count].HYJ_Basic_onUnit; }
 
     public int LSY_Count_GetUnitOnTile()
     {
@@ -196,7 +203,8 @@ partial class HYJ_Battle_Manager
     // 캐릭터를 찾아낸다. xy값으로
     object HYJ_Field_GetCharacter(params object[] _args)
     {
-        HYJ_Character res = null;
+        //HYJ_Character res = null;
+        GameObject res = null;
 
         //
         HYJ_Battle_Tile element = (HYJ_Battle_Tile)HYJ_Field_GetTile(_args);
@@ -231,7 +239,8 @@ partial class HYJ_Battle_Manager
         {
             for(int forX = 0; forX < Field_tiles[forY].HYJ_Data_GetCount(); forX++)
             {
-                HYJ_Character element = Field_tiles[forY].HYJ_Data_GetUnitOnTile(forX);
+                //HYJ_Character element = Field_tiles[forY].HYJ_Data_GetUnitOnTile(forX);
+                GameObject element = Field_tiles[forY].HYJ_Data_GetUnitOnTile(forX);
 
                 if ((element != null) && Field_tiles[forY].HYJ_Data_GetUnitOnTile(forX).Equals(target))
                 {
@@ -360,41 +369,172 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     [Header("SHOP")]
 
     [SerializeField]
-    private GameObject[] Shop_UnitList = new GameObject[5];
+    GameObject[] Shop_UnitList = new GameObject[5];
     [SerializeField]
-    List<LSY_Shop_UnitList> Shop_unit = new List<LSY_Shop_UnitList>();
+    GameObject Shop_Coin, EXP_Bar;
+    Image EXP_Img;
+    //[SerializeField]
+    //List<LSY_Shop_UnitList> Shop_Unit = new List<LSY_Shop_UnitList>();
 
-    bool isUpdated = false;
+    List<Dictionary<string, object>> Unit_DB;
 
-    public void LSY_update_UnitList()
+    [SerializeField]
+    List<string> UnitName_list = new List<string>();
+    [SerializeField]
+    List<int> UnitID_list = new List<int>();
+    [SerializeField]
+    List<int> UnitIdx_list = new List<int>();
+    int Shop_Pannel_cnt = 5;
+
+    List<int> Max_EXP_List = new List<int>() { 0, 2, 6, 10, 20, 36, 56, 80, 108, 140, 170, 190, 210 };
+    float Max_EXP;
+    int Player_Lv = 1, cur_EXP = 0;
+
+    bool UL_isInitialized = false;
+
+    public void LSY_UnitList_Init()
     {
+        // Level
+        EXP_Img = EXP_Bar.GetComponent<Image>();
+        cur_EXP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP);
+        Max_EXP = Max_EXP_List[Player_Lv];
+        EXP_Img.fillAmount = cur_EXP / Max_EXP;
+        Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
+
         // Text, Image, Cost
-        LSY_Shop_UnitList sh;
-        //Shop_unit.Add(sh);
+        Unit_DB = (List<Dictionary<string, object>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
 
-
-
-        var mon_list = new List<string>() { "Orc", "Bear" };
-
-        for (int i = 0; i < Shop_UnitList.Length; i++)
+        for (int i = 0; i < Unit_DB.Count; i++)
         {
-            System.Random r = new System.Random();
-            int idx = r.Next(2);
-
-            Shop_UnitList[i].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = mon_list[idx].ToString();
+            UnitName_list.Add(Unit_DB[i]["NAME"].ToString());
+            UnitID_list.Add((int)Unit_DB[i]["ID"]);
         }
 
-        isUpdated = true;
+        LSY_Shop_Reload(1);
+        Debug.Log("Init end..");
+
+        UL_isInitialized = true;
     }
 
-    public void LSY_buy_Unit()
+    public void LSY_Shop_Reload(int n)
     {
-        Debug.Log("Buy Unit..");
+        if (n != 1) HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 2);
+
+        // Before Reload, Clear Idx list
+        UnitIdx_list.Clear();
+
+        // Calc Proba
+        //Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
+        //Debug.Log("LV : " + Player_Lv);
+
+        LSY_Calc_Proba();
+
+        for (int i = 0; i < Shop_UnitList.Length; i++)  // 0~5
+        {
+            //System.Random r = new System.Random();
+            //int idx = UnitIdx_list[r.Next(2)];
+            int idx = UnitIdx_list[i];
+            Shop_UnitList[i].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = UnitName_list[idx].ToString();
+        }
+    }
+
+    public void LSY_Calc_Proba()
+    {
+        List<int> Prob_list = new List<int>();
+        List<int> Cost_list = new List<int>();
+
+        // 확률 적용 방법에 따라, 전체 파이가 100이 아닐 수 있음. 그때 수정하면 됨.
+        int tot_num = 100;
+
+        // 레벨에 따른 유닛 등장 확률
+        switch (Player_Lv)
+        {
+            case 1:
+                List<int> Prob_1 = new List<int>() { 100, 0, 0, 0, 0, 0 }; Prob_list = Prob_1; break;
+            case 2:
+                List<int> Prob_2 = new List<int>() { 90, 10, 0, 0, 0, 0 }; Prob_list = Prob_2; break;
+            case 3:
+                List<int> Prob_3 = new List<int>() { 75, 25, 0, 0, 0, 0 }; Prob_list = Prob_3; break;
+            case 4:
+                List<int> Prob_4 = new List<int>() { 60, 30, 10, 0, 0, 0 }; Prob_list = Prob_4; break;
+            case 5:
+                List<int> Prob_5 = new List<int>() { 45, 38, 15, 2, 0, 0 }; Prob_list = Prob_5; break;
+            case 6:
+                List<int> Prob_6 = new List<int>() { 35, 40, 20, 5, 0, 0 }; Prob_list = Prob_6; break;
+            case 7:
+                List<int> Prob_7 = new List<int>() { 34, 30, 25, 10, 1, 0 }; Prob_list = Prob_7; break;
+            case 8:
+                List<int> Prob_8 = new List<int>() { 18, 20, 40, 20, 2, 0 }; Prob_list = Prob_8; break;
+            case 9:
+                List<int> Prob_9 = new List<int>() { 16, 15, 30, 30, 8, 1 }; Prob_list = Prob_9; break;
+            case 10:
+                List<int> Prob_10 = new List<int>() { 11, 10, 20, 40, 15, 4 }; Prob_list = Prob_10; break;
+            case 11:
+                List<int> Prob_11 = new List<int>() { 0, 7, 15, 45, 25, 8 }; Prob_list = Prob_11; break;
+            case 12:
+                List<int> Prob_12 = new List<int>() { 0, 0, 10, 50, 30, 10 }; Prob_list = Prob_12; break;
+        }
+
+
+        // 등장 확률 누적 리스트
+        for(int i = 0; i < Prob_list.Count - 1; i++)
+        {
+            if (Prob_list[i] != tot_num)
+                Prob_list[i + 1] += Prob_list[i];
+        }
+
+        // 유닛 코스트 배열 초기화
+        for(int i = 0; i < Shop_Pannel_cnt; i++)  // UnitIdx_list.Count => 아직 size가 0임
+        {
+            System.Random r = new System.Random();
+            int n = r.Next(1, tot_num + 1);
+            for(int j = 0; j < Prob_list.Count; j++)
+            {
+                if (n <= Prob_list[j])
+                    Cost_list.Add(j + 1);
+            }
+        }
+
+        // 코스트 별 유닛 랜덤 설정
+        for(int i = 0; i < Shop_Pannel_cnt; i++)
+        {
+            List<int> Unit_Candi = new List<int>();
+            for(int j = 0; j < Unit_DB.Count; j++)  // header 3줄 제외.. 할 필요가 없네 어차피 3줄떼고 읽어왔구나.
+            {
+                if ((int)Unit_DB[j]["COST"] == Cost_list[i])
+                    Unit_Candi.Add((int)Unit_DB[j]["ID"]);
+            }
+
+            System.Random r = new System.Random();
+            int n = r.Next(Unit_Candi.Count);
+            if (n > 0)
+                UnitIdx_list.Add(Unit_Candi[n]);
+            else
+            {
+                Debug.Log("None of Unit COST " + Cost_list[i] + "is Available...");
+                UnitIdx_list.Add(0);
+            }
+        }
+        //Debug.Log("db.count : " + Unit_DB.Count);
+
+    }
+
+
+    public void LSY_Buy_Unit()
+    {
+        // Detect clicked btn -> getName -> Calc pos -> Instant
+        var Btn_idx = EventSystem.current.currentSelectedGameObject;
+        string Btn_name = Btn_idx.name.ToString();
+        Btn_name = Btn_name.Substring(Btn_name.Length - 1);
+        Debug.Log("Btn " + Btn_name + " is clicked");
+
+        int unit_idx = UnitIdx_list[int.Parse(Btn_name)];
+
 
         int cnt = Stand_tiles.LSY_Count_GetUnitOnTile(), pos_num = -1;
-        if(cnt < Stand_x)
+        if (cnt < Stand_x)
         {
-            for(int idx=0;idx<cnt; idx++)
+            for (int idx = 0; idx < cnt; idx++)
             {
                 if (Stand_tiles.HYJ_Data_GetUnitOnTile(idx) == null)
                 {
@@ -404,23 +544,49 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             }
             if (pos_num == -1)
                 pos_num = cnt;
-            Debug.Log("pos_num : " + pos_num);
 
             Vector3 pos = Stand_tiles.HYJ_Data_Tile(pos_num).transform.position;
 
             GameObject unitData
                 = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                     HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
-                    //
-                    0);
-            Instantiate(unitData,
-                //this.gameObject.transform.GetChild(2).gameObject.transform.GetChild(0),
-                //this.gameObject.transform.GetChild(1).gameObject.transform.Find("stand_0").localPosition,
-                pos, Quaternion.identity, Unit_parent);
+                    unit_idx);
+            if (unitData)
+            {
+                Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+                // 돈 빠지는거 고쳐야함
+                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 1);
+                Debug.Log("Unit " + unit_idx + " is spawned");
+            }
+            else
+                Debug.Log("Unit " + unit_idx + " is NULL");
         }
 
 
     }
+
+    public void LSY_Buy_EXP()
+    {
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 4);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_INCREASE, 4);
+        cur_EXP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP);
+
+        if (cur_EXP >= Max_EXP)
+        {
+            Debug.Log("cur : " + cur_EXP + ", Max_Exp : " + Max_EXP + ", LV : " + Player_Lv);
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__LEVEL_INCREASE, 1);
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_DECREASE, Max_EXP_List[Player_Lv]);
+            Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
+            cur_EXP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP);
+            Max_EXP = Max_EXP_List[Player_Lv];
+        }
+
+        EXP_Img.fillAmount = cur_EXP / Max_EXP;
+
+    }
+
+
+
 }
 
 public class LSY_Shop_UnitList
