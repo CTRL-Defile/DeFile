@@ -4,6 +4,7 @@ using UnityEngine;
 
 //
 using System;
+using JetBrains.Annotations;
 
 public partial class HYJ_Player : MonoBehaviour
 {
@@ -45,10 +46,40 @@ partial class HYJ_Player
 
     //////////  Method          //////////
 
+    object LSY_Basic_IncExp(params object[] _args)
+    {
+        Basic_exp += (int)_args[0];
+        return null;
+    }
+    object LSY_Basic_DecExp(params object[] _args)
+    {
+        Basic_exp -= (int)_args[0];
+        return null;
+    }
+    object LSY_Basic_getExp(params object[] _args)
+    {
+        return Basic_exp;
+    }
+    object LSY_Basic_IncLevel(params object[] _args)
+    {
+        Basic_level += (int)_args[0];
+        return null;
+    }
+    object LSY_Basic_getLevel(params object[] _args)
+    {
+        return Basic_level;
+    }
+
+
     // Basic_gold   //
 
+    object LSY_Basic_getGold(params object[] _args)
+    {
+        return Basic_gold;
+    }
+
     // 금화가 충분히 있는지 체크
-    object HYJ_Basic_GoldIsEnought(params object[] _args)
+    object HYJ_Basic_GoldIsEnough(params object[] _args)
     {
         bool res = false;
 
@@ -101,12 +132,24 @@ partial class HYJ_Player
     void HYJ_Basic_Init()
     {
         Basic_gold = 10000;
+        Basic_level = 1;
+        Basic_exp = 0;
+
 
         //
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_IS_ENOUGHT, HYJ_Basic_GoldIsEnought );
 
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD, LSY_Basic_getGold);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_IS_ENOUGH, HYJ_Basic_GoldIsEnough);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_PLUS,       HYJ_Basic_GoldPlus      );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS,      HYJ_Basic_GoldMinus     );
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_INCREASE, LSY_Basic_IncExp);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_DECREASE, LSY_Basic_DecExp);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP, LSY_Basic_getExp);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__LEVEL_INCREASE, LSY_Basic_IncLevel);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL, LSY_Basic_getLevel);
+
+
     }
 }
 

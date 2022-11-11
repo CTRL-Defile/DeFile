@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 //
@@ -35,6 +36,7 @@ public partial class HYJ_DataBase : MonoBehaviour
 
         HYJ_Relic_Start();
         HYJ_Unit_Start();
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BASIC__GET_IS_INITIALIZE, HYJ_Basic_GetIsInitialize);
     }
 
     // Update is called once per frame
@@ -70,7 +72,7 @@ public partial class HYJ_DataBase : MonoBehaviour
                 break;
             case 3:
                 {
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BASIC__GET_IS_INITIALIZE, HYJ_Basic_GetIsInitialize);
+                    //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BASIC__GET_IS_INITIALIZE, HYJ_Basic_GetIsInitialize);
 
                     Basic_phase = -1;
                 }
@@ -237,8 +239,9 @@ partial class HYJ_DataBase
 
 partial class HYJ_DataBase
 {
-    [SerializeField] GameObject Unit_datas;
+    [SerializeField] GameObject Unit_datas; // UnitData.prefab
     [SerializeField] int Unit_phase;
+    [SerializeField] List<Dictionary<string, object>> Unit_csv;
 
     //////////  Getter & Setter //////////
     object HYJ_Unit_GetDataCount(params object[] _args)
@@ -251,8 +254,15 @@ partial class HYJ_DataBase
 
         int id = (int)_args[0];
 
-        //
-        return Unit_datas.transform.Find("" + id).gameObject;
+        if (Unit_datas.transform.Find("" + id))
+            return Unit_datas.transform.Find("" + id).gameObject;
+        else
+            return null;
+    }
+
+    List<Dictionary<string, object>> LSY_Unit_GetDB_CSV(params object[] _args)
+    {
+        return Unit_csv;
     }
 
     object HYJ_Unit_GetDataName(params object[] _args)
@@ -296,18 +306,27 @@ partial class HYJ_DataBase
                 break;
             case 2:
                 {
-                    List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_csv");
+                    //List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_csv");
+                    Unit_csv = CSVReader.Read("HYJ/Unit_csv");
 
-                    //
-                    for (int i = 0; i < data.Count; i++)
+                    for (int i = 0; i < Unit_csv.Count; i++)
                     {
-                        Unit_datas.transform.Find("" + (int)data[i]["ID"]).GetComponent<Character>().HYJ_Status_SettingData(data[i]);
+                        var Unit_trans = Unit_datas.transform.Find("" + (int)Unit_csv[i]["ID"]);
+                        if (Unit_trans)
+                            Unit_trans.GetComponent<Character>().HYJ_Status_SettingData(Unit_csv[i]);
+                        else
+                            Debug.Log((int)Unit_csv[i]["ID"] + " is NULL Unit object in ADDRESSABLE");
+
+                        //Unit_datas.transform.Find("" + (int)Unit_csv[i]["ID"]).GetComponent<Character>().HYJ_Status_SettingData(Unit_csv[i]);
+                        //Unit_datas.transform.Find(data[i]["ID"].ToString()).GetComponent<Character>().HYJ_Status_SettingData(data[i]);
                     }
                     Unit_phase = 3;
                 }
                 break;
             case 3:
                 {
+                    //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID, HYJ_Unit_GetDataFromID);
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV, LSY_Unit_GetDB_CSV);
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_COUNT,    HYJ_Unit_GetDataCount   );
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,  HYJ_Unit_GetDataFromID  );
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_NAME,     HYJ_Unit_GetDataName    );

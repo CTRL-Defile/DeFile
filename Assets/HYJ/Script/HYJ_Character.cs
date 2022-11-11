@@ -616,7 +616,7 @@ partial class HYJ_Character
         tile.HYJ_Basic_onUnit = null;
 
         tile = (HYJ_Battle_Tile)Action_target;
-        tile.HYJ_Basic_onUnit = this;
+        tile.HYJ_Basic_onUnit = this.gameObject;    // Battle_Tiles ÂüÁ¶
 
         Action_action = HYJ_Character_ACTION.WALK_SETTING;
 	}

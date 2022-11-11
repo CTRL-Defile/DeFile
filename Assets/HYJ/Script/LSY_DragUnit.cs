@@ -89,8 +89,17 @@ public class LSY_DragUnit : MonoBehaviour
                     //    return;
                     //}
                     //oriPos = hit.transform.position;
-                    selectedObject = hit.collider.gameObject;
-                    oriPos = selectedObject.transform.position;
+
+                    if (hit.collider.gameObject.CompareTag("Ally") || hit.collider.gameObject.CompareTag("HitArea"))
+                    {
+                        Debug.Log("Ally detected");
+                        selectedObject = hit.collider.gameObject;
+                        oriPos = selectedObject.transform.position;
+                    }
+                    //else
+                    {
+                        //selectedObject = null;
+                    }
                     Cursor.visible = false;
                 }
             }
@@ -101,11 +110,15 @@ public class LSY_DragUnit : MonoBehaviour
             Debug.Log("bt up");
             isHeld = false;
             //oriPos.y -= 0.25f;
-            Vector3 position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
-            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(position);
-            selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y, worldPosition.z);
 
-            selectedObject = null;
+            if (selectedObject != null)
+            {
+                Vector3 position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
+                Vector3 worldPosition = Camera.main.ScreenToWorldPoint(position);
+                selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y, worldPosition.z);
+
+                selectedObject = null;
+            }
             Cursor.visible = true;
         }
 
