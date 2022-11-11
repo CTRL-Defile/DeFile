@@ -1549,7 +1549,8 @@ MonoBehaviour:
   Relic_phase: 0
   Potion_datas: []
   Potion_phase: 0
-  Unit_datas: {fileID: 0}
+  Unit_datas: {fileID: 7430308573864421872, guid: 61729f71fbba251429254dcf01956cf7,
+    type: 3}
   Unit_phase: 0
 --- !u!114 &2049586986
 MonoBehaviour:
@@ -16064,7 +16065,7 @@ MonoBehaviour:
   Info_faction: 0
   Info_DBNumber: 0
   Status_saveData:
-    Data_ID: 0
+    Data_ID: 
     Data_items: []
   Status_name: 
   Status_race: 
@@ -16217,7 +16218,7 @@ MonoBehaviour:
   Info_faction: 1
   Info_DBNumber: 0
   Status_saveData:
-    Data_ID: 0
+    Data_ID: 
     Data_items: []
   Status_name: 
   Status_race: 
@@ -22986,9 +22987,9 @@ MonoBehaviour:
   Relic_parent: {fileID: 4853392099884339945}
   Relic_btn: {fileID: 5875599633768117212}
   Relic_btns: []
-  Unit_parent: {fileID: 7438074803395893997}
-  Unit_btn: {fileID: 5875599635159824653}
-  Item_btns: []
+  Unit_parent: {fileID: 0}
+  Unit_btn: {fileID: 0}
+  Unit_btns: []
   Potion_parent: {fileID: 7438074803695702178}
   Potion_btn: {fileID: 5875599633860705670}
   Potion_btns: []

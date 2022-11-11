@@ -545,6 +545,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             if (pos_num == -1)
                 pos_num = cnt;
 
+            Debug.Log(pos_num + " " + cnt);
+
             Vector3 pos = Stand_tiles.HYJ_Data_Tile(pos_num).transform.position;
 
             GameObject unitData

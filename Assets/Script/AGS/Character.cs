@@ -29,10 +29,11 @@ public partial class Character : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
+		ori_Pos = new Vector3();
 		// HP 테스트 용 초기화
-		//Status_MaxHP = 100.0f;
-		//Status_HP = 50.0f;
-        //Status_atk = 10.0f;		
+		Status_MaxHP = 100.0f;
+		Status_HP = 50.0f;
+		//Status_atk = 10.0f;		
 	}
 
 	private void Awake()

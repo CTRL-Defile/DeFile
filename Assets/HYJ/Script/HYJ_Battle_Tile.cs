@@ -43,21 +43,46 @@ partial class HYJ_Battle_Tile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(Basic_onUnit == null && detectedUnit.Count == 0 && other.CompareTag("Ally"))
+        switch(other.tag)
         {
-            Debug.Log("isEmpty");
-            detectedUnit.Add(other.gameObject);
-            //Basic_onUnit = other.GetComponent<HYJ_Character>();
-            Basic_onUnit = other.gameObject;
+            case "Ally":
+                if (Basic_onUnit == null && detectedUnit.Count == 0 && other.CompareTag("Ally"))
+                {
+                    Debug.Log("isEmpty");
+                    detectedUnit.Add(other.gameObject);
+                    //Basic_onUnit = other.GetComponent<HYJ_Character>();
+                    Basic_onUnit = other.gameObject;
 
-            other.gameObject.transform.position = this.gameObject.transform.position;
+                    other.gameObject.transform.position = this.gameObject.transform.position;
+                    Debug.Log(other.gameObject.transform.position + " " + this.gameObject.transform.position);
+                }
+                else
+                {
+                    Debug.Log("isOverlap " + other.name);
+                    other.gameObject.transform.position = other.gameObject.GetComponent<Character>().LSY_Unit_Position;
+                }
+
+                break;
+            case "HitArea":
+                break;
         }
-        else
-        {
-            Debug.Log("isOverlap");
-            //other.gameObject.transform.position = other.gameObject.GetComponent<HYJ_Character>().LSY_Unit_Position;
-        }
+        //if(Basic_onUnit == null && detectedUnit.Count == 0 && other.CompareTag("Ally"))
+        //{
+        //    Debug.Log("isEmpty");
+        //    detectedUnit.Add(other.gameObject);
+        //    //Basic_onUnit = other.GetComponent<HYJ_Character>();
+        //    Basic_onUnit = other.gameObject;
+
+        //    other.gameObject.transform.position = this.gameObject.transform.position;
+        //    Debug.Log(other.gameObject.transform.position + " " + this.gameObject.transform.position);
+        //}
+        //else
+        //{
+        //    Debug.Log("isOverlap " + other.name);
+        //    other.gameObject.transform.position = other.gameObject.GetComponent<Character>().LSY_Unit_Position;
+        //}
     }
+
     private void OnTriggerExit(Collider other)
     {
         detectedUnit.Remove(other.gameObject);
