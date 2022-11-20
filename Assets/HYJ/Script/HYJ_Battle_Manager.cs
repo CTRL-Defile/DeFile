@@ -270,7 +270,7 @@ partial class HYJ_Battle_Manager
 
         //
         Field_tiles = new List<HYJ_Battle_Manager_Line>();
-        for (int forY = 0; forY < Field_y; forY++)
+        for (int forY = 0; forY < Field_y; forY++)  // Y 가 "행"
         {
             HYJ_Battle_Manager_Line line = new HYJ_Battle_Manager_Line();
 
@@ -281,12 +281,16 @@ partial class HYJ_Battle_Manager
                 countX += 1;
             }
 
-            //
-            for (int forX = 0; forX < countX; forX++)
+            for (int forX = 0; forX < countX; forX++)  // X 가 "열"
             {
                 GameObject obj = Instantiate(element, Field_parent);
                 obj.SetActive(true);
-                obj.name = forX + "_" + forY;
+                obj.name = forY + "_" + forX;
+                obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(forY);
+                obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(forX);
+
+                if ((Field_y + 1) / 2 <= forY) obj.GetComponent<HYJ_Battle_Tile>().tile_Available = HYJ_Battle_Tile.Tile_Available.Available;
+
                 if (countX == Field_x)
                 {
                     obj.transform.localPosition = new Vector3(pos0.x + (pos1.x * 2.0f * forX), 0, pos0.z + (pos1.z * forY));
@@ -296,6 +300,7 @@ partial class HYJ_Battle_Manager
                     obj.transform.localPosition = new Vector3(-pos1.x + (pos1.x * 2.0f * forX), 0, pos0.z + (pos1.z * forY));
                 }
                 obj.transform.localScale = element.transform.localScale;
+                
 
                 //
                 line.HYJ_Tile_Add(obj.transform);
@@ -333,7 +338,9 @@ partial class HYJ_Battle_Manager
             GameObject std_obj = Instantiate(std_element, Stand_parent);
             std_obj.SetActive(true);
             std_obj.name = "stand_" + forX;
-
+            std_obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(0);    // Stand는 행이 한 개 뿐이다.
+            std_obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(forX);
+            std_obj.GetComponent<HYJ_Battle_Tile>().tile_Available = HYJ_Battle_Tile.Tile_Available.Available;
             std_obj.transform.localPosition = new Vector3(left.x + (pos1.x * 2.0f * forX), 0, pos0.z + (pos1.z * Field_y));
 
             //if (Field_y % 2 == 1)
@@ -372,6 +379,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     GameObject[] Shop_UnitList = new GameObject[5];
     [SerializeField]
     GameObject Shop_Coin, EXP_Bar;
+    [SerializeField]
+    List<int> Prob_list = new List<int>();
     Image EXP_Img;
     //[SerializeField]
     //List<LSY_Shop_UnitList> Shop_Unit = new List<LSY_Shop_UnitList>();
@@ -418,21 +427,16 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public void LSY_Shop_Reload(int n)
     {
+        Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
+
         if (n != 1) HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 2);
 
         // Before Reload, Clear Idx list
         UnitIdx_list.Clear();
-
-        // Calc Proba
-        //Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
-        //Debug.Log("LV : " + Player_Lv);
-
         LSY_Calc_Proba();
 
         for (int i = 0; i < Shop_UnitList.Length; i++)  // 0~5
         {
-            //System.Random r = new System.Random();
-            //int idx = UnitIdx_list[r.Next(2)];
             int idx = UnitIdx_list[i];
             Shop_UnitList[i].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = UnitName_list[idx].ToString();
         }
@@ -440,7 +444,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public void LSY_Calc_Proba()
     {
-        List<int> Prob_list = new List<int>();
+        // List<int> Prob_list = new List<int>();   // SerializeField로 인스펙터에서 보이게끔 위에서 선언
         List<int> Cost_list = new List<int>();
 
         // 확률 적용 방법에 따라, 전체 파이가 100이 아닐 수 있음. 그때 수정하면 됨.
@@ -487,13 +491,17 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         for(int i = 0; i < Shop_Pannel_cnt; i++)  // UnitIdx_list.Count => 아직 size가 0임
         {
             System.Random r = new System.Random();
-            int n = r.Next(1, tot_num + 1);
+            int n = r.Next(1, tot_num + 1); // min 이상, max 미만
             for(int j = 0; j < Prob_list.Count; j++)
             {
                 if (n <= Prob_list[j])
+                {
                     Cost_list.Add(j + 1);
+                    break;
+                }
             }
         }
+        //Debug.Log(Cost_list.Count + "<-costlist cnt");
 
         // 코스트 별 유닛 랜덤 설정
         for(int i = 0; i < Shop_Pannel_cnt; i++)
@@ -501,17 +509,23 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             List<int> Unit_Candi = new List<int>();
             for(int j = 0; j < Unit_DB.Count; j++)  // header 3줄 제외.. 할 필요가 없네 어차피 3줄떼고 읽어왔구나.
             {
+                //Debug.Log((int)Unit_DB[j]["COST"] + "<-db.cost || costlist->" + Cost_list[i]);
                 if ((int)Unit_DB[j]["COST"] == Cost_list[i])
+                {
                     Unit_Candi.Add((int)Unit_DB[j]["ID"]);
+                }
             }
 
-            System.Random r = new System.Random();
-            int n = r.Next(Unit_Candi.Count);
-            if (n > 0)
+            if (Unit_Candi.Count > 0)
+            {
+                System.Random r = new System.Random();
+                int n = r.Next(Unit_Candi.Count);
+                //Debug.Log(Unit_Candi.Count + "<-unitcandi.count || n->" + n);
                 UnitIdx_list.Add(Unit_Candi[n]);
+            }
             else
             {
-                Debug.Log("None of Unit COST " + Cost_list[i] + "is Available...");
+                Debug.Log("None of Unit COST " + Cost_list[i] + " is Available...");
                 UnitIdx_list.Add(0);
             }
         }
@@ -589,35 +603,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
 
 
-}
-
-public class LSY_Shop_UnitList
-{
-    // Monster Name, Image, Cost
-    List<string> mon_list = new List<string>() { "Orc", "Bear" };
-    public string mon_name;
-    public int mon_cost;
-
-    public LSY_Shop_UnitList()
-    {
-        mon_name = "asdf";
-        mon_cost = 1;
-    }
-
-
-
-
-    //public void Shop_Refresh()
-    //{
-    //    for (int i = 0; i < 5; i++)
-    //    {
-    //        System.Random r = new System.Random();
-    //        int idx = r.Next(2);
-
-    //        Shop_UnitList[i].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = mon_list[idx].ToString();
-    //    }
-
-    //}
-
 
 }
+

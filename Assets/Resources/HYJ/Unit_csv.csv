@@ -2,7 +2,8 @@ ID,NAME,NAME_KOR,SCRIPT_KOR,RACE,JOB,AFFILIATION,MIX,MAX_HP,MAX_MP,START_MP,ATK_
 Int,String,String,String,String,String,String,Int,Int,Int,Int,String,Int,Int,Int,Float,Int,Int,Float,Float,Int,Int,Int
 ID,이름,한글 이름,한글 스크립트,종족,직업,소속,조합 유닛 ID,최대체력,최대 마나,시작시 보유 마나,공격형식,사거리,물리 공격력,주문 공격력,공격 속도,방어력,주문 저항,치명타 확률,치명타 배율,일반 공격 스킬 ID,특수 공격 스킬 ID,코스트
 0,Bear,곰,1,WILD,WARRIOR,WILD,1,10,10,5,MELEE,1,2,3,4,5,6,7,8,9,10,1
-1,Orc,오크,1,WILD,WARRIOR,WILD,1,10,10,5,MELEE,1,2,3,4,5,6,7,8,9,10,1
-2,Two,이,1,WILD,WARRIOR,WILD,1,10,10,5,MELEE,1,2,3,4,5,6,7,8,9,10,1
-3,Three,삼,1,WILD,WARRIOR,WILD,1,10,10,5,MELEE,1,2,3,4,5,6,7,8,9,10,1
-4,Four,사,1,WILD,WARRIOR,WILD,1,10,10,5,MELEE,1,2,3,4,5,6,7,8,9,10,1
+1,Orc,오크,1,WILD,WARRIOR,WILD,1,10,10,5,MELEE,1,2,3,4,5,6,7,8,9,10,2
+2,Two,이,1,WILD,WARRIOR,WILD,1,10,10,5,MELEE,1,2,3,4,5,6,7,8,9,10,3
+3,Three,삼,1,WILD,WARRIOR,WILD,1,10,10,5,MELEE,1,2,3,4,5,6,7,8,9,10,4
+4,Four,사,1,WILD,WARRIOR,WILD,1,10,10,5,MELEE,1,2,3,4,5,6,7,8,9,10,5
+5,Five,오,1,WILD,WARRIOR,WILD,1,10,10,5,MELEE,1,2,3,4,5,6,7,8,9,10,6

@@ -840,6 +840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   oriPos: {x: 0, y: 0, z: 0}
+  curBlkPos: {x: 0, y: 0, z: 0}
 --- !u!64 &1159666934
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -15849,7 +15850,7 @@ GameObject:
   - component: {fileID: 1355835113591341949}
   - component: {fileID: 1355835113591341950}
   m_Layer: 0
-  m_Name: Quad (1)
+  m_Name: Tile1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15947,6 +15948,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Basic_onUnit: {fileID: 0}
+  Tile_Idx: 
+  Tile_Position: {x: 0, y: 0, z: 0}
+  tile_Available: 1
   detectedUnit: []
 --- !u!33 &1355835113666453283
 MeshFilter:
@@ -16042,7 +16046,7 @@ GameObject:
   - component: {fileID: 1355835113666453293}
   - component: {fileID: 1355835113666453282}
   m_Layer: 0
-  m_Name: Quad
+  m_Name: Tile0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17563,6 +17567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   oriPos: {x: 0, y: 0, z: 0}
+  curBlkPos: {x: 0, y: 0, z: 0}
 --- !u!222 &2596144751865299538
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -24525,7 +24530,7 @@ GameObject:
   - component: {fileID: 4745671473367895534}
   - component: {fileID: 9041255472449401463}
   m_Layer: 0
-  m_Name: Quad_stand
+  m_Name: Tile_stand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28762,6 +28767,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Basic_onUnit: {fileID: 0}
+  Tile_Idx: 
+  Tile_Position: {x: 0, y: 0, z: 0}
+  tile_Available: 1
   detectedUnit: []
 --- !u!114 &9053428181423042731
 MonoBehaviour:

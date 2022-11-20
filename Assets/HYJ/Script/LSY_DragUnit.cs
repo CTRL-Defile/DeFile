@@ -58,12 +58,27 @@ public class LSY_DragUnit : MonoBehaviour
     */
 
     private GameObject selectedObject;
-    [SerializeField] Vector3 oriPos;
+    [SerializeField] public Vector3 oriPos, curBlkPos;
     Ray ray;
     bool isHeld = false;
     private void Start()
     {
-        //oriPos = this.gameObject.transform.position;
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_POSITION, LSY_Set_blkPos);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_ORIGINAL, LSY_Set_oriPos);
+    }
+
+    object LSY_Set_blkPos(params object[] _args)
+    {
+        List<float> tmp = (List<float>)_args[0];
+
+        Vector3 pos = new Vector3(tmp[0], tmp[1], tmp[2]);
+        curBlkPos = pos;
+        return null;
+    }
+    object LSY_Set_oriPos(params object[] _args)
+    {
+        curBlkPos = oriPos;
+        return null;
     }
 
     private void Update()
@@ -76,7 +91,7 @@ public class LSY_DragUnit : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("bt down");
+
             isHeld = true;
             if (selectedObject == null)
             {
@@ -84,22 +99,20 @@ public class LSY_DragUnit : MonoBehaviour
 
                 if(hit.collider != null)
                 {
-                    //if(!hit.collider.CompareTag("Ally"))
-                    //{
-                    //    return;
-                    //}
-                    //oriPos = hit.transform.position;
 
-                    if (hit.collider.gameObject.CompareTag("Ally") || hit.collider.gameObject.CompareTag("HitArea"))
+                    if (hit.collider.gameObject.CompareTag("Ally"))
                     {
                         Debug.Log("Ally detected");
                         selectedObject = hit.collider.gameObject;
                         oriPos = selectedObject.transform.position;
                     }
-                    //else
+                    else if (hit.collider.gameObject.CompareTag("HitArea"))
                     {
-                        //selectedObject = null;
+                        Debug.Log("HitArea detected");
+                        selectedObject = hit.collider.gameObject;
+                        oriPos = selectedObject.transform.position;
                     }
+
                     Cursor.visible = false;
                 }
             }
@@ -107,27 +120,33 @@ public class LSY_DragUnit : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            Debug.Log("bt up");
             isHeld = false;
-            //oriPos.y -= 0.25f;
 
             if (selectedObject != null)
             {
-                Vector3 position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
-                Vector3 worldPosition = Camera.main.ScreenToWorldPoint(position);
+                Vector3 screenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
+                Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
                 selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y, worldPosition.z);
+
+                // Unit의 Position은 마우스가 들렸을 때 완료짓는 것이 맞다. tile에서 바꾸는건 여러 경우에 의도하지 않은 현상이 있을 것
+                // ex. trigger에 지속적으로 접하는 경우
+
+                // selectedObject.transform.position = curBlkPos;
+                // Debug.Log("curblk -> " + curBlkPos);
 
                 selectedObject = null;
             }
             Cursor.visible = true;
         }
 
-        if (selectedObject!=null)
+
+        // During drag
+        if (selectedObject != null)
         {
-            Vector3 position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
-            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(position);
+
+            Vector3 screenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
+            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
             selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y + 0.25f, worldPosition.z);
-            //Debug.Log(selectedObject + " -> oriPos.y : " + oriPos.y);
         }
     }
 

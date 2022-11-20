@@ -11,8 +11,10 @@ public partial class Character : MonoBehaviour
 	//-------------------------------------------------------------------
 	// Field
 	//-------------------------------------------------------------------
-	[SerializeField] 
+	[SerializeField]
     protected Vector3 ori_Pos;
+	[SerializeField]
+	protected GameObject on_Tile;
 	[SerializeField]
 	protected bool IsDead = false;
 
@@ -24,7 +26,11 @@ public partial class Character : MonoBehaviour
 	//-------------------------------------------------------------------
 	// Method
 	//-------------------------------------------------------------------
-
+	public void LSY_Character_Set_OnTile(GameObject tile)
+	{
+		on_Tile = tile;
+	}
+	public GameObject LSY_Character_Get_OnTile() { return on_Tile; }
 
 	// Start is called before the first frame update
 	void Start()
