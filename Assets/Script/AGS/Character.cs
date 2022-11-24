@@ -111,13 +111,17 @@ public partial class Character
 
 	[SerializeField] protected int Status_critValue;  // 치명타 수치
     [SerializeField] protected int Status_critPer;    // 치명타 확률
+    [Space(10f)]
 
-	//-------------------------------------------------------------------
-	// Property
-	//-------------------------------------------------------------------
-	public float Stat_HP { get { return Status_HP; } set { Status_HP = value; } }
+	[SerializeField] protected int Status_Cost;
+
+    //-------------------------------------------------------------------
+    // Property
+    //-------------------------------------------------------------------
+    public float Stat_HP { get { return Status_HP; } set { Status_HP = value; } }
 	public float Stat_MaxHP { get { return Status_MaxHP; } set { Status_MaxHP = value; } }
 	public float Stat_Attack { get { return Status_atk; } set { Status_atk = value; } }
+	public int Stat_Cost { get { return Status_Cost; } set { Status_Cost = value; } }
 
 	//-------------------------------------------------------------------
 	// Method

@@ -43,6 +43,19 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, !_isActive);
     }
+    object LSY_Set_ShopUI(params object[] _args)
+    {
+        bool _isActive = (bool)_args[0];
+
+        //for(int i=0; i<Shop_Pannel_cnt; i++)
+        //    Shop_UnitList[i].gameObject.SetActive(_isActive);
+        //Shop_Coin.SetActive(_isActive);
+        //EXP_Bar.SetActive(_isActive);
+
+        Shop_UI.SetActive(_isActive);
+
+        return null;
+    }
 
     //////////  Default Method  //////////
     // Start is called before the first frame update
@@ -54,6 +67,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,   HYJ_Basic_GetPhase);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON,  HYJ_ActiveOn);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__SHOP_UI, LSY_Set_ShopUI);
     }
 
     // Update is called once per frame
@@ -158,7 +172,7 @@ partial class HYJ_Battle_Manager
     [Header("FIELD")]
 
     [SerializeField] Transform Battle_Map;
-    [SerializeField] Transform Field_parent, Stand_parent;
+    [SerializeField] Transform Field_parent, Stand_parent, Trash_parent;
     [SerializeField] Transform Unit_parent;
     [SerializeField] int Field_x;
     [SerializeField] int Field_y;
@@ -264,6 +278,7 @@ partial class HYJ_Battle_Manager
         // Battle_Map, Field_parent, Stand_parent 변수명임
         GameObject element = Battle_Map.GetChild(0).gameObject;
         GameObject std_element = Battle_Map.GetChild(2).gameObject;
+        GameObject trash_element = Battle_Map.GetChild(3).gameObject;
 
         Vector3 pos0 = element.transform.localPosition; // 0,0,0
         Vector3 pos1 = Battle_Map.GetChild(1).localPosition;    // 1,0,-2
@@ -352,7 +367,12 @@ partial class HYJ_Battle_Manager
             Stand_tiles.HYJ_Tile_Add(std_obj.transform);
         }
 
-        //Stand_tiles.Add(std_line);
+        GameObject trash_obj = Instantiate(trash_element, Trash_parent);
+        trash_obj.SetActive(false);
+        trash_obj.name = "trash_0";
+
+        
+
 
 
         //
@@ -375,6 +395,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     [Header("==================================================")]
     [Header("SHOP")]
 
+    [SerializeField]
+    GameObject Shop_UI;
     [SerializeField]
     GameObject[] Shop_UnitList = new GameObject[5];
     [SerializeField]

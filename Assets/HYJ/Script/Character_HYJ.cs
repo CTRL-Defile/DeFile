@@ -56,6 +56,8 @@ partial class Character
         // 스킬
         Data_spell0 = (int)_data["SPELL_0"];
         Data_spell1 = (int)_data["SPELL_1"];
+        // 코스트
+        Status_Cost = (int)_data["COST"];
     }
 
     //////////  Default Method  //////////
