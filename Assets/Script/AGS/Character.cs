@@ -15,11 +15,19 @@ public partial class Character : MonoBehaviour
     protected Vector3 ori_Pos;
 	[SerializeField]
 	protected bool IsDead = false;
+	[SerializeField]
+	protected GameObject m_Target = null;
+	[SerializeField]
+	protected int m_CurPosIndex = 0;
+	[SerializeField]
+	protected PathFinder m_PathFinder = null;
 
 	//-------------------------------------------------------------------
 	// Property
 	//-------------------------------------------------------------------
 	public Vector3 LSY_Unit_Position { get { return ori_Pos; } set { ori_Pos = value; } }
+	public GameObject Target { get { return m_Target; } set { m_Target = value; } }
+	public int CurPosIndex { get { return m_CurPosIndex; } set { m_CurPosIndex = value; } }
 
 	//-------------------------------------------------------------------
 	// Method
@@ -30,14 +38,16 @@ public partial class Character : MonoBehaviour
 	void Start()
     {
 		// HP 테스트 용 초기화
-		//Status_MaxHP = 100.0f;
-		//Status_HP = 50.0f;
-        //Status_atk = 10.0f;		
+		Status_MaxHP = 100.0f;
+		Status_HP = 50.0f;
+        Status_atk = 10.0f;
+		CurPosIndex = 0;
 	}
 
 	private void Awake()
 	{
-		animator = GetComponentInChildren<Animator>();
+		m_animator = GetComponentInChildren<Animator>();
+		m_PathFinder = GetComponent<PathFinder>();
 	}
 
 	// Update is called once per frame
@@ -69,8 +79,7 @@ public partial class Character : MonoBehaviour
 
 		ChangeState();
 
-		MoveProcess();
-		DieProcess();
+		BattleProcess();
 
 	}
 }
@@ -134,10 +143,17 @@ public partial class Character
 
 		// Dissolve Shader 적용 예정
 		// 일단 조절 값 없어서 Die 애니메이션 끝났을 때 IsDead true로
-		if (animator.GetCurrentAnimatorStateInfo(0).IsName("Die") &&
-		  animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
+		if (m_animator.GetCurrentAnimatorStateInfo(0).IsName("Die") &&
+		  m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
 		IsDead = true;
 
+	}
+
+	virtual public void BattleProcess()
+	{
+
+		MoveProcess();
+		DieProcess();
 	}
 
     virtual public void MoveProcess()
@@ -170,7 +186,7 @@ public partial class Character
 	[Space(10f)]
 
 	[SerializeField]
-	protected Animator animator;
+	protected Animator m_animator;
 
 	[SerializeField]
 	protected STATE state = STATE.IDLE;
@@ -207,26 +223,26 @@ public partial class Character
 
 	virtual protected void UpdateIdle()
 	{
-		animator.ResetTrigger("Skill");
-		animator.SetBool("Run Forward", false);
+		m_animator.ResetTrigger("Skill");
+		m_animator.SetBool("Run Forward", false);
 	}
 
 	virtual protected void UpdateRun()
 	{
-		animator.ResetTrigger("Skill");
-		animator.SetBool("Run Forward", true);
+		m_animator.ResetTrigger("Skill");
+		m_animator.SetBool("Run Forward", true);
 	}
 
 	virtual protected void UpdateDie()
 	{
-		animator.SetBool("Run Forward", false);
-		animator.ResetTrigger("Skill");
-		animator.SetTrigger("Die");		
+		m_animator.SetBool("Run Forward", false);
+		m_animator.ResetTrigger("Skill");
+		m_animator.SetTrigger("Die");		
 	}
 
 	virtual protected void UpdateSkill()
 	{		
-		animator.SetTrigger("Skill");
+		m_animator.SetTrigger("Skill");
 	}
 
 }
