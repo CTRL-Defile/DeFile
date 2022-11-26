@@ -24,8 +24,7 @@ public class PathFinder : MonoBehaviour
 
 	[SerializeField]
 	List<HYJ_Battle_Manager_Line> TileLines;
-
-	[SerializeField]
+	
 	List<NODE> m_Graph = new List<NODE>();
 
 	List<NODE> m_OpenNodes;
@@ -105,10 +104,10 @@ public class PathFinder : MonoBehaviour
 			{
 				int TileXSize = TileLines[i].HYJ_Data_GetCount();
 				for (int j = 0; j < TileXSize; ++j)
-				{
-					Index++;
+				{					
 					NODE node = new NODE(Index, TileLines[i].HYJ_Data_Tile(j).gameObject.transform.localPosition);
 					m_Graph.Add(node);
+					Index++;
 				}
 			}
 		}
@@ -175,7 +174,7 @@ public class PathFinder : MonoBehaviour
 					m_Graph[Index].m_Neighbors.Add(m_Graph[Index - 1]);
 					//Debug.Log("m_Graph[" + Index + "]ÀÇ ÁÂ Å¸ÀÏ Index" + (Index - 1));
 				}
-			}
+			}			
 		}
 	}
 
@@ -194,7 +193,7 @@ public class PathFinder : MonoBehaviour
 }
 
 
-
+[System.Serializable]
 public class NODE
 {
 	int m_MyIndex = 0;

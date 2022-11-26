@@ -15,6 +15,7 @@ public partial class HYJ_Master : MonoBehaviour
     void Start()
     {
         Basic_initialize = 0;
+        Application.targetFrameRate = 60;
     }
 
     // Update is called once per frame

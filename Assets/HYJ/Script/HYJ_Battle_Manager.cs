@@ -16,10 +16,17 @@ using TMPro.Examples;
 
 public partial class HYJ_Battle_Manager : MonoBehaviour
 {
-    [SerializeField] int Basic_phase;
+    enum PHASE { PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT };
 
-    //////////  Getter & Setter //////////
-    object HYJ_Basic_GetPhase(params object[] _args)
+    PHASE Basic_phase = PHASE.PHASE_INIT;
+
+    double Phase_timer = 10.0;
+    double Time_Acc = 0;
+    [SerializeField]
+    TextMeshProUGUI TMP = null;
+
+	//////////  Getter & Setter //////////
+	object HYJ_Basic_GetPhase(params object[] _args)
     {
         return Basic_phase;
     }
@@ -57,12 +64,18 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         return null;
     }
 
+    void Battle_Timer()
+    {
+        if (Phase_timer - Time_Acc > 0.0)
+            TMP.text = (((int)(Phase_timer - Time_Acc))).ToString();
+	}
+
     //////////  Default Method  //////////
     // Start is called before the first frame update
     void Start()
     {
         //
-        Basic_phase = 0;
+        Basic_phase = PHASE.PHASE_INIT;
 
         //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,   HYJ_Basic_GetPhase);
@@ -77,51 +90,60 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
         switch (Basic_phase)
         {
-            case -1:
+            //case -1:
+            //    {
+            //        if (this.gameObject.activeSelf == true)
+            //        {
+            //            // battle active
+            //            Basic_phase = -1;
+            //        }
+            //    }
+            //    break;
+            ////
+            case PHASE.PHASE_INIT:
                 {
-                    if (this.gameObject.activeSelf == true)
+					//Debug.Log("is Basic_phase == 0?");
+					HYJ_Field_Init();
+					this.gameObject.SetActive(false);
+
+					//
+					Basic_phase = PHASE.PHASE_PREPARE;
+                }
+                break;
+			// 전투 준비
+			case PHASE.PHASE_PREPARE:
+                {
+                    Phase_timer = 10.0;
+					Time_Acc += Time.deltaTime;
+                    Battle_Timer();
+					//시간 체크 후 전투 상태로 Phase 전환
+					if (Phase_timer - Time_Acc <= 0.0  )
                     {
-                        // battle active
-                        Basic_phase = -1;
-                    }
+						Basic_phase = PHASE.PHASE_COMBAT;
+                        Time_Acc = 0.0;
+					}					
+
+					//Debug.Log("this.gameObject : " + this.gameObject);    // Battle
+					//Debug.Log("전투 준비..");
+					if (!UL_isInitialized)
+						LSY_UnitList_Init();
+					
                 }
                 break;
-            //
-            case 0:
+			// 전투 상태
+			case PHASE.PHASE_COMBAT:
                 {
-                    //Debug.Log("is Basic_phase == 0?");
-                    HYJ_Field_Init();
-
-                    //
-                    Basic_phase = 1;
-                }
-                break;
-            case 1:
-                {
-                    //Debug.Log("this.gameObject : " + this.gameObject);    // Battle
-                    this.gameObject.SetActive(false);
-
-                    //
-                    Basic_phase = 2;
-                }
-                break;
-
-                // 전투 준비
-            case 2:
-                {
-                    //Debug.Log("전투 준비..");
-                    if(!UL_isInitialized)
-                        LSY_UnitList_Init();
-
-                }
-                break;
-
-                // 전투 상태
-            case 3:
-                {
-
-                }
-                break;
+					Phase_timer = 30.0;
+					Time_Acc += Time.deltaTime;
+					Battle_Timer();
+					//시간 체크 후 전투 상태로 Phase 전환
+					if (Phase_timer - Time_Acc <= 0.0)
+					{
+						Basic_phase = PHASE.PHASE_PREPARE;
+						Time_Acc = 0.0;
+					}
+				}
+                break;               
         }
     }
 }
