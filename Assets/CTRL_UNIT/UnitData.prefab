@@ -11864,6 +11864,7 @@ GameObject:
   - component: {fileID: 4404662457965607783}
   - component: {fileID: 6265973995579251703}
   - component: {fileID: 4243736397338360955}
+  - component: {fileID: 5254724370736482970}
   m_Layer: 20
   m_Name: 1
   m_TagString: Ally
@@ -11919,6 +11920,9 @@ MonoBehaviour:
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
+  m_Target: {fileID: 0}
+  m_CurPosIndex: 0
+  m_PathFinder: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 0
   Status_MP: 0
@@ -11928,7 +11932,8 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
-  animator: {fileID: 0}
+  Status_Cost: 0
+  m_animator: {fileID: 0}
   state: 0
 --- !u!54 &6265973995579251703
 Rigidbody:
@@ -11960,6 +11965,23 @@ CapsuleCollider:
   m_Height: 2.2371202
   m_Direction: 1
   m_Center: {x: 0, y: 1.0578032, z: 0}
+--- !u!114 &5254724370736482970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3579511156403711380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 356681fd0d8d7844a9fe49ffff81cf9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HostObj: {fileID: 0}
+  m_Basic_phase: 0
+  m_CurIdxX: 0
+  m_CurIdxY: 0
+  TileLines: []
 --- !u!1 &3586579302469860031
 GameObject:
   m_ObjectHideFlags: 0
@@ -12163,6 +12185,7 @@ GameObject:
   - component: {fileID: 1201895180302853860}
   - component: {fileID: 5404344496744357894}
   - component: {fileID: 4508474137191254123}
+  - component: {fileID: 2369580298999447660}
   m_Layer: 20
   m_Name: 0
   m_TagString: Ally
@@ -12217,6 +12240,9 @@ MonoBehaviour:
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
+  m_Target: {fileID: 0}
+  m_CurPosIndex: 0
+  m_PathFinder: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 0
   Status_MP: 0
@@ -12226,7 +12252,8 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
-  animator: {fileID: 0}
+  Status_Cost: 0
+  m_animator: {fileID: 0}
   state: 0
 --- !u!54 &5404344496744357894
 Rigidbody:
@@ -12258,6 +12285,23 @@ CapsuleCollider:
   m_Height: 2.2482207
   m_Direction: 1
   m_Center: {x: 0, y: 1.1108392, z: 0}
+--- !u!114 &2369580298999447660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3995788884653447335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 356681fd0d8d7844a9fe49ffff81cf9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HostObj: {fileID: 0}
+  m_Basic_phase: 0
+  m_CurIdxX: 0
+  m_CurIdxY: 0
+  TileLines: []
 --- !u!1 &4023105164463971769
 GameObject:
   m_ObjectHideFlags: 0
@@ -13589,6 +13633,7 @@ GameObject:
   - component: {fileID: 1788865134667311096}
   - component: {fileID: 2943985061178368812}
   - component: {fileID: 660697444375512480}
+  - component: {fileID: 3401846168303293184}
   m_Layer: 20
   m_Name: 2
   m_TagString: Ally
@@ -13677,6 +13722,9 @@ MonoBehaviour:
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
+  m_Target: {fileID: 0}
+  m_CurPosIndex: 0
+  m_PathFinder: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 0
   Status_MP: 0
@@ -13686,7 +13734,8 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
-  animator: {fileID: 0}
+  Status_Cost: 0
+  m_animator: {fileID: 0}
   state: 0
 --- !u!54 &2943985061178368812
 Rigidbody:
@@ -13718,6 +13767,23 @@ CapsuleCollider:
   m_Height: 2.2371202
   m_Direction: 1
   m_Center: {x: 0, y: 1.0578032, z: 0}
+--- !u!114 &3401846168303293184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5014343886674835824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 356681fd0d8d7844a9fe49ffff81cf9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HostObj: {fileID: 0}
+  m_Basic_phase: 0
+  m_CurIdxX: 0
+  m_CurIdxY: 0
+  TileLines: []
 --- !u!1 &5014343886674835826
 GameObject:
   m_ObjectHideFlags: 0
@@ -19513,6 +19579,7 @@ GameObject:
   - component: {fileID: 8937368241449392367}
   - component: {fileID: 798294340493377292}
   - component: {fileID: 8318151736867807050}
+  - component: {fileID: 6251648229029876329}
   m_Layer: 20
   m_Name: 3
   m_TagString: Ally
@@ -19612,6 +19679,9 @@ MonoBehaviour:
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
+  m_Target: {fileID: 0}
+  m_CurPosIndex: 0
+  m_PathFinder: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 0
   Status_MP: 0
@@ -19621,7 +19691,8 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
-  animator: {fileID: 0}
+  Status_Cost: 0
+  m_animator: {fileID: 0}
   state: 0
 --- !u!54 &798294340493377292
 Rigidbody:
@@ -19653,6 +19724,23 @@ CapsuleCollider:
   m_Height: 2.2371202
   m_Direction: 1
   m_Center: {x: 0, y: 1.0578032, z: 0}
+--- !u!114 &6251648229029876329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5191421316154643308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 356681fd0d8d7844a9fe49ffff81cf9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HostObj: {fileID: 0}
+  m_Basic_phase: 0
+  m_CurIdxX: 0
+  m_CurIdxY: 0
+  TileLines: []
 --- !u!1 &5191421316154645170
 GameObject:
   m_ObjectHideFlags: 0
@@ -37430,6 +37518,7 @@ GameObject:
   - component: {fileID: 4678839526145629840}
   - component: {fileID: 5309106266096442787}
   - component: {fileID: 7891124606960684400}
+  - component: {fileID: 4740686616995760854}
   m_Layer: 20
   m_Name: 5
   m_TagString: Ally
@@ -37533,6 +37622,9 @@ MonoBehaviour:
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
+  m_Target: {fileID: 0}
+  m_CurPosIndex: 0
+  m_PathFinder: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 0
   Status_MP: 0
@@ -37542,7 +37634,8 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
-  animator: {fileID: 0}
+  Status_Cost: 0
+  m_animator: {fileID: 0}
   state: 0
 --- !u!54 &5309106266096442787
 Rigidbody:
@@ -37574,6 +37667,23 @@ CapsuleCollider:
   m_Height: 2.2371202
   m_Direction: 1
   m_Center: {x: 0, y: 1.0578032, z: 0}
+--- !u!114 &4740686616995760854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5301566832862367469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 356681fd0d8d7844a9fe49ffff81cf9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HostObj: {fileID: 0}
+  m_Basic_phase: 0
+  m_CurIdxX: 0
+  m_CurIdxY: 0
+  TileLines: []
 --- !u!1 &5301566832862367471
 GameObject:
   m_ObjectHideFlags: 0
@@ -48827,6 +48937,7 @@ GameObject:
   - component: {fileID: 5183948002169107927}
   - component: {fileID: 7994896041913717734}
   - component: {fileID: 3788392312872562251}
+  - component: {fileID: 1295528371124158684}
   m_Layer: 20
   m_Name: 4
   m_TagString: Ally
@@ -48922,6 +49033,9 @@ MonoBehaviour:
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
+  m_Target: {fileID: 0}
+  m_CurPosIndex: 0
+  m_PathFinder: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 0
   Status_MP: 0
@@ -48931,7 +49045,8 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
-  animator: {fileID: 0}
+  Status_Cost: 0
+  m_animator: {fileID: 0}
   state: 0
 --- !u!54 &7994896041913717734
 Rigidbody:
@@ -48963,6 +49078,23 @@ CapsuleCollider:
   m_Height: 2.2371202
   m_Direction: 1
   m_Center: {x: 0, y: 1.0578032, z: 0}
+--- !u!114 &1295528371124158684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8512935431629088124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 356681fd0d8d7844a9fe49ffff81cf9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HostObj: {fileID: 0}
+  m_Basic_phase: 0
+  m_CurIdxX: 0
+  m_CurIdxY: 0
+  TileLines: []
 --- !u!1 &8512935431629088126
 GameObject:
   m_ObjectHideFlags: 0
