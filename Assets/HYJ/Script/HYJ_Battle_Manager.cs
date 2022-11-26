@@ -182,6 +182,10 @@ partial class HYJ_Battle_Manager
     [SerializeField] HYJ_Battle_Manager_Line Stand_tiles;
 
     //////////  Getter & Setter //////////
+    object Get_Field_tiles(params object[] _args)
+    {
+        return Field_tiles;
+    }
     object HYJ_Field_GetFieldX(params object[] _args)
     {
         return Field_x;
@@ -217,7 +221,6 @@ partial class HYJ_Battle_Manager
     // 캐릭터를 찾아낸다. xy값으로
     object HYJ_Field_GetCharacter(params object[] _args)
     {
-        //HYJ_Character res = null;
         GameObject res = null;
 
         //
@@ -253,7 +256,6 @@ partial class HYJ_Battle_Manager
         {
             for(int forX = 0; forX < Field_tiles[forY].HYJ_Data_GetCount(); forX++)
             {
-                //HYJ_Character element = Field_tiles[forY].HYJ_Data_GetUnitOnTile(forX);
                 GameObject element = Field_tiles[forY].HYJ_Data_GetUnitOnTile(forX);
 
                 if ((element != null) && Field_tiles[forY].HYJ_Data_GetUnitOnTile(forX).Equals(target))
@@ -371,12 +373,12 @@ partial class HYJ_Battle_Manager
         trash_obj.SetActive(false);
         trash_obj.name = "trash_0";
 
-        
+		//Stand_tiles.Add(std_line);
 
 
-
-        //
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X,                HYJ_Field_GetFieldX             );
+		//
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES,                    Get_Field_tiles         );
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X,                HYJ_Field_GetFieldX             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y,                HYJ_Field_GetFieldY             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE,                   HYJ_Field_GetTile               );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_FROM_CHARACTER,    HYJ_Field_GetTileFromCharacter  );

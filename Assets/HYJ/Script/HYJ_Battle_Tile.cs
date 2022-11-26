@@ -24,7 +24,6 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     //////////  Method          //////////
     public GameObject HYJ_Basic_onUnit { get { return Basic_onUnit; } set { Basic_onUnit = value; } }
 
-
     //////////  Default Method  //////////
     void Start()
     {
@@ -53,6 +52,11 @@ partial class HYJ_Battle_Tile : MonoBehaviour
         {
             // 둘 수 있는 타일인가, 아닌가,, 아니라면 원래 자리로 돌아가라.
             other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
+            Debug.Log("isEmpty");
+            detectedUnit.Add(other.gameObject);
+            Basic_onUnit = other.GetComponent<GameObject>();
+
+
         }
         else
         {
