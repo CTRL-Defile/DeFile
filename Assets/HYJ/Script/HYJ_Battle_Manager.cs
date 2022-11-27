@@ -14,11 +14,11 @@ using Newtonsoft.Json.Linq;
 using UnityEngine.Diagnostics;
 using TMPro.Examples;
 
+enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT };
+
 public partial class HYJ_Battle_Manager : MonoBehaviour
 {
-    enum PHASE { PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT };
-
-    PHASE Basic_phase = PHASE.PHASE_INIT;
+	BATTLE_PHASE Basic_phase = BATTLE_PHASE.PHASE_INIT;
 
     double Phase_timer = 10.0;
     double Time_Acc = 0;
@@ -75,7 +75,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     void Start()
     {
         //
-        Basic_phase = PHASE.PHASE_INIT;
+        Basic_phase = BATTLE_PHASE.PHASE_INIT;
 
         //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,   HYJ_Basic_GetPhase);
@@ -90,28 +90,34 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
         switch (Basic_phase)
         {
-            //case -1:
-            //    {
-            //        if (this.gameObject.activeSelf == true)
-            //        {
-            //            // battle active
-            //            Basic_phase = -1;
-            //        }
-            //    }
-            //    break;
-            ////
-            case PHASE.PHASE_INIT:
+            case BATTLE_PHASE.PHASE_UPDATE:
                 {
-					//Debug.Log("is Basic_phase == 0?");
-					HYJ_Field_Init();
-					this.gameObject.SetActive(false);
+                    // Init에서 잘안됐다 그러면 어드레서블 컴플리트 체크해서 로딩 끝났을때 켜져있으면 돌게 중복코드..
+                    if (this.gameObject.activeSelf == true)
+                    {
+						// battle active
+						this.gameObject.SetActive(false);
+						Basic_phase = BATTLE_PHASE.PHASE_UPDATE; // 여기는 -1 업데이트내용 다 여기서 실행해야하는 부분 //받았다고 체크가 되야함                 
+                    }
+                }
+                break;
+            //
+            case BATTLE_PHASE.PHASE_INIT:
+                {
+                    //Debug.Log("is Basic_phase == 0?");
+                    if (this.gameObject.activeSelf == true)
+                    {
+                        // battle active
+                        this.gameObject.SetActive(false);
+                    }
 
-					//
-					Basic_phase = PHASE.PHASE_PREPARE;
+						HYJ_Field_Init();					
+					
+					Basic_phase = BATTLE_PHASE.PHASE_PREPARE;
                 }
                 break;
 			// 전투 준비
-			case PHASE.PHASE_PREPARE:
+			case BATTLE_PHASE.PHASE_PREPARE:
                 {
                     Phase_timer = 10.0;
 					Time_Acc += Time.deltaTime;
@@ -119,7 +125,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 					//시간 체크 후 전투 상태로 Phase 전환
 					if (Phase_timer - Time_Acc <= 0.0  )
                     {
-						Basic_phase = PHASE.PHASE_COMBAT;
+						Basic_phase = BATTLE_PHASE.PHASE_COMBAT;
                         Time_Acc = 0.0;
 					}					
 
@@ -131,7 +137,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 }
                 break;
 			// 전투 상태
-			case PHASE.PHASE_COMBAT:
+			case BATTLE_PHASE.PHASE_COMBAT:
                 {
 					Phase_timer = 30.0;
 					Time_Acc += Time.deltaTime;
@@ -139,7 +145,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 					//시간 체크 후 전투 상태로 Phase 전환
 					if (Phase_timer - Time_Acc <= 0.0)
 					{
-						Basic_phase = PHASE.PHASE_PREPARE;
+						Basic_phase = BATTLE_PHASE.PHASE_PREPARE;
 						Time_Acc = 0.0;
 					}
 				}
@@ -230,7 +236,7 @@ partial class HYJ_Battle_Manager
         int y = (int)_args[1];
 
         return Field_tiles[y].HYJ_Data_Tile(x);
-    }
+    }    
 
     // 캐릭터가 위치한 타일을 찾아낸다.
     object HYJ_Field_GetTileFromCharacter(params object[] _args)
@@ -269,7 +275,7 @@ partial class HYJ_Battle_Manager
     // 해당 캐릭터의 위치를 찾는다.
     object HYJ_Field_GetXYFromCharacter(params object[] _args)
     {
-        HYJ_Character target = (HYJ_Character)_args[0];
+		GameObject target = (GameObject)_args[0];
 
         //
         Vector2 res = new Vector2(-1, -1);

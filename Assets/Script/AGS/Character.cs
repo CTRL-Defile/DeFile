@@ -19,8 +19,8 @@ public partial class Character : MonoBehaviour
 	protected bool IsDead = false;
 	[SerializeField]
 	protected GameObject m_Target = null;
-	[SerializeField]
-	protected int m_CurPosIndex = 0;
+	//[SerializeField]
+	//protected int m_CurPosIndex = 0;
 	[SerializeField]
 	protected PathFinder m_PathFinder = null;
 
@@ -29,7 +29,7 @@ public partial class Character : MonoBehaviour
 	//-------------------------------------------------------------------
 	public Vector3 LSY_Unit_Position { get { return ori_Pos; } set { ori_Pos = value; } }
 	public GameObject Target { get { return m_Target; } set { m_Target = value; } }
-	public int CurPosIndex { get { return m_CurPosIndex; } set { m_CurPosIndex = value; } }
+	//public int CurPosIndex { get { return m_CurPosIndex; } set { m_CurPosIndex = value; } }
 
 	//-------------------------------------------------------------------
 	// Method
@@ -48,7 +48,7 @@ public partial class Character : MonoBehaviour
 		Status_MaxHP = 100.0f;
 		Status_HP = 50.0f;
         Status_atk = 10.0f;
-		CurPosIndex = 0;
+		//CurPosIndex = 0;
 	}
 
 	private void Awake()
@@ -60,6 +60,9 @@ public partial class Character : MonoBehaviour
 	// Update is called once per frame
 	void Update()
     {
+		if(Input.GetKeyDown(KeyCode.P))
+			m_PathFinder.StartPathFinding(gameObject, Target);
+
 		if (IsDead)
 		{
 			// 풀링 할지 말지 생각중
