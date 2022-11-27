@@ -92,15 +92,17 @@ public class PathFinder : MonoBehaviour
 
 	void MoveOnPath(GameObject Obj)
 	{
-		//if (Obj == null)
-		//	return;
+		if (Obj == null)
+			return;
 
-		//if (0 == m_Path.Count)
-		//	return;
+		if (0 == m_Path.Count)
+			return;
 
-		//int Index = m_Path.First();
-		int Index = 0;
-		var Tile = (HYJ_Battle_Tile)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, Index);
+		int Index = m_Path.First();
+		HYJ_Battle_Tile Tile = (HYJ_Battle_Tile)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, Index);
+		Vector3 TilePos = Tile.Tile_Position;
+		Vector3 ObjPos = Obj.transform.position;
+
 
 	}
 
