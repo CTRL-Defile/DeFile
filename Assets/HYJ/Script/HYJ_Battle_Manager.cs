@@ -182,8 +182,19 @@ public class HYJ_Battle_Manager_Line
         return cnt;
     }
 
-    //////////  Method          //////////
-    public void HYJ_Tile_Add(Transform _trans)
+    public HYJ_Battle_Tile TileGraph(int _Idx)
+    {
+        foreach(var Tile in tiles)
+        {
+            if (Tile.GraphIndex == _Idx)
+                return Tile;                     
+		}
+
+		return null;
+	}
+
+	//////////  Method          //////////
+	public void HYJ_Tile_Add(Transform _trans)
     {
         tiles.Add(_trans.GetComponent<HYJ_Battle_Tile>());
     }
@@ -210,8 +221,19 @@ partial class HYJ_Battle_Manager
     [SerializeField] List<HYJ_Battle_Manager_Line> Field_tiles;
     [SerializeField] HYJ_Battle_Manager_Line Stand_tiles;
 
-    //////////  Getter & Setter //////////
-    object Get_Field_tiles(params object[] _args)
+	//////////  Getter & Setter //////////
+	object TileInGraph(params object[] _args)
+	{
+		foreach (var line in Field_tiles)
+		{
+			var tile = line.TileGraph((int)_args[0]);
+
+			if (null != tile)
+				return tile;
+		}
+        return null;
+	}
+	object Get_Field_tiles(params object[] _args)
     {
         return Field_tiles;
     }
@@ -428,8 +450,9 @@ partial class HYJ_Battle_Manager
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILES_GET_COUNT,        HYJ_Field_GetTilesGetCount      );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_XY_FROM_CHARACTER,      HYJ_Field_GetXYFromCharacter    );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__COUNT_ALLY_ONTILE,      LSY_Count_Ally_OnTile    );
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, TileInGraph);
 
-    }
+	}
 }
 
 #endregion

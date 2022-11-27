@@ -1,18 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using TMPro.Examples;
 using Unity.Mathematics;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
-
+using UnityEngine.UIElements;
 
 public class PathFinder : MonoBehaviour
-{	
-    PriorityQueue<int> m_PQ = new PriorityQueue<int>();
-    
+{	       
     [SerializeField]
     GameObject m_HostObj;
 
@@ -31,7 +30,7 @@ public class PathFinder : MonoBehaviour
 
 	List<NODE> m_OpenNodes = new List<NODE>();
 	List<NODE> m_CloseNodes = new List<NODE>();
-	List<int> m_Path = new List<int>();
+	LinkedList<int> m_Path = new LinkedList<int>();
 
 	// 오픈리스트에 있는 정보들 중에서 가장 좋은 후보를 빠르게 뽑아오기위한 컨테이너 PriorityQueue 적용 예정
 		
@@ -42,6 +41,7 @@ public class PathFinder : MonoBehaviour
 		m_HostObj = gameObject;
 		m_Basic_phase = 0;
 		SetupGraph();
+		MoveOnPath(null);
 	}
 
     // Update is called once per frame
@@ -56,7 +56,7 @@ public class PathFinder : MonoBehaviour
 
 		if (m_Basic_phase == BATTLE_PHASE.PHASE_COMBAT)
 		{				
-			AStar();			
+			//AStar();						
 		}
 	}
 
@@ -88,6 +88,20 @@ public class PathFinder : MonoBehaviour
 
         // 시작점 발견 ( 예약 진행 )
         //open[m_CurIdxX, m_CurIdxY] = Math.Abs( , );        
+	}
+
+	void MoveOnPath(GameObject Obj)
+	{
+		//if (Obj == null)
+		//	return;
+
+		//if (0 == m_Path.Count)
+		//	return;
+
+		//int Index = m_Path.First();
+		int Index = 0;
+		var Tile = (HYJ_Battle_Tile)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, Index);
+
 	}
 
 	private void SetupGraph()
@@ -220,20 +234,103 @@ public class PathFinder : MonoBehaviour
 			}
 		}
 
-		return false;
-		
+		return false;		
 	}
 
 	bool FindingPath(int startIdx, int endIdx)
 	{
+		if(m_OpenNodes.Count != 0)
+		{
+			m_OpenNodes.RemoveAt(0);
+		}
 
+		m_CloseNodes.Add(m_Graph[startIdx]);
 
-		return false;
+		foreach(var Neighbor in m_Graph[startIdx].m_Neighbors)
+		{
+			//이웃이 이미 도착지라면 길찾기 종료.
+			if(endIdx == Neighbor.MyIndex)
+			{
+				Neighbor.ParentIndex = startIdx;
+				return true;
+			}
+
+			// 이미 클로즈에 들어있으면 오픈에 넣을 필요 없음
+			if (CheckExistInClose(Neighbor))
+				continue;
+
+			// 오픈에 넣는다.
+			InsertNodeInOpen(Neighbor, startIdx, endIdx);
+		}
+
+		// 오픈이 비어있으면 더이상 갈 길 없음
+		if (m_OpenNodes.Count == 0)
+			return false;
+
+		// 오픈을 토탈비용 Fcost 기준으로 오름차순 정렬
+		m_OpenNodes.OrderBy(x => x.Fcost);
+
+		return FindingPath(m_OpenNodes[0].MyIndex, endIdx);
 	}
 
-	void MakePath(int startIdx, int goalIdx)
+	void MakePath(int StartIdx, int EndIdx)
 	{
-		
+		int ParentIndex = EndIdx;
+
+		while(true)
+		{
+			if (ParentIndex == StartIdx)
+				break;
+
+			////////////////////////////////
+			m_Path.AddFirst(ParentIndex);
+			ParentIndex = m_Graph[ParentIndex].ParentIndex;
+		}
+	}
+
+	bool CheckExistInClose(NODE node)
+	{
+		var FindNode = m_CloseNodes.Find(x => x == node);
+
+		if (FindNode == null)
+			return false;
+		else
+			return true;			
+	}
+
+	void InsertNodeInOpen(NODE node, int startIdx, int EndIdx)
+	{
+		var Findnode = m_OpenNodes.Find(x => x == node);
+
+		// 오픈에 존재하지 않을 때
+		if(Findnode == null)
+		{
+			// 지금까지 지나온 노드 간의 거리 추적
+			node.Gcost = m_Graph[startIdx].Gcost + Vector3.Magnitude(m_Graph[startIdx].Position - node.Position);
+
+			// 목적지와의 거리 ( 휴리스틱 추정 값)
+			float Hcost = Vector3.Magnitude(m_Graph[EndIdx].Position - node.Position);
+
+			// 토탈 비용
+			node.Fcost = node.Gcost + Hcost;
+
+			// 오픈에 넣기 전 부모 인덱스 저장.
+			node.ParentIndex = startIdx;
+
+			m_OpenNodes.Add(node);
+		}
+		else // 오픈에 이미 존재하는데 새로 구한 비용이 이전 비용보다 더 작으면 갱신.
+		{
+			float Gcost = m_Graph[startIdx].Gcost + Vector3.Magnitude(m_Graph[startIdx].Position - node.Position);
+			float Hcost = Vector3.Magnitude(m_Graph[EndIdx].Position - node.Position);
+			float Fcost = Gcost + Hcost;
+
+			if(Findnode.Fcost > Fcost)
+			{
+				Findnode.Fcost = Fcost;
+				Findnode.ParentIndex = startIdx;
+			}
+		}
 	}
 
 }
@@ -241,16 +338,19 @@ public class PathFinder : MonoBehaviour
 [System.Serializable]
 public class NODE
 {
-	int m_MyIndex = 0;
-	int m_ParentIndex = 0;
-	HYJ_Battle_Tile m_tile = null;
+	private int m_MyIndex = 0;
+	public int MyIndex { get { return m_MyIndex; } set { m_MyIndex = value; } }
+	private int m_ParentIndex = 0;
+	public int ParentIndex { get { return m_ParentIndex; } set { m_ParentIndex = value; } }
+	private HYJ_Battle_Tile m_tile = null;
 	public HYJ_Battle_Tile Tile { get { return m_tile; } set { m_tile = value; } }
-	float m_Fcost = 0.0f;
+	private float m_Fcost = 0.0f;
 	public float Fcost { get { return m_Fcost; } set { m_Fcost = value; } }
-	float m_Gcost = 0.0f;
+	private float m_Gcost = 0.0f;
 	public float Gcost { get { return m_Gcost; } set { m_Gcost = value; } }
 
-	Vector3 m_Position = new Vector3(0.0f, 0.0f, 0.0f);
+	private Vector3 m_Position = new Vector3(0.0f, 0.0f, 0.0f);
+	public Vector3 Position { get { return m_Position; } set { m_Position = value; } }
 
 	public NODE(int Idx, Vector3 Pos, HYJ_Battle_Tile tile)
 	{
