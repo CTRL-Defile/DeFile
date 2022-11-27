@@ -103,6 +103,11 @@ public class PathFinder : MonoBehaviour
 		Vector3 TilePos = Tile.Tile_Position;
 		Vector3 ObjPos = Obj.transform.position;
 
+		Vector3 Dir = TilePos - ObjPos;
+		float Length = Dir.magnitude;
+		Dir.Normalize();		
+
+		//if(  )
 
 	}
 
