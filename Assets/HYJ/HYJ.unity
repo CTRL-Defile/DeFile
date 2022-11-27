@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.67433286, g: 0.77783763, b: 0.78887975, a: 1}
+  m_IndirectSpecularColor: {r: 0.6757515, g: 0.77903193, b: 0.7893794, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -21737,10 +21737,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a00ea4f89ff1c42498cec27add75c0d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eventName: {fileID: 0}
-  script: {fileID: 0}
-  choice1: {fileID: 0}
-  choice2: {fileID: 0}
+  eventName: {fileID: 1506217688938746668}
+  script: {fileID: 8311353527578405151}
+  choice1: {fileID: 405393421072907743}
+  choice2: {fileID: 4270598633070323974}
   Basic_initialize: 0
   Event_phase: 0
   csvDataLine: []
@@ -24544,7 +24544,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3184237335490448407}
         m_TargetAssemblyTypeName: HYJ_Event_Manager, Assembly-CSharp
-        m_MethodName: HYJ_SetActive
+        m_MethodName: ClickButtonOne
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -33589,7 +33589,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3184237335490448407}
         m_TargetAssemblyTypeName: HYJ_Event_Manager, Assembly-CSharp
-        m_MethodName: HYJ_SetActive
+        m_MethodName: ClickButtonTwo
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
