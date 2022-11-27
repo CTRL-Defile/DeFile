@@ -121,21 +121,32 @@ public class LSY_DragUnit : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             isHeld = false;
+            int Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
+            int cnt_Unit_onTile = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__COUNT_ALLY_ONTILE);
 
             if (selectedObject != null)
             {
-                Vector3 screenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
-                Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
-                selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y, worldPosition.z);
+                if (cnt_Unit_onTile < Player_Lv + 1)
+                {
+                    Debug.Log(Player_Lv + " Lv... and " + cnt_Unit_onTile + " of Ally is on tile.");
+                    Vector3 screenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
+                    Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+                    selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y, worldPosition.z);
 
-                // Unit의 Position은 마우스가 들렸을 때 완료짓는 것이 맞다. tile에서 바꾸는건 여러 경우에 의도하지 않은 현상이 있을 것
-                // ex. trigger에 지속적으로 접하는 경우
+                    // Unit의 Position은 마우스가 들렸을 때 완료짓는 것이 맞다. tile에서 바꾸는건 여러 경우에 의도하지 않은 현상이 있을 것
+                    // ex. trigger에 지속적으로 접하는 경우
 
-                // selectedObject.transform.position = curBlkPos;
-                // Debug.Log("curblk -> " + curBlkPos);
+                    // selectedObject.transform.position = curBlkPos;
+                    // Debug.Log("curblk -> " + curBlkPos);
+                }
+                else
+                {
+                    selectedObject.transform.position = oriPos;
+                }
 
                 selectedObject = null;
             }
+
             Cursor.visible = true;
         }
 
