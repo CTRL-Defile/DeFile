@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditorInternal;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public partial class HYJ_Battle_Tile : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     [SerializeField] GameObject Basic_onUnit;   // GameObject 형으로 교체 -> 유닛이 모두 HYJ_Character 스크립트를 갖고 있지 않음.
     [SerializeField] public List<int> Tile_Idx; // Tile의 행/열 정보
     [SerializeField] public Vector3 Tile_Position;  // Tile의 localPosition 저장
+    [SerializeField] private int m_GraphIdx = 0;
     public enum Tile_Available
     {
         Available,
@@ -20,9 +22,10 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     [SerializeField] public Tile_Available tile_Available = Tile_Available.Non_Available;
 
     //////////  Getter & Setter //////////
+    public int GraphIndex { get { return m_GraphIdx; } set { m_GraphIdx = value; } }
 
     //////////  Method          //////////
-    public GameObject HYJ_Basic_onUnit { get { return Basic_onUnit; } set { Basic_onUnit = value; } }
+	public GameObject HYJ_Basic_onUnit { get { return Basic_onUnit; } set { Basic_onUnit = value; } }
 
     //////////  Default Method  //////////
     void Start()

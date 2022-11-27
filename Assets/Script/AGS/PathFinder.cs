@@ -4,18 +4,20 @@ using System.Collections.Generic;
 using System.Reflection;
 using TMPro.Examples;
 using Unity.Mathematics;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 
+
 public class PathFinder : MonoBehaviour
-{
+{	
     PriorityQueue<int> m_PQ = new PriorityQueue<int>();
     
     [SerializeField]
     GameObject m_HostObj;
 
 	[SerializeField] 
-    int m_Basic_phase;
+    BATTLE_PHASE m_Basic_phase;
 
 	[SerializeField]
     private int m_CurIdxX = 0;
@@ -27,9 +29,9 @@ public class PathFinder : MonoBehaviour
 	
 	List<NODE> m_Graph = new List<NODE>();
 
-	List<NODE> m_OpenNodes;
-	List<NODE> m_CloseNodes;
-	List<int> m_Path;
+	List<NODE> m_OpenNodes = new List<NODE>();
+	List<NODE> m_CloseNodes = new List<NODE>();
+	List<int> m_Path = new List<int>();
 
 	// 오픈리스트에 있는 정보들 중에서 가장 좋은 후보를 빠르게 뽑아오기위한 컨테이너 PriorityQueue 적용 예정
 		
@@ -38,7 +40,8 @@ public class PathFinder : MonoBehaviour
 	void Start()
     {
 		m_HostObj = gameObject;
-		m_Basic_phase = 0;		
+		m_Basic_phase = 0;
+		SetupGraph();
 	}
 
     // Update is called once per frame
@@ -49,14 +52,11 @@ public class PathFinder : MonoBehaviour
 
 	private void LateUpdate()
 	{
-		if (m_Basic_phase == 0)
-		{
-			//m_Basic_phase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
+		m_Basic_phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
 
-			SetupGraph();
-			AStar();
-
-			m_Basic_phase = -1;
+		if (m_Basic_phase == BATTLE_PHASE.PHASE_COMBAT)
+		{				
+			AStar();			
 		}
 	}
 
@@ -105,8 +105,9 @@ public class PathFinder : MonoBehaviour
 				int TileXSize = TileLines[i].HYJ_Data_GetCount();
 				for (int j = 0; j < TileXSize; ++j)
 				{					
-					NODE node = new NODE(Index, TileLines[i].HYJ_Data_Tile(j).gameObject.transform.localPosition);
+					NODE node = new NODE(Index, TileLines[i].HYJ_Data_Tile(j).gameObject.transform.localPosition, TileLines[i].HYJ_Data_Tile(j));
 					m_Graph.Add(node);
+					TileLines[i].HYJ_Data_Tile(j).GraphIndex = Index;
 					Index++;
 				}
 			}
@@ -178,37 +179,84 @@ public class PathFinder : MonoBehaviour
 		}
 	}
 
-	bool StartPathFinding(int StartIdex, int EndIndex)
+	public bool StartPathFinding(GameObject StartPosUnit, GameObject EndPosUnit)
 	{
+		if (m_Basic_phase != BATTLE_PHASE.PHASE_COMBAT)
+			return false;
+
 		m_OpenNodes.Clear();
 		m_CloseNodes.Clear();
 		m_Path.Clear();
 
 		var Tiles = (List<HYJ_Battle_Manager_Line>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES);
-		//int StartIndex = 
+		HYJ_Battle_Tile StartTile = (HYJ_Battle_Tile)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_FROM_CHARACTER, StartPosUnit);
+		int StartIndex = StartTile.GraphIndex;
+		HYJ_Battle_Tile EndTile = (HYJ_Battle_Tile)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_FROM_CHARACTER, EndPosUnit);
+		int EndIndex = EndTile.GraphIndex;
+
+		// 잘못된 인덱스일 때 길찾기 실패.
+		if (0 > StartIndex || 0 > EndIndex)
+			return false;
+
+		// 시작점 도착점 같으면 길찾기 필요없음
+		if (StartIndex == EndIndex)
+			return false;
+
+		// 도착점의 Neighbor가 없으면 못감
+		if ( 0 == m_Graph[EndIndex].m_Neighbors.Count)
+			return false;
+
+		// 도착점의 인접노드들 탐색해서 위에 유닛이없으면 이동 가능
+		foreach (var Neighbor in m_Graph[EndIndex].m_Neighbors)
+		{
+			if (null == Neighbor.Tile.HYJ_Basic_onUnit)
+			{
+				if( true == FindingPath(StartIndex, EndIndex))
+				{
+					MakePath(StartIndex, EndIndex);
+
+					return true;
+				}
+			}
+		}
+
+		return false;
+		
+	}
+
+	bool FindingPath(int startIdx, int endIdx)
+	{
+
 
 		return false;
 	}
 
-}
+	void MakePath(int startIdx, int goalIdx)
+	{
+		
+	}
 
+}
 
 [System.Serializable]
 public class NODE
 {
 	int m_MyIndex = 0;
 	int m_ParentIndex = 0;
-
+	HYJ_Battle_Tile m_tile = null;
+	public HYJ_Battle_Tile Tile { get { return m_tile; } set { m_tile = value; } }
 	float m_Fcost = 0.0f;
 	public float Fcost { get { return m_Fcost; } set { m_Fcost = value; } }
 	float m_Gcost = 0.0f;
+	public float Gcost { get { return m_Gcost; } set { m_Gcost = value; } }
 
 	Vector3 m_Position = new Vector3(0.0f, 0.0f, 0.0f);
 
-	public NODE(int Idx, Vector3 Pos)
+	public NODE(int Idx, Vector3 Pos, HYJ_Battle_Tile tile)
 	{
 		m_MyIndex = Idx;
 		m_Position = Pos;
+		m_tile = tile;
 		m_Neighbors = new List<NODE>();
 	}
 
