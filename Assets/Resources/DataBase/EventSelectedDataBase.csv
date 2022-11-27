@@ -1,0 +1,4 @@
+ID,NAME,NAME_KOR,SCRIPT_KOR,SCENE,CONDITION,VALUE_0,VALUE_1,SELECT,SELECT_PAY,SELECT_PAY_COUNT,SELECT_EFFECT,SELECT_EFFECT_COUNT
+Int,String,String,String,String,String,Int,Int,String,String,Int,String,String
+ID,이름,한글 이름,한글 스크립트,등장위치,등장조건,최소수치,최대수치,선택지,선택지 자원,지불할 수치,효과,효과 수치
+14,Hypothermia,저체온증,다음 스팟으로 가는 길에 굉장히 한기가 느껴지는 동굴을 발견했습니다.,EVENT,NONE,-1,-1,통과해서 간다,HP,10,ICE_PERCENTAGE,20
