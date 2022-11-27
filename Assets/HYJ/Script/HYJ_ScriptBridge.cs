@@ -100,6 +100,8 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
 
     //
     EVENT___ACTIVE__ACTIVE_ON,
+    EVENT___DATA__GET_SELECTED_EVENT,
+    EVENT___DATA__GET_ALL_SELECTED_EVENT,
 
     //
     SHOP___ACTIVE__ACTIVE_ON,
