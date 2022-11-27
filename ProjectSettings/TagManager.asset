@@ -9,7 +9,11 @@ TagManager:
   - StoreCamera
   - Field
   - Queue
-  - Hit Area
+  - HitArea
+  - AttackArea
+  - FieldTile
+  - StandTile
+  - TrashTile
   layers:
   - Default
   - TransparentFX

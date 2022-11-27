@@ -40,8 +40,8 @@ public partial class Character : MonoBehaviour
 	}
 	public GameObject LSY_Character_Get_OnTile() { return on_Tile; }
 
-	// Start is called before the first frame update
-	void Start()
+    // Start is called before the first frame update
+    void Start()
     {
 		ori_Pos = new Vector3();
 		// HP 테스트 용 초기화

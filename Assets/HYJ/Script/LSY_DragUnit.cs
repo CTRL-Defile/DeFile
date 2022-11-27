@@ -121,14 +121,14 @@ public class LSY_DragUnit : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             isHeld = false;
-            int Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
-            int cnt_Unit_onTile = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__COUNT_ALLY_ONTILE);
+            //int Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
+            //int cnt_Unit_onTile = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__COUNT_ALLY_ONTILE);
 
             if (selectedObject != null)
             {
-                if (cnt_Unit_onTile < Player_Lv + 1)
+                //if (cnt_Unit_onTile < Player_Lv + 1)
                 {
-                    Debug.Log(Player_Lv + " Lv... and " + cnt_Unit_onTile + " of Ally is on tile.");
+                    //Debug.Log(Player_Lv + " Lv... and " + cnt_Unit_onTile + " of Ally is on tile.");
                     Vector3 screenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
                     Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
                     selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y, worldPosition.z);
@@ -139,9 +139,9 @@ public class LSY_DragUnit : MonoBehaviour
                     // selectedObject.transform.position = curBlkPos;
                     // Debug.Log("curblk -> " + curBlkPos);
                 }
-                else
+                //else // 필드에 배치된 유닛의 수가 꽉 찼을 때.
                 {
-                    selectedObject.transform.position = oriPos;
+                    //selectedObject.transform.position = oriPos;
                 }
 
                 selectedObject = null;

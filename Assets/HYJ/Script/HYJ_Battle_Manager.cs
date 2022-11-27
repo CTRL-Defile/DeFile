@@ -127,12 +127,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     {
 						Basic_phase = BATTLE_PHASE.PHASE_COMBAT;
                         Time_Acc = 0.0;
-					}					
+					}
 
 					//Debug.Log("this.gameObject : " + this.gameObject);    // Battle
 					//Debug.Log("전투 준비..");
 					if (!UL_isInitialized)
 						LSY_UnitList_Init();
+                    if (!Enemy_isInitialized)
+                        LSY_Enemy_Init();
 					
                 }
                 break;
@@ -212,7 +214,7 @@ partial class HYJ_Battle_Manager
     [Header("FIELD")]
 
     [SerializeField] Transform Battle_Map;
-    [SerializeField] Transform Field_parent, Stand_parent, Trash_parent;
+    [SerializeField] Transform Field_parent, Stand_parent, Trash_parent, Enemy_parent;
     [SerializeField] Transform Unit_parent;
     [SerializeField] int Field_x;
     [SerializeField] int Field_y;
@@ -440,7 +442,7 @@ partial class HYJ_Battle_Manager
 
 
 		//
-		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES,                    Get_Field_tiles         );
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES,                    Get_Field_tiles                );
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X,                HYJ_Field_GetFieldX             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y,                HYJ_Field_GetFieldY             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE,                   HYJ_Field_GetTile               );
@@ -449,7 +451,11 @@ partial class HYJ_Battle_Manager
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILES_COUNT,            HYJ_Field_GetTilesCount         );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILES_GET_COUNT,        HYJ_Field_GetTilesGetCount      );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_XY_FROM_CHARACTER,      HYJ_Field_GetXYFromCharacter    );
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__COUNT_ALLY_ONTILE,      LSY_Count_Ally_OnTile    );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__COUNT_ALLY_ONTILE,          LSY_Count_Ally_OnTile           );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD,              Stand_to_Field                  );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIELD_TO_STAND,              Field_to_Stand                  );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___COUNT__FIELD_UNIT,                 Count_Field_Unit                );
+
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, TileInGraph);
 
 	}
@@ -493,7 +499,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     int Player_Lv = 1, cur_EXP = 0;
 
     bool UL_isInitialized = false;
-
     public void LSY_UnitList_Init()
     {
         // Level
@@ -516,6 +521,41 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Debug.Log("Init end..");
 
         UL_isInitialized = true;
+    }
+
+    bool Enemy_isInitialized = false;
+    public void LSY_Enemy_Init()
+    {
+        int enemy_num = 3;
+        List<Vector3> pos = new List<Vector3>();
+        for (int i = 0; i < enemy_num; i++)
+        {
+            pos.Add(new Vector3(i*2, 0, 0));
+        }
+
+
+        for (int i=0; i<enemy_num; i++)
+        {
+            System.Random r = new System.Random();
+            int n = r.Next(6);
+
+            GameObject unitData
+             = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                 HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
+                 n);
+
+            GameObject tmp = Instantiate(unitData, pos[i], Quaternion.identity, Enemy_parent);
+            tmp.transform.Rotate(0f, 180f, 0f);
+            tmp.tag = "Enemy";
+
+            Debug.Log(pos);
+        }
+
+        
+        
+        
+        
+        Enemy_isInitialized = true;
     }
 
     public void LSY_Shop_Reload(int n)
@@ -641,15 +681,17 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Debug.Log("Btn " + Btn_name + " is clicked");
 
         int unit_idx = UnitIdx_list[int.Parse(Btn_name)];
-
+        //GameObject std_tmp = null;
 
         int cnt = Stand_tiles.LSY_Count_GetUnitOnTile(), pos_num = -1;
         if (cnt < Stand_x)
         {
-            for (int idx = 0; idx < cnt; idx++)
+            for (int idx = 0; idx < Stand_x; idx++)
             {
                 if (Stand_tiles.HYJ_Data_GetUnitOnTile(idx) == null)
                 {
+                    //Debug.Log(Stand_tiles.HYJ_Data_Tile(idx).gameObject);
+                    //std_tmp = Stand_tiles.HYJ_Data_Tile(idx).gameObject;
                     pos_num = idx;
                     break;
                 }
@@ -667,8 +709,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     unit_idx);
             if (unitData)
             {
-                Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
-                // 돈 빠지는거 고쳐야함
+                GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+                // Stand_Unit에 추가, 생성될 때 On_Tile..... 
+                Stand_Unit.Add(tmp);
+                //unitData.GetComponent<Character>().LSY_Character_Set_OnTile(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
+                //Debug.Log(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
+
                 int cost = unitData.GetComponent<Character>().Stat_Cost;
                 HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost);
                 Debug.Log("Unit " + unit_idx + " is spawned");
@@ -705,7 +751,45 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     }
     #endregion
 
+}
+
+#region UNIT
+partial class HYJ_Battle_Manager
+{
+    [Header("==================================================")]
+    [Header("UNIT")]
+
+    [SerializeField]
+    List<GameObject> Stand_Unit;
+    [SerializeField]
+    List<GameObject> Field_Unit;
+    [SerializeField]
+    List<GameObject> Enemy_Unit;
+
+    /// Method
+    object Stand_to_Field(params object[] _args)
+    {
+        GameObject obj = (GameObject)_args[0];
+
+        Stand_Unit.Remove(obj);
+        Field_Unit.Add(obj);
+        return null;
+    }
+    object Field_to_Stand(params object[] _args)
+    {
+        GameObject obj = (GameObject)_args[0];
+
+        Stand_Unit.Add(obj);
+        Field_Unit.Remove(obj);
+        return null;
+    }
+    object Count_Field_Unit(params object[] _args)
+    {
+        int num = Field_Unit.Count;
+        return num;
+    }
+
 
 
 }
-
+#endregion
