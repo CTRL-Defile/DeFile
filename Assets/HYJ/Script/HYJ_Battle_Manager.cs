@@ -141,6 +141,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 			// 전투 상태
 			case BATTLE_PHASE.PHASE_COMBAT:
                 {
+                    Find_Target();
 					Phase_timer = 30.0;
 					Time_Acc += Time.deltaTime;
 					Battle_Timer();
@@ -548,13 +549,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             tmp.transform.Rotate(0f, 180f, 0f);
             tmp.tag = "Enemy";
 
+            Enemy_Unit.Add(tmp);
+
             Debug.Log(pos);
         }
 
-        
-        
-        
-        
         Enemy_isInitialized = true;
     }
 
@@ -789,6 +788,32 @@ partial class HYJ_Battle_Manager
         return num;
     }
 
+    public void Find_Target()
+    {
+        int Num_Ally = Field_Unit.Count;
+        int Num_Enemy = Enemy_Unit.Count;
+
+        for (int i = 0; i < Num_Ally; i++)
+        {
+            //Debug.Log("i"+i);
+            Vector3 A_pos = Field_Unit[i].gameObject.transform.position;
+            float min = 10000f;
+            for (int k = 0; k < Num_Enemy; k++)
+            {
+                Debug.Log("k" + k);
+                Vector3 E_pos = Enemy_Unit[k].gameObject.transform.position;
+                if (Vector3.Magnitude(A_pos - E_pos) < min)
+                {
+                    Debug.Log("min" + min);
+                    min = Vector3.Magnitude(A_pos - E_pos);
+                    Field_Unit[i].GetComponent<Character>().Target = Enemy_Unit[k];
+                    Enemy_Unit[k].GetComponent<Character>().Target = Field_Unit[i];
+                }
+            }
+
+        }
+
+    }
 
 
 }
