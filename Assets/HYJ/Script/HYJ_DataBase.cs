@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -14,7 +14,7 @@ public partial class HYJ_DataBase : MonoBehaviour
 
     //////////  Method          //////////
     // Default_phase
-    // ÃÊ±âÈ­°¡ ³¡³µ´ÂÁö È®ÀÎ
+    // ì´ˆê¸°í™”ê°€ ëë‚¬ëŠ”ì§€ í™•ì¸
     object HYJ_Basic_GetIsInitialize(params object[] _args)
     {
         bool res = false;
@@ -40,8 +40,8 @@ public partial class HYJ_DataBase : MonoBehaviour
     }
 
     // Update is called once per frame
-    // ¾îµå·¹¼­ºí µµÀÔÀ» À§ÇØ ÃÊ±âÈ­¸¦ ¾÷µ¥ÀÌÆ®¿¡¼­ ÁøÇà
-    // ¾îµå·¹¼­ºíÀº È£ÃâÇÑ ÇÁ·¹ÀÓ¿¡¼­ ¹Ù·Î ºÒ·¯ÁöÁö ¾Ê±â¿¡ Áö¼ÓÀûÀ¸·Î Ã¼Å©°¡ ÇÊ¿äÇÔ.
+    // ì–´ë“œë ˆì„œë¸” ë„ì…ì„ ìœ„í•´ ì´ˆê¸°í™”ë¥¼ ì—…ë°ì´íŠ¸ì—ì„œ ì§„í–‰
+    // ì–´ë“œë ˆì„œë¸”ì€ í˜¸ì¶œí•œ í”„ë ˆì„ì—ì„œ ë°”ë¡œ ë¶ˆëŸ¬ì§€ì§€ ì•Šê¸°ì— ì§€ì†ì ìœ¼ë¡œ ì²´í¬ê°€ í•„ìš”í•¨.
     void Update()
     {
         switch(Basic_phase)
@@ -109,7 +109,7 @@ partial class HYJ_DataBase
         Relic_phase = 0;
     }
 
-    // ÃÊ±âÈ­
+    // ì´ˆê¸°í™”
     bool HYJ_Relic_Init()
     {
         switch (Relic_phase)

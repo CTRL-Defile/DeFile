@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.6757515, g: 0.77903193, b: 0.7893794, a: 1}
+  m_IndirectSpecularColor: {r: 0.67433286, g: 0.77783763, b: 0.78887975, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -167,7 +167,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: Timer text
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -201,8 +201,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -261,7 +261,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 386}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &138968558
@@ -1396,6 +1396,37 @@ Transform:
   m_Father: {fileID: 996249695882959117}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1360601001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1360601002}
+  m_Layer: 0
+  m_Name: Enemy_parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1360601002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1360601001}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3941506315944325647}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1372798141
 GameObject:
   m_ObjectHideFlags: 0
@@ -1637,7 +1668,7 @@ GameObject:
   - component: {fileID: 1567668873}
   - component: {fileID: 1567668872}
   m_Layer: 5
-  m_Name: Ally_OnTile
+  m_Name: Battle_Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1863,11 +1894,11 @@ GameObject:
   - component: {fileID: 1717128173}
   m_Layer: 0
   m_Name: Tile_trash
-  m_TagString: Untagged
+  m_TagString: TrashTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1717128167
 Transform:
   m_ObjectHideFlags: 0
@@ -2256,7 +2287,7 @@ GameObject:
   - component: {fileID: 1957287744}
   - component: {fileID: 1957287743}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Ally_OnTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18148,7 +18179,7 @@ GameObject:
   - component: {fileID: 1355835113666453282}
   m_Layer: 0
   m_Name: Tile0
-  m_TagString: Untagged
+  m_TagString: FieldTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -18272,6 +18303,7 @@ MonoBehaviour:
   Field_parent: {fileID: 1253844958}
   Stand_parent: {fileID: 1455200543}
   Trash_parent: {fileID: 138968559}
+  Enemy_parent: {fileID: 1360601002}
   Unit_parent: {fileID: 1384634931}
   Field_x: 7
   Field_y: 8
@@ -18294,6 +18326,9 @@ MonoBehaviour:
   UnitName_list: []
   UnitID_list: 
   UnitIdx_list: 
+  Stand_Unit: []
+  Field_Unit: []
+  Enemy_Unit: []
 --- !u!1 &1355835114608549636
 GameObject:
   m_ObjectHideFlags: 0
@@ -23104,6 +23139,7 @@ Transform:
   - {fileID: 1253844958}
   - {fileID: 1455200543}
   - {fileID: 138968559}
+  - {fileID: 1360601002}
   m_Father: {fileID: 1355835114080984786}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -31243,7 +31279,7 @@ GameObject:
   - component: {fileID: 9041255472449401463}
   m_Layer: 0
   m_Name: Tile_stand
-  m_TagString: Untagged
+  m_TagString: StandTile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

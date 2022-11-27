@@ -11904,35 +11904,34 @@ MonoBehaviour:
   Status_saveData:
     Data_ID: 
     Data_items: []
-  Status_name: 
-  Status_race: 
-  Status_job: 
-  Status_affiliation: 
-  Status_mix: 0
-  Status_startMp: 0
-  Status_atkRange: 0
-  Status_atkPhysics: 0
-  Status_atkSpell: 0
-  Status_defence: 0
-  Status_spellRegistance: 0
-  Data_spell0: 0
-  Data_spell1: 0
+  Status_name: Orc
+  Status_race: WILD
+  Status_job: WARRIOR
+  Status_affiliation: WILD
+  Status_mix: 1
+  Status_startMp: 5
+  Status_atkRange: 1
+  Status_atkPhysics: 2
+  Status_atkSpell: 3
+  Status_defence: 5
+  Status_spellRegistance: 6
+  Data_spell0: 9
+  Data_spell1: 10
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
-  m_CurPosIndex: 0
   m_PathFinder: {fileID: 0}
   Status_HP: 0
-  Status_MaxHP: 0
+  Status_MaxHP: 10
   Status_MP: 0
-  Status_MaxMP: 0
+  Status_MaxMP: 10
   Status_atk: 0
   Status_magic: 0
-  Status_atkSpeed: 0
-  Status_critValue: 0
-  Status_critPer: 0
-  Status_Cost: 0
+  Status_atkSpeed: 4
+  Status_critValue: 8
+  Status_critPer: 7
+  Status_Cost: 2
   m_animator: {fileID: 0}
   state: 0
 --- !u!54 &6265973995579251703
@@ -12224,35 +12223,34 @@ MonoBehaviour:
   Status_saveData:
     Data_ID: 
     Data_items: []
-  Status_name: 
-  Status_race: 
-  Status_job: 
-  Status_affiliation: 
-  Status_mix: 0
-  Status_startMp: 0
-  Status_atkRange: 0
-  Status_atkPhysics: 0
-  Status_atkSpell: 0
-  Status_defence: 0
-  Status_spellRegistance: 0
-  Data_spell0: 0
-  Data_spell1: 0
+  Status_name: Bear
+  Status_race: WILD
+  Status_job: WARRIOR
+  Status_affiliation: WILD
+  Status_mix: 1
+  Status_startMp: 5
+  Status_atkRange: 1
+  Status_atkPhysics: 2
+  Status_atkSpell: 3
+  Status_defence: 5
+  Status_spellRegistance: 6
+  Data_spell0: 9
+  Data_spell1: 10
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
-  m_CurPosIndex: 0
   m_PathFinder: {fileID: 0}
   Status_HP: 0
-  Status_MaxHP: 0
+  Status_MaxHP: 10
   Status_MP: 0
-  Status_MaxMP: 0
+  Status_MaxMP: 10
   Status_atk: 0
   Status_magic: 0
-  Status_atkSpeed: 0
-  Status_critValue: 0
-  Status_critPer: 0
-  Status_Cost: 0
+  Status_atkSpeed: 4
+  Status_critValue: 8
+  Status_critPer: 7
+  Status_Cost: 1
   m_animator: {fileID: 0}
   state: 0
 --- !u!54 &5404344496744357894
@@ -13706,35 +13704,34 @@ MonoBehaviour:
   Status_saveData:
     Data_ID: 
     Data_items: []
-  Status_name: 
-  Status_race: 
-  Status_job: 
-  Status_affiliation: 
-  Status_mix: 0
-  Status_startMp: 0
-  Status_atkRange: 0
-  Status_atkPhysics: 0
-  Status_atkSpell: 0
-  Status_defence: 0
-  Status_spellRegistance: 0
-  Data_spell0: 0
-  Data_spell1: 0
+  Status_name: Two
+  Status_race: WILD
+  Status_job: WARRIOR
+  Status_affiliation: WILD
+  Status_mix: 1
+  Status_startMp: 5
+  Status_atkRange: 1
+  Status_atkPhysics: 2
+  Status_atkSpell: 3
+  Status_defence: 5
+  Status_spellRegistance: 6
+  Data_spell0: 9
+  Data_spell1: 10
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
-  m_CurPosIndex: 0
   m_PathFinder: {fileID: 0}
   Status_HP: 0
-  Status_MaxHP: 0
+  Status_MaxHP: 10
   Status_MP: 0
-  Status_MaxMP: 0
+  Status_MaxMP: 10
   Status_atk: 0
   Status_magic: 0
-  Status_atkSpeed: 0
-  Status_critValue: 0
-  Status_critPer: 0
-  Status_Cost: 0
+  Status_atkSpeed: 4
+  Status_critValue: 8
+  Status_critPer: 7
+  Status_Cost: 3
   m_animator: {fileID: 0}
   state: 0
 --- !u!54 &2943985061178368812
@@ -19663,35 +19660,34 @@ MonoBehaviour:
   Status_saveData:
     Data_ID: 
     Data_items: []
-  Status_name: 
-  Status_race: 
-  Status_job: 
-  Status_affiliation: 
-  Status_mix: 0
-  Status_startMp: 0
-  Status_atkRange: 0
-  Status_atkPhysics: 0
-  Status_atkSpell: 0
-  Status_defence: 0
-  Status_spellRegistance: 0
-  Data_spell0: 0
-  Data_spell1: 0
+  Status_name: Three
+  Status_race: WILD
+  Status_job: WARRIOR
+  Status_affiliation: WILD
+  Status_mix: 1
+  Status_startMp: 5
+  Status_atkRange: 1
+  Status_atkPhysics: 2
+  Status_atkSpell: 3
+  Status_defence: 5
+  Status_spellRegistance: 6
+  Data_spell0: 9
+  Data_spell1: 10
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
-  m_CurPosIndex: 0
   m_PathFinder: {fileID: 0}
   Status_HP: 0
-  Status_MaxHP: 0
+  Status_MaxHP: 10
   Status_MP: 0
-  Status_MaxMP: 0
+  Status_MaxMP: 10
   Status_atk: 0
   Status_magic: 0
-  Status_atkSpeed: 0
-  Status_critValue: 0
-  Status_critPer: 0
-  Status_Cost: 0
+  Status_atkSpeed: 4
+  Status_critValue: 8
+  Status_critPer: 7
+  Status_Cost: 4
   m_animator: {fileID: 0}
   state: 0
 --- !u!54 &798294340493377292
@@ -37606,35 +37602,34 @@ MonoBehaviour:
   Status_saveData:
     Data_ID: 
     Data_items: []
-  Status_name: 
-  Status_race: 
-  Status_job: 
-  Status_affiliation: 
-  Status_mix: 0
-  Status_startMp: 0
-  Status_atkRange: 0
-  Status_atkPhysics: 0
-  Status_atkSpell: 0
-  Status_defence: 0
-  Status_spellRegistance: 0
-  Data_spell0: 0
-  Data_spell1: 0
+  Status_name: Five
+  Status_race: WILD
+  Status_job: WARRIOR
+  Status_affiliation: WILD
+  Status_mix: 1
+  Status_startMp: 5
+  Status_atkRange: 1
+  Status_atkPhysics: 2
+  Status_atkSpell: 3
+  Status_defence: 5
+  Status_spellRegistance: 6
+  Data_spell0: 9
+  Data_spell1: 10
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
-  m_CurPosIndex: 0
   m_PathFinder: {fileID: 0}
   Status_HP: 0
-  Status_MaxHP: 0
+  Status_MaxHP: 10
   Status_MP: 0
-  Status_MaxMP: 0
+  Status_MaxMP: 10
   Status_atk: 0
   Status_magic: 0
-  Status_atkSpeed: 0
-  Status_critValue: 0
-  Status_critPer: 0
-  Status_Cost: 0
+  Status_atkSpeed: 4
+  Status_critValue: 8
+  Status_critPer: 7
+  Status_Cost: 6
   m_animator: {fileID: 0}
   state: 0
 --- !u!54 &5309106266096442787
@@ -49017,35 +49012,34 @@ MonoBehaviour:
   Status_saveData:
     Data_ID: 
     Data_items: []
-  Status_name: 
-  Status_race: 
-  Status_job: 
-  Status_affiliation: 
-  Status_mix: 0
-  Status_startMp: 0
-  Status_atkRange: 0
-  Status_atkPhysics: 0
-  Status_atkSpell: 0
-  Status_defence: 0
-  Status_spellRegistance: 0
-  Data_spell0: 0
-  Data_spell1: 0
+  Status_name: Four
+  Status_race: WILD
+  Status_job: WARRIOR
+  Status_affiliation: WILD
+  Status_mix: 1
+  Status_startMp: 5
+  Status_atkRange: 1
+  Status_atkPhysics: 2
+  Status_atkSpell: 3
+  Status_defence: 5
+  Status_spellRegistance: 6
+  Data_spell0: 9
+  Data_spell1: 10
   ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
-  m_CurPosIndex: 0
   m_PathFinder: {fileID: 0}
   Status_HP: 0
-  Status_MaxHP: 0
+  Status_MaxHP: 10
   Status_MP: 0
-  Status_MaxMP: 0
+  Status_MaxMP: 10
   Status_atk: 0
   Status_magic: 0
-  Status_atkSpeed: 0
-  Status_critValue: 0
-  Status_critPer: 0
-  Status_Cost: 0
+  Status_atkSpeed: 4
+  Status_critValue: 8
+  Status_critPer: 7
+  Status_Cost: 5
   m_animator: {fileID: 0}
   state: 0
 --- !u!54 &7994896041913717734
