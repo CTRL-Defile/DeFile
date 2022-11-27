@@ -1,17 +1,17 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEditorInternal;
 using UnityEngine;
 
 public partial class HYJ_Battle_Tile : MonoBehaviour
 {
-    //(11/4) »óÀ± ¼öÁ¤ »çÇ× : ±âÁ¸ Å¸ÀÏÀº HYJ_Character ½ºÅ©¸³Æ®¸¦ °®°í ÀÖ´Â À¯´ÖÀ» °¨ÁöÇÏ¿´À¸³ª, ¸ğµç À¯´ÖÀÌ µ¿ÀÏÇÑ ½ºÅ©¸³Æ®¸¦ °®°í ÀÖÁö ¾ÊÀ½.
-    // »ó¼Ó¹ŞÀº ½ºÅ©¸³Æ®¸¦ °¨ÁöÇÏ´Â ¹æ¹ıÀº ¾Ë ¼ö ¾øÀ¸¹Ç·Î ÅÂ±×·Î ±¸ºĞÇÏ´øÁö, ÀÏ´ÜÀº GameObjectÇüÀ¸·Î ¼öÁ¤.
+    //(11/4) ìƒìœ¤ ìˆ˜ì • ì‚¬í•­ : ê¸°ì¡´ íƒ€ì¼ì€ HYJ_Character ìŠ¤í¬ë¦½íŠ¸ë¥¼ ê°–ê³  ìˆëŠ” ìœ ë‹›ì„ ê°ì§€í•˜ì˜€ìœ¼ë‚˜, ëª¨ë“  ìœ ë‹›ì´ ë™ì¼í•œ ìŠ¤í¬ë¦½íŠ¸ë¥¼ ê°–ê³  ìˆì§€ ì•ŠìŒ.
+    // ìƒì†ë°›ì€ ìŠ¤í¬ë¦½íŠ¸ë¥¼ ê°ì§€í•˜ëŠ” ë°©ë²•ì€ ì•Œ ìˆ˜ ì—†ìœ¼ë¯€ë¡œ íƒœê·¸ë¡œ êµ¬ë¶„í•˜ë˜ì§€, ì¼ë‹¨ì€ GameObjectí˜•ìœ¼ë¡œ ìˆ˜ì •.
 
-    //[SerializeField] HYJ_Character Basic_onUnit;    // Å¸ÀÏÀ§¿¡ ¿Ã¶ó°¡ ÀÖ´Â À¯´Ö
-    [SerializeField] GameObject Basic_onUnit;   // GameObject ÇüÀ¸·Î ±³Ã¼ -> À¯´ÖÀÌ ¸ğµÎ HYJ_Character ½ºÅ©¸³Æ®¸¦ °®°í ÀÖÁö ¾ÊÀ½.
-    [SerializeField] public List<int> Tile_Idx; // TileÀÇ Çà/¿­ Á¤º¸
-    [SerializeField] public Vector3 Tile_Position;  // TileÀÇ localPosition ÀúÀå
+    //[SerializeField] HYJ_Character Basic_onUnit;    // íƒ€ì¼ìœ„ì— ì˜¬ë¼ê°€ ìˆëŠ” ìœ ë‹›
+    [SerializeField] GameObject Basic_onUnit;   // GameObject í˜•ìœ¼ë¡œ êµì²´ -> ìœ ë‹›ì´ ëª¨ë‘ HYJ_Character ìŠ¤í¬ë¦½íŠ¸ë¥¼ ê°–ê³  ìˆì§€ ì•ŠìŒ.
+    [SerializeField] public List<int> Tile_Idx; // Tileì˜ í–‰/ì—´ ì •ë³´
+    [SerializeField] public Vector3 Tile_Position;  // Tileì˜ localPosition ì €ì¥
     public enum Tile_Available
     {
         Available,
@@ -51,7 +51,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
     {
         if(tile_Available == Tile_Available.Non_Available)
         {
-            // µÑ ¼ö ÀÖ´Â Å¸ÀÏÀÎ°¡, ¾Æ´Ñ°¡,, ¾Æ´Ï¶ó¸é ¿ø·¡ ÀÚ¸®·Î µ¹¾Æ°¡¶ó.
+            // ë‘˜ ìˆ˜ ìˆëŠ” íƒ€ì¼ì¸ê°€, ì•„ë‹Œê°€,, ì•„ë‹ˆë¼ë©´ ì›ë˜ ìë¦¬ë¡œ ëŒì•„ê°€ë¼.
             other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
         }
         else
@@ -61,24 +61,24 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                 case "Ally":
                     if (Basic_onUnit == null && detectedUnit.Count == 0/* && other.CompareTag("Ally")*/)
                     {
-                        Debug.Log("isEmpty");
+                        Debug.Log(this.name + " isEmpty");
                         detectedUnit.Add(other.gameObject);
                         Basic_onUnit = other.gameObject;
 
-                        other.gameObject.transform.position = this.gameObject.transform.position; // ->  ¿©±â¼­ pos º¯°æ ½ÃÅ°´Â°Å ¹èÁ¦ÇØ¾ßÇÏ³ª..?
+                        other.gameObject.transform.position = this.gameObject.transform.position; // ->  ì—¬ê¸°ì„œ pos ë³€ê²½ ì‹œí‚¤ëŠ”ê±° ë°°ì œí•´ì•¼í•˜ë‚˜..?
                         other.gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(this.gameObject);
 
                         //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_POSITION, Tile_Idx);
                         //Debug.Log(other.gameObject.transform.position + "<-unit // tile->" + this.gameObject.transform.position);
                     }
-                    else // ÀÌ¹Ì ´Ù¸¥ À¯´ÖÀÌ ÀÖÀ» °æ¿ì == °ãÄ¡´Â °æ¿ì
+                    else // ì´ë¯¸ ë‹¤ë¥¸ ìœ ë‹›ì´ ìˆì„ ê²½ìš° == ê²¹ì¹˜ëŠ” ê²½ìš°
                     {
-                        Debug.Log("isOverlap " + other.name + " ");
+                        Debug.Log(this.name + " isOverlap " + other.name + " ");
                         /*
                         //other.gameObject.transform.position = other.gameObject.GetComponent<Character>().LSY_Unit_Position;
-                        // LSY : overlap ½Ã, ±âÁ¸ ÀÚ¸®·Î Ã£¾Æ°¡°Ô ÇØ³ù´Âµ¥ tileÀÇ ºÎ¸ğÀÇ ºÎ¸ğÀÇ ºÎ¸ğ°¡ Battle ÄÄÆ÷³ÍÆ®¶ó ÄÚµå°¡ Á» ´õ·¯¿ò. ÀÏ´Ü ÀÛµ¿Àº ÇÏ´Ï±î.
-                        // oriPos¸¦ Characterµµ ÇÁ·ÎÆÛÆ¼·Î °®°í ÀÖ°í, DragDrop.csµµ °®°í ÀÖ´Âµ¥ Character¸¦ È°¿ëÇÏ·Á¸é °»½ÅÀ» °è¼Ó ÇØÁà¾ßÇÏ´Âµ¥ ±ÍÂú°í.. (¾÷µ¥ÀÌÆ®¿¡ µÑ °¡Ä¡´Â ¾ø¾î º¸ÀÌ°í, À§Ä¡ ¹Ù²Ü ¶§ ÇÁ·ÎÆÛÆ¼·Î set ÇÏ¸é µÇ±ä ÇÒµí?)
-                        // DragDropÀ¸·Î Áö±İÃ³·³ ÇÏ¸é ÆíÇÏ±ä ÇÑµ¥, ÀÌ°Ç DragDropÀÌ ÇöÀç °Çµå¸®´Â °´Ã¼°¡ ÇÏ³ª¿©¾ßÇÔ. ¸¸¾à º¹¼öÀÇ À¯´ÖÀ» ÀÌµ¿½ÃÅ°¸é ÀÛµ¿¾ÈÇÔ. ¹°·Ğ ¸¶¿ì½º´Â ÇÏ³ª´Ï±î ¹®Á¦´Â ¾øÀ»°Å°°Àºµ¥ ÀÏ´Ü ¹®Á¦°¡ ÀÖÀ» ¼ø ÀÖÀ½.
+                        // LSY : overlap ì‹œ, ê¸°ì¡´ ìë¦¬ë¡œ ì°¾ì•„ê°€ê²Œ í•´ë†¨ëŠ”ë° tileì˜ ë¶€ëª¨ì˜ ë¶€ëª¨ì˜ ë¶€ëª¨ê°€ Battle ì»´í¬ë„ŒíŠ¸ë¼ ì½”ë“œê°€ ì¢€ ë”ëŸ¬ì›€. ì¼ë‹¨ ì‘ë™ì€ í•˜ë‹ˆê¹Œ.
+                        // oriPosë¥¼ Characterë„ í”„ë¡œí¼í‹°ë¡œ ê°–ê³  ìˆê³ , DragDrop.csë„ ê°–ê³  ìˆëŠ”ë° Characterë¥¼ í™œìš©í•˜ë ¤ë©´ ê°±ì‹ ì„ ê³„ì† í•´ì¤˜ì•¼í•˜ëŠ”ë° ê·€ì°®ê³ .. (ì—…ë°ì´íŠ¸ì— ë‘˜ ê°€ì¹˜ëŠ” ì—†ì–´ ë³´ì´ê³ , ìœ„ì¹˜ ë°”ê¿€ ë•Œ í”„ë¡œí¼í‹°ë¡œ set í•˜ë©´ ë˜ê¸´ í• ë“¯?)
+                        // DragDropìœ¼ë¡œ ì§€ê¸ˆì²˜ëŸ¼ í•˜ë©´ í¸í•˜ê¸´ í•œë°, ì´ê±´ DragDropì´ í˜„ì¬ ê±´ë“œë¦¬ëŠ” ê°ì²´ê°€ í•˜ë‚˜ì—¬ì•¼í•¨. ë§Œì•½ ë³µìˆ˜ì˜ ìœ ë‹›ì„ ì´ë™ì‹œí‚¤ë©´ ì‘ë™ì•ˆí•¨. ë¬¼ë¡  ë§ˆìš°ìŠ¤ëŠ” í•˜ë‚˜ë‹ˆê¹Œ ë¬¸ì œëŠ” ì—†ì„ê±°ê°™ì€ë° ì¼ë‹¨ ë¬¸ì œê°€ ìˆì„ ìˆœ ìˆìŒ.
                         */
                         other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
                         other.gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(null);

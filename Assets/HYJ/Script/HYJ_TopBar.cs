@@ -16,6 +16,7 @@ public partial class HYJ_TopBar : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        HYJ_Level_Start();
         HYJ_Gold_Start();
         HYJ_Power_Start();
         HYJ_Buff_Start();
@@ -36,6 +37,33 @@ partial class HYJ_TopBar
 
     //////////  Default Method  //////////
 }
+
+# region LEVEL
+partial class HYJ_TopBar
+{
+    [SerializeField] Text Level_text;
+
+    //////////  Getter & Setter //////////
+
+    //////////  Method          //////////
+    object HYJ_Level_ViewLevel(params object[] _args)
+    {
+        int level = (int)_args[0];
+
+        //
+        Level_text.text = "Lv. " + level;
+
+        //
+        return true;
+    }
+
+    //////////  Default Method  //////////
+    void HYJ_Level_Start()
+    {
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___LEVEL__VIEW_LEVEL, HYJ_Level_ViewLevel);
+    }
+}
+# endregion
 
 #region GOLD
 

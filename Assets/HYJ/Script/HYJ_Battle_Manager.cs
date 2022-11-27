@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -106,17 +106,17 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 }
                 break;
 
-                // ÀüÅõ ÁØºñ
+                // ì „íˆ¬ ì¤€ë¹„
             case 2:
                 {
-                    //Debug.Log("ÀüÅõ ÁØºñ..");
+                    //Debug.Log("ì „íˆ¬ ì¤€ë¹„..");
                     if(!UL_isInitialized)
                         LSY_UnitList_Init();
 
                 }
                 break;
 
-                // ÀüÅõ »óÅÂ
+                // ì „íˆ¬ ìƒíƒœ
             case 3:
                 {
 
@@ -126,7 +126,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     }
 }
 
-// ÀüÀå¿¡ ´ëÇÑ Á¤º¸(ÁÖ·Î Å¸ÀÏ)
+// ì „ì¥ì— ëŒ€í•œ ì •ë³´(ì£¼ë¡œ íƒ€ì¼)
 #region FIELD
 
 [Serializable]
@@ -139,9 +139,10 @@ public class HYJ_Battle_Manager_Line
 
     public int HYJ_Data_GetCount() { return tiles.Count; }
 
-    // HYJ_CharacterÇü¿¡¼­ -> GameObject ÇüÀ¸·Î ¼öÁ¤. Battle_TilesÀÇ ÁÖ¼® ÂüÁ¶.
+    // HYJ_Characterí˜•ì—ì„œ -> GameObject í˜•ìœ¼ë¡œ ìˆ˜ì •. Battle_Tilesì˜ ì£¼ì„ ì°¸ì¡°.
     public GameObject HYJ_Data_GetUnitOnTile(int _count) { return tiles[_count].HYJ_Basic_onUnit; }
 
+    // Battle_Manager_Lineì˜ êµ¬ì„± ìš”ì†Œ(tiles)ì— onUnit ê°œìˆ˜ ë°˜í™˜
     public int LSY_Count_GetUnitOnTile()
     {
         int cnt = 0;
@@ -193,9 +194,20 @@ partial class HYJ_Battle_Manager
 
     object LSY_Field_GetStandX(params object[] _args)
     {
-        // Bridge¿¡ Ãß°¡,,
+        // Bridgeì— ì¶”ê°€,,
         return Stand_x;
     }
+    object LSY_Count_Ally_OnTile(params object[] _args)
+    {
+        int cnt = 0;
+        for (int i=(Field_y+1)/2; i<Field_y; i++)   // Available í•œ Lines
+        {
+            cnt += Field_tiles[i].LSY_Count_GetUnitOnTile();
+        }
+
+        return cnt;
+    }
+
 
     // Field_tiles
     object HYJ_Field_GetTile(params object[] _args)
@@ -206,7 +218,7 @@ partial class HYJ_Battle_Manager
         return Field_tiles[y].HYJ_Data_Tile(x);
     }
 
-    // Ä³¸¯ÅÍ°¡ À§Ä¡ÇÑ Å¸ÀÏÀ» Ã£¾Æ³½´Ù.
+    // ìºë¦­í„°ê°€ ìœ„ì¹˜í•œ íƒ€ì¼ì„ ì°¾ì•„ë‚¸ë‹¤.
     object HYJ_Field_GetTileFromCharacter(params object[] _args)
     {
         Vector2 pos = (Vector2)HYJ_Field_GetXYFromCharacter(_args);
@@ -214,7 +226,7 @@ partial class HYJ_Battle_Manager
         return Field_tiles[(int)pos.y].HYJ_Data_Tile((int)pos.x);
     }
 
-    // Ä³¸¯ÅÍ¸¦ Ã£¾Æ³½´Ù. xy°ªÀ¸·Î
+    // ìºë¦­í„°ë¥¼ ì°¾ì•„ë‚¸ë‹¤. xyê°’ìœ¼ë¡œ
     object HYJ_Field_GetCharacter(params object[] _args)
     {
         //HYJ_Character res = null;
@@ -227,13 +239,13 @@ partial class HYJ_Battle_Manager
         return res;
     }
 
-    // yÀÇ °ªÀ» º¸³»ÁØ´Ù.
+    // yì˜ ê°’ì„ ë³´ë‚´ì¤€ë‹¤.
     object HYJ_Field_GetTilesCount(params object[] _args)
     {
         return Field_tiles.Count;
     }
 
-    // ÇØ´ç yÀÇ x°ªÀ» º¸³»ÁØ´Ù.
+    // í•´ë‹¹ yì˜ xê°’ì„ ë³´ë‚´ì¤€ë‹¤.
     object HYJ_Field_GetTilesGetCount(params object[] _args)
     {
         int count = (int)_args[0];
@@ -241,7 +253,7 @@ partial class HYJ_Battle_Manager
         return Field_tiles[count].HYJ_Data_GetCount();
     }
 
-    // ÇØ´ç Ä³¸¯ÅÍÀÇ À§Ä¡¸¦ Ã£´Â´Ù.
+    // í•´ë‹¹ ìºë¦­í„°ì˜ ìœ„ì¹˜ë¥¼ ì°¾ëŠ”ë‹¤.
     object HYJ_Field_GetXYFromCharacter(params object[] _args)
     {
         HYJ_Character target = (HYJ_Character)_args[0];
@@ -275,7 +287,7 @@ partial class HYJ_Battle_Manager
     //////////  Default Method  //////////
     void HYJ_Field_Init()
     {
-        // Battle_Map, Field_parent, Stand_parent º¯¼ö¸íÀÓ
+        // Battle_Map, Field_parent, Stand_parent ë³€ìˆ˜ëª…ì„
         GameObject element = Battle_Map.GetChild(0).gameObject;
         GameObject std_element = Battle_Map.GetChild(2).gameObject;
         GameObject trash_element = Battle_Map.GetChild(3).gameObject;
@@ -285,7 +297,7 @@ partial class HYJ_Battle_Manager
 
         //
         Field_tiles = new List<HYJ_Battle_Manager_Line>();
-        for (int forY = 0; forY < Field_y; forY++)  // Y °¡ "Çà"
+        for (int forY = 0; forY < Field_y; forY++)  // Y ê°€ "í–‰"
         {
             HYJ_Battle_Manager_Line line = new HYJ_Battle_Manager_Line();
 
@@ -296,7 +308,7 @@ partial class HYJ_Battle_Manager
                 countX += 1;
             }
 
-            for (int forX = 0; forX < countX; forX++)  // X °¡ "¿­"
+            for (int forX = 0; forX < countX; forX++)  // X ê°€ "ì—´"
             {
                 GameObject obj = Instantiate(element, Field_parent);
                 obj.SetActive(true);
@@ -325,15 +337,15 @@ partial class HYJ_Battle_Manager
             Field_tiles.Add(line);
         }
 
-        // ´ë±â¿­ 9ÁÂ¼® +@, ·¹º§¾÷ÀÌ³ª À¯¹°·Î ´Ã¾î³¯ ¼ö ÀÖÀ½.
+        // ëŒ€ê¸°ì—´ 9ì¢Œì„ +@, ë ˆë²¨ì—…ì´ë‚˜ ìœ ë¬¼ë¡œ ëŠ˜ì–´ë‚  ìˆ˜ ìˆìŒ.
         Stand_tiles = new HYJ_Battle_Manager_Line();
 
-        // left´Â Stand_tilesÀÇ ÁÂÃø ½ÃÀÛÁ¡ À§Ä¡
+        // leftëŠ” Stand_tilesì˜ ì¢Œì¸¡ ì‹œì‘ì  ìœ„ì¹˜
         int num = Field_tiles[Field_y - 1].HYJ_Data_GetCount();
         Vector3 left;
         if (num % 2 == 0)
         {
-            // ¸¶Áö¸· ÇàÀÇ tile ¼ö°¡ Â¦¼öÀÏ ¶§,
+            // ë§ˆì§€ë§‰ í–‰ì˜ tile ìˆ˜ê°€ ì§ìˆ˜ì¼ ë•Œ,
             left = Field_tiles[Field_y - 1].HYJ_Data_Tile(num / 2 - 1).gameObject.transform.localPosition;
             Vector3 right = Field_tiles[Field_y - 1].HYJ_Data_Tile(num / 2).gameObject.transform.localPosition;
             Vector3 mid = new Vector3((left.x + right.x) / 2.0f, (left.y + right.y) / 2.0f, (left.z + right.z) / 2.0f);
@@ -342,18 +354,18 @@ partial class HYJ_Battle_Manager
         }
         else
         {
-            // ¸¶Áö¸· ÇàÀÇ tile ¼ö°¡ È¦¼öÀÏ ¶§,
+            // ë§ˆì§€ë§‰ í–‰ì˜ tile ìˆ˜ê°€ í™€ìˆ˜ì¼ ë•Œ,
             left = Field_tiles[Field_y - 1].HYJ_Data_Tile(num / 2).gameObject.transform.localPosition;
             left = new Vector3(left.x - 4 * 2.0f, 0, left.z);
         }
 
-        // Stand_x °³ ¸¸Å­ Stand_tile »ı¼º
+        // Stand_x ê°œ ë§Œí¼ Stand_tile ìƒì„±
         for (int forX = 0; forX < Stand_x; forX++)
         {
             GameObject std_obj = Instantiate(std_element, Stand_parent);
             std_obj.SetActive(true);
             std_obj.name = "stand_" + forX;
-            std_obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(0);    // Stand´Â ÇàÀÌ ÇÑ °³ »ÓÀÌ´Ù.
+            std_obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(0);    // StandëŠ” í–‰ì´ í•œ ê°œ ë¿ì´ë‹¤.
             std_obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(forX);
             std_obj.GetComponent<HYJ_Battle_Tile>().tile_Available = HYJ_Battle_Tile.Tile_Available.Available;
             std_obj.transform.localPosition = new Vector3(left.x + (pos1.x * 2.0f * forX), 0, pos0.z + (pos1.z * Field_y));
@@ -384,17 +396,22 @@ partial class HYJ_Battle_Manager
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILES_COUNT,            HYJ_Field_GetTilesCount         );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILES_GET_COUNT,        HYJ_Field_GetTilesGetCount      );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_XY_FROM_CHARACTER,      HYJ_Field_GetXYFromCharacter    );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__COUNT_ALLY_ONTILE,      LSY_Count_Ally_OnTile    );
+
     }
 }
 
 #endregion
 
-
+// ì „íˆ¬ ìƒì  ë° UI ì •ë³´
+# region SHOP & UI
 public partial class HYJ_Battle_Manager : MonoBehaviour
 {
     [Header("==================================================")]
     [Header("SHOP")]
 
+    [SerializeField]
+    GameObject Battle_UI;
     [SerializeField]
     GameObject Shop_UI;
     [SerializeField]
@@ -449,6 +466,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public void LSY_Shop_Reload(int n)
     {
+        for(int i=0; i<Shop_Pannel_cnt; i++)
+        {
+            Shop_UnitList[i].SetActive(true);
+        }
+
         Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
 
         if (n != 1) HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 2);
@@ -466,13 +488,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public void LSY_Calc_Proba()
     {
-        // List<int> Prob_list = new List<int>();   // SerializeField·Î ÀÎ½ºÆåÅÍ¿¡¼­ º¸ÀÌ°Ô²û À§¿¡¼­ ¼±¾ğ
+        // List<int> Prob_list = new List<int>();   // SerializeFieldë¡œ ì¸ìŠ¤í™í„°ì—ì„œ ë³´ì´ê²Œë” ìœ„ì—ì„œ ì„ ì–¸
         List<int> Cost_list = new List<int>();
 
-        // È®·ü Àû¿ë ¹æ¹ı¿¡ µû¶ó, ÀüÃ¼ ÆÄÀÌ°¡ 100ÀÌ ¾Æ´Ò ¼ö ÀÖÀ½. ±×¶§ ¼öÁ¤ÇÏ¸é µÊ.
+        // í™•ë¥  ì ìš© ë°©ë²•ì— ë”°ë¼, ì „ì²´ íŒŒì´ê°€ 100ì´ ì•„ë‹ ìˆ˜ ìˆìŒ. ê·¸ë•Œ ìˆ˜ì •í•˜ë©´ ë¨.
         int tot_num = 100;
 
-        // ·¹º§¿¡ µû¸¥ À¯´Ö µîÀå È®·ü
+        // ë ˆë²¨ì— ë”°ë¥¸ ìœ ë‹› ë“±ì¥ í™•ë¥ 
         switch (Player_Lv)
         {
             case 1:
@@ -502,18 +524,18 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
 
 
-        // µîÀå È®·ü ´©Àû ¸®½ºÆ®
+        // ë“±ì¥ í™•ë¥  ëˆ„ì  ë¦¬ìŠ¤íŠ¸
         for(int i = 0; i < Prob_list.Count - 1; i++)
         {
             if (Prob_list[i] != tot_num)
                 Prob_list[i + 1] += Prob_list[i];
         }
 
-        // À¯´Ö ÄÚ½ºÆ® ¹è¿­ ÃÊ±âÈ­
-        for(int i = 0; i < Shop_Pannel_cnt; i++)  // UnitIdx_list.Count => ¾ÆÁ÷ size°¡ 0ÀÓ
+        // ìœ ë‹› ì½”ìŠ¤íŠ¸ ë°°ì—´ ì´ˆê¸°í™”
+        for(int i = 0; i < Shop_Pannel_cnt; i++)  // UnitIdx_list.Count => ì•„ì§ sizeê°€ 0ì„
         {
             System.Random r = new System.Random();
-            int n = r.Next(1, tot_num + 1); // min ÀÌ»ó, max ¹Ì¸¸
+            int n = r.Next(1, tot_num + 1); // min ì´ìƒ, max ë¯¸ë§Œ
             for(int j = 0; j < Prob_list.Count; j++)
             {
                 if (n <= Prob_list[j])
@@ -525,11 +547,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
         //Debug.Log(Cost_list.Count + "<-costlist cnt");
 
-        // ÄÚ½ºÆ® º° À¯´Ö ·£´ı ¼³Á¤
+        // ì½”ìŠ¤íŠ¸ ë³„ ìœ ë‹› ëœë¤ ì„¤ì •
         for(int i = 0; i < Shop_Pannel_cnt; i++)
         {
             List<int> Unit_Candi = new List<int>();
-            for(int j = 0; j < Unit_DB.Count; j++)  // header 3ÁÙ Á¦¿Ü.. ÇÒ ÇÊ¿ä°¡ ¾ø³× ¾îÂ÷ÇÇ 3ÁÙ¶¼°í ÀĞ¾î¿Ô±¸³ª.
+            for(int j = 0; j < Unit_DB.Count; j++)  // header 3ì¤„ ì œì™¸.. í•  í•„ìš”ê°€ ì—†ë„¤ ì–´ì°¨í”¼ 3ì¤„ë–¼ê³  ì½ì–´ì™”êµ¬ë‚˜.
             {
                 //Debug.Log((int)Unit_DB[j]["COST"] + "<-db.cost || costlist->" + Cost_list[i]);
                 if ((int)Unit_DB[j]["COST"] == Cost_list[i])
@@ -592,17 +614,22 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             if (unitData)
             {
                 Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
-                // µ· ºüÁö´Â°Å °íÃÄ¾ßÇÔ
-                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 1);
+                // ëˆ ë¹ ì§€ëŠ”ê±° ê³ ì³ì•¼í•¨
+                int cost = unitData.GetComponent<Character>().Stat_Cost;
+                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost);
                 Debug.Log("Unit " + unit_idx + " is spawned");
+
+                // êµ¬ë§¤í•œ ì¹´ë“œ ì‚¬ë¼ì§€ê²Œ.
+                Btn_idx.SetActive(false);
             }
-            else
+            else // ìœ ë‹›ì´ ì—†ì„ ê²½ìš°!
                 Debug.Log("Unit " + unit_idx + " is NULL");
         }
+        else
+            Debug.Log("Stand Tile is full..");
 
 
     }
-
     public void LSY_Buy_EXP()
     {
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 4);
@@ -622,7 +649,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         EXP_Img.fillAmount = cur_EXP / Max_EXP;
 
     }
-
+    #endregion
 
 
 

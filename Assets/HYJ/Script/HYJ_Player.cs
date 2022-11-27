@@ -63,6 +63,7 @@ partial class HYJ_Player
     object LSY_Basic_IncLevel(params object[] _args)
     {
         Basic_level += (int)_args[0];
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___LEVEL__VIEW_LEVEL, Basic_level);
         return null;
     }
     object LSY_Basic_getLevel(params object[] _args)

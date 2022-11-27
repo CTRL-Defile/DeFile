@@ -11928,6 +11928,7 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
+  Status_Cost: 0
   animator: {fileID: 0}
   state: 0
 --- !u!54 &6265973995579251703
@@ -12226,6 +12227,7 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
+  Status_Cost: 0
   animator: {fileID: 0}
   state: 0
 --- !u!54 &5404344496744357894
@@ -13686,6 +13688,7 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
+  Status_Cost: 0
   animator: {fileID: 0}
   state: 0
 --- !u!54 &2943985061178368812
@@ -19621,6 +19624,7 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
+  Status_Cost: 0
   animator: {fileID: 0}
   state: 0
 --- !u!54 &798294340493377292
@@ -37542,6 +37546,7 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
+  Status_Cost: 0
   animator: {fileID: 0}
   state: 0
 --- !u!54 &5309106266096442787
@@ -48931,6 +48936,7 @@ MonoBehaviour:
   Status_atkSpeed: 0
   Status_critValue: 0
   Status_critPer: 0
+  Status_Cost: 0
   animator: {fileID: 0}
   state: 0
 --- !u!54 &7994896041913717734
