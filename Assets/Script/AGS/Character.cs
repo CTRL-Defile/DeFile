@@ -48,6 +48,7 @@ public partial class Character : MonoBehaviour
 		Status_MaxHP = 100.0f;
 		Status_HP = 50.0f;
         Status_atk = 10.0f;
+		Status_moveSpeed = 1.0f;
 		//CurPosIndex = 0;
 	}
 
@@ -60,8 +61,10 @@ public partial class Character : MonoBehaviour
 	// Update is called once per frame
 	void Update()
     {
-		if(Input.GetKeyDown(KeyCode.P))
+		if (Input.GetKeyDown(KeyCode.P))
 			m_PathFinder.StartPathFinding(gameObject, Target);
+		m_PathFinder.StartPathFinding(gameObject, Target);
+		m_PathFinder.MoveOnPath(gameObject, Target);
 
 		if (IsDead)
 		{
@@ -119,6 +122,7 @@ public partial class Character
 	[Space(10f)]
 
 	[SerializeField] protected int Status_atkSpeed;   // 공속
+	[SerializeField] protected float Status_moveSpeed;   // 공속
 	[Space(10f)]
 
 	[SerializeField] protected int Status_critValue;  // 치명타 수치
@@ -133,6 +137,7 @@ public partial class Character
     public float Stat_HP { get { return Status_HP; } set { Status_HP = value; } }
 	public float Stat_MaxHP { get { return Status_MaxHP; } set { Status_MaxHP = value; } }
 	public float Stat_Attack { get { return Status_atk; } set { Status_atk = value; } }
+	public float Stat_MoveSpeed { get { return Status_moveSpeed; } set { Status_moveSpeed = value; } }
 	public int Stat_Cost { get { return Status_Cost; } set { Status_Cost = value; } }
 
 	//-------------------------------------------------------------------
