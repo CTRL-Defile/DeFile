@@ -7,7 +7,7 @@ public class LSY_Trash_Tile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Trash Tile Enter.." + other);
+        //Debug.Log("Trash Tile Enter.." + other);
         switch (other.tag)
         {
             case "Ally":

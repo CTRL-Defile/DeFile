@@ -7,7 +7,7 @@ public class LSY_Trash_Parent : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Trash_Parent Enter.." + other);
+        //Debug.Log("Trash_Parent Enter.." + other);
 
         switch (other.tag)
         {
@@ -21,7 +21,7 @@ public class LSY_Trash_Parent : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("Trash_Parent Exit.." + other);
+        //Debug.Log("Trash_Parent Exit.." + other);
 
         switch (other.tag)
         {
