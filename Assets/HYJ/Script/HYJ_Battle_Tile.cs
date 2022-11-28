@@ -51,8 +51,10 @@ partial class HYJ_Battle_Tile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-
-        switch(other.tag)
+		 BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
+        if (phase == BATTLE_PHASE.PHASE_COMBAT)
+            return;
+		switch (other.tag)
         {
             case "Ally":
                 Ally_Enter(other);
@@ -66,7 +68,10 @@ partial class HYJ_Battle_Tile : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        switch (other.tag)
+		BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
+		if (phase == BATTLE_PHASE.PHASE_COMBAT)
+			return;
+		switch (other.tag)
         {
             case "Ally":
                 Ally_Exit(other);

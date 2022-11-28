@@ -13,6 +13,7 @@ using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using UnityEngine.Diagnostics;
 using TMPro.Examples;
+using System.Linq;
 
 enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT };
 
@@ -141,7 +142,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 			// 전투 상태
 			case BATTLE_PHASE.PHASE_COMBAT:
                 {
-                    Find_Target();
+					Find_Target();
+
 					Phase_timer = 30.0;
 					Time_Acc += Time.deltaTime;
 					Battle_Timer();
@@ -499,7 +501,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     float Max_EXP;
     int Player_Lv = 1, cur_EXP = 0;
 
-    bool UL_isInitialized = false;
+    bool UL_isInitialized = false;    
     public void LSY_UnitList_Init()
     {
         // Level
@@ -527,7 +529,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     bool Enemy_isInitialized = false;
     public void LSY_Enemy_Init()
     {
-        int enemy_num = 3;
+        int enemy_num = 2;
         List<Vector3> pos = new List<Vector3>();
         for (int i = 0; i < enemy_num; i++)
         {
@@ -708,9 +710,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     unit_idx);
             if (unitData)
             {
-                GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
-                // Stand_Unit에 추가, 생성될 때 On_Tile..... 
-                Stand_Unit.Add(tmp);
+				GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+				// Stand_Unit에 추가, 생성될 때 On_Tile..... 
+				tmp.transform.localPosition = pos;
+				Stand_Unit.Add(tmp);
                 //unitData.GetComponent<Character>().LSY_Character_Set_OnTile(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
                 //Debug.Log(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
 
@@ -792,6 +795,10 @@ partial class HYJ_Battle_Manager
     {
         int Num_Ally = Field_Unit.Count;
         int Num_Enemy = Enemy_Unit.Count;
+        int MinIdx = 0;
+
+        //if (Num_Ally <= 0 || Num_Enemy <= 0)
+        //    return;
 
         for (int i = 0; i < Num_Ally; i++)
         {
@@ -806,14 +813,34 @@ partial class HYJ_Battle_Manager
                 {
                     Debug.Log("min" + min);
                     min = Vector3.Magnitude(A_pos - E_pos);
-                    Field_Unit[i].GetComponent<Character>().Target = Enemy_Unit[k];
-                    Enemy_Unit[k].GetComponent<Character>().Target = Field_Unit[i];
+                    MinIdx = k;
                 }
             }
+			Field_Unit[i].GetComponent<Character>().Target = Enemy_Unit[MinIdx];
+			//Enemy_Unit[MinIdx].GetComponent<Character>().Target = Field_Unit[i];
+		}
 
-        }
+		for (int i = 0; i < Num_Enemy; i++)
+		{
+			//Debug.Log("i"+i);
+			Vector3 A_pos = Enemy_Unit[i].gameObject.transform.position;
+			float min = 10000f;
+			for (int k = 0; k < Num_Ally; k++)
+			{
+				Debug.Log("k" + k);
+				Vector3 E_pos = Field_Unit[k].gameObject.transform.position;
+				if (Vector3.Magnitude(A_pos - E_pos) < min)
+				{
+					Debug.Log("min" + min);
+					min = Vector3.Magnitude(A_pos - E_pos);
+					MinIdx = k;
+				}
+			}
+			Enemy_Unit[i].GetComponent<Character>().Target = Field_Unit[MinIdx];
 
-    }
+		}
+
+	}
 
 
 }
