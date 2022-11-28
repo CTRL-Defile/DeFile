@@ -514,6 +514,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         EXP_Img.fillAmount = cur_EXP / Max_EXP;
         Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
 
+        Show_Ally_OnTile();
+
         // Text, Image, Cost
         Unit_DB = (List<Dictionary<string, object>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
 
@@ -749,6 +751,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
             cur_EXP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP);
             Max_EXP = Max_EXP_List[Player_Lv];
+            Show_Ally_OnTile();
         }
 
         EXP_Img.fillAmount = cur_EXP / Max_EXP;
@@ -778,6 +781,9 @@ partial class HYJ_Battle_Manager
 
         Stand_Unit.Remove(obj);
         Field_Unit.Add(obj);
+
+        Show_Ally_OnTile();
+
         return null;
     }
     object Field_to_Stand(params object[] _args)
@@ -786,6 +792,9 @@ partial class HYJ_Battle_Manager
 
         Stand_Unit.Add(obj);
         Field_Unit.Remove(obj);
+
+        Show_Ally_OnTile();
+
         return null;
     }
     object Unit_to_Trash(params object[] _args)
@@ -793,20 +802,18 @@ partial class HYJ_Battle_Manager
         string tile_tag = _args[0].ToString();
         GameObject obj = (GameObject)_args[1];
 
-        //Debug.Log("Unit_to_Trash .. " + tile_tag + ", " + obj);
-
         switch (tile_tag)
         {
             case "StandTile":
-                //Debug.Log("Stand to Trash " + obj);
                 Stand_Unit.Remove(obj);
                 break;
 
             case "FieldTile":
-                //Debug.Log("Field to Trash " + obj);
                 Field_Unit.Remove(obj);
                 break;
         }
+
+        Show_Ally_OnTile();
 
         return null;
     }
@@ -814,6 +821,12 @@ partial class HYJ_Battle_Manager
     {
         int num = Field_Unit.Count;
         return num;
+    }
+    public void Show_Ally_OnTile()
+    {
+        int lv = Player_Lv + 1;
+        string cnt_restrict = "(" + Field_Unit.Count + "/" + lv + ")";
+        Battle_UI.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = cnt_restrict;
     }
 
     public void Find_Target()
