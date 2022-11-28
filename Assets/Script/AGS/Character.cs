@@ -48,7 +48,7 @@ public partial class Character : MonoBehaviour
 		Status_MaxHP = 100.0f;
 		Status_HP = 50.0f;
         Status_atk = 10.0f;
-		Status_moveSpeed = 1.0f;
+		Status_moveSpeed = 5.0f;
 		//CurPosIndex = 0;
 	}
 
@@ -63,7 +63,15 @@ public partial class Character : MonoBehaviour
     {
 		if (Input.GetKeyDown(KeyCode.P))
 			m_PathFinder.StartPathFinding(gameObject, Target);
-		m_PathFinder.StartPathFinding(gameObject, Target);
+		//m_PathFinder.StartPathFinding(gameObject, Target);
+
+		// 무브를 멈추고 이동중이던 타일까지 이동을하고 // OnUnit같은거 싹 셋팅해주고 
+		// 다시 StartPathFinding 한번 해주고 (무한으로 돌지않게 bool변수하나 해주고)
+		// 기존에는 Path가 프레임마다 Clear되고 다시잡히니까 계속 첫위치가( 이동중이던 타일 처리를 안해줘서) 고정이다. 그래서 그자리에 얼음 해버림
+		// 이말은 == 한칸 이동하고 StartPathFinding 해주고 다시 불변수 풀어주고 이런식으로 Target으로하던 목표지점으로 하던 목적지까지 이거 반복.
+		// 이동중이거나 도착했을 시의 목적지 타일 체크해서 도착하게 만들어 도착했을때만 불변수 풀어서 Start 돌고
+		// 도착안했으면 불변수 false라서 start안돌고.
+		// Start가 안돌았다? 기존 Path유지 == Move호출시 지금 이동중이던 목적지 타일로 이동 한다는거임
 		m_PathFinder.MoveOnPath(gameObject, Target);
 
 		if (IsDead)

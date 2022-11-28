@@ -66,7 +66,7 @@ public class PathFinder : MonoBehaviour
 			return;
 
 		if (0 == m_Path.Count)
-			return;
+			return;		
 
 		int Index = m_Path.First();
 		HYJ_Battle_Tile Tile = (HYJ_Battle_Tile)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, Index);
@@ -77,20 +77,23 @@ public class PathFinder : MonoBehaviour
 		float Length = Dir.magnitude;
 		Dir.Normalize();
 
-		Obj.GetComponent<Character>().LSY_Character_Set_OnTile(Tile.gameObject);
-		Tile.HYJ_Basic_onUnit = Obj;
-
 		if (Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime >= Length)
 		{
-			float Dist = Vector3.Magnitude(Obj.transform.position - Target.transform.position);
-			if(Dist <= 2.5f)
-			{
-				return;
-			}
-		
+			Obj.GetComponent<Character>().LSY_Character_Set_OnTile(Tile.gameObject);
+			Tile.HYJ_Basic_onUnit = Obj;
+			Target = Obj.GetComponent<Character>().Target;
+			//StartPathFinding(Obj, Target);
+			//float Dist = Vector3.Magnitude(Obj.transform.position - Target.transform.position);
+			//if(Dist <= 2.5f)
+			//{
+			//	return;
+			//}
+
+			// 여기서 도착했다는 불변수 하나 프로퍼티 만들어줘야함.
+
 			m_Path.RemoveFirst();
 			return;
-		}
+		}				
 
 		//ObjPos.x = Mathf.Lerp(ObjPos.x, TilePos.x, Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime);
 		//ObjPos.z = Mathf.Lerp(ObjPos.z, TilePos.z, Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime);
