@@ -455,6 +455,9 @@ partial class HYJ_Battle_Manager
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__COUNT_ALLY_ONTILE,          LSY_Count_Ally_OnTile           );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD,              Stand_to_Field                  );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIELD_TO_STAND,              Field_to_Stand                  );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH,                     Unit_to_Trash                   );
+
+        
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___COUNT__FIELD_UNIT,                 Count_Field_Unit                );
 
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, TileInGraph);
@@ -782,6 +785,28 @@ partial class HYJ_Battle_Manager
         Field_Unit.Remove(obj);
         return null;
     }
+    object Unit_to_Trash(params object[] _args)
+    {
+        string tile_tag = _args[0].ToString();
+        GameObject obj = (GameObject)_args[1];
+
+        //Debug.Log("Unit_to_Trash .. " + tile_tag + ", " + obj);
+
+        switch (tile_tag)
+        {
+            case "StandTile":
+                //Debug.Log("Stand to Trash " + obj);
+                Stand_Unit.Remove(obj);
+                break;
+
+            case "FieldTile":
+                //Debug.Log("Field to Trash " + obj);
+                Field_Unit.Remove(obj);
+                break;
+        }
+
+        return null;
+    }
     object Count_Field_Unit(params object[] _args)
     {
         int num = Field_Unit.Count;
@@ -800,11 +825,11 @@ partial class HYJ_Battle_Manager
             float min = 10000f;
             for (int k = 0; k < Num_Enemy; k++)
             {
-                Debug.Log("k" + k);
+                //Debug.Log("k" + k);
                 Vector3 E_pos = Enemy_Unit[k].gameObject.transform.position;
                 if (Vector3.Magnitude(A_pos - E_pos) < min)
                 {
-                    Debug.Log("min" + min);
+                    //Debug.Log("min" + min);
                     min = Vector3.Magnitude(A_pos - E_pos);
                     Field_Unit[i].GetComponent<Character>().Target = Enemy_Unit[k];
                     Enemy_Unit[k].GetComponent<Character>().Target = Field_Unit[i];

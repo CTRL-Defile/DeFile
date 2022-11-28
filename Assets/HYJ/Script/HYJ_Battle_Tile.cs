@@ -9,7 +9,6 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     //(11/4) 상윤 수정 사항 : 기존 타일은 HYJ_Character 스크립트를 갖고 있는 유닛을 감지하였으나, 모든 유닛이 동일한 스크립트를 갖고 있지 않음.
     // 상속받은 스크립트를 감지하는 방법은 알 수 없으므로 태그로 구분하던지, 일단은 GameObject형으로 수정.
 
-    //[SerializeField] HYJ_Character Basic_onUnit;    // 타일위에 올라가 있는 유닛
     [SerializeField] GameObject Basic_onUnit = null;   // GameObject 형으로 교체 -> 유닛이 모두 HYJ_Character 스크립트를 갖고 있지 않음.
     [SerializeField] public List<int> Tile_Idx; // Tile의 행/열 정보
     [SerializeField] public Vector3 Tile_Position;  // Tile의 localPosition 저장
@@ -102,12 +101,10 @@ partial class HYJ_Battle_Tile : MonoBehaviour
     {
         if (tile_Available == Tile_Available.Non_Available)
         {
-            // 둘 수 있는 타일인가, 아닌가,, 아니라면 원래 자리로 돌아가라.
             other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
         }
-        else /* if (other.tag == "Ally") */
+        else
         {
-            //Debug.Log(other.GetComponent<Character>().LSY_Character_Get_OnTile() + " " + this);
             string Tag_UnitTile;
             if (other.GetComponent<Character>().LSY_Character_Get_OnTile() == null)
                 Tag_UnitTile = "StandTile";
@@ -116,7 +113,6 @@ partial class HYJ_Battle_Tile : MonoBehaviour
 
             int Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
             int cnt_FieldUnit = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___COUNT__FIELD_UNIT);
-            // 충돌되는 타일이 StandTile일 경우,
             // stand->stand, stand->field, field->field, field->stand & [trash]
             switch (Tag_UnitTile)
             {
@@ -135,8 +131,14 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                         }
                         else
                         {
+                            // 필드 위 유닛 개수 초과 시,
                             other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
                         }
+                    }
+                    else if (this.tag == "TrashTile")
+                    {
+                        //Debug.Log("Trash Collider Enter");
+                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, Tag_UnitTile, other.gameObject);
                     }
                     break;
 
@@ -151,7 +153,19 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                         Move_Unit(other);
                         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIELD_TO_STAND, other.gameObject);
                     }
+                    else if (this.tag == "TrashTile")
+                    {
+                        //Debug.Log("Trash Collider Enter");
+                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, Tag_UnitTile, other.gameObject);
+                    }
                     break;
+
+                //case "TrashTile":
+                //    {
+                //        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, this.tag, other.gameObject);
+                //    }
+                //    break;
+
             }
         }
     }
@@ -160,7 +174,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
         switch (other.tag)
         {
             case "Ally":
-                detectedUnit.Remove(other.gameObject);
+                //detectedUnit.Remove(other.gameObject);
                 //other.gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(null);
                 //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_ORIGINAL);
                 Basic_onUnit = null;
@@ -172,7 +186,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
     }
     private void Enemy_Enter(Collider other)
     {
-        detectedUnit.Add(other.gameObject);
+        //detectedUnit.Add(other.gameObject);
         Basic_onUnit = other.gameObject;
         other.gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(this.gameObject);
     }
@@ -181,7 +195,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
         switch (other.tag)
         {
             case "Enemy":
-                detectedUnit.Remove(other.gameObject);
+                //detectedUnit.Remove(other.gameObject);
                 Basic_onUnit = null;
                 break;
 
@@ -196,10 +210,10 @@ partial class HYJ_Battle_Tile : MonoBehaviour
         switch (other.tag)
         {
             case "Ally":
-                if (Basic_onUnit == null && detectedUnit.Count == 0)
+                if (Basic_onUnit == null /* && detectedUnit.Count == 0 */ )
                 {
                     Debug.Log(this.name + " isEmpty");
-                    detectedUnit.Add(other.gameObject);
+                    //detectedUnit.Add(other.gameObject);
                     Basic_onUnit = other.gameObject;
 
                     other.gameObject.transform.position = this.gameObject.transform.position; // ->  여기서 pos 변경 시키는거 배제해야하나..?
