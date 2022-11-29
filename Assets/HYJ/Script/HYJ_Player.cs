@@ -8,6 +8,8 @@ using JetBrains.Annotations;
 
 public partial class HYJ_Player : MonoBehaviour
 {
+    [SerializeField] int Basic_phase;
+
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
@@ -16,16 +18,21 @@ public partial class HYJ_Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        HYJ_Basic_Init();
-        HYJ_Unit_Init();
-        HYJ_Item_Init();
-        HYJ_Buff_Init();
+        Basic_phase = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        switch (Basic_phase)
+        {
+            case -1: break;
+            //
+            case 0: { if (HYJ_Basic_Init()) { Basic_phase = 1; } } break;
+            case 1: { if (HYJ_Unit_Init()) { Basic_phase = 2; } } break;
+            case 2: { if (HYJ_Item_Init()) { Basic_phase = 3; } } break;
+            case 3: { if (HYJ_Buff_Init()) { Basic_phase = -1; } } break;
+        }
     }
 }
 
@@ -130,7 +137,7 @@ partial class HYJ_Player
     }
 
     //////////  Default Method  //////////
-    void HYJ_Basic_Init()
+    bool HYJ_Basic_Init()
     {
         Basic_gold = 10000;
         Basic_level = 1;
@@ -150,7 +157,7 @@ partial class HYJ_Player
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__LEVEL_INCREASE, LSY_Basic_IncLevel);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL, LSY_Basic_getLevel);
 
-
+        return true;
     }
 }
 
@@ -159,38 +166,139 @@ partial class HYJ_Player
 // 유닛(기물)에 대한 정보
 #region Unit
 
-partial class HYJ_Player
+[Serializable]
+public class HYJ_Player_Unit_Datas
 {
-    [SerializeField] List<CTRL_Character_Data> Unit_waitUnits;
-    [SerializeField] List<CTRL_Character_Data> Unit_fieldUnits;
+    [SerializeField] List<CTRL_Character_Data> unitDatas;
 
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
-    // 유닛을 추가한다.
-    void HYJ_Unit_Insert(string _name)
+    public CTRL_Character_Data HYJ_Data_GetUnitData(int _count) { return unitDatas[_count]; }
+    public void HYJ_Data_SetUnitData(CTRL_Character_Data _data, int _count) { unitDatas[_count] = _data; }
+
+    public int HYJ_Data_GetUnitDataCount() { return unitDatas.Count; }
+
+    //////////  Default Method  //////////
+    public HYJ_Player_Unit_Datas(int _count)
     {
-        Unit_waitUnits.Add(new CTRL_Character_Data(_name));
+        unitDatas = new List<CTRL_Character_Data>();
+
+        for (int i = 0; i < _count; i++)
+        {
+            unitDatas.Add(null);
+        }
+    }
+}
+
+partial class HYJ_Player
+{
+    [SerializeField] HYJ_Player_Unit_Datas Unit_waitUnits;
+    [SerializeField] List<HYJ_Player_Unit_Datas> Unit_fieldUnits;
+
+    //////////  Getter & Setter //////////
+    object HYJ_Unit_GetWaitUnitData(params object[] _args)
+    {
+        int _count = (int)_args[0];
+
+        return Unit_waitUnits.HYJ_Data_GetUnitData(_count);
+    }
+
+    //////////  Method          //////////
+    // 유닛을 추가한다.
+    // -1이면 빈 칸에 추가한다.
+    bool HYJ_Unit_Insert(string _name, int _count)
+    {
+        bool res = false;
+
+        CTRL_Character_Data element = new CTRL_Character_Data(_name);
+        if (_count == -1)
+        {
+            for (int i = 0; i < Unit_waitUnits.HYJ_Data_GetUnitDataCount(); i++)
+            {
+                if ((Unit_waitUnits.HYJ_Data_GetUnitData(i) == null) || (Unit_waitUnits.HYJ_Data_GetUnitData(i).Data_ID == null))
+                {
+                    Unit_waitUnits.HYJ_Data_SetUnitData(element, i);
+                    res = true;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            Unit_waitUnits.HYJ_Data_SetUnitData(element, _count);
+            res = true;
+        }
+
+        return res;
     }
 
     // 유닛을 추가한다.(외부에서 접근할 때 사용)
     object HYJ_Unit_Insert_Bridge(params object[] _args)
     {
         string name = (string)_args[0];
-        HYJ_Unit_Insert(name);
+        int count = (int)_args[1];
+
+        //
+        HYJ_Unit_Insert(name, count);
 
         //
         return true;
     }
 
     //////////  Default Method  //////////
-    void HYJ_Unit_Init()
+    bool HYJ_Unit_Init()
     {
-        Unit_waitUnits = new List<CTRL_Character_Data>();
-        Unit_fieldUnits = new List<CTRL_Character_Data>();
+        bool res = true;
+
+        object count0 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X);
+        if (count0 != null)
+        {
+            if(Unit_waitUnits.HYJ_Data_GetUnitDataCount() == 0)
+                Unit_waitUnits = new HYJ_Player_Unit_Datas((int)count0);
+        }
+        else
+        {
+            res = false;
+        }
 
         //
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__INSERT, HYJ_Unit_Insert_Bridge);
+        if(res)
+        {
+                    count0 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X);
+            object  count1 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y);
+            if (Unit_fieldUnits == null)
+                Unit_fieldUnits = new List<HYJ_Player_Unit_Datas>();
+
+            if((count0 != null) && (count1 != null))
+            {
+                for (int forY = 0; forY < (int)count1; forY++)
+                {
+                    Unit_fieldUnits.Add(null);
+                }
+
+                for (int forY = 0; forY < (int)count1; forY++)
+                {
+                    int countX = (int)count0;
+                    if ((forY % 2) == 1)
+                    {
+                        countX += 1;
+                    }
+
+                    Unit_fieldUnits[forY] = new HYJ_Player_Unit_Datas(countX);
+                }
+            }
+            else
+            {
+                res = false;
+            }
+        }
+
+        //
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_WAIT_UNIT_DATA,  HYJ_Unit_GetWaitUnitData    );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__INSERT,              HYJ_Unit_Insert_Bridge      );
+
+        return res;
     }
 }
 
@@ -251,7 +359,7 @@ partial class HYJ_Player
                 break;
             case "UNIT":
                 {
-                    HYJ_Unit_Insert(name);
+                    HYJ_Unit_Insert(name, -1);
                 }
                 break;
             case "POTION":
@@ -266,11 +374,13 @@ partial class HYJ_Player
     }
 
     //////////  Default Method  //////////
-    void HYJ_Item_Init()
+    bool HYJ_Item_Init()
     {
         Item_relics = new List<HYJ_Player_Item>();
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___ITEM__INSERT,  HYJ_Item_Insert );
+
+        return true;
     }
 }
 
@@ -396,7 +506,7 @@ partial class HYJ_Player
     }
 
     //////////  Default Method  //////////
-    void HYJ_Buff_Init()
+    bool HYJ_Buff_Init()
     {
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__SETTING,         HYJ_Buff_Insert_Bridge  );
 
@@ -405,6 +515,8 @@ partial class HYJ_Player
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_FROM_COUNT,   HYJ_Buff_GetDeBuffFromCount );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_COUNT,        HYJ_Buff_GetDeBuffCount     );
+
+        return true;
     }
 }
 
