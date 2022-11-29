@@ -28,7 +28,11 @@ partial class Character
     [SerializeField] protected int Data_spell1;
 
     //////////  Getter & Setter //////////
-    public void HYJ_Status_SetSaveData(CTRL_Character_Data _saveData) { Status_saveData = _saveData; }
+    public CTRL_Character_Data HYJ_Status_saveData
+    {
+        get { return Status_saveData;   }
+        set { Status_saveData = value;  }
+    }
 
     //////////  Method          //////////
 

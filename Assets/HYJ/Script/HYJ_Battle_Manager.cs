@@ -250,6 +250,10 @@ partial class HYJ_Battle_Manager
     {
         return Field_y;
     }
+    object HYJ_Field_GetStandX(params object[] _args)
+    {
+        return Stand_x;
+    }
 
     object LSY_Field_GetStandX(params object[] _args)
     {
@@ -339,7 +343,73 @@ partial class HYJ_Battle_Manager
     }
 
     //////////  Method          //////////
+    void HYJ_Field_CharacterFixed()
+    {
+        // 대기열 픽스
+        for (int i = 0; i < Stand_x; i++)
+        {
+            // 플레이어에게 저장된 유닛데이터를 가져온다.
+            object data = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_WAIT_UNIT_DATA,
+                //
+                i);
 
+            // 빈칸인가?
+            if(data != null)
+            {
+                CTRL_Character_Data element = (CTRL_Character_Data)data;
+
+                // 의미없는 데이터인가?
+                if(element.Data_ID != null)
+                {
+                    bool isCreate = true;
+
+                    GameObject unit = Stand_tiles.HYJ_Data_Tile(i).HYJ_Basic_onUnit;
+
+                    if(unit != null)
+                    {
+                        // 유닛이 지금 가져온 데이터와 다르다면 날려준다.
+                        if(unit.GetComponent<Character>().HYJ_Status_saveData == element)
+                        {
+                            isCreate = false;
+                        }
+                        else
+                        {
+                            HYJ_Field_CharacterFixed_UnitDestroy(i);
+                        }
+                    }
+
+                    if (isCreate)
+                    {
+                        // DB에서 데이터를 불러온다.
+                        GameObject unitData
+                            = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                                HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
+                                int.Parse(element.Data_ID));
+
+                        Vector3 pos = Stand_tiles.HYJ_Data_Tile(i).transform.position;
+
+                        GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+                        tmp.GetComponent<Character>().HYJ_Status_saveData = element;
+                    }
+                }
+            }
+            else
+            {
+                HYJ_Field_CharacterFixed_UnitDestroy(i);
+            }
+        }
+    }
+
+    void HYJ_Field_CharacterFixed_UnitDestroy(int _count)
+    {
+        GameObject unit = Stand_tiles.HYJ_Data_Tile(_count).HYJ_Basic_onUnit;
+        if (unit != null)
+        {
+            Stand_tiles.HYJ_Data_Tile(_count).HYJ_Basic_onUnit = null;
+            Destroy(unit);
+        }
+    }
 
     //////////  Default Method  //////////
     void HYJ_Field_Init()
@@ -448,6 +518,7 @@ partial class HYJ_Battle_Manager
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES,                    Get_Field_tiles                );
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X,                HYJ_Field_GetFieldX             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y,                HYJ_Field_GetFieldY             );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X,                HYJ_Field_GetStandX             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE,                   HYJ_Field_GetTile               );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_FROM_CHARACTER,    HYJ_Field_GetTileFromCharacter  );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_CHARACTER,              HYJ_Field_GetCharacter          );
@@ -680,62 +751,101 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public void LSY_Buy_Unit()
     {
-        // Detect clicked btn -> getName -> Calc pos -> Instant
+        //// Detect clicked btn -> getName -> Calc pos -> Instant
+        //var Btn_idx = EventSystem.current.currentSelectedGameObject;
+        //string Btn_name = Btn_idx.name.ToString();
+        //Btn_name = Btn_name.Substring(Btn_name.Length - 1);
+        //Debug.Log("Btn " + Btn_name + " is clicked");
+        //
+        //int unit_idx = UnitIdx_list[int.Parse(Btn_name)];
+        ////GameObject std_tmp = null;
+        //
+        //int cnt = Stand_tiles.LSY_Count_GetUnitOnTile(), pos_num = -1;
+        //if (cnt < Stand_x)
+        //{
+        //    for (int idx = 0; idx < Stand_x; idx++)
+        //    {
+        //        if (Stand_tiles.HYJ_Data_GetUnitOnTile(idx) == null)
+        //        {
+        //            //Debug.Log(Stand_tiles.HYJ_Data_Tile(idx).gameObject);
+        //            //std_tmp = Stand_tiles.HYJ_Data_Tile(idx).gameObject;
+        //            pos_num = idx;
+        //            break;
+        //        }
+        //    }
+        //    if (pos_num == -1)
+        //        pos_num = cnt;
+        //
+        //    Debug.Log(pos_num + " " + cnt);
+        //
+        //    Vector3 pos = Stand_tiles.HYJ_Data_Tile(pos_num).transform.position;
+        //
+        //    GameObject unitData
+        //        = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+        //            HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
+        //            unit_idx);
+        //    if (unitData)
+        //    {
+        //		GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+        //		// Stand_Unit에 추가, 생성될 때 On_Tile..... 
+        //		tmp.transform.localPosition = pos;
+        //		Stand_Unit.Add(tmp);
+        //        //unitData.GetComponent<Character>().LSY_Character_Set_OnTile(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
+        //        //Debug.Log(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
+        //
+        //        int cost = unitData.GetComponent<Character>().Stat_Cost;
+        //        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost);
+        //        Debug.Log("Unit " + unit_idx + " is spawned");
+        //
+        //        // 구매한 카드 사라지게.
+        //        Btn_idx.SetActive(false);
+        //    }
+        //    else // 유닛이 없을 경우!
+        //        Debug.Log("Unit " + unit_idx + " is NULL");
+        //}
+        //else
+        //    Debug.Log("Stand Tile is full..");
+
+
+
         var Btn_idx = EventSystem.current.currentSelectedGameObject;
         string Btn_name = Btn_idx.name.ToString();
         Btn_name = Btn_name.Substring(Btn_name.Length - 1);
         Debug.Log("Btn " + Btn_name + " is clicked");
-
+        
         int unit_idx = UnitIdx_list[int.Parse(Btn_name)];
-        //GameObject std_tmp = null;
 
-        int cnt = Stand_tiles.LSY_Count_GetUnitOnTile(), pos_num = -1;
-        if (cnt < Stand_x)
+        GameObject unitData
+            = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
+                unit_idx);
+
+        if (unitData != null)
         {
-            for (int idx = 0; idx < Stand_x; idx++)
+            object success = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__INSERT,
+                //
+                unitData.name, -1);
+
+            if (success != null)
             {
-                if (Stand_tiles.HYJ_Data_GetUnitOnTile(idx) == null)
+                if ((bool)success)
                 {
-                    //Debug.Log(Stand_tiles.HYJ_Data_Tile(idx).gameObject);
-                    //std_tmp = Stand_tiles.HYJ_Data_Tile(idx).gameObject;
-                    pos_num = idx;
-                    break;
+                    int cost = unitData.GetComponent<Character>().Stat_Cost;
+
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost);
+
+                    // 구매한 카드 사라지게.
+                    Btn_idx.SetActive(false);
+
+                    HYJ_Field_CharacterFixed();
+                }
+                else
+                {
+
                 }
             }
-            if (pos_num == -1)
-                pos_num = cnt;
-
-            Debug.Log(pos_num + " " + cnt);
-
-            Vector3 pos = Stand_tiles.HYJ_Data_Tile(pos_num).transform.position;
-
-            GameObject unitData
-                = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
-                    HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
-                    unit_idx);
-            if (unitData)
-            {
-				GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
-				// Stand_Unit에 추가, 생성될 때 On_Tile..... 
-				tmp.transform.localPosition = pos;
-				Stand_Unit.Add(tmp);
-                //unitData.GetComponent<Character>().LSY_Character_Set_OnTile(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
-                //Debug.Log(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
-
-                int cost = unitData.GetComponent<Character>().Stat_Cost;
-                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost);
-                Debug.Log("Unit " + unit_idx + " is spawned");
-
-                // 구매한 카드 사라지게.
-                Btn_idx.SetActive(false);
-            }
-            else // 유닛이 없을 경우!
-                Debug.Log("Unit " + unit_idx + " is NULL");
         }
-        else
-            Debug.Log("Stand Tile is full..");
-
-
     }
     public void LSY_Buy_EXP()
     {
