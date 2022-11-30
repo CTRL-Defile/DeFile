@@ -32,6 +32,9 @@ public class PathFinder : MonoBehaviour
 	List<NODE> m_CloseNodes = new List<NODE>();
 	LinkedList<int> m_Path = new LinkedList<int>();
 
+	bool m_IsArrived = false;	 
+	public bool Arrived { get { return m_IsArrived;} set { m_IsArrived = value;} }
+
 	// 오픈리스트에 있는 정보들 중에서 가장 좋은 후보를 빠르게 뽑아오기위한 컨테이너 PriorityQueue 적용 예정
 		
 
@@ -65,39 +68,79 @@ public class PathFinder : MonoBehaviour
 			Target == null)
 			return;
 
-		if (0 == m_Path.Count)
-			return;		
+		if (Obj.GetComponent<Character>().State == Character.STATE.SKILL)
+			return;
 
+		if (0 == m_Path.Count)
+			return;
+
+		//현재 이동중 다음 목적지 노드
 		int Index = m_Path.First();
 		HYJ_Battle_Tile Tile = (HYJ_Battle_Tile)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, Index);
 		Vector3 TilePos = Tile.Tile_Position;
 		Vector3 ObjPos = Obj.transform.position;
 
+		//도착 했을때 다음노드 선점관련 셋업 하기위한 변수
+		int nextIndex = m_Path.First.Next.Value;
+		HYJ_Battle_Tile nextTile = (HYJ_Battle_Tile)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, nextIndex);
+
 		Vector3 Dir = TilePos - ObjPos;
 		float Length = Dir.magnitude;
 		Dir.Normalize();
 
+		//Vector3 LookDir = nextTile.Tile_Position - TilePos;		
+		gameObject.transform.LookAt(Tile.transform);
+		
+		//if(null != Tile.HYJ_Basic_onUnit)
+		//	StartPathFinding(gameObject, Target);
+
+		if (GetComponent<Character>().PreTarget != GetComponent<Character>().Target)
+		{
+			StartPathFinding(gameObject, Target);
+			return;
+		}
+
 		if (Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime >= Length)
 		{
-			Obj.GetComponent<Character>().LSY_Character_Set_OnTile(Tile.gameObject);
-			Tile.HYJ_Basic_onUnit = Obj;
-			Target = Obj.GetComponent<Character>().Target;
-			//StartPathFinding(Obj, Target);
-			//float Dist = Vector3.Magnitude(Obj.transform.position - Target.transform.position);
-			//if(Dist <= 2.5f)
-			//{
-			//	return;
-			//}
+			float Dist = Vector3.Magnitude(Obj.transform.position - Target.transform.position);
+			if (Dist <= 2.5f)
+			{
+				Arrived = true;
+				if (Character.STATE.RUN == gameObject.GetComponent<Character>().State)
+					gameObject.GetComponent<Character>().State = Character.STATE.IDLE;
 
-			// 여기서 도착했다는 불변수 하나 프로퍼티 만들어줘야함.
+				nextTile.HYJ_Basic_onUnit = null;
+				Tile.HYJ_Basic_onUnit = gameObject;
+				return;
+			}
+
+			Obj.GetComponent<Character>().LSY_Character_Set_OnTile(Tile.gameObject);
+			Tile.HYJ_Basic_onUnit = gameObject;
+
+			if (null != nextTile.HYJ_Basic_onUnit)
+			{				
+				StartPathFinding(gameObject, Target);
+				return;
+			}
+
+			nextTile.HYJ_Basic_onUnit = gameObject;
+			Target = Obj.GetComponent<Character>().Target;
+
+			//StartPathFinding(Obj, Target);
 
 			m_Path.RemoveFirst();
+				
+
 			return;
-		}				
+		}
 
 		//ObjPos.x = Mathf.Lerp(ObjPos.x, TilePos.x, Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime);
 		//ObjPos.z = Mathf.Lerp(ObjPos.z, TilePos.z, Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime);
 		//ObjPos.y = 0.0f;
+		
+		// 이동가능하다면 객체 Run 상태로
+		Obj.GetComponent<Character>().State = Character.STATE.RUN;
+
 		ObjPos += Dir * Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime;
 		Obj.transform.position = ObjPos;
 	}
@@ -229,9 +272,9 @@ public class PathFinder : MonoBehaviour
 			if (null == Neighbor.Tile.HYJ_Basic_onUnit)
 			{
 				if( true == FindingPath(StartIndex, Neighbor.MyIndex))
-				{
+				{					
 					MakePath(StartIndex, Neighbor.MyIndex);
-
+					Arrived = false;
 					return true;
 				}
 			}
@@ -264,6 +307,7 @@ public class PathFinder : MonoBehaviour
 
 			// 오픈에 넣는다.
 			InsertNodeInOpen(Neighbor, startIdx, endIdx);
+		
 		}
 
 		// 오픈이 비어있으면 더이상 갈 길 없음
@@ -278,7 +322,7 @@ public class PathFinder : MonoBehaviour
 
 	void MakePath(int StartIdx, int EndIdx)
 	{
-		int ParentIndex = EndIdx;
+		int ParentIndex = EndIdx;		
 
 		while(true)
 		{
@@ -353,7 +397,7 @@ public class NODE
 	public float Gcost { get { return m_Gcost; } set { m_Gcost = value; } }
 
 	private Vector3 m_Position = new Vector3(0.0f, 0.0f, 0.0f);
-	public Vector3 Position { get { return m_Position; } set { m_Position = value; } }
+	public Vector3 Position { get { return m_Position; } set { m_Position = value; } }	
 
 	public NODE(int Idx, Vector3 Pos, HYJ_Battle_Tile tile)
 	{

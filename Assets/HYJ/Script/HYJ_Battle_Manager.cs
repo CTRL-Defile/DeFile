@@ -835,8 +835,8 @@ partial class HYJ_Battle_Manager
         int Num_Enemy = Enemy_Unit.Count;
         int MinIdx = 0;
 
-        //if (Num_Ally <= 0 || Num_Enemy <= 0)
-        //    return;
+        if (Num_Ally <= 0 || Num_Enemy <= 0)
+            return;
 
         for (int i = 0; i < Num_Ally; i++)
         {
@@ -847,14 +847,17 @@ partial class HYJ_Battle_Manager
             {
                 //Debug.Log("k" + k);
                 Vector3 E_pos = Enemy_Unit[k].gameObject.transform.position;
-                if (Vector3.Magnitude(A_pos - E_pos) < min)
+                float Dist = Vector3.Magnitude(A_pos - E_pos);
+
+				if (Dist < min)
                 {
                     //Debug.Log("min" + min);
-                    min = Vector3.Magnitude(A_pos - E_pos);
+                    min = Dist;
                     MinIdx = k;
                 }
             }
-			Field_Unit[i].GetComponent<Character>().Target = Enemy_Unit[MinIdx];
+            Field_Unit[i].GetComponent<Character>().PreTarget = Field_Unit[i].GetComponent<Character>().Target;
+			Field_Unit[i].GetComponent<Character>().Target = Enemy_Unit[MinIdx];            
 			//Enemy_Unit[MinIdx].GetComponent<Character>().Target = Field_Unit[i];
 		}
 
@@ -867,13 +870,16 @@ partial class HYJ_Battle_Manager
 			{
 				Debug.Log("k" + k);
 				Vector3 E_pos = Field_Unit[k].gameObject.transform.position;
-				if (Vector3.Magnitude(A_pos - E_pos) < min)
+				float Dist = Vector3.Magnitude(A_pos - E_pos);
+
+				if (Dist < min)
 				{
 					Debug.Log("min" + min);
-					min = Vector3.Magnitude(A_pos - E_pos);
+					min = Dist;
 					MinIdx = k;
 				}
 			}
+            Enemy_Unit[i].GetComponent<Character>().PreTarget = Enemy_Unit[i].GetComponent<Character>().Target;
 			Enemy_Unit[i].GetComponent<Character>().Target = Field_Unit[MinIdx];
 
 		}
