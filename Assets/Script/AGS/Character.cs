@@ -5,6 +5,7 @@ using UnityEngine;
 //
 using System;
 using UnityEngine.EventSystems;
+using static AnimationEvent;
 
 public partial class Character : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public partial class Character : MonoBehaviour
 	//protected int m_CurPosIndex = 0;
 	[SerializeField]
 	protected PathFinder m_PathFinder = null;
+	[SerializeField]
+	protected AnimationEvent m_AnimEvent = null;
 
 	//-------------------------------------------------------------------
 	// Property
@@ -50,7 +53,32 @@ public partial class Character : MonoBehaviour
 		// HP 테스트 용 초기화
 		Status_MaxHP = 100.0f;
 		Status_HP = 50.0f;
-        Status_atk = 10.0f;
+		Status_MaxMP = 60.0f;
+		Status_MP = 0.0f;
+
+
+		switch (m_AnimEvent.Anim_Type)
+		{
+			case ANIM_TYPE.BEAR:
+				Status_atk = 10.0f;
+				break;
+			case ANIM_TYPE.ORC:
+				Status_atk = 7.0f;
+				break;
+			case ANIM_TYPE.EVIL:
+				Status_atk = 3.0f;
+				break;
+			case ANIM_TYPE.GOBLIN_T:
+				Status_atk = 5.0f;
+				break;
+			case ANIM_TYPE.GOBLIN_N:
+				Status_atk = 12.0f;
+				break;
+			case ANIM_TYPE.WERERAT:
+				Status_atk = 2.0f;
+				break;
+		}
+        
 		Status_moveSpeed = 5.0f;
 		// Stat_MoveSpeed = UnityEngine.Random.Range(1.0f, 8.0f);		
 		//CurPosIndex = 0;
@@ -60,6 +88,7 @@ public partial class Character : MonoBehaviour
 	{
 		m_animator = GetComponentInChildren<Animator>();
 		m_PathFinder = GetComponent<PathFinder>();
+		m_AnimEvent = GetComponentInChildren<AnimationEvent>();
 	}
 
 	// Update is called once per frame
@@ -86,7 +115,8 @@ public partial class Character : MonoBehaviour
 		if (IsDead)
 		{
 			// 풀링 할지 말지 생각중
-			Destroy(gameObject);
+			//Destroy(gameObject);
+			gameObject.SetActive(false);
 			return;
 		}
 
@@ -130,8 +160,8 @@ public partial class Character
     [SerializeField] protected float Status_MaxHP;  // 최대체력
 	[Space(10f)]
 
-	[SerializeField] protected int Status_MP;     // 마나
-    [SerializeField] protected int Status_MaxMP;  // 최대마나
+	[SerializeField] protected float Status_MP;     // 마나
+    [SerializeField] protected float Status_MaxMP;  // 최대마나
 	[Space(10f)]
 
 	[SerializeField] protected float Status_atk;    // 공격력
@@ -152,7 +182,9 @@ public partial class Character
     // Property
     //-------------------------------------------------------------------
     public float Stat_HP { get { return Status_HP; } set { Status_HP = value; } }
+	public float Stat_MP { get { return Status_MP; } set { Status_MP = value; } }
 	public float Stat_MaxHP { get { return Status_MaxHP; } set { Status_MaxHP = value; } }
+	public float Stat_MaxMP { get { return Status_MaxMP; } set { Status_MaxMP = value; } }
 	public float Stat_Attack { get { return Status_atk; } set { Status_atk = value; } }
 	public float Stat_MoveSpeed { get { return Status_moveSpeed; } set { Status_moveSpeed = value; } }
 	public int Stat_Cost { get { return Status_Cost; } set { Status_Cost = value; } }

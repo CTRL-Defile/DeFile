@@ -130,7 +130,6 @@ public class PathFinder : MonoBehaviour
 
 			m_Path.RemoveFirst();
 				
-
 			return;
 		}
 
@@ -382,7 +381,6 @@ public class PathFinder : MonoBehaviour
 
 }
 
-[System.Serializable]
 public class NODE
 {
 	private int m_MyIndex = 0;
