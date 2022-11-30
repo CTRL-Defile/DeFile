@@ -19,6 +19,8 @@ public partial class Character : MonoBehaviour
 	protected bool IsDead = false;
 	[SerializeField]
 	protected GameObject m_Target = null;
+	[SerializeField]
+	protected GameObject m_PreTarget = null;
 	//[SerializeField]
 	//protected int m_CurPosIndex = 0;
 	[SerializeField]
@@ -29,6 +31,7 @@ public partial class Character : MonoBehaviour
 	//-------------------------------------------------------------------
 	public Vector3 LSY_Unit_Position { get { return ori_Pos; } set { ori_Pos = value; } }
 	public GameObject Target { get { return m_Target; } set { m_Target = value; } }
+	public GameObject PreTarget { get { return m_PreTarget; } set { m_PreTarget = value; } }
 	//public int CurPosIndex { get { return m_CurPosIndex; } set { m_CurPosIndex = value; } }
 
 	//-------------------------------------------------------------------
@@ -49,6 +52,7 @@ public partial class Character : MonoBehaviour
 		Status_HP = 50.0f;
         Status_atk = 10.0f;
 		Status_moveSpeed = 5.0f;
+		// Stat_MoveSpeed = UnityEngine.Random.Range(1.0f, 8.0f);		
 		//CurPosIndex = 0;
 	}
 
@@ -71,8 +75,13 @@ public partial class Character : MonoBehaviour
 		// 이말은 == 한칸 이동하고 StartPathFinding 해주고 다시 불변수 풀어주고 이런식으로 Target으로하던 목표지점으로 하던 목적지까지 이거 반복.
 		// 이동중이거나 도착했을 시의 목적지 타일 체크해서 도착하게 만들어 도착했을때만 불변수 풀어서 Start 돌고
 		// 도착안했으면 불변수 false라서 start안돌고.
-		// Start가 안돌았다? 기존 Path유지 == Move호출시 지금 이동중이던 목적지 타일로 이동 한다는거임
+		// Start가 안돌았다? 기존 Path유지 == Move호출시 지금 이동중이던 목적지 타일로 이동 한다는거임		
+
+		//if(m_PathFinder.Arrived == true)
+		//	m_PathFinder.StartPathFinding(gameObject, Target);
+
 		m_PathFinder.MoveOnPath(gameObject, Target);
+
 
 		if (IsDead)
 		{
@@ -83,15 +92,15 @@ public partial class Character : MonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.A))
 		{
-			state = STATE.RUN;
+			State = STATE.RUN;
 		}
 		else if (Input.GetKeyDown(KeyCode.S))
 		{
-			state = STATE.IDLE;
+			State = STATE.IDLE;
 		}
 		else if (Input.GetKeyDown(KeyCode.D))
 		{
-			state = STATE.SKILL;
+			State = STATE.SKILL;
 		}
 		else if (Input.GetKeyDown(KeyCode.F))
 		{
@@ -166,7 +175,7 @@ public partial class Character
 		if (Status_HP > 0.0f)
 			return;
 		else
-			state = STATE.DIE;
+			State = STATE.DIE;
 
 		// Dissolve Shader 적용 예정
 		// 일단 조절 값 없어서 Die 애니메이션 끝났을 때 IsDead true로
@@ -178,6 +187,17 @@ public partial class Character
 
 	virtual public void BattleProcess()
 	{
+		if(null != Target)
+		{
+			float Dist = Vector3.Magnitude(transform.position - Target.transform.position);
+
+			if (2.5f >= Dist && State == STATE.IDLE)
+			{
+				State = STATE.SKILL;
+				transform.LookAt(Target.transform);
+			}
+				
+		}
 
 		MoveProcess();
 		DieProcess();
@@ -216,7 +236,8 @@ public partial class Character
 	protected Animator m_animator;
 
 	[SerializeField]
-	protected STATE state = STATE.IDLE;
+	protected STATE m_state = STATE.IDLE;
+	public STATE State { get { return m_state; } set { m_state = value; } }
 
 	//-------------------------------------------------------------------
 	// Property
@@ -229,7 +250,7 @@ public partial class Character
 	//-------------------------------------------------------------------
 	virtual protected void ChangeState()
 	{
-		switch (state)
+		switch (m_state)
 		{
 			case STATE.IDLE:
 					UpdateIdle();
