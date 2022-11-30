@@ -183,6 +183,7 @@ public partial class Character
 		  m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
 		IsDead = true;
 
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE, this.gameObject);
 	}
 
 	virtual public void BattleProcess()

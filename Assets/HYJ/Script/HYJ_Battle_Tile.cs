@@ -12,7 +12,7 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     [SerializeField] GameObject Basic_onUnit = null;   // GameObject 형으로 교체 -> 유닛이 모두 HYJ_Character 스크립트를 갖고 있지 않음.
     [SerializeField] public List<int> Tile_Idx; // Tile의 행/열 정보
     [SerializeField] public Vector3 Tile_Position;  // Tile의 localPosition 저장
-    [SerializeField] private int m_GraphIdx = 0;
+    [SerializeField] private int m_GraphIdx = -1;
     public enum Tile_Available
     {
         Available,

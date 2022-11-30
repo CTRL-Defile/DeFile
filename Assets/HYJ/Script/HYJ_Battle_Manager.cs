@@ -529,8 +529,8 @@ partial class HYJ_Battle_Manager
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD,              Stand_to_Field                  );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIELD_TO_STAND,              Field_to_Stand                  );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH,                     Unit_to_Trash                   );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE,                           Unit_Die                        );
 
-        
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___COUNT__FIELD_UNIT,                 Count_Field_Unit                );
 
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, TileInGraph);
@@ -751,98 +751,104 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public void LSY_Buy_Unit()
     {
-        //// Detect clicked btn -> getName -> Calc pos -> Instant
-        //var Btn_idx = EventSystem.current.currentSelectedGameObject;
-        //string Btn_name = Btn_idx.name.ToString();
-        //Btn_name = Btn_name.Substring(Btn_name.Length - 1);
-        //Debug.Log("Btn " + Btn_name + " is clicked");
-        //
-        //int unit_idx = UnitIdx_list[int.Parse(Btn_name)];
-        ////GameObject std_tmp = null;
-        //
-        //int cnt = Stand_tiles.LSY_Count_GetUnitOnTile(), pos_num = -1;
-        //if (cnt < Stand_x)
-        //{
-        //    for (int idx = 0; idx < Stand_x; idx++)
-        //    {
-        //        if (Stand_tiles.HYJ_Data_GetUnitOnTile(idx) == null)
-        //        {
-        //            //Debug.Log(Stand_tiles.HYJ_Data_Tile(idx).gameObject);
-        //            //std_tmp = Stand_tiles.HYJ_Data_Tile(idx).gameObject;
-        //            pos_num = idx;
-        //            break;
-        //        }
-        //    }
-        //    if (pos_num == -1)
-        //        pos_num = cnt;
-        //
-        //    Debug.Log(pos_num + " " + cnt);
-        //
-        //    Vector3 pos = Stand_tiles.HYJ_Data_Tile(pos_num).transform.position;
-        //
-        //    GameObject unitData
-        //        = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
-        //            HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
-        //            unit_idx);
-        //    if (unitData)
-        //    {
-        //		GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
-        //		// Stand_Unit에 추가, 생성될 때 On_Tile..... 
-        //		tmp.transform.localPosition = pos;
-        //		Stand_Unit.Add(tmp);
-        //        //unitData.GetComponent<Character>().LSY_Character_Set_OnTile(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
-        //        //Debug.Log(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
-        //
-        //        int cost = unitData.GetComponent<Character>().Stat_Cost;
-        //        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost);
-        //        Debug.Log("Unit " + unit_idx + " is spawned");
-        //
-        //        // 구매한 카드 사라지게.
-        //        Btn_idx.SetActive(false);
-        //    }
-        //    else // 유닛이 없을 경우!
-        //        Debug.Log("Unit " + unit_idx + " is NULL");
-        //}
-        //else
-        //    Debug.Log("Stand Tile is full..");
-
-
-
-        var Btn_idx = EventSystem.current.currentSelectedGameObject;
-        string Btn_name = Btn_idx.name.ToString();
-        Btn_name = Btn_name.Substring(Btn_name.Length - 1);
-        Debug.Log("Btn " + Btn_name + " is clicked");
-        
-        int unit_idx = UnitIdx_list[int.Parse(Btn_name)];
-
-        GameObject unitData
-            = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
-                HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
-                unit_idx);
-
-        if (unitData != null)
+        if (true)
         {
-            object success = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
-                HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__INSERT,
-                //
-                unitData.name, -1);
 
-            if (success != null)
+
+            // Detect clicked btn -> getName -> Calc pos -> Instant
+            var Btn_idx = EventSystem.current.currentSelectedGameObject;
+            string Btn_name = Btn_idx.name.ToString();
+            Btn_name = Btn_name.Substring(Btn_name.Length - 1);
+            Debug.Log("Btn " + Btn_name + " is clicked");
+
+            int unit_idx = UnitIdx_list[int.Parse(Btn_name)];
+            //GameObject std_tmp = null;
+
+            int cnt = Stand_tiles.LSY_Count_GetUnitOnTile(), pos_num = -1;
+            if (cnt < Stand_x)
             {
-                if ((bool)success)
+                for (int idx = 0; idx < Stand_x; idx++)
                 {
-                    int cost = unitData.GetComponent<Character>().Stat_Cost;
+                    if (Stand_tiles.HYJ_Data_GetUnitOnTile(idx) == null)
+                    {
+                        //Debug.Log(Stand_tiles.HYJ_Data_Tile(idx).gameObject);
+                        //std_tmp = Stand_tiles.HYJ_Data_Tile(idx).gameObject;
+                        pos_num = idx;
+                        break;
+                    }
+                }
+                if (pos_num == -1)
+                    pos_num = cnt;
 
+                Debug.Log(pos_num + " " + cnt);
+
+                Vector3 pos = Stand_tiles.HYJ_Data_Tile(pos_num).transform.position;
+
+                GameObject unitData
+                    = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                        HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
+                        unit_idx);
+                if (unitData)
+                {
+                    GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+                    // Stand_Unit에 추가, 생성될 때 On_Tile..... 
+                    tmp.transform.localPosition = pos;
+                    Stand_Unit.Add(tmp);
+                    //unitData.GetComponent<Character>().LSY_Character_Set_OnTile(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
+                    //Debug.Log(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
+
+                    int cost = unitData.GetComponent<Character>().Stat_Cost;
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost);
+                    Debug.Log("Unit " + unit_idx + " is spawned");
 
                     // 구매한 카드 사라지게.
                     Btn_idx.SetActive(false);
-
-                    HYJ_Field_CharacterFixed();
                 }
-                else
-                {
+                else // 유닛이 없을 경우!
+                    Debug.Log("Unit " + unit_idx + " is NULL");
+            }
+            else
+                Debug.Log("Stand Tile is full..");
 
+        }
+        else
+        {
+            var Btn_idx = EventSystem.current.currentSelectedGameObject;
+            string Btn_name = Btn_idx.name.ToString();
+            Btn_name = Btn_name.Substring(Btn_name.Length - 1);
+            Debug.Log("Btn " + Btn_name + " is clicked");
+
+            int unit_idx = UnitIdx_list[int.Parse(Btn_name)];
+
+            GameObject unitData
+                = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                    HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
+                    unit_idx);
+
+            if (unitData != null)
+            {
+                object success = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                    HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__INSERT,
+                    //
+                    unitData.name, -1);
+
+                if (success != null)
+                {
+                    if ((bool)success)
+                    {
+                        int cost = unitData.GetComponent<Character>().Stat_Cost;
+
+                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost);
+
+                        // 구매한 카드 사라지게.
+                        Btn_idx.SetActive(false);
+
+                        HYJ_Field_CharacterFixed();
+                    }
+                    else
+                    {
+
+                    }
                 }
             }
         }
@@ -927,6 +933,38 @@ partial class HYJ_Battle_Manager
 
         return null;
     }
+    object Unit_Die(params object[] _args)
+    {
+
+        GameObject obj = (GameObject)_args[0];
+        string obj_tag = obj.tag;
+
+        switch(obj_tag)
+        {
+            case "Ally":
+                int obj_tile_idx = obj.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex;
+                if (obj_tile_idx < 0) // stand
+                {
+                    Stand_Unit.Remove(obj);
+                }
+                else // field
+                {
+                    Field_Unit.Remove(obj);
+                }
+                break;
+
+            case "Enemy":
+                Enemy_Unit.Remove(obj);
+                break;
+
+        }
+
+
+        Show_Ally_OnTile();
+
+        return null;
+    }
+
     object Count_Field_Unit(params object[] _args)
     {
         int num = Field_Unit.Count;
