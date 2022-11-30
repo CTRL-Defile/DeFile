@@ -37,6 +37,7 @@ public partial class HYJ_Event_Manager : MonoBehaviour
         return null;
     }
 
+    bool isFirst = true;
     public void HYJ_SetActive(bool _isActive)
     {
         this.gameObject.SetActive(_isActive);
@@ -46,7 +47,10 @@ public partial class HYJ_Event_Manager : MonoBehaviour
         JHW_displayEventText();
 
         //
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, !_isActive);
+        if (isFirst)
+            isFirst= false;
+        else
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, !_isActive);
     }
 
     //////////  Default Method  //////////
