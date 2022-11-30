@@ -357,7 +357,8 @@ partial class HYJ_Map_Manager
             {
                 GameObject element = Instantiate(Road_roads[0]);
                 element.SetActive(false);
-                element.transform.parent = Road_parent;
+                //element.transform.parent = Road_parent;
+                element.transform.SetParent(Road_parent);
                 element.transform.localScale = new Vector3(1, 1, 1);
                 Road_roads.Add(element);
             }

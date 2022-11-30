@@ -24,7 +24,7 @@ public class MainControl : MonoBehaviour
     {
         UIManager.init(ui_root);
 
-        UIManager.show<UIStage>();
+        //UIManager.show<UIStage>();
     }
 
     public void OnDestory()

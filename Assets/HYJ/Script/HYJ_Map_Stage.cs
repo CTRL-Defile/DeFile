@@ -41,7 +41,8 @@ public partial class HYJ_Map_Stage : MonoBehaviour
         int _x, int _y)
     {
         Transform parent = this.transform.parent;
-        parent.parent = _parent;
+        //parent.parent = _parent;
+        parent.SetParent(_parent);
         parent.localScale = new Vector3(1, 1, 1);
         parent.localPosition = new Vector3(_x * 150, _y * 150, 0);
 
