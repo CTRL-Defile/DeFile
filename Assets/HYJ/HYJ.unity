@@ -18068,24 +18068,6 @@ Transform:
   m_Father: {fileID: 3941506315944325647}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!114 &1355835113666453282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1355835113666453295}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0154b1fcda2b93246a881130fc01bcd9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Basic_onUnit: {fileID: 0}
-  Tile_Idx: 
-  Tile_Position: {x: 0, y: 0, z: 0}
-  m_GraphIdx: 0
-  tile_Available: 1
-  detectedUnit: []
 --- !u!33 &1355835113666453283
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -18178,7 +18160,7 @@ GameObject:
   - component: {fileID: 1355835113666453283}
   - component: {fileID: 1355835113666453292}
   - component: {fileID: 1355835113666453293}
-  - component: {fileID: 1355835113666453282}
+  - component: {fileID: 1355835113666453296}
   m_Layer: 0
   m_Name: Tile0
   m_TagString: FieldTile
@@ -18186,6 +18168,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!114 &1355835113666453296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1355835113666453295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0154b1fcda2b93246a881130fc01bcd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Basic_onUnit: {fileID: 0}
+  Tile_Idx: 
+  Tile_Position: {x: 0, y: 0, z: 0}
+  m_GraphIdx: -1
+  tile_Available: 1
+  detectedUnit: []
 --- !u!114 &1355835113847754741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31278,7 +31278,7 @@ GameObject:
   - component: {fileID: 2095526394182597536}
   - component: {fileID: 7612466820008496836}
   - component: {fileID: 4745671473367895534}
-  - component: {fileID: 9041255472449401463}
+  - component: {fileID: 7612466820008496837}
   m_Layer: 0
   m_Name: Tile_stand
   m_TagString: StandTile
@@ -33833,6 +33833,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7612466820008496837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7269473860551407170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0154b1fcda2b93246a881130fc01bcd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Basic_onUnit: {fileID: 0}
+  Tile_Idx: 
+  Tile_Position: {x: 0, y: 0, z: 0}
+  m_GraphIdx: -1
+  tile_Available: 1
+  detectedUnit: []
 --- !u!223 &7625413645223331484
 Canvas:
   m_ObjectHideFlags: 0
@@ -36967,24 +36985,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &9041255472449401463
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7269473860551407170}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0154b1fcda2b93246a881130fc01bcd9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Basic_onUnit: {fileID: 0}
-  Tile_Idx: 
-  Tile_Position: {x: 0, y: 0, z: 0}
-  m_GraphIdx: 0
-  tile_Available: 1
-  detectedUnit: []
 --- !u!114 &9053428181423042731
 MonoBehaviour:
   m_ObjectHideFlags: 0
