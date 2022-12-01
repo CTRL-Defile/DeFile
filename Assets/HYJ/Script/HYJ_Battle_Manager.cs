@@ -23,7 +23,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     double Phase_timer = 10.0;
     double Time_Acc = 0;
-    [SerializeField]
+    bool StatusBar_isInitialized = false;
+	[SerializeField]
     TextMeshProUGUI TMP = null;
 
 	//////////  Getter & Setter //////////
@@ -120,7 +121,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 			// 전투 준비
 			case BATTLE_PHASE.PHASE_PREPARE:
                 {
-                    Phase_timer = 10.0;
+                    Phase_timer = 20.0;
 					Time_Acc += Time.deltaTime;
                     Battle_Timer();
 					//시간 체크 후 전투 상태로 Phase 전환
@@ -137,7 +138,22 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     if (!Enemy_isInitialized)
                         LSY_Enemy_Init();
 					
-                }
+                    if(!StatusBar_isInitialized)
+                    {
+						foreach (var OBJ in Enemy_Unit)
+						{
+							OBJ.GetComponent<Character>().STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.RED);
+						}
+
+						StatusBar_isInitialized = true;
+					}
+
+					foreach (var OBJ in Stand_Unit)
+					{
+						OBJ.GetComponent<Character>().STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
+					}
+
+				}
                 break;
 			// 전투 상태
 			case BATTLE_PHASE.PHASE_COMBAT:
@@ -618,6 +634,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             System.Random r = new System.Random();
             int n = r.Next(6);
 
+            //TODO : 중간발표용 곰생성 막음
+            if (0 == n)
+                n = 1;
+
             GameObject unitData
              = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                  HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
@@ -939,7 +959,19 @@ partial class HYJ_Battle_Manager
         GameObject obj = (GameObject)_args[0];
         string obj_tag = obj.tag;
 
-        switch(obj_tag)
+		foreach(var unit in Field_Unit)
+        {
+            if (unit.GetComponent<Character>().Target == obj)
+                unit.GetComponent<Character>().Target = null;
+		}
+
+		foreach (var unit in Enemy_Unit)
+		{
+			if (unit.GetComponent<Character>().Target == obj)
+				unit.GetComponent<Character>().Target = null;
+		}
+
+		switch (obj_tag)
         {
             case "Ally":
                 int obj_tile_idx = obj.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex;

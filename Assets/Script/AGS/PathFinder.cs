@@ -9,6 +9,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
 
 public class PathFinder : MonoBehaviour
 {	       
@@ -62,17 +63,22 @@ public class PathFinder : MonoBehaviour
 		}
 	}
 
-	public void MoveOnPath(GameObject Obj, GameObject Target)
+	public void MoveOnPath(GameObject Obj)
 	{
 		if (Obj == null ||
-			Target == null)
+		   Obj.GetComponent<Character>().Target == null ||
+		   Obj.GetComponent<Character>().Stat_HP <= 0 ||
+		   Obj.GetComponent<Character>().Dead == true ||
+		   Obj.GetComponent<Character>().Target != Obj.GetComponent<Character>().PreTarget)
 			return;
 
-		if (Obj.GetComponent<Character>().State == Character.STATE.SKILL)
+		if (Obj.GetComponent<Character>().State == Character.STATE.SKILL	)
 			return;
 
 		if (0 == m_Path.Count)
 			return;
+
+		GameObject Target = Obj.GetComponent<Character>().Target;
 
 		//현재 이동중 다음 목적지 노드
 		int Index = m_Path.First();

@@ -6,6 +6,7 @@ using UnityEngine;
 using System;
 using UnityEngine.EventSystems;
 using static AnimationEvent;
+using UnityEngine.UIElements;
 
 public partial class Character : MonoBehaviour
 {
@@ -28,6 +29,8 @@ public partial class Character : MonoBehaviour
 	protected PathFinder m_PathFinder = null;
 	[SerializeField]
 	protected AnimationEvent m_AnimEvent = null;
+	[SerializeField]
+	protected UI_StatusBar m_StatusBar = null;
 
 	//-------------------------------------------------------------------
 	// Property
@@ -35,7 +38,9 @@ public partial class Character : MonoBehaviour
 	public Vector3 LSY_Unit_Position { get { return ori_Pos; } set { ori_Pos = value; } }
 	public GameObject Target { get { return m_Target; } set { m_Target = value; } }
 	public GameObject PreTarget { get { return m_PreTarget; } set { m_PreTarget = value; } }
+	public bool Dead { get { return IsDead; } set { IsDead = value; } }
 	//public int CurPosIndex { get { return m_CurPosIndex; } set { m_CurPosIndex = value; } }
+	public UI_StatusBar STATUS_BAR { get { return m_StatusBar; } set { m_StatusBar = value; } }
 
 	//-------------------------------------------------------------------
 	// Method
@@ -51,8 +56,6 @@ public partial class Character : MonoBehaviour
     {
 		ori_Pos = new Vector3();
 		// HP 테스트 용 초기화
-		Status_MaxHP = 100.0f;
-		Status_HP = 50.0f;
 		Status_MaxMP = 60.0f;
 		Status_MP = 0.0f;
 
@@ -61,20 +64,32 @@ public partial class Character : MonoBehaviour
 		{
 			case ANIM_TYPE.BEAR:
 				Status_atk = 10.0f;
+				Status_MaxHP = 100.0f;
+				Status_HP = Status_MaxHP;
 				break;
 			case ANIM_TYPE.ORC:
 				Status_atk = 7.0f;
+				Status_MaxHP = 30.0f;
+				Status_HP = Status_MaxHP;
 				break;
 			case ANIM_TYPE.EVIL:
 				Status_atk = 3.0f;
+				Status_MaxHP = 40.0f;
+				Status_HP = Status_MaxHP;
 				break;
 			case ANIM_TYPE.GOBLIN_T:
+				Status_MaxHP = 50.0f;
+				Status_HP = Status_MaxHP;
 				Status_atk = 5.0f;
 				break;
 			case ANIM_TYPE.GOBLIN_N:
-				Status_atk = 12.0f;
+				Status_MaxHP = 60.0f;
+				Status_HP = Status_MaxHP;
+				Status_atk = 6.0f;
 				break;
 			case ANIM_TYPE.WERERAT:
+				Status_MaxHP = 70.0f;
+				Status_HP = Status_MaxHP;
 				Status_atk = 2.0f;
 				break;
 		}
@@ -89,11 +104,20 @@ public partial class Character : MonoBehaviour
 		m_animator = GetComponentInChildren<Animator>();
 		m_PathFinder = GetComponent<PathFinder>();
 		m_AnimEvent = GetComponentInChildren<AnimationEvent>();
+		m_StatusBar = GetComponentInChildren<UI_StatusBar>();
 	}
 
 	// Update is called once per frame
 	void Update()
     {
+	
+
+	}
+
+	private void LateUpdate()
+	{
+		DieProcess();
+
 		if (Input.GetKeyDown(KeyCode.P))
 			m_PathFinder.StartPathFinding(gameObject, Target);
 		//m_PathFinder.StartPathFinding(gameObject, Target);
@@ -108,8 +132,8 @@ public partial class Character : MonoBehaviour
 
 		//if(m_PathFinder.Arrived == true)
 		//	m_PathFinder.StartPathFinding(gameObject, Target);
-
-		m_PathFinder.MoveOnPath(gameObject, Target);
+		
+		m_PathFinder.MoveOnPath(gameObject);
 
 
 		if (IsDead)
@@ -138,9 +162,7 @@ public partial class Character : MonoBehaviour
 		}
 
 		ChangeState();
-
-		BattleProcess();
-
+		BattleProcess();		
 	}
 }
 
@@ -213,27 +235,54 @@ public partial class Character
 		// 일단 조절 값 없어서 Die 애니메이션 끝났을 때 IsDead true로
 		if (m_animator.GetCurrentAnimatorStateInfo(0).IsName("Die") &&
 		  m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
-		IsDead = true;
+		IsDead = true;		
 
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE, this.gameObject);
 	}
 
 	virtual public void BattleProcess()
 	{
-		if(null != Target)
+		if (null == Target)
+			State = STATE.IDLE;
+
+		if (null != Target)
 		{
 			float Dist = Vector3.Magnitude(transform.position - Target.transform.position);
+			Vector3 Dir = Vector3.zero;
+			float Angle = 0.0f;
 
-			if (2.5f >= Dist && State == STATE.IDLE)
+			if (2.5f >= Dist)
 			{
-				State = STATE.SKILL;
-				transform.LookAt(Target.transform);
+				switch (State)
+				{
+					case STATE.IDLE:
+						if (PreTarget == Target)
+							transform.LookAt(Target.transform);
+						State = STATE.SKILL;
+						break;
+					case STATE.SKILL:
+						Dir = Target.transform.position - transform.position;
+						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 1.0f * Time.deltaTime);
+						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
+						break;
+					case STATE.SKILL_IDLE:
+						transform.LookAt(Target.transform);
+
+						Dir = Target.transform.position - transform.position;
+						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 1.0f * Time.deltaTime);
+						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
+						Debug.Log(Angle);						
+
+						if (Angle <= 10.0f)
+							State = STATE.SKILL;
+						break;
+					default:
+						break;
+				}
 			}
-				
 		}
 
-		MoveProcess();
-		DieProcess();
+		MoveProcess();		
 	}
 
     virtual public void MoveProcess()
@@ -256,6 +305,7 @@ public partial class Character
 		RUN,
 		DIE,
 		SKILL,
+		SKILL_IDLE,
 		STATE_END
 	}
 
@@ -296,6 +346,9 @@ public partial class Character
 					break;
 			case STATE.SKILL:
 					UpdateSkill();
+					break;
+			case STATE.SKILL_IDLE:
+					UpdateIdle();
 					break;
 			default:
 					break;
