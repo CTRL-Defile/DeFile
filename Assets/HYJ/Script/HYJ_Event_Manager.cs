@@ -12,6 +12,7 @@ public partial class HYJ_Event_Manager : MonoBehaviour
     [SerializeField] public Text script;        //이벤트 텍스트 텍스트
     [SerializeField] public Text choice1;       //선택지 1 텍스트
     [SerializeField] public Text choice2;       //선택지 2 텍스트
+    [SerializeField] private Button resultButton; // 결과 버튼
 
     [SerializeField] int Basic_initialize;
 
@@ -19,10 +20,18 @@ public partial class HYJ_Event_Manager : MonoBehaviour
     private JHW_EventSelectedData tempData;
 
     // 랜덤으로 등장하게 될 이벤트 ID
-    private int randomEventID;
+    private int randomEventID = -1;
 
     // 이벤트 현재 위치(번호)
     private int eventIndex;
+
+    // 이벤트 선택 후 결과 스크립트
+    private string resultScript;
+
+    // 이벤트 버튼 오브젝트들
+    private GameObject eventButton1;
+    private GameObject eventButton2;
+    private GameObject eventResultButton;
 
     //////////  Getter & Setter //////////
 
@@ -82,6 +91,11 @@ public partial class HYJ_Event_Manager : MonoBehaviour
 
                         Basic_initialize = 1;
                     }
+
+                    // 버튼 게임오브젝트 불러오기
+                    eventButton1 = GameObject.Find("EventButton1");
+                    eventButton2 = GameObject.Find("EventButton2");
+                    eventResultButton = GameObject.Find("ResultButton");
                 }
                 break;
             case 1:
@@ -91,6 +105,9 @@ public partial class HYJ_Event_Manager : MonoBehaviour
                     this.HYJ_SetActive(false);
 
                     Basic_initialize = -1;
+
+                    // 결과버튼비활성화
+                    eventResultButton.SetActive(false);
                 }
                 break;
         }
@@ -145,6 +162,9 @@ partial class HYJ_Event_Manager
                         EventSelect_datas.Add(new JHW_EventSelect(eventSelectData[i]));
                     }
 
+                    // csv 초기화
+                    InitCSVFile();
+
                     Event_phase = 2;
                 }
                 break;
@@ -185,82 +205,82 @@ partial class HYJ_Event_Manager
     List<string[]> data = new List<string[]>();
     public string[] csvDataLine;
 
-    //// CSV 초기화
-    //public void InitCSVFile()
-    //{
-    //    string filepath = Path.GetFullPath("Assets/Resources/DataBase");
-    //    string fileName = "EventSelectedDataBase.csv";
+    // CSV 초기화
+    public void InitCSVFile()
+    {
+        string filepath = Path.GetFullPath("Assets/Resources/DataBase");
+        string fileName = "EventSelectedDataBase.csv";
 
-    //    System.IO.File.Delete(filepath + "\\" + fileName);
+        System.IO.File.Delete(filepath + "\\" + fileName);
 
-    //    csvDataLine = new string[13];
-    //    csvDataLine[0] = "ID";
-    //    csvDataLine[1] = "NAME";
-    //    csvDataLine[2] = "NAME_KOR";
-    //    csvDataLine[3] = "SCRIPT_KOR";
-    //    csvDataLine[4] = "SCENE";
-    //    csvDataLine[5] = "CONDITION";
-    //    csvDataLine[6] = "VALUE_0";
-    //    csvDataLine[7] = "VALUE_1";
-    //    csvDataLine[8] = "SELECT";
-    //    csvDataLine[9] = "SELECT_PAY";
-    //    csvDataLine[10] = "SELECT_PAY_COUNT";
-    //    csvDataLine[11] = "SELECT_EFFECT";
-    //    csvDataLine[12] = "SELECT_EFFECT_COUNT";
-    //    data.Add(csvDataLine);
+        csvDataLine = new string[13];
+        csvDataLine[0] = "ID";
+        csvDataLine[1] = "NAME";
+        csvDataLine[2] = "NAME_KOR";
+        csvDataLine[3] = "SCRIPT_KOR";
+        csvDataLine[4] = "SCENE";
+        csvDataLine[5] = "CONDITION";
+        csvDataLine[6] = "VALUE_0";
+        csvDataLine[7] = "VALUE_1";
+        csvDataLine[8] = "SELECT";
+        csvDataLine[9] = "SELECT_PAY";
+        csvDataLine[10] = "SELECT_PAY_COUNT";
+        csvDataLine[11] = "SELECT_EFFECT";
+        csvDataLine[12] = "SELECT_EFFECT_COUNT";
+        data.Add(csvDataLine);
 
-    //    csvDataLine = new string[13];
-    //    csvDataLine[0] = "Int";
-    //    csvDataLine[1] = "String";
-    //    csvDataLine[2] = "String";
-    //    csvDataLine[3] = "String";
-    //    csvDataLine[4] = "String";
-    //    csvDataLine[5] = "String";
-    //    csvDataLine[6] = "Int";
-    //    csvDataLine[7] = "Int";
-    //    csvDataLine[8] = "String";
-    //    csvDataLine[9] = "String";
-    //    csvDataLine[10] = "Int";
-    //    csvDataLine[11] = "String";
-    //    csvDataLine[12] = "String";
-    //    data.Add(csvDataLine);
+        csvDataLine = new string[13];
+        csvDataLine[0] = "Int";
+        csvDataLine[1] = "String";
+        csvDataLine[2] = "String";
+        csvDataLine[3] = "String";
+        csvDataLine[4] = "String";
+        csvDataLine[5] = "String";
+        csvDataLine[6] = "Int";
+        csvDataLine[7] = "Int";
+        csvDataLine[8] = "String";
+        csvDataLine[9] = "String";
+        csvDataLine[10] = "Int";
+        csvDataLine[11] = "String";
+        csvDataLine[12] = "String";
+        data.Add(csvDataLine);
 
-    //    csvDataLine = new string[13];
-    //    csvDataLine[0] = "ID";
-    //    csvDataLine[1] = "이름";
-    //    csvDataLine[2] = "한글 이름";
-    //    csvDataLine[3] = "한글 스크립트";
-    //    csvDataLine[4] = "등장위치";
-    //    csvDataLine[5] = "등장조건";
-    //    csvDataLine[6] = "최소수치";
-    //    csvDataLine[7] = "최대수치";
-    //    csvDataLine[8] = "선택지";
-    //    csvDataLine[9] = "선택지 자원";
-    //    csvDataLine[10] = "지불할 수치";
-    //    csvDataLine[11] = "효과";
-    //    csvDataLine[12] = "효과 수치";
-    //    data.Add(csvDataLine);
+        csvDataLine = new string[13];
+        csvDataLine[0] = "ID";
+        csvDataLine[1] = "이름";
+        csvDataLine[2] = "한글 이름";
+        csvDataLine[3] = "한글 스크립트";
+        csvDataLine[4] = "등장위치";
+        csvDataLine[5] = "등장조건";
+        csvDataLine[6] = "최소수치";
+        csvDataLine[7] = "최대수치";
+        csvDataLine[8] = "선택지";
+        csvDataLine[9] = "선택지 자원";
+        csvDataLine[10] = "지불할 수치";
+        csvDataLine[11] = "효과";
+        csvDataLine[12] = "효과 수치";
+        data.Add(csvDataLine);
 
-    //    string[][] output = new string[data.Count][];
+        string[][] output = new string[data.Count][];
 
-    //    for (int i = 0; i < output.Length; i++)
-    //    {
-    //        output[i] = data[i];
-    //    }
+        for (int i = 0; i < output.Length; i++)
+        {
+            output[i] = data[i];
+        }
 
-    //    int length = output.GetLength(0);
-    //    string delimiter = ",";
+        int length = output.GetLength(0);
+        string delimiter = ",";
 
-    //    StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-    //    for (int i = 0; i < length; i++)
-    //    {
-    //        sb.AppendLine(string.Join(delimiter, output[i]));
-    //    }
-    //    StreamWriter outStream = System.IO.File.AppendText(filepath + "\\" + fileName);
-    //    outStream.Write(sb.ToString(), Encoding.UTF8);
-    //    outStream.Close();
-    //}
+        for (int i = 0; i < length; i++)
+        {
+            sb.AppendLine(string.Join(delimiter, output[i]));
+        }
+        StreamWriter outStream = System.IO.File.AppendText(filepath + "\\" + fileName);
+        outStream.Write(sb.ToString(), Encoding.UTF8);
+        outStream.Close();
+    }
     public void SaveCSVFile(JHW_EventSelect eventSelectResult)
     {
         string filepath = Path.GetFullPath("Assets/Resources/DataBase");
@@ -323,6 +343,8 @@ public class JHW_Event
     public string Data_CONDITION; // 등장조건 
     public int Data_VALUE_0; // 최소수치
     public int Data_VALUE_1; // 최대수치 
+    public string Data_SELECTED1_SCRIPT_KOR;
+    public string Data_SELECTED2_SCRIPT_KOR;
 
     // 생성자
     public JHW_Event(Dictionary<string, object> _data)
@@ -335,6 +357,8 @@ public class JHW_Event
         Data_CONDITION = (string)_data["CONDITION"];
         Data_VALUE_0 = (int)_data["VALUE_0"];
         Data_VALUE_1 = (int)_data["VALUE_1"];
+        Data_SELECTED1_SCRIPT_KOR = (string)_data["SELECTED1_SCRIPT_KOR"];
+        Data_SELECTED2_SCRIPT_KOR = (string)_data["SELECTED2_SCRIPT_KOR"];
     }
 }
 #endregion
@@ -418,7 +442,17 @@ partial class HYJ_Event_Manager
     // 랜덤 이벤트ID 발생 메서드
     private int JHW_setRandomEventID()
     {
-        int randomID = Random.Range(0, Event_datas.Count);
+        int randomID = Random.Range(0, 3); // 중간 발표 때문에 0~3으로 임시조정
+        while (randomEventID == randomID) // 이미 선택된 이벤트면 다시뽑는다
+        {
+            randomID = Random.Range(0, 3);
+        }
+
+        /*int randomID = Random.Range(0, Event_datas.Count);
+        while (randomEventID == randomID) // 이미 선택된 이벤트면 다시뽑는다
+        {
+            randomID = Random.Range(0, Event_datas.Count);
+        }*/
         return randomID;
     }
 
@@ -436,22 +470,42 @@ partial class HYJ_Event_Manager
         }
     }
 
-    // 첫번째 선택지 버튼
+    // 첫번째 선택지 버튼 누를 때 발생하는 함수
     public void ClickButtonOne(bool isClicked)
     {
         // 이벤트 효과
         List<JHW_EventSelect> eventSelectResult = EventSelect_datas.FindAll(x => x.Data_EVENT_ID.Equals(randomEventID));// 이벤트셀렉트 선택지1,2
         SaveCSVFile(eventSelectResult[0]);
-        HYJ_SetActive(isClicked);
+        // 결과 선택 후 등장하는 스크립트로 변경
+        string eventResultScript = Event_datas[randomEventID].Data_SELECTED1_SCRIPT_KOR.Replace("n", "\n");
+        script.text = eventResultScript;
+        eventButton1.SetActive(false);
+        eventButton2.SetActive(false);
+        eventResultButton.SetActive(true);
     }
 
-    // 두번째 선택지 버튼
+    // 두번째 선택지 버튼 누를 때 
     public void ClickButtonTwo(bool isClicked)
     {
         // 이벤트 효과
         List<JHW_EventSelect> eventSelectResult = EventSelect_datas.FindAll(x => x.Data_EVENT_ID.Equals(randomEventID));// 이벤트셀렉트 선택지1,2
         SaveCSVFile(eventSelectResult[1]);
+        // 결과 선택 후 등장하는 스크립트로 변경
+        string eventResultScript = Event_datas[randomEventID].Data_SELECTED2_SCRIPT_KOR.Replace("n","\n");
+        script.text = eventResultScript;
+        eventButton1.SetActive(false);
+        eventButton2.SetActive(false);
+        eventResultButton.SetActive(true);
+    }
+
+    // 결과창 버튼
+    public void ClickResultButton(bool isClicked)
+    {
         HYJ_SetActive(isClicked);
+        // 활성화시킨 버튼 비활성화 / 비활성화시킨 버튼 활성화
+        eventButton1.SetActive(true);
+        eventButton2.SetActive(true);
+        eventResultButton.SetActive(false);
     }
 
     public object JHW_GetSelectedData(params object[] _args) // EventSelectedDataBase.csv의 가장 최근 데이터 리턴
