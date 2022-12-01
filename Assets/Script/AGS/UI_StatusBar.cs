@@ -5,10 +5,17 @@ using UnityEngine.UI;
 
 public class UI_StatusBar : MonoBehaviour
 {
-    enum STATUS_BAR
+    public enum STATUS_BAR
     {
         HPBar, MPBar
     }
+
+    public enum STATUS_HP_COLOR
+    {
+        RED = 0,
+        GREEN = 1,        
+    }
+
 
     RectTransform Trans;
 
@@ -17,6 +24,9 @@ public class UI_StatusBar : MonoBehaviour
 
     [SerializeField]
     Image FillImage;
+
+    [SerializeField]
+    STATUS_HP_COLOR HPColor;
 
     [SerializeField]
     public Character Target_Obj;
@@ -31,8 +41,6 @@ public class UI_StatusBar : MonoBehaviour
 
         //FillImage.color = new Color(250, 62, 62, 255);
         //FillImage.color = new Color(51, 183, 46, 255);
-        if (Bar == STATUS_BAR.HPBar)
-            FillImage.color = new Color(0.2f, 0.718f, 0.18f, 1f);
 
     }
 
@@ -55,5 +63,20 @@ public class UI_StatusBar : MonoBehaviour
                 break;
         }
 
+    }
+
+    public void SetHPColor(STATUS_HP_COLOR color)
+    {
+        switch(color)
+        {
+            case STATUS_HP_COLOR.RED:
+				FillImage.color = new Color(0.98f, 0.243f, 0.243f, 1f);
+				break;
+            case STATUS_HP_COLOR.GREEN:
+				FillImage.color = new Color(0.2f, 0.718f, 0.18f, 1f);
+				break;
+            default: 
+                break;
+		}
     }
 }
