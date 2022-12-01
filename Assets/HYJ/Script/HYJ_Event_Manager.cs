@@ -501,6 +501,7 @@ partial class HYJ_Event_Manager
     // 결과창 버튼
     public void ClickResultButton(bool isClicked)
     {
+        // 누르면 false 가 리턴됨
         HYJ_SetActive(isClicked);
         // 활성화시킨 버튼 비활성화 / 비활성화시킨 버튼 활성화
         eventButton1.SetActive(true);

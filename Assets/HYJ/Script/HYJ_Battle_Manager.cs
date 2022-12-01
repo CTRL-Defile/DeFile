@@ -15,10 +15,11 @@ using UnityEngine.Diagnostics;
 using TMPro.Examples;
 using System.Linq;
 
-enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT };
+enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_END };
 
 public partial class HYJ_Battle_Manager : MonoBehaviour
 {
+    [SerializeField]
 	BATTLE_PHASE Basic_phase = BATTLE_PHASE.PHASE_INIT;
 
     double Phase_timer = 10.0;
@@ -26,6 +27,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     bool StatusBar_isInitialized = false;
 	[SerializeField]
     TextMeshProUGUI TMP = null;
+    GameObject End_Btn= null;
 
 	//////////  Getter & Setter //////////
 	object HYJ_Basic_GetPhase(params object[] _args)
@@ -56,11 +58,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     {
         bool _isActive = (bool)_args[0];
 
-        //for(int i=0; i<Shop_Pannel_cnt; i++)
-        //    Shop_UnitList[i].gameObject.SetActive(_isActive);
-        //Shop_Coin.SetActive(_isActive);
-        //EXP_Bar.SetActive(_isActive);
-
         Shop_UI.SetActive(_isActive);
 
         return null;
@@ -76,6 +73,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        End_Btn = Battle_UI.transform.GetChild(0).transform.GetChild(2).gameObject;
         //
         Basic_phase = BATTLE_PHASE.PHASE_INIT;
 
@@ -113,9 +111,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         this.gameObject.SetActive(false);
                     }
 
-						HYJ_Field_Init();					
+					HYJ_Field_Init();					
 					
 					Basic_phase = BATTLE_PHASE.PHASE_PREPARE;
+                    // End Btn set false;
+                    End_Btn.SetActive(false);
+                    //Battle_UI.transform.GetChild(0).transform.GetChild(2).gameObject.SetActive(false);
                 }
                 break;
 			// 전투 준비
@@ -169,8 +170,24 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 						Basic_phase = BATTLE_PHASE.PHASE_PREPARE;
 						Time_Acc = 0.0;
 					}
+                    if (Enemy_Unit.Count == 0 || Field_Unit.Count == 0)
+                    {
+                        Basic_phase = BATTLE_PHASE.PHASE_END;
+                    }
 				}
-                break;               
+                break;
+            // 전투 끝난 상태
+            case BATTLE_PHASE.PHASE_END:
+                {
+                    End_Btn.SetActive(true);
+                    if (Enemy_Unit.Count == 0)
+                        End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Win";
+                    else
+                        End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Lose";
+
+
+                }
+                break;
         }
     }
 }
@@ -1048,13 +1065,13 @@ partial class HYJ_Battle_Manager
 			float min = 10000f;
 			for (int k = 0; k < Num_Ally; k++)
 			{
-				Debug.Log("k" + k);
+				//Debug.Log("k" + k);
 				Vector3 E_pos = Field_Unit[k].gameObject.transform.position;
 				float Dist = Vector3.Magnitude(A_pos - E_pos);
 
 				if (Dist < min)
 				{
-					Debug.Log("min" + min);
+					//Debug.Log("min" + min);
 					min = Dist;
 					MinIdx = k;
 				}
