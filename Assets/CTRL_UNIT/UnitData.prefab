@@ -2571,7 +2571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc26a01c50650254e8dd7ea992857545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HostObject: {fileID: 1201895180302853860}
+  HostObject: {fileID: 5183948002169107927}
   Target: {fileID: 0}
 --- !u!1 &1934784088338280701
 GameObject:
@@ -2824,8 +2824,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3df4466054533d64cb605b338645b1c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Collider: {fileID: 0}
-  type: 0
+  Collider: {fileID: 5673517294749867905}
+  type: 5
 --- !u!1 &2083318031170697968
 GameObject:
   m_ObjectHideFlags: 0
@@ -3390,8 +3390,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3df4466054533d64cb605b338645b1c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Collider: {fileID: 0}
-  type: 0
+  Collider: {fileID: 5849460601348154042}
+  type: 4
 --- !u!1 &2446684102503730486
 GameObject:
   m_ObjectHideFlags: 0
@@ -3804,8 +3804,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3df4466054533d64cb605b338645b1c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Collider: {fileID: 0}
-  type: 0
+  Collider: {fileID: 7914387865258022695}
+  type: 1
 --- !u!1 &2743697232388440678
 GameObject:
   m_ObjectHideFlags: 0
@@ -3959,7 +3959,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc26a01c50650254e8dd7ea992857545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HostObject: {fileID: 1201895180302853860}
+  HostObject: {fileID: 1788865134667311096}
   Target: {fileID: 0}
 --- !u!1 &2907647033745359781
 GameObject:
@@ -14083,6 +14083,7 @@ MonoBehaviour:
   m_Target: {fileID: 0}
   m_PreTarget: {fileID: 0}
   m_PathFinder: {fileID: 0}
+  m_AnimEvent: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 10
   Status_MP: 0
@@ -14572,6 +14573,7 @@ MonoBehaviour:
   m_Target: {fileID: 0}
   m_PreTarget: {fileID: 0}
   m_PathFinder: {fileID: 0}
+  m_AnimEvent: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 10
   Status_MP: 0
@@ -15477,8 +15479,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3df4466054533d64cb605b338645b1c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Collider: {fileID: 0}
-  type: 0
+  Collider: {fileID: 660998660406125520}
+  type: 2
 --- !u!1 &4718312530160045759
 GameObject:
   m_ObjectHideFlags: 0
@@ -16800,6 +16802,7 @@ MonoBehaviour:
   m_Target: {fileID: 0}
   m_PreTarget: {fileID: 0}
   m_PathFinder: {fileID: 0}
+  m_AnimEvent: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 10
   Status_MP: 0
@@ -22830,6 +22833,7 @@ MonoBehaviour:
   m_Target: {fileID: 0}
   m_PreTarget: {fileID: 0}
   m_PathFinder: {fileID: 0}
+  m_AnimEvent: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 10
   Status_MP: 0
@@ -29760,8 +29764,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3df4466054533d64cb605b338645b1c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Collider: {fileID: 0}
-  type: 0
+  Collider: {fileID: 3897295586899737266}
+  type: 3
 --- !u!1 &5291015222135580929
 GameObject:
   m_ObjectHideFlags: 0
@@ -29883,7 +29887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc26a01c50650254e8dd7ea992857545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HostObject: {fileID: 1201895180302853860}
+  HostObject: {fileID: 4404662457965607783}
   Target: {fileID: 0}
 --- !u!1 &5301566832862367361
 GameObject:
@@ -40881,6 +40885,7 @@ MonoBehaviour:
   m_Target: {fileID: 0}
   m_PreTarget: {fileID: 0}
   m_PathFinder: {fileID: 0}
+  m_AnimEvent: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 10
   Status_MP: 0
@@ -43418,7 +43423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc26a01c50650254e8dd7ea992857545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HostObject: {fileID: 1201895180302853860}
+  HostObject: {fileID: 8937368241449392367}
   Target: {fileID: 0}
 --- !u!1 &5795566582796007732
 GameObject:
@@ -44570,7 +44575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc26a01c50650254e8dd7ea992857545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HostObject: {fileID: 1201895180302853860}
+  HostObject: {fileID: 4678839526145629840}
   Target: {fileID: 0}
 --- !u!1 &6658732198318628766
 GameObject:
@@ -54107,6 +54112,7 @@ MonoBehaviour:
   m_Target: {fileID: 0}
   m_PreTarget: {fileID: 0}
   m_PathFinder: {fileID: 0}
+  m_AnimEvent: {fileID: 0}
   Status_HP: 0
   Status_MaxHP: 10
   Status_MP: 0
