@@ -63,34 +63,34 @@ public partial class Character : MonoBehaviour
 		switch (m_AnimEvent.Anim_Type)
 		{
 			case ANIM_TYPE.BEAR:
-				Status_atk = 10.0f;
+				Status_atk = 5.0f;
 				Status_MaxHP = 100.0f;
 				Status_HP = Status_MaxHP;
 				break;
 			case ANIM_TYPE.ORC:
 				Status_atk = 7.0f;
-				Status_MaxHP = 30.0f;
+				Status_MaxHP = 120.0f;
 				Status_HP = Status_MaxHP;
 				break;
 			case ANIM_TYPE.EVIL:
-				Status_atk = 3.0f;
-				Status_MaxHP = 40.0f;
+				Status_atk = 9.0f;
+				Status_MaxHP = 140.0f;
 				Status_HP = Status_MaxHP;
 				break;
 			case ANIM_TYPE.GOBLIN_T:
-				Status_MaxHP = 50.0f;
+				Status_MaxHP = 160.0f;
 				Status_HP = Status_MaxHP;
-				Status_atk = 5.0f;
+				Status_atk = 11.0f;
 				break;
 			case ANIM_TYPE.GOBLIN_N:
-				Status_MaxHP = 60.0f;
+				Status_MaxHP = 160.0f;
 				Status_HP = Status_MaxHP;
-				Status_atk = 6.0f;
+				Status_atk = 13.0f;
 				break;
 			case ANIM_TYPE.WERERAT:
-				Status_MaxHP = 70.0f;
+				Status_MaxHP = 180.0f;
 				Status_HP = Status_MaxHP;
-				Status_atk = 2.0f;
+				Status_atk = 15.0f;
 				break;
 		}
         

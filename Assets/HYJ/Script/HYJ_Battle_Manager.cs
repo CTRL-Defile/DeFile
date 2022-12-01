@@ -122,7 +122,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 			// 전투 준비
 			case BATTLE_PHASE.PHASE_PREPARE:
                 {
-                    Phase_timer = 20.0;
+                    Phase_timer = 50.0;
 					Time_Acc += Time.deltaTime;
                     Battle_Timer();
 					//시간 체크 후 전투 상태로 Phase 전환
@@ -161,7 +161,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 {
 					Find_Target();
 
-					Phase_timer = 30.0;
+					Phase_timer = 50.0;
 					Time_Acc += Time.deltaTime;
 					Battle_Timer();
 					//시간 체크 후 전투 상태로 Phase 전환
@@ -649,11 +649,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         for (int i=0; i<enemy_num; i++)
         {
             System.Random r = new System.Random();
-            int n = r.Next(6);
-
-            //TODO : 중간발표용 곰생성 막음
-            if (0 == n)
-                n = 1;
+            int n = r.Next(3);
 
             GameObject unitData
              = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
