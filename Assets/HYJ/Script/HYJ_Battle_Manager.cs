@@ -15,7 +15,7 @@ using UnityEngine.Diagnostics;
 using TMPro.Examples;
 using System.Linq;
 
-enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_END };
+public enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_END };
 
 public partial class HYJ_Battle_Manager : MonoBehaviour
 {
@@ -271,7 +271,8 @@ partial class HYJ_Battle_Manager
 		}
         return null;
 	}
-	object Get_Field_tiles(params object[] _args)
+    // Field_tiles
+    object Get_Field_tiles(params object[] _args)
     {
         return Field_tiles;
     }
@@ -282,6 +283,11 @@ partial class HYJ_Battle_Manager
     object HYJ_Field_GetFieldY(params object[] _args)
     {
         return Field_y;
+    }
+    // Stand_tiles
+    object HYJ_Field_GetStandtiles(params object[] _args)
+    {
+        return Stand_tiles;
     }
     object HYJ_Field_GetStandX(params object[] _args)
     {
@@ -551,6 +557,7 @@ partial class HYJ_Battle_Manager
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES,                    Get_Field_tiles                );
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X,                HYJ_Field_GetFieldX             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y,                HYJ_Field_GetFieldY             );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_TILES,            HYJ_Field_GetStandtiles         );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X,                HYJ_Field_GetStandX             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE,                   HYJ_Field_GetTile               );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_FROM_CHARACTER,    HYJ_Field_GetTileFromCharacter  );
@@ -836,6 +843,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
                     // 구매한 카드 사라지게.
                     Btn_idx.SetActive(false);
+
+                    //
+                    tmp.GetComponent<Character>().HYJ_Status_saveData = new CTRL_Character_Data(unit_idx+"");
                 }
                 else // 유닛이 없을 경우!
                     Debug.Log("Unit " + unit_idx + " is NULL");

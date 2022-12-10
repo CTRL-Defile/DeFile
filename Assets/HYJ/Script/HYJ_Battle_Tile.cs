@@ -173,6 +173,13 @@ partial class HYJ_Battle_Tile : MonoBehaviour
 
             }
         }
+
+        // 영재가 추가
+        BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
+        if (phase == BATTLE_PHASE.PHASE_PREPARE)
+        {
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE);
+        }
     }
     private void Ally_Exit(Collider other)
     {
