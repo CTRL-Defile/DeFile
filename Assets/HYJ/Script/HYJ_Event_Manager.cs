@@ -479,6 +479,9 @@ partial class HYJ_Event_Manager
         // 결과 선택 후 등장하는 스크립트로 변경
         string eventResultScript = Event_datas[randomEventID].Data_SELECTED1_SCRIPT_KOR.Replace("n", "\n");
         script.text = eventResultScript;
+        if (script.text.Length > 100) script.fontSize = 25;
+        else script.fontSize = 30;
+        Debug.Log(script.text.Length);
         eventButton1.SetActive(false);
         eventButton2.SetActive(false);
         eventResultButton.SetActive(true);
@@ -492,6 +495,8 @@ partial class HYJ_Event_Manager
         SaveCSVFile(eventSelectResult[1]);
         // 결과 선택 후 등장하는 스크립트로 변경
         string eventResultScript = Event_datas[randomEventID].Data_SELECTED2_SCRIPT_KOR.Replace("n","\n");
+        if (script.text.Length > 100) script.fontSize = 25;
+        else script.fontSize = 30;
         script.text = eventResultScript;
         eventButton1.SetActive(false);
         eventButton2.SetActive(false);
@@ -503,10 +508,11 @@ partial class HYJ_Event_Manager
     {
         // 누르면 false 가 리턴됨
         HYJ_SetActive(isClicked);
-        // 활성화시킨 버튼 비활성화 / 비활성화시킨 버튼 활성화
+        // 활성화시킨 버튼 비활성화 / 비활성화시킨 버튼 활성화 / 스크립트 원래크기로
         eventButton1.SetActive(true);
         eventButton2.SetActive(true);
         eventResultButton.SetActive(false);
+        script.fontSize = 30;
     }
 
     public object JHW_GetSelectedData(params object[] _args) // EventSelectedDataBase.csv의 가장 최근 데이터 리턴
