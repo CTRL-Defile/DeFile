@@ -117,8 +117,6 @@ partial class HYJ_BaseCamp_Manager {
         dataFlag[randomSelectUnitNumber2] = true;
         do { randomSelectUnitNumber3 = Random.Range(0, unitDatas.Count); } while (dataFlag[randomSelectUnitNumber3] == true);
 
-        Debug.Log(randomSelectUnitNumber1+"+"+ randomSelectUnitNumber2 + "+" + randomSelectUnitNumber3);
-
         // 랜덤하게 선택된 유닛
         selectedUnit1 = unitDatas[randomSelectUnitNumber1];
         selectedUnit2 = unitDatas[randomSelectUnitNumber2];
@@ -265,7 +263,7 @@ partial class HYJ_BaseCamp_Manager {
         StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/UnitDataBase1.csv");
         // 삭제되는 유닛 라인은 가장 마지막 라인으로 대체
         lines[deleteLineNumber] = lines[lines.Length-1];
-        for (int i = 0; i < lines.Length-1; i++) { Debug.Log(lines[i]); outStream.WriteLine(lines[i].ToString());}
+        for (int i = 0; i < lines.Length-1; i++) {outStream.WriteLine(lines[i].ToString());}
         outStream.Close();
     }
 
