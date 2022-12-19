@@ -23,7 +23,7 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     //////////  Getter & Setter //////////
     public int GraphIndex { get { return m_GraphIdx; } set { m_GraphIdx = value; } }
 
-    //////////  Method          //////////
+	//////////  Method          //////////
 	public GameObject HYJ_Basic_onUnit { get { return Basic_onUnit; } set { Basic_onUnit = value; } }
 
     //////////  Default Method  //////////
@@ -52,34 +52,47 @@ partial class HYJ_Battle_Tile : MonoBehaviour
     {
 		 BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
         if (phase == BATTLE_PHASE.PHASE_COMBAT)
-            return;
-		switch (other.tag)
         {
-            case "Ally":
-                Ally_Enter(other);
-                break;
-
-            case "Enemy":
-                Enemy_Enter(other);
-                break;
+            if(null == Basic_onUnit)
+			    Basic_onUnit = other.gameObject;
         }
-    }
+        else
+        {
+            switch (other.tag)
+            {
+                case "Ally":
+                    Ally_Enter(other);
+                    break;
 
-    private void OnTriggerExit(Collider other)
+                case "Enemy":
+                    Enemy_Enter(other);
+                    break;
+            }
+        }
+
+	}
+
+	private void OnTriggerExit(Collider other)
     {
 		BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
 		if (phase == BATTLE_PHASE.PHASE_COMBAT)
-			return;
-		switch (other.tag)
+		{			
+			Basic_onUnit = null;
+		}
+        else
         {
-            case "Ally":
-                Ally_Exit(other);
-                break;
+			switch (other.tag)
+			{
+				case "Ally":
+					Ally_Exit(other);
+					break;
 
-            case "Enemy":
-                Enemy_Exit(other);
-                break;
-        }
+				case "Enemy":
+					Enemy_Exit(other);
+					break;
+			}
+		}
+
     }
 
     private GameObject DetectUnitObject()

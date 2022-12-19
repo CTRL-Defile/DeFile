@@ -132,7 +132,8 @@ public partial class Character : MonoBehaviour
 
 		//if(m_PathFinder.Arrived == true)
 		//	m_PathFinder.StartPathFinding(gameObject, Target);
-		
+		if(Target != null)
+			m_PathFinder.StartPathFinding(on_Tile, Target.GetComponent<Character>().LSY_Character_Get_OnTile());
 		m_PathFinder.MoveOnPath(gameObject);
 
 
@@ -264,6 +265,9 @@ public partial class Character
 						Dir = Target.transform.position - transform.position;
 						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 1.0f * Time.deltaTime);
 						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
+
+						if (Target.GetComponent<Character>().Stat_HP <= 0)
+							State = STATE.SKILL_IDLE;
 						break;
 					case STATE.SKILL_IDLE:
 						transform.LookAt(Target.transform);
@@ -276,6 +280,7 @@ public partial class Character
 						if (Angle <= 10.0f)
 							State = STATE.SKILL;
 						break;
+
 					default:
 						break;
 				}
@@ -285,10 +290,10 @@ public partial class Character
 		MoveProcess();		
 	}
 
-    virtual public void MoveProcess()
-    {
+	virtual public void MoveProcess()
+	{
 
-    }
+	}
 
 	//////////  Default Method  //////////
 }
@@ -357,26 +362,27 @@ public partial class Character
 
 	virtual protected void UpdateIdle()
 	{
-		m_animator.ResetTrigger("Skill");
+		m_animator.SetBool("Skill", false);
 		m_animator.SetBool("Run Forward", false);
 	}
 
 	virtual protected void UpdateRun()
 	{
-		m_animator.ResetTrigger("Skill");
+		m_animator.SetBool("Skill", false);
 		m_animator.SetBool("Run Forward", true);
 	}
 
 	virtual protected void UpdateDie()
 	{
 		m_animator.SetBool("Run Forward", false);
-		m_animator.ResetTrigger("Skill");
+		m_animator.SetBool("Skill", false);
 		m_animator.SetTrigger("Die");		
 	}
 
 	virtual protected void UpdateSkill()
-	{		
-		m_animator.SetTrigger("Skill");
+	{
+		m_animator.SetBool("Skill", true);
+		m_animator.SetBool("Run Forward", false);
 	}
 
 }
