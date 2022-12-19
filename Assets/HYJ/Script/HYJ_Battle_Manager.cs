@@ -75,10 +75,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     {
         End_Btn = Battle_UI.transform.GetChild(0).transform.GetChild(2).gameObject;
         //
-        Basic_phase = BATTLE_PHASE.PHASE_INIT;
+        Basic_phase = BATTLE_PHASE.PHASE_INIT;		
 
-        //
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,   HYJ_Basic_GetPhase);
+		//
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,   HYJ_Basic_GetPhase);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON,  HYJ_ActiveOn);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__SHOP_UI, LSY_Set_ShopUI);
     }
@@ -111,8 +111,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         this.gameObject.SetActive(false);
                     }
 
-					HYJ_Field_Init();					
-					
+					HYJ_Field_Init();
+                    // 필드 생성 후 그래프 셋업
+					SetupGraph();
+
 					Basic_phase = BATTLE_PHASE.PHASE_PREPARE;
                     // End Btn set false;
                     End_Btn.SetActive(false);
@@ -122,7 +124,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 			// 전투 준비
 			case BATTLE_PHASE.PHASE_PREPARE:
                 {
-                    Phase_timer = 50.0;
+                    Phase_timer = 10.0;
 					Time_Acc += Time.deltaTime;
                     Battle_Timer();
 					//시간 체크 후 전투 상태로 Phase 전환
@@ -158,7 +160,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 break;
 			// 전투 상태
 			case BATTLE_PHASE.PHASE_COMBAT:
-                {
+                {                    
+                    InitGraphNodes();
 					Find_Target();
 
 					Phase_timer = 50.0;
@@ -259,7 +262,14 @@ partial class HYJ_Battle_Manager
     [SerializeField] List<HYJ_Battle_Manager_Line> Field_tiles;
     [SerializeField] HYJ_Battle_Manager_Line Stand_tiles;
 
+	List<NODE> m_Graph = new List<NODE>();
+
 	//////////  Getter & Setter //////////
+	object GetGraph(params object[] _args)
+    {
+        return m_Graph;
+    }
+
 	object TileInGraph(params object[] _args)
 	{
 		foreach (var line in Field_tiles)
@@ -450,8 +460,111 @@ partial class HYJ_Battle_Manager
         }
     }
 
-    //////////  Default Method  //////////
-    void HYJ_Field_Init()
+	object InitGraphNodes(params object[] _args)
+	{
+        int size = m_Graph.Count;
+        for(int i = 0; i < size; i++)
+        {
+            m_Graph[i].Fcost = 0;
+			m_Graph[i].Gcost = 0;
+            m_Graph[i].InitializeMarking();
+            m_Graph[i].ParentIndex = 0;
+		}
+
+        return null;
+    }
+
+	private void SetupGraph()
+	{
+		List<HYJ_Battle_Manager_Line> TileLines = (List<HYJ_Battle_Manager_Line>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES);
+		int Index = 0;
+		int MinimX = TileLines[0].HYJ_Data_GetCount();
+		int MaximX = TileLines[1].HYJ_Data_GetCount();
+		double TruncateVal = 0.0f;
+
+		if (TileLines.Count > 0)
+		{
+			for (int i = 0; i < TileLines.Count; ++i)
+			{
+				int TileXSize = TileLines[i].HYJ_Data_GetCount();
+				for (int j = 0; j < TileXSize; ++j)
+				{
+					NODE node = new NODE(Index, TileLines[i].HYJ_Data_Tile(j).gameObject.transform.localPosition, TileLines[i].HYJ_Data_Tile(j));
+					m_Graph.Add(node);
+					TileLines[i].HYJ_Data_Tile(j).GraphIndex = Index;
+					Index++;
+				}
+			}
+		}
+
+		for (int i = 0; i < TileLines.Count; ++i)
+		{
+			int TileXSize = TileLines[i].HYJ_Data_GetCount();
+
+			// 행별 열개수 차에 의한 Index 보정 값
+			TruncateVal = Math.Truncate(i / 2.0f);
+
+			for (int j = 0; j < TileXSize; ++j)
+			{
+				if (i % 2 == 0 || i >= 3)
+					Index = i * MinimX + j + (int)TruncateVal;
+				else
+					Index = i * MinimX + j;
+
+				if (m_Graph.Count <= Index)
+					continue;
+
+				//Debug.Log("그래프 생성 중 Index : " + Index);
+
+				// 좌 상단 인접 타일
+				// 맨윗줄과 맨왼쪽줄에 홀수타일은 좌상단 타일이 없다
+				if (i != 0 && (j != 0 || (j == 0 && i % 2 == 0))) // 맨윗줄 아닐때 && ( 맨왼쪽 아닐때 || (  j == 0 인데 짝수 줄이면 좌상단 있어서 예외처리 )
+				{
+					m_Graph[Index].m_Neighbors.Add(m_Graph[Index - (MaximX)]);
+					//Debug.Log("m_Graph[" + Index + "]의 좌상단 타일 Index" + (Index - MaximX));
+				}
+
+				// 우 상단 인접 타일
+				if (i != 0 && ((j != TileXSize - 1) || (j == TileXSize - 1 && i % 2 == 0)))
+				{
+					m_Graph[Index].m_Neighbors.Add(m_Graph[Index - (MinimX)]);
+					//Debug.Log("m_Graph[" + Index + "]의 우상단 타일 Index" + (Index - MinimX));
+				}
+
+				// 우 인접 타일
+				if (j < TileXSize - 1)
+				{
+					m_Graph[Index].m_Neighbors.Add(m_Graph[Index + 1]);
+					//Debug.Log("m_Graph[" + Index + "]의 우 타일 Index" + (Index + 1));
+				}
+
+				// 우 하단 인접 타일			
+				// 맨 아랫줄과 맨오른쪽 홀수줄은 우 하단 타일 없음	
+				if (i != TileLines.Count - 1 && (j != TileXSize - 1 || (j == TileXSize - 1 && i % 2 == 0)))
+				{
+					m_Graph[Index].m_Neighbors.Add(m_Graph[Index + MaximX]);
+					//Debug.Log("m_Graph[" + Index + "]의 우하단 타일 Index" + (Index + MaximX));
+				}
+
+				// 좌 하단 인접 타일
+				if (i != TileLines.Count - 1 && (j != 0 || (j == 0 && i % 2 == 0)))
+				{
+					m_Graph[Index].m_Neighbors.Add(m_Graph[Index + MinimX]);
+					//Debug.Log("m_Graph[" + Index + "]의 좌하단 타일 Index" + (Index + MinimX));
+				}
+
+				// 좌 인접 타일
+				if (j > 0)
+				{
+					m_Graph[Index].m_Neighbors.Add(m_Graph[Index - 1]);
+					//Debug.Log("m_Graph[" + Index + "]의 좌 타일 Index" + (Index - 1));
+				}
+			}
+		}
+	}
+
+	//////////  Default Method  //////////
+	void HYJ_Field_Init()
     {
         // Battle_Map, Field_parent, Stand_parent 변수명임
         GameObject element = Battle_Map.GetChild(0).gameObject;
@@ -549,11 +662,13 @@ partial class HYJ_Battle_Manager
         trash_obj.SetActive(false);
         trash_obj.name = "trash_0";
 
-        
+
 
 
 
 		//
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GRAPH_NODE_INIT,          InitGraphNodes              );
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH,                    GetGraph                    );
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES,                    Get_Field_tiles                );
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X,                HYJ_Field_GetFieldX             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y,                HYJ_Field_GetFieldY             );
@@ -1043,11 +1158,18 @@ partial class HYJ_Battle_Manager
 
         for (int i = 0; i < Num_Ally; i++)
         {
-            //Debug.Log("i"+i);
-            Vector3 A_pos = Field_Unit[i].gameObject.transform.position;
+			if (Field_Unit[i].GetComponent<Character>().Dead ||
+				Field_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL)
+				continue;
+
+			//Debug.Log("i"+i);
+			Vector3 A_pos = Field_Unit[i].gameObject.transform.position;
             float min = 10000f;
             for (int k = 0; k < Num_Enemy; k++)
             {
+                // 죽어있으면 타겟 계산 X
+                if (Enemy_Unit[k].GetComponent<Character>().Dead)
+					continue;
                 //Debug.Log("k" + k);
                 Vector3 E_pos = Enemy_Unit[k].gameObject.transform.position;
                 float Dist = Vector3.Magnitude(A_pos - E_pos);
@@ -1066,11 +1188,18 @@ partial class HYJ_Battle_Manager
 
 		for (int i = 0; i < Num_Enemy; i++)
 		{
+			if (Enemy_Unit[i].GetComponent<Character>().Dead ||
+				Enemy_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL)
+				continue;
 			//Debug.Log("i"+i);
 			Vector3 A_pos = Enemy_Unit[i].gameObject.transform.position;
 			float min = 10000f;
 			for (int k = 0; k < Num_Ally; k++)
 			{
+				// 죽어있으면 타겟 계산 X
+				if (Field_Unit[k].GetComponent<Character>().Dead)
+					continue;
+
 				//Debug.Log("k" + k);
 				Vector3 E_pos = Field_Unit[k].gameObject.transform.position;
 				float Dist = Vector3.Magnitude(A_pos - E_pos);
