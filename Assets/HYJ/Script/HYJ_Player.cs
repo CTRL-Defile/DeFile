@@ -136,6 +136,14 @@ partial class HYJ_Player
         return res;
     }
 
+    // 플레이어 체력 회복
+    object JHW_Basic_hp_Increase(params object[] _args)
+    {
+        int value = (int)_args[0];
+        Basic_hp = (Basic_hp + value) % Basic_hpMax;
+        return true;
+    }
+
     //////////  Default Method  //////////
     bool HYJ_Basic_Init()
     {
@@ -143,8 +151,9 @@ partial class HYJ_Player
         Basic_level = 1;
         Basic_exp = 0;
 
-
         //
+        Basic_hpMax = 99;
+        Basic_hp = Basic_hpMax;
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD, LSY_Basic_getGold);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_IS_ENOUGH, HYJ_Basic_GoldIsEnough);
