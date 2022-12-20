@@ -1483,6 +1483,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4d6a43277f67974383b5f5499d08bf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedObject: {fileID: 0}
+  selectedTile: {fileID: 0}
   oriPos: {x: 0, y: 0, z: 0}
   curBlkPos: {x: 0, y: 0, z: 0}
 --- !u!64 &1159666934
@@ -2371,7 +2373,7 @@ GameObject:
   - component: {fileID: 1717128172}
   - component: {fileID: 1717128168}
   - component: {fileID: 1717128173}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Tile_trash
   m_TagString: TrashTile
   m_Icon: {fileID: 0}
@@ -2411,6 +2413,7 @@ MonoBehaviour:
   Tile_Idx: 
   Tile_Position: {x: 0, y: 0, z: 0}
   m_GraphIdx: 0
+  isCasting: 0
   tile_Available: 0
   detectedUnit: []
 --- !u!64 &1717128169
@@ -2881,7 +2884,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1936266798}
   m_LocalRotation: {x: 0.35616523, y: -0, z: -0, w: 0.93442297}
-  m_LocalPosition: {x: 6, y: 10, z: -21.5}
+  m_LocalPosition: {x: 6, y: 16.75, z: -29.07}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18680,7 +18683,7 @@ GameObject:
   - component: {fileID: 1355835113591341948}
   - component: {fileID: 1355835113591341949}
   - component: {fileID: 1355835113591341950}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Tile1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18859,7 +18862,7 @@ GameObject:
   - component: {fileID: 1355835113666453292}
   - component: {fileID: 1355835113666453293}
   - component: {fileID: 1355835113666453296}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Tile0
   m_TagString: FieldTile
   m_Icon: {fileID: 0}
@@ -18882,6 +18885,7 @@ MonoBehaviour:
   Tile_Idx: 
   Tile_Position: {x: 0, y: 0, z: 0}
   m_GraphIdx: -1
+  isCasting: 0
   tile_Available: 1
   detectedUnit: []
 --- !u!114 &1355835113847754741
@@ -21319,6 +21323,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4d6a43277f67974383b5f5499d08bf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedObject: {fileID: 0}
+  selectedTile: {fileID: 0}
   oriPos: {x: 0, y: 0, z: 0}
   curBlkPos: {x: 0, y: 0, z: 0}
 --- !u!222 &2596144751865299538
@@ -31991,7 +31997,7 @@ GameObject:
   - component: {fileID: 7612466820008496836}
   - component: {fileID: 4745671473367895534}
   - component: {fileID: 7612466820008496837}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Tile_stand
   m_TagString: StandTile
   m_Icon: {fileID: 0}
@@ -34561,6 +34567,7 @@ MonoBehaviour:
   Tile_Idx: 
   Tile_Position: {x: 0, y: 0, z: 0}
   m_GraphIdx: -1
+  isCasting: 0
   tile_Available: 1
   detectedUnit: []
 --- !u!223 &7625413645223331484
