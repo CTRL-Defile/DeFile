@@ -118,25 +118,6 @@ public partial class Character : MonoBehaviour
 	{
 		DieProcess();
 
-		if (Input.GetKeyDown(KeyCode.P))
-			m_PathFinder.StartPathFinding(gameObject, Target);
-		//m_PathFinder.StartPathFinding(gameObject, Target);
-
-		// 무브를 멈추고 이동중이던 타일까지 이동을하고 // OnUnit같은거 싹 셋팅해주고 
-		// 다시 StartPathFinding 한번 해주고 (무한으로 돌지않게 bool변수하나 해주고)
-		// 기존에는 Path가 프레임마다 Clear되고 다시잡히니까 계속 첫위치가( 이동중이던 타일 처리를 안해줘서) 고정이다. 그래서 그자리에 얼음 해버림
-		// 이말은 == 한칸 이동하고 StartPathFinding 해주고 다시 불변수 풀어주고 이런식으로 Target으로하던 목표지점으로 하던 목적지까지 이거 반복.
-		// 이동중이거나 도착했을 시의 목적지 타일 체크해서 도착하게 만들어 도착했을때만 불변수 풀어서 Start 돌고
-		// 도착안했으면 불변수 false라서 start안돌고.
-		// Start가 안돌았다? 기존 Path유지 == Move호출시 지금 이동중이던 목적지 타일로 이동 한다는거임		
-
-		//if(m_PathFinder.Arrived == true)
-		//	m_PathFinder.StartPathFinding(gameObject, Target);
-		if(Target != null)
-			m_PathFinder.StartPathFinding(on_Tile, Target.GetComponent<Character>().LSY_Character_Get_OnTile());
-		m_PathFinder.MoveOnPath(gameObject);
-
-
 		if (IsDead)
 		{
 			// 풀링 할지 말지 생각중
@@ -144,6 +125,16 @@ public partial class Character : MonoBehaviour
 			gameObject.SetActive(false);
 			return;
 		}
+
+		if (Input.GetKeyDown(KeyCode.P))
+			m_PathFinder.StartPathFinding(gameObject, on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex, Target.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex);
+
+		if (State != STATE.DIE && Target != null)
+		{
+			m_PathFinder.StartPathFinding(gameObject, on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex, Target.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex);
+			m_PathFinder.MoveOnPath(gameObject);
+		}
+
 
 		if (Input.GetKeyDown(KeyCode.A))
 		{
@@ -162,8 +153,8 @@ public partial class Character : MonoBehaviour
 			HitProcess(10.0f);
 		}
 
-		ChangeState();
-		BattleProcess();		
+		BattleProcess();
+		ChangeState();		
 	}
 }
 
@@ -229,8 +220,14 @@ public partial class Character
     {
 		if (Status_HP > 0.0f)
 			return;
-		else
+		else if(Status_HP <= 0.0f && State != STATE.DIE)
+		{
+			List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);
+			BattleGraph[on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex].Marking = false;
+
 			State = STATE.DIE;
+		}
+			
 
 		// Dissolve Shader 적용 예정
 		// 일단 조절 값 없어서 Die 애니메이션 끝났을 때 IsDead true로
@@ -239,6 +236,7 @@ public partial class Character
 		IsDead = true;		
 
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE, this.gameObject);
+
 	}
 
 	virtual public void BattleProcess()
@@ -257,9 +255,8 @@ public partial class Character
 				switch (State)
 				{
 					case STATE.IDLE:
-						if (PreTarget == Target)
-							transform.LookAt(Target.transform);
 						State = STATE.SKILL;
+						transform.LookAt(Target.transform.position);
 						break;
 					case STATE.SKILL:
 						Dir = Target.transform.position - transform.position;
@@ -267,18 +264,12 @@ public partial class Character
 						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
 
 						if (Target.GetComponent<Character>().Stat_HP <= 0)
-							State = STATE.SKILL_IDLE;
-						break;
-					case STATE.SKILL_IDLE:
-						transform.LookAt(Target.transform);
-
-						Dir = Target.transform.position - transform.position;
-						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 1.0f * Time.deltaTime);
-						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
-						Debug.Log(Angle);						
-
-						if (Angle <= 10.0f)
-							State = STATE.SKILL;
+						{
+							State = STATE.IDLE;
+							m_PathFinder.InitCloseNodes();
+							m_PathFinder.InitMarking();
+						}
+							
 						break;
 
 					default:

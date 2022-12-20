@@ -124,7 +124,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 			// 전투 준비
 			case BATTLE_PHASE.PHASE_PREPARE:
                 {
-                    Phase_timer = 10.0;
+                    Phase_timer = 20.0;
 					Time_Acc += Time.deltaTime;
                     Battle_Timer();
 					//시간 체크 후 전투 상태로 Phase 전환
@@ -466,8 +466,7 @@ partial class HYJ_Battle_Manager
         for(int i = 0; i < size; i++)
         {
             m_Graph[i].Fcost = 0;
-			m_Graph[i].Gcost = 0;
-            m_Graph[i].InitializeMarking();
+			m_Graph[i].Gcost = 0;            
             m_Graph[i].ParentIndex = 0;
 		}
 
@@ -760,7 +759,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     bool Enemy_isInitialized = false;
     public void LSY_Enemy_Init()
     {
-        int enemy_num = 2;
+        int enemy_num = 6;
         List<Vector3> pos = new List<Vector3>();
         for (int i = 0; i < enemy_num; i++)
         {
