@@ -13,6 +13,7 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     [SerializeField] public List<int> Tile_Idx; // Tile의 행/열 정보
     [SerializeField] public Vector3 Tile_Position;  // Tile의 localPosition 저장
     [SerializeField] private int m_GraphIdx = -1;
+    [SerializeField] bool isCasting = false;
     public enum Tile_Available
     {
         Available,
@@ -25,6 +26,13 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
 
 	//////////  Method          //////////
 	public GameObject HYJ_Basic_onUnit { get { return Basic_onUnit; } set { Basic_onUnit = value; } }
+    public void LSY_Set_Cast(int i)
+    {
+        if (i == 0)
+            isCasting = false;
+        else
+            isCasting = true;
+    }
 
     //////////  Default Method  //////////
     void Start()
@@ -34,7 +42,10 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
 
     void Update()
     {
-        
+        if (isCasting)
+            this.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.red;
+        else
+            this.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.white;
     }
 
 }
