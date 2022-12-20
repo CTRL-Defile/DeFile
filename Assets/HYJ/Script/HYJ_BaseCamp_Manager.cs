@@ -139,9 +139,8 @@ partial class HYJ_BaseCamp_Manager {
 
         actionCnt -= (2 + this.restStack++); // 휴식 사용 시 다음 휴식에 필요한 행동개수 증가 및 행동개수 감소
 
-        // 체력회복?
-        //GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
-        //tmp.GetComponent<Character>().HYJ_Status_saveData = element;
+        // 10만큼 체력회복
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__HP_INCREASE, 10);
 
         ChangeGaugeUI(); // Gauge UI 변경
     }
