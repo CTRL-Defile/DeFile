@@ -223,12 +223,13 @@ public partial class Character
 		else if(Status_HP <= 0.0f && State != STATE.DIE)
 		{
 			List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);
-			BattleGraph[on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex].Marking = false;
+			//BattleGraph[on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex].Marking = false;
+			m_PathFinder.InitMarking();
 
 			State = STATE.DIE;
+			gameObject.SetActive(false);
 		}
 			
-
 		// Dissolve Shader 적용 예정
 		// 일단 조절 값 없어서 Die 애니메이션 끝났을 때 IsDead true로
 		if (m_animator.GetCurrentAnimatorStateInfo(0).IsName("Die") &&
@@ -261,15 +262,13 @@ public partial class Character
 					case STATE.SKILL:
 						Dir = Target.transform.position - transform.position;
 						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 1.0f * Time.deltaTime);
-						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
-
+						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));						
 						if (Target.GetComponent<Character>().Stat_HP <= 0)
 						{
 							State = STATE.IDLE;
 							m_PathFinder.InitCloseNodes();
 							m_PathFinder.InitMarking();
-						}
-							
+						}							
 						break;
 
 					default:
