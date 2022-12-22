@@ -262,18 +262,19 @@ public partial class Character
 					case STATE.SKILL:
 						Dir = Target.transform.position - transform.position;
 						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 1.0f * Time.deltaTime);
-						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));						
-						if (Target.GetComponent<Character>().Stat_HP <= 0)
-						{
-							State = STATE.IDLE;
-							m_PathFinder.InitCloseNodes();
-							m_PathFinder.InitMarking();
-						}							
+						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));										
 						break;
 
 					default:
 						break;
 				}
+			}
+
+			if (Target.GetComponent<Character>().Stat_HP <= 0)
+			{
+				State = STATE.IDLE;
+				m_PathFinder.InitCloseNodes();
+				m_PathFinder.InitMarking();
 			}
 		}
 
