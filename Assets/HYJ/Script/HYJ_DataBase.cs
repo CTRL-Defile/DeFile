@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 //
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public partial class HYJ_DataBase : MonoBehaviour
 {
@@ -30,7 +32,8 @@ public partial class HYJ_DataBase : MonoBehaviour
 
     //////////  Default Method  //////////
     // Start is called before the first frame update
-    void Start()
+    //void Start()
+    private void Awake()
     {
         Basic_phase = 0;
 
@@ -244,6 +247,18 @@ partial class HYJ_DataBase
     [SerializeField] List<Dictionary<string, object>> Unit_csv;
 
     //////////  Getter & Setter //////////
+
+    object LSY_GetUnitPrefab(params object[] _args)
+    {
+        return Unit_datas;
+    }
+    object LSY_GetPhase(params object[] _args)
+    {
+        int a;
+        if (Unit_phase == -1)
+            a=0;
+        return Unit_phase;
+    }
     object HYJ_Unit_GetDataCount(params object[] _args)
     {
         return Unit_datas.transform.childCount;
@@ -278,6 +293,8 @@ partial class HYJ_DataBase
     void HYJ_Unit_Start()
     {
         Unit_phase = 0;
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_PHASE, LSY_GetPhase);
+
     }
 
     bool HYJ_Unit_Init()
@@ -326,7 +343,8 @@ partial class HYJ_DataBase
             case 3:
                 {
                     //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID, HYJ_Unit_GetDataFromID);
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV, LSY_Unit_GetDB_CSV);
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_UNIT_PREFAB,   LSY_GetUnitPrefab       );
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV,  LSY_Unit_GetDB_CSV      );
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_COUNT,    HYJ_Unit_GetDataCount   );
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,  HYJ_Unit_GetDataFromID  );
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_NAME,     HYJ_Unit_GetDataName    );
@@ -337,6 +355,16 @@ partial class HYJ_DataBase
 
         return (Unit_phase == -1);
     }
+
+    private void Addressable_Completed(AsyncOperationHandle<GameObject> handle)
+    {
+        if (handle.Status == AsyncOperationStatus.Succeeded)
+        {
+            GameObject result = handle.Result;
+        }
+    }
+
+
 }
 
 #endregion

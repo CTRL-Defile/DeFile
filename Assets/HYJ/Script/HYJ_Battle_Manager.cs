@@ -29,8 +29,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     TextMeshProUGUI TMP = null;
     GameObject End_Btn= null;
 
-	//////////  Getter & Setter //////////
-	object HYJ_Basic_GetPhase(params object[] _args)
+    GameObjectPool<HYJ_Battle_Tile> m_TilePool;
+    GameObjectPool<Character> m_CharacterPool;
+    short Max_tile = 100, Max_character = 40;
+
+    //////////  Getter & Setter //////////
+    object HYJ_Basic_GetPhase(params object[] _args)
     {
         return Basic_phase;
     }
@@ -75,7 +79,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     {
         End_Btn = Battle_UI.transform.GetChild(0).transform.GetChild(2).gameObject;
         //
-        Basic_phase = BATTLE_PHASE.PHASE_INIT;		
+        Basic_phase = BATTLE_PHASE.PHASE_INIT;
 
 		//
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,   HYJ_Basic_GetPhase);
@@ -97,7 +101,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     {
 						// battle active
 						this.gameObject.SetActive(false);
-						Basic_phase = BATTLE_PHASE.PHASE_UPDATE; // 여기는 -1 업데이트내용 다 여기서 실행해야하는 부분 //받았다고 체크가 되야함                 
+						Basic_phase = BATTLE_PHASE.PHASE_UPDATE; // 여기는 -1 업데이트내용 다 여기서 실행해야하는 부분 //받았다고 체크가 되야함
                     }
                 }
                 break;
@@ -111,14 +115,18 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         this.gameObject.SetActive(false);
                     }
 
-					HYJ_Field_Init();
+                    int DB_phase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_PHASE);
+                    if (DB_phase != -1)
+                        break;
+
+                    LSY_Pool_Init();
+
+                    HYJ_Field_Init();
                     // 필드 생성 후 그래프 셋업
 					SetupGraph();
 
 					Basic_phase = BATTLE_PHASE.PHASE_PREPARE;
-                    // End Btn set false;
                     End_Btn.SetActive(false);
-                    //Battle_UI.transform.GetChild(0).transform.GetChild(2).gameObject.SetActive(false);
                 }
                 break;
 			// 전투 준비
@@ -188,11 +196,35 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     else
                         End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Lose";
 
-
                 }
                 break;
         }
     }
+
+    void LSY_Pool_Init()
+    {
+        m_TilePool = new GameObjectPool<HYJ_Battle_Tile>(Max_tile, () =>
+        {
+            var obj = Instantiate(Battle_Map.GetChild(0).gameObject);
+            obj.SetActive(false);
+            obj.transform.SetParent(Field_parent);
+            obj.transform.localScale = Vector3.one;
+            var tile = obj.GetComponent<HYJ_Battle_Tile>();
+            return tile;
+        });
+
+        //m_CharacterPool = new GameObjectPool<Character>(Max_character, () =>
+        //{
+        //    GameObject prefab = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_UNIT_PREFAB);
+        //    var obj = Instantiate(prefab);
+        //    obj.SetActive(false);
+        //    obj.transform.SetParent(Unit_parent);
+        //    obj.transform.localScale = Vector3.one;
+        //    var character = obj.GetComponent<Character>();
+        //    return character;
+        //});
+    }
+
 }
 
 // 전장에 대한 정보(주로 타일)
