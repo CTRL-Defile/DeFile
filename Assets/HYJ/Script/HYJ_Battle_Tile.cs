@@ -136,6 +136,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
         {
             string Tag_UnitTile;
             if (other.GetComponent<Character>().LSY_Character_Get_OnTile() == null)
+                // 첫 생성(구매) 시 Stand로 설정
                 Tag_UnitTile = "StandTile";
             else
                 Tag_UnitTile = other.GetComponent<Character>().LSY_Character_Get_OnTile().tag;
@@ -252,7 +253,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                     //detectedUnit.Add(other.gameObject);
                     Basic_onUnit = other.gameObject;
 
-                    other.gameObject.transform.position = this.gameObject.transform.position; // ->  여기서 pos 변경 시키는거 배제해야하나..?
+                    //other.gameObject.transform.position = this.gameObject.transform.position; // ->  여기서 pos 변경 시키는거 배제해야하나..?
                     other.gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(this.gameObject);
 
                     //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_POSITION, Tile_Idx);

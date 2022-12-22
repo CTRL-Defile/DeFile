@@ -57,9 +57,16 @@ public class LSY_DragUnit : MonoBehaviour
         }
     }
     */
+    public enum STATE
+    {
+        DOWN,
+        UP
+    }
 
     [SerializeField]
     private GameObject selectedObject, selectedTile;
+    [SerializeField]
+    private STATE m_state = STATE.UP;
     [SerializeField]
     public Vector3 oriPos, curBlkPos;
     Ray m_TileRay, m_UnitRay;
@@ -84,7 +91,7 @@ public class LSY_DragUnit : MonoBehaviour
         return null;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         RaycastHit tile_hit = CastRay("Tile"), unit_hit = CastRay("Unit");
 
@@ -112,6 +119,11 @@ public class LSY_DragUnit : MonoBehaviour
         }
 
         // Unit Ray
+        if (unit_hit.collider != null)
+        {
+            Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.red);
+        }
+
         if (isHeld)
         {
             m_UnitRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -120,6 +132,7 @@ public class LSY_DragUnit : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
+            m_state = STATE.DOWN;
             isHeld = true;
             if (selectedObject == null && unit_hit.collider != null)
             {
@@ -136,15 +149,9 @@ public class LSY_DragUnit : MonoBehaviour
             }
         }
 
-        if (selectedObject != null) // Draging...
-        {
-            Vector3 screenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
-            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
-            selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y + 0.25f, worldPosition.z);
-        }
-
         if (Input.GetMouseButtonUp(0))
         {
+            m_state = STATE.UP;
             isHeld = false;
             Cursor.visible = true;
 
@@ -158,10 +165,18 @@ public class LSY_DragUnit : MonoBehaviour
                 {
                     selectedObject.transform.position = oriPos;
                 }
-                selectedObject = null;
-
             }
+            else
+                Debug.Log("no selectedObject and mousebtnUp..");
+            selectedObject = null;
+        }
 
+        //if (selectedObject != null) // Draging...
+        if (Input.GetMouseButton(0) && selectedObject != null)
+        {
+            Vector3 screenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
+            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+            selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y + 0.25f, worldPosition.z);
         }
 
     }
