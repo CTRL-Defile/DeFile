@@ -61,6 +61,9 @@ public class PathFinder : MonoBehaviour
 			m_DestTile == null)
 			return;
 
+		if (m_CurrentTile == m_DestTile)
+			return;
+
 		if (null == Obj.GetComponent<Character>().Target)
 			return;
 
@@ -81,25 +84,28 @@ public class PathFinder : MonoBehaviour
 		{
 			m_IsArrived = true;
 			Obj.GetComponent<Character>().LSY_Character_Set_OnTile(m_DestTile.gameObject);
-			m_StartNode.Marking = false;			
+			//m_StartNode.Marking = false;			
 			return;
 		}
 
 		Obj.GetComponent<Character>().State = Character.STATE.RUN;
-		Obj.transform.position += Dir * Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime;
-
+		//Obj.transform.position += Dir * Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime;
+		Obj.transform.position = Vector3.Lerp(Obj.transform.position, m_DestTile.Tile_Position, Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime);
 	}
 
 	public bool StartPathFinding(GameObject Obj, int StartIdx, int EndIdx)
 	{
 		if (false == m_IsArrived)
-			return false;		
-
-		if (Obj.GetComponent<Character>().State == Character.STATE.SKILL)
-			return false;
+			return false;					
 
 		// 1. 그래프에서 유닛의 현재 노드 구하기
 		List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);
+
+		if (Obj.GetComponent<Character>().State == Character.STATE.SKILL)
+		{
+			BattleGraph[StartIdx].Marking = true;
+			return false;
+		}
 
 		// 이미 도착지 이웃이 시작지점이면 리턴
 		foreach (var Neighbor in BattleGraph[EndIdx].m_Neighbors)
@@ -107,6 +113,7 @@ public class PathFinder : MonoBehaviour
 			if (BattleGraph[StartIdx].MyIndex == Neighbor.MyIndex)
 			{				
 				m_StartNode = BattleGraph[StartIdx];
+				m_StartNode.Marking = true;
 				m_CurrentTile = BattleGraph[StartIdx].Tile;
 				Obj.GetComponent<Character>().LSY_Character_Set_OnTile(m_CurrentTile.gameObject);
 				m_PathDic.Clear();
@@ -158,13 +165,17 @@ public class PathFinder : MonoBehaviour
 			{
 				m_PathDic.Remove(Pair.Key);
 			}
-			else if (CheckExistInClose(BattleGraph[Pair.Value]))
-			{
-				m_PathDic.Remove(Pair.Key);
-			}
+			//else if (CheckExistInClose(BattleGraph[Pair.Value]))
+			//{
+			//	m_PathDic.Remove(Pair.Key);
+			//}
+			//else if (null != BattleGraph[Pair.Value].Tile.HYJ_Basic_onUnit)
+			//{
+			//	m_PathDic.Remove(Pair.Key);
+			//}
 			else
 			{			
-				m_CloseNodes.Add(m_StartNode);
+				m_CloseNodes.Add(BattleGraph[Pair.Value]);
 				m_CurrentTile = StartNode.Tile;
 				m_DestTile = BattleGraph[Pair.Value].Tile;
 				m_StartNode = StartNode;
