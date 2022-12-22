@@ -87,10 +87,12 @@ public class PathFinder : MonoBehaviour
 			//m_StartNode.Marking = false;			
 			return;
 		}
-
-		Obj.GetComponent<Character>().State = Character.STATE.RUN;
-		//Obj.transform.position += Dir * Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime;
-		Obj.transform.position = Vector3.Lerp(Obj.transform.position, m_DestTile.Tile_Position, Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime);
+		else if(0.1f < MoveLength)
+		{
+			Obj.GetComponent<Character>().State = Character.STATE.RUN;
+			Obj.transform.position += Dir * Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime;
+		}	
+		//Obj.transform.position = Vector3.Lerp(Obj.transform.position, m_DestTile.Tile_Position, Obj.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime);
 	}
 
 	public bool StartPathFinding(GameObject Obj, int StartIdx, int EndIdx)
@@ -165,10 +167,10 @@ public class PathFinder : MonoBehaviour
 			{
 				m_PathDic.Remove(Pair.Key);
 			}
-			//else if (CheckExistInClose(BattleGraph[Pair.Value]))
-			//{
-			//	m_PathDic.Remove(Pair.Key);
-			//}
+			else if (CheckExistInClose(BattleGraph[Pair.Value]))
+			{
+				m_PathDic.Remove(Pair.Key);
+			}
 			//else if (null != BattleGraph[Pair.Value].Tile.HYJ_Basic_onUnit)
 			//{
 			//	m_PathDic.Remove(Pair.Key);

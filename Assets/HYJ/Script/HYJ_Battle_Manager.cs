@@ -27,7 +27,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     bool StatusBar_isInitialized = false;
 	[SerializeField]
     TextMeshProUGUI TMP = null;
-    GameObject End_Btn= null;
+    GameObject End_Btn= null;    
 
     GameObjectPool<HYJ_Battle_Tile> m_TilePool;
     GameObjectPool<Character> m_CharacterPool;
