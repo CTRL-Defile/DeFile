@@ -157,17 +157,26 @@ public class LSY_DragUnit : MonoBehaviour
 
             if (selectedObject != null)
             {
-                if (selectedTile != null && selectedTile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit == null)
+                if (selectedTile != null)
                 {
-                    selectedObject.transform.position = selectedTile.transform.position;
+                    GameObject tmp = selectedTile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit;
+                    if (tmp == null)
+                        selectedObject.transform.position = selectedTile.transform.position;
+                    else
+                    {
+                        Vector3 tmp_pos = tmp.transform.position;
+                        tmp.transform.position = selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile().transform.position;
+                        selectedObject.transform.position = tmp_pos;
+                        //Debug.Log("[DragUnit] SWAP " + tmp_pos + " " + selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile().transform.position);
+                    }
                 }
                 else
                 {
                     selectedObject.transform.position = oriPos;
                 }
             }
-            else
-                Debug.Log("no selectedObject and mousebtnUp..");
+            //else
+            //    Debug.Log("no selectedObject and mousebtnUp..");
             selectedObject = null;
         }
 
