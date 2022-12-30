@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 using UnityEngine.Diagnostics;
 using TMPro.Examples;
 using System.Linq;
+using static Unity.Burst.Intrinsics.X86.Avx;
 
 public enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_END };
 
@@ -25,13 +26,16 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     double Phase_timer = 10.0;
     double Time_Acc = 0;
     bool StatusBar_isInitialized = false;
+    bool CharacterPool_isInitialized = false;
 	[SerializeField]
     TextMeshProUGUI TMP = null;
     GameObject End_Btn= null;    
 
     GameObjectPool<HYJ_Battle_Tile> m_TilePool;
+    [SerializeField]
+    List<GameObjectPool<Character>> m_CharacterPools = new List<GameObjectPool<Character>>();
     GameObjectPool<Character> m_CharacterPool;
-    short Max_tile = 100, Max_character = 40;
+    int Max_tile = 80, Max_character = 40, Pool_cnt = 0;
 
     //////////  Getter & Setter //////////
     object HYJ_Basic_GetPhase(params object[] _args)
@@ -53,6 +57,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public void HYJ_SetActive(bool _isActive)
     {
+        Debug.Log(_isActive);
         this.gameObject.SetActive(_isActive);
 
         //
@@ -77,6 +82,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Unit_pool = Battle_Units.GetChild(0).transform;
+        Unit_parent = Battle_Units.GetChild(1).transform;
+        Enemy_parent = Battle_Units.GetChild(2).transform;
+
         End_Btn = Battle_UI.transform.GetChild(0).transform.GetChild(2).gameObject;
         //
         Basic_phase = BATTLE_PHASE.PHASE_INIT;
@@ -96,37 +105,51 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         {
             case BATTLE_PHASE.PHASE_UPDATE:
                 {
-                    // Init에서 잘안됐다 그러면 어드레서블 컴플리트 체크해서 로딩 끝났을때 켜져있으면 돌게 중복코드..
-                    if (this.gameObject.activeSelf == true)
+      //              // Init에서 잘안됐다 그러면 어드레서블 컴플리트 체크해서 로딩 끝났을때 켜져있으면 돌게 중복코드..
+      //              if (this.gameObject.activeSelf == true)
+      //              {
+						//// battle active
+						//this.gameObject.SetActive(false);
+						//Basic_phase = BATTLE_PHASE.PHASE_UPDATE; // 여기는 -1 업데이트내용 다 여기서 실행해야하는 부분 //받았다고 체크가 되야함
+      //              }
+
+                    int DB_phase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_PHASE);
+                    if (DB_phase == -1)
                     {
-						// battle active
-						this.gameObject.SetActive(false);
-						Basic_phase = BATTLE_PHASE.PHASE_UPDATE; // 여기는 -1 업데이트내용 다 여기서 실행해야하는 부분 //받았다고 체크가 되야함
+                        Basic_phase = BATTLE_PHASE.PHASE_INIT;
+                        this.gameObject.SetActive(false);
                     }
+                    
                 }
                 break;
             //
             case BATTLE_PHASE.PHASE_INIT:
                 {
-                    //Debug.Log("is Basic_phase == 0?");
-                    if (this.gameObject.activeSelf == true)
-                    {
-                        // battle active
-                        this.gameObject.SetActive(false);
-                    }
-
                     int DB_phase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_PHASE);
                     if (DB_phase != -1)
+                    {
+                        Basic_phase = BATTLE_PHASE.PHASE_UPDATE;
                         break;
+                    }
 
-                    LSY_Pool_Init();
+                    if (CharacterPool_isInitialized == false)
+                    {
+                        Debug.Log("DB_phase : " + DB_phase);
+                        LSY_Pool_Init();
+                        CharacterPool_isInitialized = true;
+                        HYJ_Field_Init();
+                        // 필드 생성 후 그래프 셋업
+					    SetupGraph();
+                    }
+                    else //(this.gameObject.activeSelf == true && CharacterPool_isInitialized == true)
+                    {
+                        Basic_phase = BATTLE_PHASE.PHASE_PREPARE;
+                        End_Btn.SetActive(false);
 
-                    HYJ_Field_Init();
-                    // 필드 생성 후 그래프 셋업
-					SetupGraph();
+                        if (UL_isInitialized)
+                            LSY_Shop_Reload(1);
+                    }
 
-					Basic_phase = BATTLE_PHASE.PHASE_PREPARE;
-                    End_Btn.SetActive(false);
                 }
                 break;
 			// 전투 준비
@@ -142,14 +165,16 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         Time_Acc = 0.0;
 					}
 
-					//Debug.Log("this.gameObject : " + this.gameObject);    // Battle
-					//Debug.Log("전투 준비..");
-					if (!UL_isInitialized)
-						LSY_UnitList_Init();
                     if (!Enemy_isInitialized)
                         LSY_Enemy_Init();
-					
-                    if(!StatusBar_isInitialized)
+
+                    if (!UL_isInitialized)
+                    {
+                        LSY_UnitList_Init();
+                        LSY_Shop_Reload(1);
+                    }
+
+                    if (!StatusBar_isInitialized)
                     {
 						foreach (var OBJ in Enemy_Unit)
 						{
@@ -159,12 +184,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 						StatusBar_isInitialized = true;
 					}
 
-					foreach (var OBJ in Stand_Unit)
-					{
-						OBJ.GetComponent<Character>().STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
-					}
+                    foreach (var OBJ in Stand_Unit)
+                    {
+                        OBJ.GetComponent<Character>().STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
+                    }
 
-				}
+                }
                 break;
 			// 전투 상태
 			case BATTLE_PHASE.PHASE_COMBAT:
@@ -195,11 +220,37 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Win";
                     else
                         End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Lose";
-
+                    
                 }
                 break;
         }
     }
+
+    public void LSY_Battle_End()
+    {
+        End_Btn.SetActive(false);
+        HYJ_SetActive(false);
+        Basic_phase = BATTLE_PHASE.PHASE_INIT;
+        //UL_isInitialized= false;
+        StatusBar_isInitialized = false;
+        LSY_Unit_to_Pool("Enemy", Enemy_Unit);
+        Enemy_isInitialized = false;
+
+
+    }
+
+    public void LSY_Unit_to_Pool(string _type, List<GameObject> unit_list)
+    {
+        int cnt = unit_list.Count;
+        object[] objs = new object[2];
+        objs[0] = _type;
+        for (int i = 0; i < cnt; i++)
+        {
+            objs[1] = unit_list[0];
+            Unit_to_Trash(objs);
+        }
+    }
+
 
     void LSY_Pool_Init()
     {
@@ -213,16 +264,25 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             return tile;
         });
 
-        //m_CharacterPool = new GameObjectPool<Character>(Max_character, () =>
-        //{
-        //    GameObject prefab = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_UNIT_PREFAB);
-        //    var obj = Instantiate(prefab);
-        //    obj.SetActive(false);
-        //    obj.transform.SetParent(Unit_parent);
-        //    obj.transform.localScale = Vector3.one;
-        //    var character = obj.GetComponent<Character>();
-        //    return character;
-        //});
+        GameObject prefab = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_UNIT_PREFAB);
+        int cnt = prefab.transform.childCount;
+        Pool_cnt = Max_character / cnt;
+        for (int i = 0; i < cnt; i++)
+        {
+            m_CharacterPool = new GameObjectPool<Character>(Pool_cnt, () =>
+            {
+                var obj = Instantiate(prefab.transform.GetChild(i).gameObject);
+                obj.SetActive(false);
+                obj.transform.SetParent(Unit_pool);
+                obj.transform.localScale = Vector3.one;
+                //obj.GetComponent<Character>().STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
+                var character = obj.GetComponent<Character>();
+                character.HYJ_Status_saveData = new CTRL_Character_Data(i + "");
+                return character;
+            });
+            m_CharacterPools.Add(m_CharacterPool);
+        }
+
     }
 
 }
@@ -285,8 +345,9 @@ partial class HYJ_Battle_Manager
     [Header("FIELD")]
 
     [SerializeField] Transform Battle_Map;
-    [SerializeField] Transform Field_parent, Stand_parent, Trash_parent, Enemy_parent;
-    [SerializeField] Transform Unit_parent;
+    [SerializeField] Transform Field_parent, Stand_parent, Trash_parent;
+    [SerializeField] Transform Battle_Units;
+    Transform Unit_pool, Unit_parent, Enemy_parent;
     [SerializeField] int Field_x;
     [SerializeField] int Field_y;
     [SerializeField] int Stand_x;
@@ -426,6 +487,7 @@ partial class HYJ_Battle_Manager
     //////////  Method          //////////
     void HYJ_Field_CharacterFixed()
     {
+        Debug.Log("HYJ called");
         // 대기열 픽스
         for (int i = 0; i < Stand_x; i++)
         {
@@ -462,15 +524,20 @@ partial class HYJ_Battle_Manager
 
                     if (isCreate)
                     {
+                        int idx = int.Parse(element.Data_ID);
                         // DB에서 데이터를 불러온다.
                         GameObject unitData
                             = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                                 HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
-                                int.Parse(element.Data_ID));
+                                idx);
+                                //int.Parse(element.Data_ID));
 
                         Vector3 pos = Stand_tiles.HYJ_Data_Tile(i).transform.position;
 
-                        GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+                        //GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+                        GameObject tmp = m_CharacterPools[idx].pop().gameObject;
+                        tmp.transform.localPosition = pos;
+                        tmp.transform.rotation= Quaternion.identity;
                         tmp.GetComponent<Character>().HYJ_Status_saveData = element;
                     }
                 }
@@ -601,7 +668,7 @@ partial class HYJ_Battle_Manager
         GameObject element = Battle_Map.GetChild(0).gameObject;
         GameObject std_element = Battle_Map.GetChild(2).gameObject;
         GameObject trash_element = Battle_Map.GetChild(3).gameObject;
-
+        
         Vector3 pos0 = element.transform.localPosition; // 0,0,0
         Vector3 pos1 = Battle_Map.GetChild(1).localPosition;    // 1,0,-2
 
@@ -620,7 +687,8 @@ partial class HYJ_Battle_Manager
 
             for (int forX = 0; forX < countX; forX++)  // X 가 "열"
             {
-                GameObject obj = Instantiate(element, Field_parent);
+                //GameObject obj = Instantiate(element, Field_parent);
+                GameObject obj = m_TilePool.pop().gameObject;
                 obj.SetActive(true);
                 obj.name = forY + "_" + forX;
                 obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(forY);
@@ -783,7 +851,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
 
         LSY_Shop_Reload(1);
-        Debug.Log("Init end..");
+        Debug.Log("UnitList_Init end..");
 
         UL_isInitialized = true;
     }
@@ -809,7 +877,30 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                  HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
                  n);
 
-            GameObject tmp = Instantiate(unitData, pos[i], Quaternion.identity, Enemy_parent);
+            GameObject tmp;
+            if (false)
+                //GameObject tmp = Instantiate(unitData, pos[i], Quaternion.identity, Enemy_parent);
+                tmp = Instantiate(unitData, pos[i], Quaternion.identity, Enemy_parent);
+            else if (m_CharacterPools[n].get_Count() > 0)
+            {
+                tmp = m_CharacterPools[n].pop().gameObject;
+                tmp.SetActive(true);
+                tmp.transform.localPosition = pos[i];
+                tmp.transform.rotation = Quaternion.identity;
+                tmp.transform.SetParent(Enemy_parent);
+            }
+            else
+            {
+                // -- enemy init 할 때 pooling에 다시 넣어주기, pool에 모자랄 경우 예외 처리.
+
+                tmp = Instantiate(unitData, pos[i], Quaternion.identity, Enemy_parent);
+                //tmp = m_CharacterPools[6].pop().gameObject;
+                //tmp.SetActive(true);
+                //tmp.transform.localPosition = pos[i];
+                //tmp.transform.rotation = Quaternion.identity;
+                //tmp.transform.SetParent(Enemy_parent);
+            }
+
             tmp.transform.Rotate(0f, 180f, 0f);
             tmp.tag = "Enemy";
 
@@ -904,16 +995,40 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
         //Debug.Log(Cost_list.Count + "<-costlist cnt");
 
+        List<int> tmp_cnt = new List<int>();
+
         // 코스트 별 유닛 랜덤 설정
         for(int i = 0; i < Shop_Pannel_cnt; i++)
         {
             List<int> Unit_Candi = new List<int>();
-            for(int j = 0; j < Unit_DB.Count; j++)  // header 3줄 제외.. 할 필요가 없네 어차피 3줄떼고 읽어왔구나.
+            for(int j = 0; j < Unit_DB.Count - 1; j++)  // header 3줄 제외.. 할 필요가 없네 어차피 3줄떼고 읽어왔구나.
             {
                 //Debug.Log((int)Unit_DB[j]["COST"] + "<-db.cost || costlist->" + Cost_list[i]);
-                if ((int)Unit_DB[j]["COST"] == Cost_list[i])
+
+                int unit_cost = (int)Unit_DB[j]["COST"];
+                int unit_id = (int)Unit_DB[j]["ID"];
+                int unit_cnt = m_CharacterPools[unit_id].get_Count();
+                if (i == 0)
+                    tmp_cnt.Add(unit_cnt);
+                /*
+                //int unit_cnt = 0;
+                //Stack<Character> stk = m_CharacterPools[unit_id].get_Stack();
+                //Stack<Character> stk_tmp = new Stack<Character>();
+                //int n_tmp = stk.Count();
+                //for (int n = 0; n < n_tmp; n++)
+                //{
+                //    var tmp = stk.Pop();
+                //    if (tmp.gameObject.activeSelf == false)
+                //        unit_cnt++;
+                //    stk_tmp.Push(tmp);
+                //}
+                //for (int n = 0; n < n_tmp; n++)
+                //    stk.Push(stk_tmp.Pop());
+                */
+                if (unit_cost == Cost_list[i] && tmp_cnt[j] > 0)
                 {
-                    Unit_Candi.Add((int)Unit_DB[j]["ID"]);
+                    for (int k = 0; k < tmp_cnt[j]; k++)
+                        Unit_Candi.Add(unit_id);
                 }
             }
 
@@ -923,24 +1038,23 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 int n = r.Next(Unit_Candi.Count);
                 //Debug.Log(Unit_Candi.Count + "<-unitcandi.count || n->" + n);
                 UnitIdx_list.Add(Unit_Candi[n]);
+                tmp_cnt[Unit_Candi[n]]--;
+                Unit_Candi.RemoveAt(n);
             }
             else
             {
                 Debug.Log("None of Unit COST " + Cost_list[i] + " is Available...");
-                UnitIdx_list.Add(0);
+                UnitIdx_list.Add(6);
             }
         }
         //Debug.Log("db.count : " + Unit_DB.Count);
 
     }
 
-
     public void LSY_Buy_Unit()
     {
         if (true)
         {
-
-
             // Detect clicked btn -> getName -> Calc pos -> Instant
             var Btn_idx = EventSystem.current.currentSelectedGameObject;
             string Btn_name = Btn_idx.name.ToString();
@@ -976,7 +1090,18 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         unit_idx);
                 if (unitData)
                 {
-                    GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+                    GameObject tmp;
+                    if (false)
+                        tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+                    else
+                    {
+                        tmp = m_CharacterPools[unit_idx].pop().gameObject;
+                        tmp.SetActive(true);
+                        tmp.transform.localPosition = pos;
+                        tmp.transform.rotation = Quaternion.identity;
+                        tmp.transform.SetParent(Unit_parent);
+                        //tmp.tag = "Ally";
+                    }
                     // Stand_Unit에 추가, 생성될 때 On_Tile..... 
                     tmp.transform.localPosition = pos;
                     Stand_Unit.Add(tmp);
@@ -990,7 +1115,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     // 구매한 카드 사라지게.
                     Btn_idx.SetActive(false);
 
-                    //
+                    // Status_saveData를 꼭 구매할 때 저장해야 하는가?
                     tmp.GetComponent<Character>().HYJ_Status_saveData = new CTRL_Character_Data(unit_idx+"");
                 }
                 else // 유닛이 없을 경우!
@@ -1062,10 +1187,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         EXP_Img.fillAmount = cur_EXP / Max_EXP;
 
     }
-    #endregion
 
 }
+#endregion
 
+// 유닛 정보
 #region UNIT
 partial class HYJ_Battle_Manager
 {
@@ -1106,15 +1232,31 @@ partial class HYJ_Battle_Manager
     {
         string tile_tag = _args[0].ToString();
         GameObject obj = (GameObject)_args[1];
+        int id = int.Parse(obj.GetComponent<Character>().HYJ_Status_saveData.Data_ID);
 
         switch (tile_tag)
         {
             case "StandTile":
                 Stand_Unit.Remove(obj);
+                obj.SetActive(false);
+                obj.transform.SetParent(Unit_pool);
+                m_CharacterPools[id].push(obj.GetComponent<Character>());
                 break;
 
             case "FieldTile":
                 Field_Unit.Remove(obj);
+                obj.SetActive(false);
+                obj.transform.SetParent(Unit_pool);
+                //id = int.Parse(obj.GetComponent<Character>().HYJ_Status_saveData.Data_ID);
+                m_CharacterPools[id].push(obj.GetComponent<Character>());
+                break;
+
+            case "Enemy":
+                Enemy_Unit.Remove(obj);
+                obj.SetActive(false);
+                obj.transform.SetParent(Unit_pool);
+                obj.tag = "Ally";
+                m_CharacterPools[id].push(obj.GetComponent<Character>());
                 break;
         }
 

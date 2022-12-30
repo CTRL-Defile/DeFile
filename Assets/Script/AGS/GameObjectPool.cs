@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class GameObjectPool<T> where T : class
 {
-    short count;
+    int count;
     public delegate T Func();
     Func create_fn;
     // Instances.  
     Stack<T> objects;
     // Construct  
-    public GameObjectPool(short count, Func fn)
+    public GameObjectPool(int count, Func fn)
     {
         this.count = count;
-        this.create_fn = fn;        
+        this.create_fn = fn;
         this.objects = new Stack<T>(this.count);
         allocate();
 
@@ -29,6 +29,7 @@ public class GameObjectPool<T> where T : class
     {
         if (this.objects.Count <= 0)
         {
+            Debug.Log(this + " allocate more");
             allocate();
         }
         return this.objects.Pop();
@@ -36,6 +37,14 @@ public class GameObjectPool<T> where T : class
     public void push(T obj)
     {
         this.objects.Push(obj);
+    }
+    public int get_Count()
+    {
+        return objects.Count;
+    }
+    public Stack<T> get_Stack()
+    {
+        return objects;
     }
 
 }
