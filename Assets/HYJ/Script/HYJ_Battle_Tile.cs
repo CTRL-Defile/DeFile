@@ -61,27 +61,32 @@ partial class HYJ_Battle_Tile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-		 BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
-        if (phase == BATTLE_PHASE.PHASE_COMBAT)
+        if (other.CompareTag("Ally") || other.CompareTag("Enemy"))
         {
-            if(null == Basic_onUnit)
-			    Basic_onUnit = other.gameObject;
-        }
-        else
-        {
-            switch (other.tag)
+
+            BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
+            if (phase == BATTLE_PHASE.PHASE_COMBAT && !this.CompareTag("TrashTile"))
             {
-                case "Ally":
-                    Ally_Enter(other);
-                    break;
-
-                case "Enemy":
-                    Enemy_Enter(other);
-                    break;
+                if (null == Basic_onUnit)
+                    Basic_onUnit = other.gameObject;
             }
+            else
+            {
+                switch (other.tag)
+                {
+                    case "Ally":
+                        Ally_Enter(other);
+                        break;
+
+                    case "Enemy":
+                        Enemy_Enter(other);
+                        break;
+                }
+            }
+
         }
 
-	}
+    }
 
 	private void OnTriggerExit(Collider other)
     {
@@ -268,7 +273,9 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                     // oriPos를 Character도 프로퍼티로 갖고 있고, DragDrop.cs도 갖고 있는데 Character를 활용하려면 갱신을 계속 해줘야하는데 귀찮고.. (업데이트에 둘 가치는 없어 보이고, 위치 바꿀 때 프로퍼티로 set 하면 되긴 할듯?)
                     // DragDrop으로 지금처럼 하면 편하긴 한데, 이건 DragDrop이 현재 건드리는 객체가 하나여야함. 만약 복수의 유닛을 이동시키면 작동안함. 물론 마우스는 하나니까 문제는 없을거같은데 일단 문제가 있을 순 있음.
                     */
-                    other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
+
+                    //other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
+
                     //other.gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(null);
 
                     //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_ORIGINAL);
