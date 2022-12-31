@@ -119,7 +119,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         Basic_phase = BATTLE_PHASE.PHASE_INIT;
 						// battle active
 						this.gameObject.SetActive(false);
-						Basic_phase = BATTLE_PHASE.PHASE_UPDATE; // 여기는 -1 업데이트내용 다 여기서 실행해야하는 부분 //받았다고 체크가 되야함                 
+						//Basic_phase = BATTLE_PHASE.PHASE_UPDATE; // 여기는 -1 업데이트내용 다 여기서 실행해야하는 부분 //받았다고 체크가 되야함                 
                     }
                     
                 }
