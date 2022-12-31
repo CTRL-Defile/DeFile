@@ -29,7 +29,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     bool CharacterPool_isInitialized = false;
 	[SerializeField]
     TextMeshProUGUI TMP = null;
-    GameObject End_Btn= null;    
+    GameObject End_Btn= null;
 
     GameObjectPool<HYJ_Battle_Tile> m_TilePool;
     [SerializeField]
@@ -37,8 +37,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     GameObjectPool<Character> m_CharacterPool;
     int Max_tile = 80, Max_character = 40, Pool_cnt = 0;
 
-    //////////  Getter & Setter //////////
-    object HYJ_Basic_GetPhase(params object[] _args)
+	//////////  Getter & Setter //////////
+	object HYJ_Basic_GetPhase(params object[] _args)
     {
         return Basic_phase;
     }
@@ -88,7 +88,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
         End_Btn = Battle_UI.transform.GetChild(0).transform.GetChild(2).gameObject;
         //
-        Basic_phase = BATTLE_PHASE.PHASE_INIT;
+        Basic_phase = BATTLE_PHASE.PHASE_INIT;		
 
 		//
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,   HYJ_Basic_GetPhase);
@@ -117,7 +117,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     if (DB_phase == -1)
                     {
                         Basic_phase = BATTLE_PHASE.PHASE_INIT;
-                        this.gameObject.SetActive(false);
+						// battle active
+						this.gameObject.SetActive(false);
+						Basic_phase = BATTLE_PHASE.PHASE_UPDATE; // 여기는 -1 업데이트내용 다 여기서 실행해야하는 부분 //받았다고 체크가 되야함                 
                     }
                     
                 }
@@ -125,6 +127,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             //
             case BATTLE_PHASE.PHASE_INIT:
                 {
+
                     int DB_phase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_PHASE);
                     if (DB_phase != -1)
                     {
@@ -149,7 +152,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         if (UL_isInitialized)
                             LSY_Shop_Reload(1);
                     }
-
                 }
                 break;
 			// 전투 준비
@@ -220,7 +222,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Win";
                     else
                         End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Lose";
-                    
                 }
                 break;
         }
@@ -618,21 +619,21 @@ partial class HYJ_Battle_Manager
 				// 맨윗줄과 맨왼쪽줄에 홀수타일은 좌상단 타일이 없다
 				if (i != 0 && (j != 0 || (j == 0 && i % 2 == 0))) // 맨윗줄 아닐때 && ( 맨왼쪽 아닐때 || (  j == 0 인데 짝수 줄이면 좌상단 있어서 예외처리 )
 				{
-					m_Graph[Index].m_Neighbors.Add(m_Graph[Index - (MaximX)]);
+					m_Graph[Index].m_Neighbors.m_List.Add(m_Graph[Index - (MaximX)]);
 					//Debug.Log("m_Graph[" + Index + "]의 좌상단 타일 Index" + (Index - MaximX));
 				}
 
 				// 우 상단 인접 타일
 				if (i != 0 && ((j != TileXSize - 1) || (j == TileXSize - 1 && i % 2 == 0)))
 				{
-					m_Graph[Index].m_Neighbors.Add(m_Graph[Index - (MinimX)]);
+					m_Graph[Index].m_Neighbors.m_List.Add(m_Graph[Index - (MinimX)]);
 					//Debug.Log("m_Graph[" + Index + "]의 우상단 타일 Index" + (Index - MinimX));
 				}
 
 				// 우 인접 타일
 				if (j < TileXSize - 1)
 				{
-					m_Graph[Index].m_Neighbors.Add(m_Graph[Index + 1]);
+					m_Graph[Index].m_Neighbors.m_List.Add(m_Graph[Index + 1]);
 					//Debug.Log("m_Graph[" + Index + "]의 우 타일 Index" + (Index + 1));
 				}
 
@@ -640,21 +641,21 @@ partial class HYJ_Battle_Manager
 				// 맨 아랫줄과 맨오른쪽 홀수줄은 우 하단 타일 없음	
 				if (i != TileLines.Count - 1 && (j != TileXSize - 1 || (j == TileXSize - 1 && i % 2 == 0)))
 				{
-					m_Graph[Index].m_Neighbors.Add(m_Graph[Index + MaximX]);
+					m_Graph[Index].m_Neighbors.m_List.Add(m_Graph[Index + MaximX]);
 					//Debug.Log("m_Graph[" + Index + "]의 우하단 타일 Index" + (Index + MaximX));
 				}
 
 				// 좌 하단 인접 타일
 				if (i != TileLines.Count - 1 && (j != 0 || (j == 0 && i % 2 == 0)))
 				{
-					m_Graph[Index].m_Neighbors.Add(m_Graph[Index + MinimX]);
+					m_Graph[Index].m_Neighbors.m_List.Add(m_Graph[Index + MinimX]);
 					//Debug.Log("m_Graph[" + Index + "]의 좌하단 타일 Index" + (Index + MinimX));
 				}
 
 				// 좌 인접 타일
 				if (j > 0)
 				{
-					m_Graph[Index].m_Neighbors.Add(m_Graph[Index - 1]);
+					m_Graph[Index].m_Neighbors.m_List.Add(m_Graph[Index - 1]);
 					//Debug.Log("m_Graph[" + Index + "]의 좌 타일 Index" + (Index - 1));
 				}
 			}
@@ -1332,7 +1333,8 @@ partial class HYJ_Battle_Manager
         for (int i = 0; i < Num_Ally; i++)
         {
 			if (Field_Unit[i].GetComponent<Character>().Dead ||
-				Field_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL)
+				Field_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL ||
+				Field_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL_IDLE)
 				continue;
 
 			//Debug.Log("i"+i);
@@ -1354,7 +1356,9 @@ partial class HYJ_Battle_Manager
                     MinIdx = k;
                 }
             }
-            Field_Unit[i].GetComponent<Character>().PreTarget = Field_Unit[i].GetComponent<Character>().Target;
+
+            if(null != Field_Unit[i].GetComponent<Character>().Target)
+                Field_Unit[i].GetComponent<Character>().PreTarget = Field_Unit[i].GetComponent<Character>().Target;
 			Field_Unit[i].GetComponent<Character>().Target = Enemy_Unit[MinIdx];            
 			//Enemy_Unit[MinIdx].GetComponent<Character>().Target = Field_Unit[i];
 		}
@@ -1362,7 +1366,8 @@ partial class HYJ_Battle_Manager
 		for (int i = 0; i < Num_Enemy; i++)
 		{
 			if (Enemy_Unit[i].GetComponent<Character>().Dead ||
-				Enemy_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL)
+				Enemy_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL ||
+				Enemy_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL_IDLE)
 				continue;
 			//Debug.Log("i"+i);
 			Vector3 A_pos = Enemy_Unit[i].gameObject.transform.position;
@@ -1384,7 +1389,9 @@ partial class HYJ_Battle_Manager
 					MinIdx = k;
 				}
 			}
-            Enemy_Unit[i].GetComponent<Character>().PreTarget = Enemy_Unit[i].GetComponent<Character>().Target;
+
+			if (null != Enemy_Unit[i].GetComponent<Character>().Target)
+				Enemy_Unit[i].GetComponent<Character>().PreTarget = Enemy_Unit[i].GetComponent<Character>().Target;
 			Enemy_Unit[i].GetComponent<Character>().Target = Field_Unit[MinIdx];
 
 		}

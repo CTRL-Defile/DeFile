@@ -7,6 +7,8 @@ using System;
 using UnityEngine.EventSystems;
 using static AnimationEvent;
 using UnityEngine.UIElements;
+using Newtonsoft.Json.Serialization;
+using UnityEditor;
 
 public partial class Character : MonoBehaviour
 {
@@ -107,13 +109,6 @@ public partial class Character : MonoBehaviour
 		m_StatusBar = GetComponentInChildren<UI_StatusBar>();
 	}
 
-	// Update is called once per frame
-	void Update()
-    {
-	
-
-	}
-
 	private void LateUpdate()
 	{
 		DieProcess();
@@ -126,31 +121,10 @@ public partial class Character : MonoBehaviour
 			return;
 		}
 
-		if (Input.GetKeyDown(KeyCode.P))
-			m_PathFinder.StartPathFinding(gameObject, on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex, Target.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex);
-
-		if (State != STATE.DIE && Target != null)
+		if (State != STATE.DIE && Target != null && on_Tile != null)
 		{
-			m_PathFinder.StartPathFinding(gameObject, on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex, Target.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex);
-			m_PathFinder.MoveOnPath(gameObject);
-		}
-
-
-		if (Input.GetKeyDown(KeyCode.A))
-		{
-			State = STATE.RUN;
-		}
-		else if (Input.GetKeyDown(KeyCode.S))
-		{
-			State = STATE.IDLE;
-		}
-		else if (Input.GetKeyDown(KeyCode.D))
-		{
-			State = STATE.SKILL;
-		}
-		else if (Input.GetKeyDown(KeyCode.F))
-		{
-			HitProcess(10.0f);
+			m_PathFinder.StartPathFinding(on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex, Target.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex);
+			m_PathFinder.MoveOnPath();
 		}
 
 		BattleProcess();
@@ -225,6 +199,7 @@ public partial class Character
 			List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);
 			//BattleGraph[on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex].Marking = false;
 			m_PathFinder.InitMarking();
+			on_Tile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
 
 			State = STATE.DIE;
 			gameObject.SetActive(false);
@@ -237,7 +212,6 @@ public partial class Character
 		IsDead = true;		
 
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE, this.gameObject);
-
 	}
 
 	virtual public void BattleProcess()
@@ -255,29 +229,46 @@ public partial class Character
 			{
 				switch (State)
 				{
-					case STATE.IDLE:
-						State = STATE.SKILL;
-						transform.LookAt(Target.transform.position);
+					case STATE.IDLE:						
+						Dir = Target.transform.position - transform.position;
+						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 5.0f * Time.deltaTime);
+						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
+
+						if(Angle <= 5.0f)
+							State = STATE.SKILL;
 						break;
 					case STATE.SKILL:
 						Dir = Target.transform.position - transform.position;
-						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 1.0f * Time.deltaTime);
-						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));										
+						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 5.0f * Time.deltaTime);
+						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
 						break;
-
+					case STATE.SKILL_IDLE:
+						break;
 					default:
 						break;
 				}
 			}
+			else if(2.5 < Dist)
+			{
+				switch (State) 
+				{
+					case STATE.IDLE:
+						break;
+					case STATE.SKILL:
+						State = STATE.IDLE;
+						m_PathFinder.InitCloseNodes();
+						m_PathFinder.InitMarking();
+						break;
+				}
+			}
 
-			if (Target.GetComponent<Character>().Stat_HP <= 0)
+			if (Target.GetComponent<Character>().Stat_HP <= 0 || (PreTarget != Target && State != STATE.SKILL_IDLE ))
 			{
 				State = STATE.IDLE;
 				m_PathFinder.InitCloseNodes();
 				m_PathFinder.InitMarking();
 			}
 		}
-
 		MoveProcess();		
 	}
 
