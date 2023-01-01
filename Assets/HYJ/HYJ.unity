@@ -393,7 +393,7 @@ GameObject:
   - component: {fileID: 138968560}
   - component: {fileID: 138968562}
   m_Layer: 0
-  m_Name: Trash_parent
+  m_Name: Map_Trash_parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1659,7 +1659,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1253844958}
   m_Layer: 0
-  m_Name: Field_parent
+  m_Name: Map_Field_parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2012,7 +2012,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1455200543}
   m_Layer: 0
-  m_Name: Stand_parent
+  m_Name: Map_Stand_parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3708,7 +3708,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2111833492}
   m_Layer: 0
-  m_Name: Units
+  m_Name: Battle_Units
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19416,9 +19416,6 @@ MonoBehaviour:
   Basic_phase: 0
   TMP: {fileID: 133190591}
   Battle_Map: {fileID: 3941506315944325647}
-  Field_parent: {fileID: 1253844958}
-  Stand_parent: {fileID: 1455200543}
-  Trash_parent: {fileID: 138968559}
   Battle_Units: {fileID: 2111833492}
   Field_x: 7
   Field_y: 8
@@ -24358,7 +24355,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3941506315944325647}
   m_Layer: 0
-  m_Name: Map
+  m_Name: Battle_Map
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

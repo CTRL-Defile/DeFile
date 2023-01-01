@@ -27,26 +27,26 @@ public class PathFinder : MonoBehaviour
 	[SerializeField]
 	private HYJ_Battle_Tile m_DestTile = null;
 
-	[SerializeField]
+	//[SerializeField]
 	private NODE m_StartNode = null;
-	[SerializeField]
+	//[SerializeField]
 	private NODE m_DestNode = null;
 
-	[SerializeField]
+	//[SerializeField]
 	private NODE PreNode = null;
 
-	[SerializeField]
+	//[SerializeField]
 	SerialList<NODE> m_OpenNodes = new SerialList<NODE>();
-	[SerializeField]
+	//[SerializeField]
 	SerialList<NODE> m_CloseNodes = new SerialList<NODE>();
 
-	[SerializeField]
+	//[SerializeField]
 	NODE m_NearNode = null;
 
 	bool m_IsArrived = true;	 
 	public bool Arrived { get { return m_IsArrived;} set { m_IsArrived = value;} }
 
-	[SerializeField]
+	//[SerializeField]
 	SerialLinkedList<int> m_FinalPath= new SerialLinkedList<int>();
 	public SerialLinkedList<int> FinalPath { get { return m_FinalPath; } }
 

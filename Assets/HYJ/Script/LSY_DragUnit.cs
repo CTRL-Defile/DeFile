@@ -161,7 +161,12 @@ public class LSY_DragUnit : MonoBehaviour
                 {
                     GameObject tmp = selectedTile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit;
                     if (tmp == null)
-                        selectedObject.transform.position = selectedTile.transform.position;
+                    {
+                        if (selectedTile.GetComponent<HYJ_Battle_Tile>().tile_Available == HYJ_Battle_Tile.Tile_Available.Non_Available)
+                            selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
+                        else
+                            selectedObject.transform.position = selectedTile.transform.position;
+                    }
                     else
                     {
                         Vector3 tmp_pos = tmp.transform.position;
@@ -172,6 +177,7 @@ public class LSY_DragUnit : MonoBehaviour
                 }
                 else
                 {
+                    // selectedTile이 없을 때 (타일 밖으로 옮기려고 할 때)
                     selectedObject.transform.position = oriPos;
                 }
             }

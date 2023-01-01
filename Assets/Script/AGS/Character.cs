@@ -12,11 +12,13 @@ using UnityEditor;
 
 public partial class Character : MonoBehaviour
 {
-	//-------------------------------------------------------------------
-	// Field
-	//-------------------------------------------------------------------
+    //-------------------------------------------------------------------
+    // Field
+    //-------------------------------------------------------------------
+    [SerializeField]
+    BATTLE_PHASE m_Basic_phase;
 	[SerializeField]
-    protected Vector3 ori_Pos;
+    protected Vector3 char_ori_Pos;
 	[SerializeField]
 	protected GameObject on_Tile;
 	[SerializeField]
@@ -37,7 +39,7 @@ public partial class Character : MonoBehaviour
 	//-------------------------------------------------------------------
 	// Property
 	//-------------------------------------------------------------------
-	public Vector3 LSY_Unit_Position { get { return ori_Pos; } set { ori_Pos = value; } }
+	public Vector3 LSY_Character_OriPos { get { return char_ori_Pos; } set { char_ori_Pos = value; } }
 	public GameObject Target { get { return m_Target; } set { m_Target = value; } }
 	public GameObject PreTarget { get { return m_PreTarget; } set { m_PreTarget = value; } }
 	public bool Dead { get { return IsDead; } set { IsDead = value; } }
@@ -56,9 +58,11 @@ public partial class Character : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		ori_Pos = new Vector3();
-		// HP 테스트 용 초기화
-		Status_MaxMP = 60.0f;
+		char_ori_Pos = new Vector3();
+        m_Basic_phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
+
+        // HP 테스트 용 초기화
+        Status_MaxMP = 60.0f;
 		Status_MP = 0.0f;
 
 
@@ -97,7 +101,7 @@ public partial class Character : MonoBehaviour
 		}
         
 		Status_moveSpeed = 5.0f;
-		// Stat_MoveSpeed = UnityEngine.Random.Range(1.0f, 8.0f);		
+		// Stat_MoveSpeed = UnityEngine.Random.Range(1.0f, 8.0f);
 		//CurPosIndex = 0;
 	}
 
@@ -110,7 +114,11 @@ public partial class Character : MonoBehaviour
 	}
 
 	private void LateUpdate()
-	{
+    {
+        m_Basic_phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
+        if (m_Basic_phase == BATTLE_PHASE.PHASE_PREPARE && this.on_Tile != null)
+			char_ori_Pos = on_Tile.transform.position;
+
 		DieProcess();
 
 		if (IsDead)
@@ -128,7 +136,7 @@ public partial class Character : MonoBehaviour
 		}
 
 		BattleProcess();
-		ChangeState();		
+		ChangeState();
 	}
 }
 
@@ -186,8 +194,8 @@ public partial class Character
             Status_HP -= Attack;
         else if (Status_HP < Attack)
         {
-			Status_HP = 0.0f;         
-		}            
+			Status_HP = 0.0f;
+		}
     }
 
     virtual public void DieProcess()
@@ -367,6 +375,12 @@ public partial class Character
 		m_animator.SetBool("Run Forward", false);
 	}
 
+	virtual public void CharacterInit()
+	{
+		this.State = STATE.IDLE;
+		this.Target = null;
+		this.PreTarget = null;
+	}
 }
 
 #endregion

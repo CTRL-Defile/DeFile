@@ -32,7 +32,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     GameObject End_Btn= null;
 
     GameObjectPool<HYJ_Battle_Tile> m_TilePool;
-    [SerializeField]
     List<GameObjectPool<Character>> m_CharacterPools = new List<GameObjectPool<Character>>();
     GameObjectPool<Character> m_CharacterPool;
     int Max_tile = 80, Max_character = 40, Pool_cnt = 0;
@@ -54,21 +53,17 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         //
         return null;
     }
-
     public void HYJ_SetActive(bool _isActive)
     {
         Debug.Log(_isActive);
         this.gameObject.SetActive(_isActive);
-
         //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, !_isActive);
     }
     object LSY_Set_ShopUI(params object[] _args)
     {
         bool _isActive = (bool)_args[0];
-
         Shop_UI.SetActive(_isActive);
-
         return null;
     }
 
@@ -85,6 +80,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Unit_pool = Battle_Units.GetChild(0).transform;
         Unit_parent = Battle_Units.GetChild(1).transform;
         Enemy_parent = Battle_Units.GetChild(2).transform;
+
+        element = Battle_Map.GetChild(0).gameObject;
+        std_element = Battle_Map.GetChild(2).gameObject;
+        trash_element = Battle_Map.GetChild(3).gameObject;
+        Field_parent = Battle_Map.GetChild(4);
+        Stand_parent = Battle_Map.GetChild(5);
+        Trash_parent = Battle_Map.GetChild(6);
 
         End_Btn = Battle_UI.transform.GetChild(0).transform.GetChild(2).gameObject;
         //
@@ -211,8 +213,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     if (Enemy_Unit.Count == 0 || Field_Unit.Count == 0)
                     {
                         Basic_phase = BATTLE_PHASE.PHASE_END;
+                        Time_Acc = 0.0;
                     }
-				}
+                }
                 break;
             // 전투 끝난 상태
             case BATTLE_PHASE.PHASE_END:
@@ -234,7 +237,29 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Basic_phase = BATTLE_PHASE.PHASE_INIT;
         //UL_isInitialized= false;
         StatusBar_isInitialized = false;
-        LSY_Unit_to_Pool("Enemy", Enemy_Unit);
+
+
+        Field_Unit.Clear();
+        Enemy_Unit.Clear();
+
+        int UnitParent_num = Unit_parent.childCount;
+        int EnemyParent_num = Enemy_parent.childCount;
+        
+        for (int i = 0; i < UnitParent_num; i++)
+        {
+            Transform tmp = Unit_parent.GetChild(i);
+            if (!Stand_Unit.Contains(tmp.gameObject))
+                Field_Unit.Add(tmp.gameObject);
+        }
+        for (int i = 0; i < EnemyParent_num; i++)
+        {
+            Enemy_Unit.Add(Enemy_parent.GetChild(i).gameObject);
+        }
+        LSY_Unit_Init(Field_Unit);
+        LSY_Unit_Init(Enemy_Unit);
+
+        string str = "Enemy";
+        LSY_Unit_to_Pool(str, Enemy_Unit);
         Enemy_isInitialized = false;
 
 
@@ -278,12 +303,31 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 obj.transform.localScale = Vector3.one;
                 //obj.GetComponent<Character>().STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
                 var character = obj.GetComponent<Character>();
-                character.HYJ_Status_saveData = new CTRL_Character_Data(i + "");
+                character.HYJ_Status_saveData = new CTRL_Character_Data(i.ToString());
                 return character;
             });
             m_CharacterPools.Add(m_CharacterPool);
         }
 
+        //for (int i = 0; i < Max_tile; i++)
+        //{
+
+        //}
+
+
+    }
+
+    void LSY_Unit_Init(List<GameObject> unit_list)
+    {
+        int cnt = unit_list.Count;
+        for (int i = 0; i < cnt; i++)
+        {
+            unit_list[i].SetActive(true);
+            Character Char_tmp = unit_list[i].GetComponent<Character>();
+            float max_hp = Char_tmp.Stat_MaxHP;
+            Char_tmp.Stat_HP = max_hp;
+            Char_tmp.CharacterInit();
+        }
     }
 
 }
@@ -346,7 +390,9 @@ partial class HYJ_Battle_Manager
     [Header("FIELD")]
 
     [SerializeField] Transform Battle_Map;
-    [SerializeField] Transform Field_parent, Stand_parent, Trash_parent;
+    //[SerializeField]
+    GameObject element, std_element, trash_element;
+    Transform Field_parent, Stand_parent, Trash_parent;
     [SerializeField] Transform Battle_Units;
     Transform Unit_pool, Unit_parent, Enemy_parent;
     [SerializeField] int Field_x;
@@ -665,14 +711,11 @@ partial class HYJ_Battle_Manager
 	//////////  Default Method  //////////
 	void HYJ_Field_Init()
     {
-        // Battle_Map, Field_parent, Stand_parent 변수명임
-        GameObject element = Battle_Map.GetChild(0).gameObject;
-        GameObject std_element = Battle_Map.GetChild(2).gameObject;
-        GameObject trash_element = Battle_Map.GetChild(3).gameObject;
-        
+        //// Battle_Map, Field_parent, Stand_parent 변수명임
+
         Vector3 pos0 = element.transform.localPosition; // 0,0,0
         Vector3 pos1 = Battle_Map.GetChild(1).localPosition;    // 1,0,-2
-
+        int tile_cnt = -1;
         //
         Field_tiles = new List<HYJ_Battle_Manager_Line>();
         for (int forY = 0; forY < Field_y; forY++)  // Y 가 "행"
@@ -691,7 +734,10 @@ partial class HYJ_Battle_Manager
                 //GameObject obj = Instantiate(element, Field_parent);
                 GameObject obj = m_TilePool.pop().gameObject;
                 obj.SetActive(true);
-                obj.name = forY + "_" + forX;
+
+                ++tile_cnt;
+                obj.name = "(" + forY + "," + forX + ")_" + tile_cnt.ToString();
+
                 obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(forY);
                 obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(forX);
 
@@ -1253,6 +1299,7 @@ partial class HYJ_Battle_Manager
                 break;
 
             case "Enemy":
+                Debug.Log(obj + " Enemy remove");
                 Enemy_Unit.Remove(obj);
                 obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);

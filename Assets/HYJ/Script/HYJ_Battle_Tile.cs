@@ -135,7 +135,8 @@ partial class HYJ_Battle_Tile : MonoBehaviour
     {
         if (tile_Available == Tile_Available.Non_Available)
         {
-            other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
+            Debug.Log("[BattleTile] NonAvailable Tile Enter");
+            //other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
         }
         else
         {
@@ -167,7 +168,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                         else
                         {
                             // 필드 위 유닛 개수 초과 시,
-                            other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
+                            //other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
                         }
                     }
                     else if (this.tag == "TrashTile")
@@ -255,14 +256,9 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                 if (Basic_onUnit == null /* && detectedUnit.Count == 0 */ )
                 {
                     Debug.Log(this.name + " isEmpty");
-                    //detectedUnit.Add(other.gameObject);
                     Basic_onUnit = other.gameObject;
 
-                    //other.gameObject.transform.position = this.gameObject.transform.position; // ->  여기서 pos 변경 시키는거 배제해야하나..?
                     other.gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(this.gameObject);
-
-                    //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_POSITION, Tile_Idx);
-                    //Debug.Log(other.gameObject.transform.position + "<-unit // tile->" + this.gameObject.transform.position);
                 }
                 else // 이미 다른 유닛이 있을 경우 == 겹치는 경우
                 {
