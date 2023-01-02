@@ -9,6 +9,7 @@ using static AnimationEvent;
 using UnityEngine.UIElements;
 using Newtonsoft.Json.Serialization;
 using UnityEditor;
+[System.Serializable]
 
 public partial class Character : MonoBehaviour
 {

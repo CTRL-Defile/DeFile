@@ -32,7 +32,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     GameObject End_Btn= null;
 
     GameObjectPool<HYJ_Battle_Tile> m_TilePool;
-    List<GameObjectPool<Character>> m_CharacterPools = new List<GameObjectPool<Character>>();
+    [SerializeField]
+    SerialList<GameObjectPool<Character>> m_CharacterPools = new SerialList<GameObjectPool<Character>>();
     GameObjectPool<Character> m_CharacterPool;
     int Max_tile = 80, Max_character = 40, Pool_cnt = 0;
 
@@ -280,7 +281,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     void LSY_Pool_Init()
     {
-        m_TilePool = new GameObjectPool<HYJ_Battle_Tile>(Max_tile, () =>
+        m_TilePool = new GameObjectPool<HYJ_Battle_Tile>(Max_tile, (int n) =>
         {
             var obj = Instantiate(Battle_Map.GetChild(0).gameObject);
             obj.SetActive(false);
@@ -295,18 +296,23 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Pool_cnt = Max_character / cnt;
         for (int i = 0; i < cnt; i++)
         {
-            m_CharacterPool = new GameObjectPool<Character>(Pool_cnt, () =>
+            m_CharacterPool = new GameObjectPool<Character>(Pool_cnt, (int n) =>
             {
                 var obj = Instantiate(prefab.transform.GetChild(i).gameObject);
                 obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
                 obj.transform.localScale = Vector3.one;
-                //obj.GetComponent<Character>().STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
                 var character = obj.GetComponent<Character>();
                 character.HYJ_Status_saveData = new CTRL_Character_Data(i.ToString());
+
+                string obj_name;
+                //obj_name = obj.name.Substring(0, 1);
+                obj_name = character.Character_Status_name;
+                obj.name = obj_name + "_#" + n;
+                
                 return character;
             });
-            m_CharacterPools.Add(m_CharacterPool);
+            m_CharacterPools.m_List.Add(m_CharacterPool);
         }
 
         //for (int i = 0; i < Max_tile; i++)
@@ -323,7 +329,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         for (int i = 0; i < cnt; i++)
         {
             unit_list[i].SetActive(true);
+            unit_list[i].gameObject.transform.rotation = Quaternion.identity;
             Character Char_tmp = unit_list[i].GetComponent<Character>();
+            unit_list[i].gameObject.transform.position = Char_tmp.LSY_Character_OriPos;
             float max_hp = Char_tmp.Stat_MaxHP;
             Char_tmp.Stat_HP = max_hp;
             Char_tmp.CharacterInit();
@@ -582,7 +590,8 @@ partial class HYJ_Battle_Manager
                         Vector3 pos = Stand_tiles.HYJ_Data_Tile(i).transform.position;
 
                         //GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
-                        GameObject tmp = m_CharacterPools[idx].pop().gameObject;
+                        //GameObject tmp = m_CharacterPools.m_List[idx].pop().gameObject;
+                        GameObject tmp = m_CharacterPools.m_List[idx].objects.PopStack().gameObject;
                         tmp.transform.localPosition = pos;
                         tmp.transform.rotation= Quaternion.identity;
                         tmp.GetComponent<Character>().HYJ_Status_saveData = element;
@@ -732,7 +741,8 @@ partial class HYJ_Battle_Manager
             for (int forX = 0; forX < countX; forX++)  // X 가 "열"
             {
                 //GameObject obj = Instantiate(element, Field_parent);
-                GameObject obj = m_TilePool.pop().gameObject;
+                //GameObject obj = m_TilePool.pop().gameObject;
+                GameObject obj = m_TilePool.objects.PopStack().gameObject;
                 obj.SetActive(true);
 
                 ++tile_cnt;
@@ -928,9 +938,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             if (false)
                 //GameObject tmp = Instantiate(unitData, pos[i], Quaternion.identity, Enemy_parent);
                 tmp = Instantiate(unitData, pos[i], Quaternion.identity, Enemy_parent);
-            else if (m_CharacterPools[n].get_Count() > 0)
+            else if (m_CharacterPools.m_List[n].get_Count() > 0)
             {
-                tmp = m_CharacterPools[n].pop().gameObject;
+                Debug.Log("[BM]Pools.mList.getCount : " + m_CharacterPools.m_List[n].get_Count());
+                //tmp = m_CharacterPools.m_List[n].pop().gameObject;
+                tmp = m_CharacterPools.m_List[n].objects.PopStack().gameObject;
                 tmp.SetActive(true);
                 tmp.transform.localPosition = pos[i];
                 tmp.transform.rotation = Quaternion.identity;
@@ -940,7 +952,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             {
                 // -- enemy init 할 때 pooling에 다시 넣어주기, pool에 모자랄 경우 예외 처리.
 
-                tmp = Instantiate(unitData, pos[i], Quaternion.identity, Enemy_parent);
+                continue;
+
+
                 //tmp = m_CharacterPools[6].pop().gameObject;
                 //tmp.SetActive(true);
                 //tmp.transform.localPosition = pos[i];
@@ -1054,7 +1068,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
                 int unit_cost = (int)Unit_DB[j]["COST"];
                 int unit_id = (int)Unit_DB[j]["ID"];
-                int unit_cnt = m_CharacterPools[unit_id].get_Count();
+                int unit_cnt = m_CharacterPools.m_List[unit_id].get_Count();
                 if (i == 0)
                     tmp_cnt.Add(unit_cnt);
                 /*
@@ -1142,7 +1156,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
                     else
                     {
-                        tmp = m_CharacterPools[unit_idx].pop().gameObject;
+                        //tmp = m_CharacterPools.m_List[unit_idx].pop().gameObject;
+                        tmp = m_CharacterPools.m_List[unit_idx].objects.PopStack().gameObject;
                         tmp.SetActive(true);
                         tmp.transform.localPosition = pos;
                         tmp.transform.rotation = Quaternion.identity;
@@ -1287,7 +1302,8 @@ partial class HYJ_Battle_Manager
                 Stand_Unit.Remove(obj);
                 obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
-                m_CharacterPools[id].push(obj.GetComponent<Character>());
+                //m_CharacterPools.m_List[id].push(obj.GetComponent<Character>());
+                m_CharacterPools.m_List[id].objects.PushStack(obj.GetComponent<Character>());
                 break;
 
             case "FieldTile":
@@ -1295,7 +1311,8 @@ partial class HYJ_Battle_Manager
                 obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
                 //id = int.Parse(obj.GetComponent<Character>().HYJ_Status_saveData.Data_ID);
-                m_CharacterPools[id].push(obj.GetComponent<Character>());
+                //m_CharacterPools.m_List[id].push(obj.GetComponent<Character>());
+                m_CharacterPools.m_List[id].objects.PushStack(obj.GetComponent<Character>());
                 break;
 
             case "Enemy":
@@ -1304,7 +1321,8 @@ partial class HYJ_Battle_Manager
                 obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
                 obj.tag = "Ally";
-                m_CharacterPools[id].push(obj.GetComponent<Character>());
+                //m_CharacterPools.m_List[id].push(obj.GetComponent<Character>());
+                m_CharacterPools.m_List[id].objects.PushStack(obj.GetComponent<Character>());
                 break;
         }
 

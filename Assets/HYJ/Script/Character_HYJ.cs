@@ -33,6 +33,8 @@ partial class Character
         get { return Status_saveData;   }
         set { Status_saveData = value;  }
     }
+    virtual public string Character_Status_name { get { return Status_name; } }
+
 
     //////////  Method          //////////
 

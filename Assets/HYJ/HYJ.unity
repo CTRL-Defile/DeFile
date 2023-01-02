@@ -19415,6 +19415,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Basic_phase: 0
   TMP: {fileID: 133190591}
+  m_CharacterPools:
+    m_List: []
   Battle_Map: {fileID: 3941506315944325647}
   Battle_Units: {fileID: 2111833492}
   Field_x: 7

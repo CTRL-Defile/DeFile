@@ -168,7 +168,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                         else
                         {
                             // 필드 위 유닛 개수 초과 시,
-                            //other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
+                            other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
                         }
                     }
                     else if (this.tag == "TrashTile")
