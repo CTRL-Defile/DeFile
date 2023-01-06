@@ -205,20 +205,22 @@ public partial class Character
 		else if(Status_HP <= 0.0f && State != STATE.DIE)
 		{
 			List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);
-			//BattleGraph[on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex].Marking = false;
-			m_PathFinder.InitMarking();
+			BattleGraph[on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex].Marking = false;
+			//m_PathFinder.InitMarking();
 			on_Tile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
 
-			State = STATE.DIE;
-			gameObject.SetActive(false);
+			State = STATE.DIE;			
 		}
-			
+		
 		// Dissolve Shader 적용 예정
 		// 일단 조절 값 없어서 Die 애니메이션 끝났을 때 IsDead true로
 		if (m_animator.GetCurrentAnimatorStateInfo(0).IsName("Die") &&
 		  m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
-		IsDead = true;		
-
+		{
+			gameObject.SetActive(false);
+			IsDead = true;
+		}
+		
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE, this.gameObject);
 	}
 
@@ -237,13 +239,8 @@ public partial class Character
 			{
 				switch (State)
 				{
-					case STATE.IDLE:						
-						Dir = Target.transform.position - transform.position;
-						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 5.0f * Time.deltaTime);
-						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
-
-						if(Angle <= 5.0f)
-							State = STATE.SKILL;
+					case STATE.IDLE:
+						State = STATE.SKILL_IDLE;
 						break;
 					case STATE.SKILL:
 						Dir = Target.transform.position - transform.position;
@@ -251,26 +248,34 @@ public partial class Character
 						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
 						break;
 					case STATE.SKILL_IDLE:
+						Dir = Target.transform.position - transform.position;
+						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 5.0f * Time.deltaTime);
+						Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
+
+						if (Angle <= 5.0f)
+							State = STATE.SKILL;
 						break;
 					default:
 						break;
 				}
 			}
-			else if(2.5 < Dist)
+			else if(2.5f < Dist)
 			{
 				switch (State) 
 				{
 					case STATE.IDLE:
 						break;
 					case STATE.SKILL:
-						State = STATE.IDLE;
-						m_PathFinder.InitCloseNodes();
-						m_PathFinder.InitMarking();
+						//State = STATE.IDLE;
+						//m_PathFinder.InitCloseNodes();
+						//m_PathFinder.InitMarking();
+						break;
+					default:
 						break;
 				}
 			}
 
-			if (Target.GetComponent<Character>().Stat_HP <= 0 || (PreTarget != Target && State != STATE.SKILL_IDLE ))
+			if (Target.GetComponent<Character>().Stat_HP <= 0/* || (PreTarget != Target && State != STATE.SKILL_IDLE )*/)
 			{
 				State = STATE.IDLE;
 				m_PathFinder.InitCloseNodes();
