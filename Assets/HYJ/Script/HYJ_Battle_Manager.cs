@@ -208,6 +208,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     InitGraphNodes();
 					Find_Target();
 
+                    //TODO : 해야할 일.
+                    // bool변수 해서 정렬 한번만하게 해두면 괜찮을듯
+                    //여기 길찾기. 그러면 컨테이너돌면서 순서 정해줄수 있음. 정렬 -> 기준이 그래프상에서 우상단 좌하단에 가깝냐 정렬을 한번하고 순회하면서 StartPathFinding
+
 					Phase_timer = 50.0;
 					Time_Acc += Time.deltaTime;
 					Battle_Timer();
@@ -632,7 +636,7 @@ partial class HYJ_Battle_Manager
         {
             m_Graph[i].Fcost = 0;
 			m_Graph[i].Gcost = 0;            
-            m_Graph[i].ParentIndex = 0;
+            m_Graph[i].ParentIndex = 0;            
 		}
 
         return null;

@@ -27,26 +27,26 @@ public class PathFinder : MonoBehaviour
 	[SerializeField]
 	private HYJ_Battle_Tile m_DestTile = null;
 
-	//[SerializeField]
+	[SerializeField]
 	private NODE m_StartNode = null;
-	//[SerializeField]
+	[SerializeField]
 	private NODE m_DestNode = null;
 
-	//[SerializeField]
+	[SerializeField]
 	private NODE PreNode = null;
 
-	//[SerializeField]
+	[SerializeField]
 	SerialList<NODE> m_OpenNodes = new SerialList<NODE>();
-	//[SerializeField]
+	[SerializeField]
 	SerialList<NODE> m_CloseNodes = new SerialList<NODE>();
 
-	//[SerializeField]
+	[SerializeField]
 	NODE m_NearNode = null;
 
 	bool m_IsArrived = true;	 
 	public bool Arrived { get { return m_IsArrived;} set { m_IsArrived = value;} }
 
-	//[SerializeField]
+	[SerializeField]
 	SerialLinkedList<int> m_FinalPath= new SerialLinkedList<int>();
 	public SerialLinkedList<int> FinalPath { get { return m_FinalPath; } }
 
@@ -129,7 +129,17 @@ public class PathFinder : MonoBehaviour
 		if(StartIdx < 0 || EndIdx < 0) 
 			return false;
 		
-		List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);		
+		List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);
+
+		// 상태가 공격중이면 리턴
+		if (gameObject.GetComponent<Character>().State == Character.STATE.SKILL)
+		{
+			BattleGraph[StartIdx].Marking = true;
+			BattleGraph[StartIdx].Unit = gameObject;
+			gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(BattleGraph[StartIdx].Tile.gameObject);
+			m_FinalPath.ClearList();
+			return false;
+		}
 
 		// 이미 도착지 이웃이 시작지점이면 리턴
 		foreach (var Neighbor in BattleGraph[EndIdx].m_Neighbors.m_List)
@@ -143,16 +153,6 @@ public class PathFinder : MonoBehaviour
 				m_FinalPath.ClearList();				
 				return false;
 			}				
-		}
-
-		// 상태가 공격중이면 리턴
-		if (gameObject.GetComponent<Character>().State == Character.STATE.SKILL)
-		{
-			BattleGraph[StartIdx].Marking = true;
-			BattleGraph[StartIdx].Unit = gameObject;
-			gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(BattleGraph[StartIdx].Tile.gameObject);
-			m_FinalPath.ClearList();			
-			return false;
 		}
 
 		// 그래프가 없거나 도착지점 이웃이 없다면 길찾기 실패
@@ -238,10 +238,10 @@ public class PathFinder : MonoBehaviour
 		int size = BattleGraph.Count;
 		for(int i = 0; i < size; i++)
 		{
-			if(null != BattleGraph[i].Tile.HYJ_Basic_onUnit)			
-				m_CloseNodes.m_List.Add(BattleGraph[i]);			
+			if (null != BattleGraph[i].Tile.HYJ_Basic_onUnit)
+				m_CloseNodes.m_List.Add(BattleGraph[i]);
 
-			if(true == BattleGraph[i].Marking)
+			if (true == BattleGraph[i].Marking)
 				m_CloseNodes.m_List.Add(BattleGraph[i]);
 		}
 
