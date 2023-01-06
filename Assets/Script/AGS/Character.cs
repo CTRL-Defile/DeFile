@@ -19,8 +19,8 @@ public partial class Character : MonoBehaviour
     [SerializeField]
     BATTLE_PHASE m_Basic_phase;
 	[SerializeField]
-    protected Vector3 char_ori_Pos;
-	[SerializeField]
+    protected Vector3 char_ori_Pos; // Update/MouseUp 에서 갱신
+    [SerializeField]
 	protected GameObject on_Tile;
 	[SerializeField]
 	protected bool IsDead = false;
@@ -117,9 +117,16 @@ public partial class Character : MonoBehaviour
 	private void LateUpdate()
     {
         m_Basic_phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
-        if (m_Basic_phase == BATTLE_PHASE.PHASE_PREPARE && this.on_Tile != null)
+        // char_ori_Pos 는 다음 전투 혹은 드래그 드랍 시 되돌아가는 위치이므로, 전투 상태일 때는 초기화할 필요가 없음.
+		if (m_Basic_phase == BATTLE_PHASE.PHASE_PREPARE && 
+			this.on_Tile != null && 
+			this.on_Tile.GetComponent<HYJ_Battle_Tile>().tile_Available == HYJ_Battle_Tile.Tile_Available.Available)
 			char_ori_Pos = on_Tile.transform.position;
 
+
+		if (true)
+			if (false)
+				;
 		DieProcess();
 
 		if (IsDead)
@@ -147,10 +154,10 @@ public partial class Character : MonoBehaviour
 
 public partial class Character
 {
-	//-------------------------------------------------------------------
-	// Field
-	//-------------------------------------------------------------------
-	[Header("======================================= STATUS =======================================")]
+    //-------------------------------------------------------------------
+    // Field
+    //-------------------------------------------------------------------
+    [Header("======================================= STATUS =======================================")]
 	[Space (10f)]	
 
 	[SerializeField] protected float Status_HP;     // 체력
@@ -278,7 +285,7 @@ public partial class Character
 				m_PathFinder.InitMarking();
 			}
 		}
-		MoveProcess();		
+		MoveProcess();
 	}
 
 	virtual public void MoveProcess()
@@ -295,7 +302,13 @@ public partial class Character
 
 public partial class Character
 {
-	public enum STATE
+    public enum Unit_Type
+    {
+        Ally,
+        Enemy,
+		Unit_END
+    }
+    public enum STATE
 	{
 		IDLE,
 		RUN,
@@ -315,8 +328,11 @@ public partial class Character
 	protected Animator m_animator;
 
 	[SerializeField]
+	public Unit_Type m_UnitType = Unit_Type.Unit_END;
+	[SerializeField]
 	protected STATE m_state = STATE.IDLE;
 	public STATE State { get { return m_state; } set { m_state = value; } }
+	public Unit_Type UnitType { get { return m_UnitType; } set { m_UnitType = value; } }
 
 	//-------------------------------------------------------------------
 	// Property
