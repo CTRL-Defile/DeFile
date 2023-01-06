@@ -5,13 +5,15 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
+using TMPro;
+using DG.Tweening;
 
 public partial class HYJ_Event_Manager : MonoBehaviour
-{
-    [SerializeField] public Text eventName;     //좌측상단 이벤트 이름 텍스트
-    [SerializeField] public Text script;        //이벤트 텍스트 텍스트
-    [SerializeField] public Text choice1;       //선택지 1 텍스트
-    [SerializeField] public Text choice2;       //선택지 2 텍스트
+{   
+    [SerializeField] public TextMeshProUGUI eventName;     //좌측상단 이벤트 이름 텍스트
+    [SerializeField] public TextMeshProUGUI script;        //이벤트 텍스트 텍스트
+    [SerializeField] public TextMeshProUGUI choice1;       //선택지 1 텍스트
+    [SerializeField] public TextMeshProUGUI choice2;       //선택지 2 텍스트
     [SerializeField] private Button resultButton; // 결과 버튼
 
     [SerializeField] int Basic_initialize;
@@ -40,6 +42,12 @@ public partial class HYJ_Event_Manager : MonoBehaviour
     {
         bool aa = (bool)_args[0];
 
+        if (aa == true)
+        {
+            // 이벤트 클릭시 이벤트ID 랜덤으로 뽑고, 그 ID에 따른 사진/스크립트 변경
+            randomEventID = JHW_setRandomEventID();
+            JHW_displayEventText();
+        }
         //
         this.gameObject.SetActive(aa);
         //
@@ -51,11 +59,6 @@ public partial class HYJ_Event_Manager : MonoBehaviour
     {
         this.gameObject.SetActive(_isActive);
 
-        // 이벤트 클릭시 이벤트ID 랜덤으로 뽑고, 그 ID에 따른 사진/스크립트 변경
-        randomEventID = JHW_setRandomEventID();
-        JHW_displayEventText();
-
-        //
         if (isFirst)
             isFirst= false;
         else
@@ -467,45 +470,91 @@ partial class HYJ_Event_Manager
         {
             choice1.text = eventSelectResult[0].Data_SELECT; // 이벤트 버튼1 텍스트
             choice2.text = eventSelectResult[1].Data_SELECT; // 이벤트 버튼2 텍스트
+            // UX
+            // 처음에 스크립트/버튼 안뜨게
+            script.text = "";
+            choice1.transform.parent.DOScale(0f, 0);
+            choice2.transform.parent.DOScale(0f, 0);
         }
+
+
+        // UX
+        // 처음에 스크립트/버튼 안뜨게
+        script.text = "";
+        //GameObject.Find("EventButton1").transform.DOScale(0f, 0);
+        //GameObject.Find("EventButton2").transform.DOScale(0f, 0);
+        choice1.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f);
+        choice2.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f);
+        // ux적용
+        script.gameObject.GetComponent<TextMeshProUGUI>().DOText(Event_datas[randomEventID].Data_SCRIPT_KOR, 2f);
+        Sequence eventUX = DOTween.Sequence().Insert(1f, choice1.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.OutExpo))
+            .Insert(1.5f, choice2.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.OutExpo));
+
     }
 
     // 첫번째 선택지 버튼 누를 때 발생하는 함수
     public void ClickButtonOne(bool isClicked)
     {
+        GameObject.Find("EventButton1").GetComponent<Image>().DOColor(new Color(1f, 1f, 1f, 1f), 0f); // 투명도 원래대로
+
         // 이벤트 효과
         List<JHW_EventSelect> eventSelectResult = EventSelect_datas.FindAll(x => x.Data_EVENT_ID.Equals(randomEventID));// 이벤트셀렉트 선택지1,2
         SaveCSVFile(eventSelectResult[0]);
+
         // 결과 선택 후 등장하는 스크립트로 변경
         string eventResultScript = Event_datas[randomEventID].Data_SELECTED1_SCRIPT_KOR.Replace("n", "\n");
-        script.text = eventResultScript;
+
+        // 이벤트 스크립트 사이즈조정
         if (script.text.Length > 100) script.fontSize = 25;
         else script.fontSize = 30;
-        Debug.Log(script.text.Length);
         eventButton1.SetActive(false);
         eventButton2.SetActive(false);
         eventResultButton.SetActive(true);
+
+        // UX
+        // 처음에 스크립트/버튼 안뜨게
+        script.text = "";
+        eventResultButton.gameObject.transform.DOScale(0f, 0);
+        // ux적용
+        script.gameObject.GetComponent<TextMeshProUGUI>().DOText(eventResultScript, 2f); // 결과 선택 후 등장하는 스크립트로 변경
+        eventResultButton.gameObject.transform.DOScale(1f, 0.5f).SetEase(Ease.OutExpo).SetDelay(2f); // 2초뒤 결과 확인 버튼
+
     }
 
     // 두번째 선택지 버튼 누를 때 
     public void ClickButtonTwo(bool isClicked)
     {
+        GameObject.Find("EventButton2").GetComponent<Image>().DOColor(new Color(1f, 1f, 1f, 1f), 0f); // 투명도 원래대로
+
         // 이벤트 효과
         List<JHW_EventSelect> eventSelectResult = EventSelect_datas.FindAll(x => x.Data_EVENT_ID.Equals(randomEventID));// 이벤트셀렉트 선택지1,2
         SaveCSVFile(eventSelectResult[1]);
+
         // 결과 선택 후 등장하는 스크립트로 변경
         string eventResultScript = Event_datas[randomEventID].Data_SELECTED2_SCRIPT_KOR.Replace("n","\n");
+
+        // 이벤트 스크립트 사이즈조정
         if (script.text.Length > 100) script.fontSize = 25;
         else script.fontSize = 30;
-        script.text = eventResultScript;
         eventButton1.SetActive(false);
         eventButton2.SetActive(false);
         eventResultButton.SetActive(true);
+
+        // UX
+        // 처음에 스크립트/버튼 안뜨게
+        script.text = "";
+        eventResultButton.gameObject.transform.DOScale(0f, 0);
+        // ux적용
+        script.gameObject.GetComponent<TextMeshProUGUI>().DOText(eventResultScript, 2f); // 결과 선택 후 등장하는 스크립트로 변경
+        eventResultButton.gameObject.transform.DOScale(1f, 0).SetEase(Ease.OutExpo).SetDelay(2f); // 2초뒤 결과 확인 버튼
+        
     }
 
     // 결과창 버튼
     public void ClickResultButton(bool isClicked)
     {
+        GameObject.Find("ResultButton").GetComponent<Image>().DOColor(new Color(1f, 1f, 1f, 1f), 0f); // 투명도 원래대로
+
         // 누르면 false 가 리턴됨
         HYJ_SetActive(isClicked);
         // 활성화시킨 버튼 비활성화 / 비활성화시킨 버튼 활성화 / 스크립트 원래크기로
@@ -540,5 +589,43 @@ partial class HYJ_Event_Manager
     //    InitCSVFile();
     //    return null;
     //}
+}
+#endregion
+
+
+// UX
+#region UX
+partial class HYJ_Event_Manager
+{
+    private bool isMouseEntered = false;
+
+    public void EventButton_OnMouseEnter(GameObject g)
+    {
+        isMouseEntered = true;
+
+        g.transform.DOScale(new Vector3(1.05f, 1.3f), 0.2f);
+        g.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f);
+
+    }
+
+    public void EventButton_OnMouseDown(GameObject g)
+    {
+        g.GetComponent<Image>().DOColor(new Color(1, 1, 1, 0.7f), 0.2f);
+    }
+
+    public void EventButton_OnMouseExit(GameObject g)
+    {
+        isMouseEntered = false;
+
+        g.transform.DOScale(new Vector3(1f, 1f), 0.2f);
+        g.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f);
+    }
+
+    public void EventButton_OnMouseUp(GameObject g)
+    {
+        isMouseEntered = false;
+
+        g.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0f);
+    }
 }
 #endregion
