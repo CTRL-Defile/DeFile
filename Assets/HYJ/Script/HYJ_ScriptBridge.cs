@@ -167,6 +167,9 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     TOPBAR___GOLD__VIEW_GOLD,
     TOPBAR___BATTLE__VIEW_POWER,
     TOPBAR___BUFF__VIEW,
+
+    //
+    SOUNDMANAGER___PLAY__SOUND_NAME
 }
 
 public delegate object HYJ_ScriptBridge_Event(params object[] _args);
