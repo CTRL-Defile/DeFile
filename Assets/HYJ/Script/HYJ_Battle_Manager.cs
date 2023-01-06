@@ -16,7 +16,7 @@ using TMPro.Examples;
 using System.Linq;
 using static Unity.Burst.Intrinsics.X86.Avx;
 
-public enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_END };
+public enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_COMBAT_OVER, PHASE_END };
 
 public partial class HYJ_Battle_Manager : MonoBehaviour
 {
@@ -27,9 +27,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     double Time_Acc = 0;
     bool StatusBar_isInitialized = false;
     bool CharacterPool_isInitialized = false;
-	[SerializeField]
-    TextMeshProUGUI TMP = null;
-    GameObject End_Btn= null;
+
+    TextMeshProUGUI Battle_Timer_TMP;
+    GameObject End_Btn;
 
     GameObjectPool<HYJ_Battle_Tile> m_TilePool;
     [SerializeField]
@@ -37,8 +37,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     GameObjectPool<Character> m_CharacterPool;
     int Max_tile = 80, Max_character = 40, Pool_cnt = 0;
 
-	//////////  Getter & Setter //////////
-	object HYJ_Basic_GetPhase(params object[] _args)
+    [SerializeField]
+    bool _StopVar = false, _StartVar = false;
+
+    //////////  Getter & Setter //////////
+    object HYJ_Basic_GetPhase(params object[] _args)
     {
         return Basic_phase;
     }
@@ -71,7 +74,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     void Battle_Timer()
     {
         if (Phase_timer - Time_Acc > 0.0)
-            TMP.text = (((int)(Phase_timer - Time_Acc))).ToString();
+            Battle_Timer_TMP.text = (((int)(Phase_timer - Time_Acc))).ToString();
 	}
 
     //////////  Default Method  //////////
@@ -89,6 +92,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Stand_parent = Battle_Map.GetChild(5);
         Trash_parent = Battle_Map.GetChild(6);
 
+        Battle_Timer_TMP = Battle_UI.transform.GetChild(0).transform.GetChild(1).transform.GetComponent<TextMeshProUGUI>();
         End_Btn = Battle_UI.transform.GetChild(0).transform.GetChild(2).gameObject;
         //
         Basic_phase = BATTLE_PHASE.PHASE_INIT;		
@@ -164,11 +168,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 					Time_Acc += Time.deltaTime;
                     Battle_Timer();
 					//시간 체크 후 전투 상태로 Phase 전환
-					if (Phase_timer - Time_Acc <= 0.0  )
+					if (Phase_timer - Time_Acc <= 0.0 && _StopVar == false )
                     {
 						Basic_phase = BATTLE_PHASE.PHASE_COMBAT;
                         Time_Acc = 0.0;
 					}
+                    if (_StartVar == true)
+                        Basic_phase = BATTLE_PHASE.PHASE_COMBAT;
 
                     if (!Enemy_isInitialized)
                         LSY_Enemy_Init();
@@ -213,13 +219,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 					}
                     if (Enemy_Unit.Count == 0 || Field_Unit.Count == 0)
                     {
-                        Basic_phase = BATTLE_PHASE.PHASE_END;
+                        Basic_phase = BATTLE_PHASE.PHASE_COMBAT_OVER;
                         Time_Acc = 0.0;
                     }
                 }
                 break;
             // 전투 끝난 상태
-            case BATTLE_PHASE.PHASE_END:
+            case BATTLE_PHASE.PHASE_COMBAT_OVER:
                 {
                     End_Btn.SetActive(true);
                     if (Enemy_Unit.Count == 0)
@@ -288,6 +294,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             obj.transform.SetParent(Field_parent);
             obj.transform.localScale = Vector3.one;
             var tile = obj.GetComponent<HYJ_Battle_Tile>();
+            tile.tile_type = HYJ_Battle_Tile.Tile_Type.Field;
             return tile;
         });
 
@@ -303,6 +310,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 obj.transform.SetParent(Unit_pool);
                 obj.transform.localScale = Vector3.one;
                 var character = obj.GetComponent<Character>();
+                character.m_UnitType = Character.Unit_Type.Ally;
+                character.STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
                 character.HYJ_Status_saveData = new CTRL_Character_Data(i.ToString());
 
                 string obj_name;
@@ -334,6 +343,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             unit_list[i].gameObject.transform.position = Char_tmp.LSY_Character_OriPos;
             float max_hp = Char_tmp.Stat_MaxHP;
             Char_tmp.Stat_HP = max_hp;
+            Char_tmp.Stat_MP = 0.0f;
             Char_tmp.CharacterInit();
         }
     }
@@ -800,6 +810,7 @@ partial class HYJ_Battle_Manager
             GameObject std_obj = Instantiate(std_element, Stand_parent);
             std_obj.SetActive(true);
             std_obj.name = "stand_" + forX;
+            std_obj.GetComponent<HYJ_Battle_Tile>().tile_type = HYJ_Battle_Tile.Tile_Type.Stand;
             std_obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(0);    // Stand는 행이 한 개 뿐이다.
             std_obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(forX);
             std_obj.GetComponent<HYJ_Battle_Tile>().tile_Available = HYJ_Battle_Tile.Tile_Available.Available;
@@ -964,6 +975,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
             tmp.transform.Rotate(0f, 180f, 0f);
             tmp.tag = "Enemy";
+            tmp.GetComponent<Character>().m_UnitType = Character.Unit_Type.Enemy;
 
             Enemy_Unit.Add(tmp);
 
@@ -1143,7 +1155,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
                 Debug.Log(pos_num + " " + cnt);
 
-                Vector3 pos = Stand_tiles.HYJ_Data_Tile(pos_num).transform.position;
+                GameObject _onTile = Stand_tiles.HYJ_Data_Tile(pos_num).gameObject;
+                //Vector3 pos = Stand_tiles.HYJ_Data_Tile(pos_num).transform.position;
 
                 GameObject unitData
                     = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
@@ -1153,19 +1166,21 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 {
                     GameObject tmp;
                     if (false)
-                        tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+                        tmp = Instantiate(unitData, _onTile.transform.position, Quaternion.identity, Unit_parent);
                     else
                     {
                         //tmp = m_CharacterPools.m_List[unit_idx].pop().gameObject;
                         tmp = m_CharacterPools.m_List[unit_idx].objects.PopStack().gameObject;
                         tmp.SetActive(true);
-                        tmp.transform.localPosition = pos;
+                        tmp.transform.localPosition = _onTile.transform.position;
                         tmp.transform.rotation = Quaternion.identity;
                         tmp.transform.SetParent(Unit_parent);
                         //tmp.tag = "Ally";
                     }
                     // Stand_Unit에 추가, 생성될 때 On_Tile..... 
-                    tmp.transform.localPosition = pos;
+                    tmp.transform.localPosition = _onTile.transform.position;
+                    tmp.GetComponent<Character>().LSY_Character_OriPos = _onTile.transform.position;   // 처음 구매할 때 char_ori_Pos 초기화 필요함
+                    tmp.GetComponent<Character>().LSY_Character_Set_OnTile(_onTile);    // 처음 구매할 때 onTile 설정 필요.
                     Stand_Unit.Add(tmp);
                     //unitData.GetComponent<Character>().LSY_Character_Set_OnTile(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
                     //Debug.Log(Stand_tiles.HYJ_Data_Tile(pos_num).gameObject);
@@ -1334,7 +1349,9 @@ partial class HYJ_Battle_Manager
     {
 
         GameObject obj = (GameObject)_args[0];
-        string obj_tag = obj.tag;
+        //string obj_tag = obj.tag;
+
+        Character.Unit_Type _Type = obj.GetComponent<Character>().UnitType;
 
 		foreach(var unit in Field_Unit)
         {
@@ -1348,9 +1365,9 @@ partial class HYJ_Battle_Manager
 				unit.GetComponent<Character>().Target = null;
 		}
 
-		switch (obj_tag)
+		switch (_Type)
         {
-            case "Ally":
+            case Character.Unit_Type.Ally:
                 int obj_tile_idx = obj.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex;
                 if (obj_tile_idx < 0) // stand
                 {
@@ -1362,7 +1379,7 @@ partial class HYJ_Battle_Manager
                 }
                 break;
 
-            case "Enemy":
+            case Character.Unit_Type.Enemy:
                 Enemy_Unit.Remove(obj);
                 break;
 

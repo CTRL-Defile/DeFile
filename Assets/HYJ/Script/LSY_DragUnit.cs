@@ -57,20 +57,22 @@ public class LSY_DragUnit : MonoBehaviour
         }
     }
     */
-    public enum STATE
-    {
-        DOWN,
-        UP
-    }
 
     [SerializeField]
     private GameObject selectedObject, selectedTile;
-    [SerializeField]
-    private STATE m_state = STATE.UP;
+    HYJ_Battle_Tile selectedTile_Script;
+    BATTLE_PHASE m_Battle_Phase;
+
     [SerializeField]
     public Vector3 oriPos, curBlkPos;
+
     Ray m_TileRay, m_UnitRay;
-    bool isHeld = false;
+    RaycastHit tile_hit, unit_hit;
+
+    [SerializeField] bool isHeld = false;
+    bool isPhaseChange = false;
+    bool isRayHit;
+
     private void Start()
     {
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_POSITION, LSY_Set_blkPos);
@@ -93,8 +95,9 @@ public class LSY_DragUnit : MonoBehaviour
 
     void Update()
     {
-        RaycastHit tile_hit = CastRay("Tile"), unit_hit = CastRay("Unit");
+        m_Battle_Phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
 
+        tile_hit = CastRay("Tile");
         // Tile Ray
         if (tile_hit.collider != null)
         {
@@ -103,7 +106,8 @@ public class LSY_DragUnit : MonoBehaviour
                 selectedTile.GetComponent<HYJ_Battle_Tile>().LSY_Set_Cast(0);
 
             selectedTile = tile_hit.collider.gameObject;
-            selectedTile.GetComponent<HYJ_Battle_Tile>().LSY_Set_Cast(1);
+            selectedTile_Script = selectedTile.GetComponent<HYJ_Battle_Tile>();
+            selectedTile_Script.LSY_Set_Cast(1);
             m_TileRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.yellow);
         }
@@ -111,11 +115,82 @@ public class LSY_DragUnit : MonoBehaviour
         {
             if (selectedTile != null)
             {
-                selectedTile.GetComponent<HYJ_Battle_Tile>().LSY_Set_Cast(0);
+                selectedTile_Script.LSY_Set_Cast(0);
                 selectedTile = null;
             }
             m_TileRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.white);
+        }
+
+
+        switch (m_Battle_Phase)
+        {
+            case BATTLE_PHASE.PHASE_PREPARE:
+                {
+                    unit_hit = CastRay("Unit");
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        MouseDown();
+                    }
+                    if (Input.GetMouseButtonUp(0))
+                    {
+                        MouseUp();
+                    }
+                    break;
+                }
+
+            case BATTLE_PHASE.PHASE_COMBAT:
+                {
+                    if (isPhaseChange == false && selectedObject != null)
+                    {
+                        Debug.Log("Go Back");
+                        selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
+                        selectedObject = null;
+                        isHeld = false;
+                        Cursor.visible = true;
+                        isPhaseChange = true;
+                    }
+
+                    if (selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Stand)
+                    {
+                        unit_hit = CastRay("Unit");
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            MouseDown();
+                        }
+                        if (Input.GetMouseButtonUp(0))
+                        {
+                            MouseUp_COMBAT();
+                        }
+                    }
+                    else if (selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Field)
+                    {
+                        if (selectedObject != null && Input.GetMouseButtonUp(0))
+                        {
+                            Debug.Log("BTNUP with ...");
+                            selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
+                            selectedObject = null;
+                            isHeld = false;
+                            Cursor.visible = true;
+
+                        }
+                    }
+                    break;
+                }
+
+            case BATTLE_PHASE.PHASE_COMBAT_OVER:
+                {
+                    if (selectedObject != null)
+                    {
+                        Debug.Log("Go Back");
+                        selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
+                        selectedObject = null;
+                        isHeld = false;
+                        Cursor.visible = true;
+                    }
+                    break;
+                }
+
         }
 
         // Unit Ray
@@ -130,61 +205,10 @@ public class LSY_DragUnit : MonoBehaviour
             Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.green);
         }
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            m_state = STATE.DOWN;
-            isHeld = true;
-            if (selectedObject == null && unit_hit.collider != null)
-            {
-                switch (unit_hit.collider.gameObject.tag)
-                {
-                    case "Ally":
-                        //case "HitArea":
-                        selectedObject = unit_hit.collider.gameObject;
-                        oriPos = selectedObject.transform.position;
-                        break;
-                }
-
-                Cursor.visible = false;
-            }
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            m_state = STATE.UP;
-            isHeld = false;
-            Cursor.visible = true;
-
-            if (selectedObject != null)
-            {
-                if (selectedTile != null)
-                {
-                    GameObject tmp = selectedTile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit;
-                    if (tmp == null)
-                    {
-                        if (selectedTile.GetComponent<HYJ_Battle_Tile>().tile_Available == HYJ_Battle_Tile.Tile_Available.Non_Available)
-                            selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
-                        else
-                            selectedObject.transform.position = selectedTile.transform.position;
-                    }
-                    else
-                    {
-                        Vector3 tmp_pos = tmp.transform.position;
-                        tmp.transform.position = selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile().transform.position;
-                        selectedObject.transform.position = tmp_pos;
-                        //Debug.Log("[DragUnit] SWAP " + tmp_pos + " " + selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile().transform.position);
-                    }
-                }
-                else
-                {
-                    // selectedTile이 없을 때 (타일 밖으로 옮기려고 할 때)
-                    selectedObject.transform.position = oriPos;
-                }
-            }
-            //else
-            //    Debug.Log("no selectedObject and mousebtnUp..");
-            selectedObject = null;
-        }
+        // Mouse Button Method
+        
+        // 1. BattlePhase -> Prepare : every ally unit control / Combat : stand unit control
+        // 2. 
 
         //if (selectedObject != null) // Draging...
         if (Input.GetMouseButton(0) && selectedObject != null)
@@ -207,6 +231,9 @@ public class LSY_DragUnit : MonoBehaviour
             case "Unit":
                 layerMask = 1 << LayerMask.NameToLayer("Unit");
                 break;
+            case "NULL":
+                layerMask = 1 << 10000;
+                break;
         }
 
         Vector3 screenMousePosFar = new Vector3(
@@ -222,13 +249,159 @@ public class LSY_DragUnit : MonoBehaviour
         Vector3 worldMousePosFar = Camera.main.ScreenToWorldPoint(screenMousePosFar);
         Vector3 worldMousePosNear = Camera.main.ScreenToWorldPoint(screenMousePosNear);
         RaycastHit hit;
-        Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out hit, 1000, layerMask);
+        isRayHit = Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out hit, 1000, layerMask);
 
         return hit;
     }
 
+    private void MouseDown()
+    {
+        isHeld = true;
+        Debug.Log("BtnDown collider : " + unit_hit.collider);
+        if (selectedObject == null && unit_hit.collider != null)
+        {
+            Character.Unit_Type _Type = unit_hit.collider.gameObject.GetComponent<Character>().UnitType;
+            switch (_Type)
+            {
+                case Character.Unit_Type.Ally:
+                    //case "HitArea":
+                    selectedObject = unit_hit.collider.gameObject;
+                    oriPos = selectedObject.transform.position;
+                    break;
+            }
+            Cursor.visible = false;
+        }
+    }
+
+    private void MouseUp_COMBAT()
+    {
+        Debug.Log("BtnUP collider : " + unit_hit.collider);
+        isHeld = false;
+        Cursor.visible = true;
+
+        // 잡고 있는 유닛이 있는가
+        if (selectedObject != null)
+        {
+            Character selectedObject_Script = selectedObject.GetComponent<Character>();
+            // 지정된 타일이 있는가
+            if (selectedTile != null)
+            {
+                GameObject _tile_onUnit = selectedTile_Script.HYJ_Basic_onUnit;
+                HYJ_Battle_Tile.Tile_Available _available = selectedTile_Script.tile_Available;
+
+                // 지정된 타일의 onUnit 이 비었는가
+                if (_tile_onUnit == null)
+                {
+                    // 둘 수 없는 타일인가
+                    if (_available == HYJ_Battle_Tile.Tile_Available.Non_Available)
+                    {
+                        selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
+                    }
+                    // 둘 수 있는 타일이다 -> 위치 변화와 Character의 OnTile 값 갱신
+                    else
+                    {
+                        selectedObject.transform.position = selectedTile.transform.position;
+                        selectedObject_Script.LSY_Character_Set_OnTile(selectedTile);
+                    }
+                }
+                // 지정된 타일의 onUnit 이 비어있지 않으며 둘 수 있는 타일이다 -> Swap == 위치 변화와 Character의 OnTile 값 갱신
+                else if (_available == HYJ_Battle_Tile.Tile_Available.Available)
+                {
+                    //  Unit Swap -> selectedObject와 selectedTile.onUnit 의 position 및 onTile 교환
+                    Debug.Log("[Drag] SWAP " + _tile_onUnit + " " + selectedObject);
+
+                    Vector3 tile_pos = _tile_onUnit.transform.position; // selectedTile 위의 Unit ( -> onUnit ) 의 포지션을 받아옴
+                    //GameObject tile_tmp = selectedTile_Script.HYJ_Basic_onUnit.GetComponent<Character>().LSY_Character_Get_OnTile(); // selectedTile의 onUnit의 Character 스크립트의 onTile을 가져옴
+                    GameObject tile_tmp = selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile(); // selectedTile의 onUnit의 Character 스크립트의 onTile을 가져옴
+
+                    _tile_onUnit.transform.position = selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile().transform.position;
+                    _tile_onUnit.GetComponent<Character>().LSY_Character_Set_OnTile(tile_tmp);
+                    
+                    selectedObject.transform.position = tile_pos;
+                    selectedObject_Script.LSY_Character_Set_OnTile(selectedTile);
+                    
 
 
+                }
+                // 지정된 타일의 onUnit 이 비어있지 않으며 둘 수 없는 타일이다 -> 제자리로 가라 (처음 마우스를 집었던 자리)
+                else
+                {
+                    Debug.Log("btup : " + oriPos);
+                    selectedObject.transform.position = oriPos;
+                }
+            }
+            // selectedTile이 없을 때 (타일 밖으로 옮기려고 할 때)
+            else
+            {
+                selectedObject.transform.position = oriPos;
+            }
+            selectedObject_Script.LSY_Character_OriPos = selectedObject.transform.position;
+        }
+        selectedObject = null;
+    }
+    private void MouseUp()
+    {
+        Debug.Log("BtnUP collider : " + unit_hit.collider);
+        isHeld = false;
+        Cursor.visible = true;
 
+        // 잡고 있는 유닛이 있는가
+        if (selectedObject != null)
+        {
+            Character selectedObject_Script = selectedObject.GetComponent<Character>();
+            // 지정된 타일이 있는가
+            if (selectedTile != null)
+            {
+                GameObject _tile_onUnit = selectedTile_Script.HYJ_Basic_onUnit;
+                HYJ_Battle_Tile.Tile_Available _available = selectedTile_Script.tile_Available;
+
+                // 지정된 타일의 onUnit 이 비었는가
+                if (_tile_onUnit == null)
+                {
+                    Debug.Log("[Tile] " + selectedTile + " is null");
+                    // 둘 수 없는 타일인가
+                    if (_available == HYJ_Battle_Tile.Tile_Available.Non_Available)
+                    {
+                        selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
+                    }
+                    // 둘 수 있는 타일이다 -> 위치 변화와 Character의 OnTile 값 갱신
+                    else
+                    {
+                        selectedObject.transform.position = selectedTile.transform.position;
+                        //selectedObject_Script.LSY_Character_Set_OnTile(selectedTile);
+                    }
+                }
+                // 지정된 타일의 onUnit 이 비어있지 않으며 둘 수 있는 타일이다 -> Swap == 위치 변화와 Character의 OnTile 값 갱신
+                else if (_available == HYJ_Battle_Tile.Tile_Available.Available)
+                {
+                    //  Unit Swap -> selectedObject와 selectedTile.onUnit 의 position 및 onTile 교환
+                    Debug.Log("[Drag] SWAP " + _tile_onUnit + " " + selectedObject);
+
+                    Vector3 tile_pos = _tile_onUnit.transform.position;
+                    //GameObject tile_tmp = selectedTile_Script.HYJ_Basic_onUnit.GetComponent<Character>().LSY_Character_Get_OnTile();
+                    GameObject tile_tmp = selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile();
+
+
+                    _tile_onUnit.transform.position = selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile().transform.position;
+                    //_tile_onUnit.GetComponent<Character>().LSY_Character_Set_OnTile(tile_tmp);
+
+                    selectedObject.transform.position = tile_pos;
+                    //selectedObject_Script.LSY_Character_Set_OnTile(selectedTile);
+
+                }
+                // 지정된 타일의 onUnit 이 비어있지 않으며 둘 수 없는 타일이다 -> 제자리로 가라 (처음 마우스를 집었던 자리)
+                else
+                    selectedObject.transform.position = oriPos;
+            }
+            // selectedTile이 없을 때 (타일 밖으로 옮기려고 할 때)
+            else
+            {
+                selectedObject.transform.position = oriPos;
+            }
+            selectedObject_Script.LSY_Character_OriPos = selectedObject.transform.position;
+        }
+
+        selectedObject = null;
+    }
 
 }
