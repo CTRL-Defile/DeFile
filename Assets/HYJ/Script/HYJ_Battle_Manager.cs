@@ -1183,6 +1183,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     }
                     // Stand_Unit에 추가, 생성될 때 On_Tile..... 
                     tmp.transform.localPosition = _onTile.transform.position;
+                    tmp.GetComponent<Character>().UnitType = Character.Unit_Type.Ally;
                     tmp.GetComponent<Character>().LSY_Character_OriPos = _onTile.transform.position;   // 처음 구매할 때 char_ori_Pos 초기화 필요함
                     tmp.GetComponent<Character>().LSY_Character_Set_OnTile(_onTile);    // 처음 구매할 때 onTile 설정 필요.
                     Stand_Unit.Add(tmp);
