@@ -258,14 +258,16 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         for (int i = 0; i < UnitParent_num; i++)
         {
             Unit_parent.GetChild(i).gameObject.SetActive(true);
-			Transform tmp = Unit_parent.GetChild(i);
+            Unit_parent.GetChild(i).GetComponent<Character>().Dead = false;
+            Transform tmp = Unit_parent.GetChild(i);
             if (!Stand_Unit.Contains(tmp.gameObject))
                 Field_Unit.Add(tmp.gameObject);
         }
         for (int i = 0; i < EnemyParent_num; i++)
         {
             Enemy_parent.GetChild(i).gameObject.SetActive(true);
-			Enemy_Unit.Add(Enemy_parent.GetChild(i).gameObject);
+            Enemy_parent.GetChild(i).GetComponent<Character>().Dead = false;
+            Enemy_Unit.Add(Enemy_parent.GetChild(i).gameObject);
         }
         LSY_Unit_Init(Field_Unit);
         LSY_Unit_Init(Enemy_Unit);
@@ -829,6 +831,7 @@ partial class HYJ_Battle_Manager
         }
 
         GameObject trash_obj = Instantiate(trash_element, Trash_parent);
+        trash_obj.GetComponent<HYJ_Battle_Tile>().TileType = HYJ_Battle_Tile.Tile_Type.Trash;
         trash_obj.SetActive(false);
         trash_obj.name = "trash_0";
 
@@ -1317,7 +1320,7 @@ partial class HYJ_Battle_Manager
 
         switch (tile_tag)
         {
-            case "StandTile":
+            case "Stand":
                 Stand_Unit.Remove(obj);
                 obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
@@ -1325,7 +1328,7 @@ partial class HYJ_Battle_Manager
                 m_CharacterPools.m_List[id].objects.PushStack(obj.GetComponent<Character>());
                 break;
 
-            case "FieldTile":
+            case "Field":
                 Field_Unit.Remove(obj);
                 obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);

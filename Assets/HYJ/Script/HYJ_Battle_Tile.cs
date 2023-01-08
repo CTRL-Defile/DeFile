@@ -227,12 +227,6 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                     }
                     break;
 
-                //case "TrashTile":
-                //    {
-                //        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, this.tag, other.gameObject);
-                //    }
-                //    break;
-
             }
         }
 
