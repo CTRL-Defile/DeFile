@@ -249,7 +249,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         //UL_isInitialized= false;
         StatusBar_isInitialized = false;
 
-
         Field_Unit.Clear();
         Enemy_Unit.Clear();
 
@@ -258,13 +257,15 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         
         for (int i = 0; i < UnitParent_num; i++)
         {
-            Transform tmp = Unit_parent.GetChild(i);
+            Unit_parent.GetChild(i).gameObject.SetActive(true);
+			Transform tmp = Unit_parent.GetChild(i);
             if (!Stand_Unit.Contains(tmp.gameObject))
                 Field_Unit.Add(tmp.gameObject);
         }
         for (int i = 0; i < EnemyParent_num; i++)
         {
-            Enemy_Unit.Add(Enemy_parent.GetChild(i).gameObject);
+            Enemy_parent.GetChild(i).gameObject.SetActive(true);
+			Enemy_Unit.Add(Enemy_parent.GetChild(i).gameObject);
         }
         LSY_Unit_Init(Field_Unit);
         LSY_Unit_Init(Enemy_Unit);
@@ -272,8 +273,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         string str = "Enemy";
         LSY_Unit_to_Pool(str, Enemy_Unit);
         Enemy_isInitialized = false;
-
-
     }
 
     public void LSY_Unit_to_Pool(string _type, List<GameObject> unit_list)

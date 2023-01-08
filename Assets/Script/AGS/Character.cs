@@ -123,19 +123,7 @@ public partial class Character : MonoBehaviour
 			this.on_Tile.GetComponent<HYJ_Battle_Tile>().tile_Available == HYJ_Battle_Tile.Tile_Available.Available)
 			char_ori_Pos = on_Tile.transform.position;
 
-
-		if (true)
-			if (false)
-				;
 		DieProcess();
-
-		if (IsDead)
-		{
-			// 풀링 할지 말지 생각중
-			//Destroy(gameObject);
-			gameObject.SetActive(false);
-			return;
-		}
 
 		if (State != STATE.DIE && Target != null && on_Tile != null)
 		{
