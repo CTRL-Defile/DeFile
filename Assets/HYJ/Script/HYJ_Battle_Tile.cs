@@ -14,7 +14,8 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     [SerializeField] public List<int> Tile_Idx; // Tile의 행/열 정보
     [SerializeField] public Vector3 Tile_Position;  // Tile의 localPosition 저장
     [SerializeField] private int m_GraphIdx = -1;
-    [SerializeField] bool isCasting = false;
+    [SerializeField] bool isHovering = false, isDraging = false;
+    GameObject m_child;
     public enum Tile_Available
     {
         Available,
@@ -37,26 +38,50 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     public Tile_Available TileAvailable { get { return tile_Available; } set { tile_Available = value; } }
 	//////////  Method          //////////
 	public GameObject HYJ_Basic_onUnit { get { return Basic_onUnit; } set { Basic_onUnit = value; } }
-    public void LSY_Set_Cast(int i)
+    public void LSY_Set_Hover(bool tf)
     {
-        if (i == 0)
-            isCasting = false;
-        else
-            isCasting = true;
+        isHovering = tf;
+    }
+
+    public void LSY_Set_Drag(bool tf)
+    {
+        isDraging = tf;
     }
 
     //////////  Default Method  //////////
     void Start()
     {
+        m_child = this.transform.GetChild(0).gameObject;
         Tile_Position = this.transform.localPosition;
-    }
 
+    }
     void Update()
     {
-        if (isCasting)
-            this.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.red;
+        if (isDraging)
+        {
+            //if (this.tile_Available == Tile_Available.Available)
+            if (TileAvailable == Tile_Available.Available)
+                m_child.SetActive(true);
+        }
         else
-            this.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.white;
+        {
+            m_child.SetActive(false);
+        }
+        if (isHovering)
+        {
+            //if (m_child.gameObject.activeSelf == false)
+            m_child.SetActive(true);
+            m_child.GetComponent<SpriteRenderer>().color = Color.red;
+
+        }
+        else
+        {
+            if (!isDraging)
+                m_child.SetActive(false);
+
+            m_child.GetComponent<SpriteRenderer>().color = Color.white;
+
+        }
     }
 
 }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.6757515, g: 0.77903193, b: 0.7893794, a: 1}
+  m_IndirectSpecularColor: {r: 0.67433286, g: 0.77783763, b: 0.78887975, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -790,8 +790,10 @@ MonoBehaviour:
   Tile_Idx: 
   Tile_Position: {x: 0, y: 0, z: 0}
   m_GraphIdx: -1
-  isCasting: 0
+  isHovering: 0
+  isDraging: 0
   tile_Available: 1
+  tile_type: 0
   detectedUnit: []
 --- !u!64 &365964951
 MeshCollider:
@@ -2448,8 +2450,10 @@ MonoBehaviour:
   Tile_Idx: 
   Tile_Position: {x: 0, y: 0, z: 0}
   m_GraphIdx: -1
-  isCasting: 0
+  isHovering: 0
+  isDraging: 0
   tile_Available: 0
+  tile_type: 0
   detectedUnit: []
 --- !u!1 &1722427806
 GameObject:
@@ -3126,8 +3130,10 @@ MonoBehaviour:
   Tile_Idx: 
   Tile_Position: {x: 0, y: 0, z: 0}
   m_GraphIdx: -1
-  isCasting: 0
+  isHovering: 0
+  isDraging: 0
   tile_Available: 1
+  tile_type: 0
   detectedUnit: []
 --- !u!64 &2017265340
 MeshCollider:
@@ -3430,7 +3436,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2104383991
 Transform:
   m_ObjectHideFlags: 0
@@ -18388,8 +18394,10 @@ MonoBehaviour:
   Tile_Idx: 
   Tile_Position: {x: 0, y: 0, z: 0}
   m_GraphIdx: -1
-  isCasting: 0
+  isHovering: 0
+  isDraging: 0
   tile_Available: 1
+  tile_type: 0
   detectedUnit: []
 --- !u!114 &1355835113847754741
 MonoBehaviour:
@@ -18505,9 +18513,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Basic_phase: 0
-  TMP: {fileID: 133190591}
   m_CharacterPools:
     m_List: []
+  _StopVar: 0
+  _StartVar: 0
   Battle_Map: {fileID: 3941506315944325647}
   Battle_Units: {fileID: 2111833492}
   Field_x: 7
@@ -20353,9 +20362,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectedObject: {fileID: 0}
   selectedTile: {fileID: 0}
-  m_state: 1
+  beforeTile: {fileID: 0}
   oriPos: {x: 0, y: 0, z: 0}
   curBlkPos: {x: 0, y: 0, z: 0}
+  isHeld: 0
 --- !u!222 &2596144751865299538
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21661,8 +21671,10 @@ MonoBehaviour:
   Tile_Idx: 
   Tile_Position: {x: 0, y: 0, z: 0}
   m_GraphIdx: -1
-  isCasting: 0
+  isHovering: 0
+  isDraging: 0
   tile_Available: 1
+  tile_type: 0
   detectedUnit: []
 --- !u!64 &3469287838230065395
 MeshCollider:
@@ -31332,8 +31344,10 @@ MonoBehaviour:
   Tile_Idx: 
   Tile_Position: {x: 0, y: 0, z: 0}
   m_GraphIdx: -1
-  isCasting: 0
+  isHovering: 0
+  isDraging: 0
   tile_Available: 1
+  tile_type: 0
   detectedUnit: []
 --- !u!223 &7625413645223331484
 Canvas:

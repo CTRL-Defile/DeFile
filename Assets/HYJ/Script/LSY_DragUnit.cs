@@ -63,20 +63,23 @@ public class LSY_DragUnit : MonoBehaviour
     HYJ_Battle_Tile selectedTile_Script;
     BATTLE_PHASE m_Battle_Phase;
 
+    List<HYJ_Battle_Manager_Line> Field_Tile_List;
+    HYJ_Battle_Manager_Line Stand_Tiles;
+
     [SerializeField]
     public Vector3 oriPos, curBlkPos;
 
     Ray m_TileRay, m_UnitRay;
     RaycastHit tile_hit, unit_hit;
 
-    [SerializeField] bool isHeld = false;
-    bool isPhaseChange = false;
+    [SerializeField] bool isHeld = false, isPhaseChange = false;
     bool isRayHit;
 
     private void Start()
     {
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_POSITION, LSY_Set_blkPos);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_ORIGINAL, LSY_Set_oriPos);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DRAG___INIT, Drag_Init);
     }
 
     object LSY_Set_blkPos(params object[] _args)
@@ -92,6 +95,13 @@ public class LSY_DragUnit : MonoBehaviour
         curBlkPos = oriPos;
         return null;
     }
+    object Drag_Init(params object[] _args)
+    {
+        Field_Tile_List = (List<HYJ_Battle_Manager_Line>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES);
+        Stand_Tiles = (HYJ_Battle_Manager_Line)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_TILES);
+
+        return null;
+    }
 
     void Update()
     {
@@ -103,11 +113,13 @@ public class LSY_DragUnit : MonoBehaviour
         {
             // Tile Detected..
             if (tile_hit.collider != selectedTile && selectedTile != null)
-                selectedTile.GetComponent<HYJ_Battle_Tile>().LSY_Set_Cast(0);
+            {
+                selectedTile.GetComponent<HYJ_Battle_Tile>().LSY_Set_Hover(false);
+            }
 
             selectedTile = tile_hit.collider.gameObject;
             selectedTile_Script = selectedTile.GetComponent<HYJ_Battle_Tile>();
-            selectedTile_Script.LSY_Set_Cast(1);
+            selectedTile_Script.LSY_Set_Hover(true);
             m_TileRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.yellow);
         }
@@ -115,7 +127,7 @@ public class LSY_DragUnit : MonoBehaviour
         {
             if (selectedTile != null)
             {
-                selectedTile_Script.LSY_Set_Cast(0);
+                selectedTile_Script.LSY_Set_Hover(false);
                 selectedTile = null;
             }
             m_TileRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -141,14 +153,20 @@ public class LSY_DragUnit : MonoBehaviour
 
             case BATTLE_PHASE.PHASE_COMBAT:
                 {
-                    if (isPhaseChange == false && selectedObject != null)
+                    if (isPhaseChange == false)
                     {
-                        Debug.Log("Go Back");
-                        selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
-                        selectedObject = null;
-                        isHeld = false;
-                        Cursor.visible = true;
-                        isPhaseChange = true;
+                        if (selectedObject == null)
+                            isPhaseChange = true;
+                        else
+                        {
+                            Debug.Log("Go Back");
+                            selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
+                            selectedObject = null;
+                            //isHeld = false;
+                            Set_isHeld(false);
+                            Cursor.visible = true;
+                            isPhaseChange = true;
+                        }
                     }
 
                     if (selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Stand)
@@ -170,7 +188,8 @@ public class LSY_DragUnit : MonoBehaviour
                             Debug.Log("BTNUP with ...");
                             selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
                             selectedObject = null;
-                            isHeld = false;
+                            //isHeld = false;
+                            Set_isHeld(false);
                             Cursor.visible = true;
 
                         }
@@ -180,12 +199,16 @@ public class LSY_DragUnit : MonoBehaviour
 
             case BATTLE_PHASE.PHASE_COMBAT_OVER:
                 {
+                    if (isPhaseChange == true)
+                        isPhaseChange = false;
+
                     if (selectedObject != null)
                     {
                         Debug.Log("Go Back");
                         selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
                         selectedObject = null;
-                        isHeld = false;
+                        //isHeld = false;
+                        Set_isHeld(false);
                         Cursor.visible = true;
                     }
                     break;
@@ -256,10 +279,12 @@ public class LSY_DragUnit : MonoBehaviour
 
     private void MouseDown()
     {
-        isHeld = true;
+        //isHeld = true;
+
         Debug.Log("BtnDown collider : " + unit_hit.collider);
         if (selectedObject == null && unit_hit.collider != null)
         {
+            Set_isHeld(true);
             Character.Unit_Type _Type = unit_hit.collider.gameObject.GetComponent<Character>().UnitType;
             switch (_Type)
             {
@@ -276,7 +301,8 @@ public class LSY_DragUnit : MonoBehaviour
     private void MouseUp_COMBAT()
     {
         Debug.Log("BtnUP collider : " + unit_hit.collider);
-        isHeld = false;
+        //isHeld = false;
+        Set_isHeld(false);
         Cursor.visible = true;
 
         // 잡고 있는 유닛이 있는가
@@ -342,7 +368,8 @@ public class LSY_DragUnit : MonoBehaviour
     private void MouseUp()
     {
         Debug.Log("BtnUP collider : " + unit_hit.collider);
-        isHeld = false;
+        //isHeld = false;
+        Set_isHeld(false);
         Cursor.visible = true;
 
         // 잡고 있는 유닛이 있는가
@@ -402,6 +429,29 @@ public class LSY_DragUnit : MonoBehaviour
         }
 
         selectedObject = null;
+    }
+
+    public void Set_isHeld(bool tf)
+    {
+        isHeld = tf;
+
+        int field_cnt = Field_Tile_List.Count;
+        for (int i = 0; i < field_cnt; i++)
+        {
+            int field_x = Field_Tile_List[i].HYJ_Data_GetCount();
+            for (int j = 0; j < field_x; j++)
+            {
+                Field_Tile_List[i].HYJ_Data_Tile(j).LSY_Set_Drag(tf);
+            }
+        }
+
+        int stand_cnt = Stand_Tiles.HYJ_Data_GetCount();
+        for (int i = 0; i < stand_cnt; i++)
+        {
+            Debug.Log(Stand_Tiles.HYJ_Data_Tile(i) + " set Drag");
+            Stand_Tiles.HYJ_Data_Tile(i).LSY_Set_Drag(tf);
+        }
+
     }
 
 }

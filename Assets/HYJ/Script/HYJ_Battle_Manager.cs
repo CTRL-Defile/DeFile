@@ -148,6 +148,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         LSY_Pool_Init();
                         CharacterPool_isInitialized = true;
                         HYJ_Field_Init();
+                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DRAG___INIT);
                         // 필드 생성 후 그래프 셋업
 					    SetupGraph();
                     }
@@ -820,12 +821,6 @@ partial class HYJ_Battle_Manager
             std_obj.GetComponent<HYJ_Battle_Tile>().Tile_Idx.Add(forX);
             std_obj.GetComponent<HYJ_Battle_Tile>().tile_Available = HYJ_Battle_Tile.Tile_Available.Available;
             std_obj.transform.localPosition = new Vector3(left.x + (pos1.x * 2.0f * forX), 0, pos0.z + (pos1.z * Field_y));
-
-            //if (Field_y % 2 == 1)
-            //    std_obj.transform.localPosition = new Vector3(pos0.x + (pos1.x * 2.0f * forX), 0, pos0.z + (pos1.z * Field_y));
-            //else
-            //    std_obj.transform.localPosition = new Vector3(-pos0.x + (pos1.x * 2.0f * forX), 0, pos0.z + (pos1.z * Field_y));
-
             std_obj.transform.localScale = element.transform.localScale;
             Stand_tiles.HYJ_Tile_Add(std_obj.transform);
         }

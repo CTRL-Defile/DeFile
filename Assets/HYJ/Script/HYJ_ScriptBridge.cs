@@ -161,6 +161,7 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     //
     DRAG___UNIT__SET_POSITION,
     DRAG___UNIT__SET_ORIGINAL,
+    DRAG___INIT,
 
     //
     TOPBAR___LEVEL__VIEW_LEVEL,
