@@ -26,18 +26,19 @@ public class PathFinder : MonoBehaviour
 	private HYJ_Battle_Tile m_CurrentTile = null;
 	[SerializeField]
 	private HYJ_Battle_Tile m_DestTile = null;
+	public HYJ_Battle_Tile DestTile { get { return m_DestTile; } }
 
-	[SerializeField]
+	//[SerializeField]
 	private NODE m_StartNode = null;
-	[SerializeField]
-	private NODE m_DestNode = null;
+	//[SerializeField]
+	private NODE m_DestNode = null;	
 
 	[SerializeField]
 	private NODE PreNode = null;
 
-	[SerializeField]
+	//[SerializeField]
 	SerialList<NODE> m_OpenNodes = new SerialList<NODE>();
-	[SerializeField]
+	//[SerializeField]
 	SerialList<NODE> m_CloseNodes = new SerialList<NODE>();
 
 	[SerializeField]
@@ -46,7 +47,7 @@ public class PathFinder : MonoBehaviour
 	bool m_IsArrived = true;	 
 	public bool Arrived { get { return m_IsArrived;} set { m_IsArrived = value;} }
 
-	[SerializeField]
+	//[SerializeField]
 	SerialLinkedList<int> m_FinalPath= new SerialLinkedList<int>();
 	public SerialLinkedList<int> FinalPath { get { return m_FinalPath; } }
 
@@ -120,19 +121,16 @@ public class PathFinder : MonoBehaviour
 		// 타일에서 타일로 이동중이면 리턴 -> 이미 정해진 경로에서 타일 이동중에 다시 길을 찾으면 타일이동이 아니라 일반적인 이동할 것 예상
 		if (false == m_IsArrived)
 			return false;
-
-		// 상태가 SKILL_IDLE 이면 리턴
-		if (gameObject.GetComponent<Character>().State == Character.STATE.SKILL_IDLE)
-			return false;
 		
 		// 잘못된 인덱스면 리턴
 		if(StartIdx < 0 || EndIdx < 0) 
-			return false;
-		
+			return false;		
+
 		List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);
 
 		// 상태가 공격중이면 리턴
-		if (gameObject.GetComponent<Character>().State == Character.STATE.SKILL)
+		if (gameObject.GetComponent<Character>().State == Character.STATE.SKILL ||
+			gameObject.GetComponent<Character>().State == Character.STATE.SKILL_IDLE)
 		{
 			BattleGraph[StartIdx].Marking = true;
 			BattleGraph[StartIdx].Unit = gameObject;
@@ -172,12 +170,25 @@ public class PathFinder : MonoBehaviour
 		// + 나중에 Path Node 개수 저장해서 더 빨리 도착하는 객체가 도착지점 선점하고 도착지점 갱신하는 작업 할 예정
 		float MinDist = float.MaxValue;
 		m_NearNode = null;
+
+		//타겟하고 가까워졌을때를 체크하기위해서 거리계산
+		float TargetDist = Vector3.Magnitude(gameObject.transform.position - gameObject.GetComponent<Character>().Target.transform.position);
+
 		foreach (var Neighbor in BattleGraph[EndIdx].m_Neighbors.m_List)
 		{
 			if (null != Neighbor.Tile.HYJ_Basic_onUnit)
 				continue;
 
-			if (true == Neighbor.Marking)
+			// TODO : 매직넘버로 5.0f 해놨는데 나중에 타일간 거리 계산 기반으로 값 바꿀 예정
+			if(TargetDist < 5.0f &&
+				true == Neighbor.Marking &&
+				Neighbor.Unit == gameObject.GetComponent<Character>().Target)
+			{
+				gameObject.GetComponent<Character>().State = Character.STATE.SKILL_IDLE;
+				m_NearNode = null;
+				return false;
+			}
+			else if (true == Neighbor.Marking)
 				continue;
 
 			float Dist = Vector3.Magnitude(Neighbor.Position - StartNode.Position);
@@ -269,7 +280,7 @@ public class PathFinder : MonoBehaviour
 		// 오픈을 토탈비용 Fcost 기준으로 오름차순 정렬		
 		m_OpenNodes.m_List = m_OpenNodes.m_List.OrderBy(x => x.Fcost).ToList();
 
-		// 재귀함수
+		// 재귀함수를 사용해서 DFS 구현
 		return FindingPath(m_OpenNodes.m_List[0].MyIndex, endIdx);		
 	}
 
