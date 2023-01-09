@@ -15,6 +15,7 @@ using UnityEngine.Diagnostics;
 using TMPro.Examples;
 using System.Linq;
 using static Unity.Burst.Intrinsics.X86.Avx;
+using static UnityEngine.GraphicsBuffer;
 
 public enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_COMBAT_OVER, PHASE_END };
 
@@ -209,9 +210,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     InitGraphNodes();
 					Find_Target();
 
-                    //TODO : 해야할 일.
-                    // bool변수 해서 정렬 한번만하게 해두면 괜찮을듯
                     //여기 길찾기. 그러면 컨테이너돌면서 순서 정해줄수 있음. 정렬 -> 기준이 그래프상에서 우상단 좌하단에 가깝냐 정렬을 한번하고 순회하면서 StartPathFinding
+                    UnitSorting();
+                    FindingPath();
 
 					Phase_timer = 50.0;
 					Time_Acc += Time.deltaTime;
@@ -242,7 +243,33 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
     }
 
-    public void LSY_Battle_End()
+    public void FindingPath()
+    {
+		foreach (var Unit in Field_Unit)
+		{
+			if (null != Unit.GetComponent<Character>().Target)
+				Unit.GetComponent<PathFinder>().StartPathFinding(Unit.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex,
+																					Unit.GetComponent<Character>().Target.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex);
+		}
+		foreach (var Unit in Enemy_Unit)
+		{
+			if (null != Unit.GetComponent<Character>().Target)
+				Unit.GetComponent<PathFinder>().StartPathFinding(Unit.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex,
+																					Unit.GetComponent<Character>().Target.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex);
+		}
+	}
+    public void UnitSorting()
+    {
+        //TODO : 일단 우측, 좌측 기준으로 잡았음
+
+        // 1. Field 유닛들은 그래프 좌하단 기준으로 우선순위 정렬
+        Field_Unit = Field_Unit.OrderBy(x => x.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex).ToList();
+
+		// 2. Enemy 유닛들은 그래프 우상단 기준으로 우선순위 정렬
+		Enemy_Unit = Enemy_Unit.OrderByDescending(x => x.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex).ToList();
+	}
+
+	public void LSY_Battle_End()
     {
         End_Btn.SetActive(false);
         HYJ_SetActive(false);
@@ -1413,6 +1440,8 @@ partial class HYJ_Battle_Manager
 
         if (Num_Ally <= 0 || Num_Enemy <= 0)
             return;
+
+        // TODO : 거리가 똑같은게 있다면 현재 객체가 보고있는 방향 기준으로 각도가 작은것으로 타겟 설정
 
         for (int i = 0; i < Num_Ally; i++)
         {

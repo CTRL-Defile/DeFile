@@ -127,7 +127,7 @@ public partial class Character : MonoBehaviour
 
 		if (State != STATE.DIE && Target != null && on_Tile != null)
 		{
-			m_PathFinder.StartPathFinding(on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex, Target.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex);
+			//m_PathFinder.StartPathFinding(on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex, Target.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex);
 			m_PathFinder.MoveOnPath();
 		}
 
@@ -262,9 +262,9 @@ public partial class Character
 					case STATE.IDLE:
 						break;
 					case STATE.SKILL:
-						//State = STATE.IDLE;
-						//m_PathFinder.InitCloseNodes();
-						//m_PathFinder.InitMarking();
+						State = STATE.IDLE;
+						m_PathFinder.InitCloseNodes();
+						m_PathFinder.InitMarking();
 						break;
 					default:
 						break;
@@ -275,7 +275,7 @@ public partial class Character
 			{
 				State = STATE.IDLE;
 				m_PathFinder.InitCloseNodes();
-				m_PathFinder.InitMarking();
+				//m_PathFinder.InitMarking();
 			}
 		}
 		MoveProcess();
