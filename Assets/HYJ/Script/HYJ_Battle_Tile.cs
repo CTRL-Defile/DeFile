@@ -132,6 +132,29 @@ partial class HYJ_Battle_Tile : MonoBehaviour
 
     }
 
+	private void OnTriggerStay(Collider other)
+	{
+		Character other_Script = other.GetComponent<Character>();
+		if (other_Script != null)   // 다른 collider 검출 방지
+		{
+			//Debug.Log("[Tile] " + other + " " + this);
+			if (other_Script.m_UnitType == Character.Unit_Type.Ally || other_Script.m_UnitType == Character.Unit_Type.Enemy)
+			{
+				BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
+				if (phase == BATTLE_PHASE.PHASE_COMBAT && !this.CompareTag("TrashTile"))
+				{
+					if (Basic_onUnit == null &&
+						other.GetComponent<Character>().State != Character.STATE.DIE)
+					{
+						Basic_onUnit = other.gameObject;
+						other_Script.LSY_Character_Set_OnTile(this.gameObject);
+					}
+				}
+
+			}
+		}
+	}
+
 	private void OnTriggerExit(Collider other)
     {
 		BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
