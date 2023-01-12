@@ -281,7 +281,7 @@ public class LSY_DragUnit : MonoBehaviour
     {
         //isHeld = true;
 
-        Debug.Log("BtnDown collider : " + unit_hit.collider);
+        //Debug.Log("BtnDown collider : " + unit_hit.collider);
         if (selectedObject == null && unit_hit.collider != null)
         {
             Set_isHeld(true);
@@ -300,7 +300,7 @@ public class LSY_DragUnit : MonoBehaviour
 
     private void MouseUp_COMBAT()
     {
-        Debug.Log("BtnUP collider : " + unit_hit.collider);
+        //Debug.Log("BtnUP collider : " + unit_hit.collider);
         //isHeld = false;
         Set_isHeld(false);
         Cursor.visible = true;
@@ -367,7 +367,7 @@ public class LSY_DragUnit : MonoBehaviour
     }
     private void MouseUp()
     {
-        Debug.Log("BtnUP collider : " + unit_hit.collider);
+        //Debug.Log("BtnUP collider : " + unit_hit.collider);
         //isHeld = false;
         Set_isHeld(false);
         Cursor.visible = true;
@@ -448,7 +448,7 @@ public class LSY_DragUnit : MonoBehaviour
         int stand_cnt = Stand_Tiles.HYJ_Data_GetCount();
         for (int i = 0; i < stand_cnt; i++)
         {
-            Debug.Log(Stand_Tiles.HYJ_Data_Tile(i) + " set Drag");
+            //Debug.Log(Stand_Tiles.HYJ_Data_Tile(i) + " set Drag");
             Stand_Tiles.HYJ_Data_Tile(i).LSY_Set_Drag(tf);
         }
 
