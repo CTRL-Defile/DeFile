@@ -15,7 +15,9 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     [SerializeField] public Vector3 Tile_Position;  // Tile의 localPosition 저장
     [SerializeField] private int m_GraphIdx = -1;
     [SerializeField] bool isHovering = false, isDraging = false;
-    GameObject m_child;
+    MeshRenderer m_mesh;
+    Material m_material;
+    Color ori_Color;
     public enum Tile_Available
     {
         Available,
@@ -51,7 +53,10 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     //////////  Default Method  //////////
     void Start()
     {
-        m_child = this.transform.GetChild(0).gameObject;
+        m_mesh = this.GetComponent<MeshRenderer>();
+        m_material = this.GetComponent<Material>();
+        //ori_Color = m_material.color;
+        ori_Color = m_mesh.material.color;
         Tile_Position = this.transform.localPosition;
 
     }
@@ -61,25 +66,38 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
         {
             //if (this.tile_Available == Tile_Available.Available)
             if (TileAvailable == Tile_Available.Available)
-                m_child.SetActive(true);
+                m_mesh.enabled = true;
         }
         else
         {
-            m_child.SetActive(false);
+            //m_child.SetActive(false);
+            m_mesh.enabled = false;
         }
+
         if (isHovering)
         {
             //if (m_child.gameObject.activeSelf == false)
-            m_child.SetActive(true);
-            m_child.GetComponent<SpriteRenderer>().color = Color.red;
+            //m_child.SetActive(true);
+            //m_child.GetComponent<SpriteRenderer>().color = Color.red;
+            if (TileAvailable == Tile_Available.Available)
+            {
+                m_mesh.enabled = true;
+                //m_material.color = Color.white;
+                m_mesh.material.color = Color.white;
+            }
+            //this.transform.position = new Vector3(Tile_Position.x, Tile_Position.y + 0.25f, Tile_Position.z);
 
         }
         else
         {
             if (!isDraging)
-                m_child.SetActive(false);
-
-            m_child.GetComponent<SpriteRenderer>().color = Color.white;
+            {
+                //m_child.SetActive(false);
+                m_mesh.enabled = false;
+            }
+            m_mesh.material.color = ori_Color;
+            //m_child.GetComponent<SpriteRenderer>().color = Color.white;
+            //this.transform.position = new Vector3(Tile_Position.x, Tile_Position.y, Tile_Position.z);
 
         }
     }
