@@ -125,10 +125,13 @@ public partial class Character : MonoBehaviour
 
 		DieProcess();
 
+		if (true == IsDead)
+			return;
+
 		if (State != STATE.DIE && Target != null && on_Tile != null)
 		{
 			//m_PathFinder.StartPathFinding(on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex, Target.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex);
-			m_PathFinder.MoveOnPath();
+			m_PathFinder.MoveOnPath();			
 		}
 
 		BattleProcess();
@@ -202,9 +205,8 @@ public partial class Character
 		{
 			List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);
 			BattleGraph[on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex].Marking = false;
-			//m_PathFinder.InitMarking();
+			//m_PathFinder.InitMarking();			
 			on_Tile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
-
 			State = STATE.DIE;			
 		}
 		
@@ -213,6 +215,7 @@ public partial class Character
 		if (m_animator.GetCurrentAnimatorStateInfo(0).IsName("Die") &&
 		  m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
 		{
+			on_Tile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
 			gameObject.SetActive(false);
 			IsDead = true;
 		}
@@ -224,6 +227,12 @@ public partial class Character
 	{
 		if (null == Target)
 			State = STATE.IDLE;
+
+		if (PreTarget != Target)
+		{			
+			m_PathFinder.InitCloseNodes();
+		}
+			
 
 		if (null != Target)
 		{
@@ -265,6 +274,17 @@ public partial class Character
 						State = STATE.IDLE;
 						m_PathFinder.InitCloseNodes();
 						m_PathFinder.InitMarking();
+						break;
+					case STATE.SKILL_IDLE:
+						Dir = Target.transform.position - transform.position;
+						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 5.0f * Time.deltaTime);
+
+						if (Target.GetComponent<Character>().State == STATE.SKILL)
+						{
+							m_PathFinder.InitCloseNodes();
+							m_PathFinder.InitMarking();
+							State = STATE.IDLE;
+						}							
 						break;
 					default:
 						break;

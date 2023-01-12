@@ -16,6 +16,9 @@ using TMPro.Examples;
 using System.Linq;
 using static Unity.Burst.Intrinsics.X86.Avx;
 using static UnityEngine.GraphicsBuffer;
+using UnityEngine.UIElements;
+using System.Security.Cryptography;
+using UnityEditor.Experimental.GraphView;
 
 public enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_COMBAT_OVER, PHASE_END };
 
@@ -270,7 +273,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
     }
 
-    public void FindingPath()
+    private void FindingPath()
     {
 		foreach (var Unit in Field_Unit)
 		{
@@ -285,15 +288,58 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 																					Unit.GetComponent<Character>().Target.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex);
 		}
 	}
-    public void UnitSorting()
+	private void UnitSorting()
     {
         //TODO : 일단 우측, 좌측 기준으로 잡았음
 
-        // 1. Field 유닛들은 그래프 좌하단 기준으로 우선순위 정렬
+        //      // 1. Field 유닛들은 그래프 좌하단 기준으로 우선순위 정렬
         Field_Unit = Field_Unit.OrderBy(x => x.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex).ToList();
 
-		// 2. Enemy 유닛들은 그래프 우상단 기준으로 우선순위 정렬
-		Enemy_Unit = Enemy_Unit.OrderByDescending(x => x.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex).ToList();
+        //// 2. Enemy 유닛들은 그래프 우상단 기준으로 우선순위 정렬
+        Enemy_Unit = Enemy_Unit.OrderBy(x => x.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex).ToList();
+
+  //      // 3. 맵에서 가운데 라인에 가까울수록인걸 체크해야하는데..
+
+  //      List<GameObject> TmpList = new List<GameObject>();
+
+  //      // 3.1 Line Count의 절반 만약 8줄이면 반 값 == 4
+  //      // 012(3 4)567 => -1 하고 반 값 사용
+  //      string LineCnt = (Field_tiles.Count).ToString();
+  //      int FieldHalfIdx = (int)Math.Round(float.Parse(LineCnt) / 2.0f);
+        
+  //      for(int i = Field_tiles[FieldHalfIdx].Tiles[0].GraphIndex; i < m_Graph.Count; i++)
+  //      {
+            
+  //          if(null != m_Graph[i].Tile.HYJ_Basic_onUnit)
+  //          {
+  //              GameObject FindObj = m_Graph[i].Tile.HYJ_Basic_onUnit;
+
+  //              FindObj = Field_Unit.Find(x => FindObj);
+
+  //              if(FindObj == m_Graph[i].Tile.HYJ_Basic_onUnit)
+		//		    TmpList.Add(m_Graph[i].Tile.HYJ_Basic_onUnit);
+		//	}				
+  //      }
+
+  //      Field_Unit = TmpList.ToList();
+  //      TmpList.Clear();
+
+		//for (int i = Field_tiles[FieldHalfIdx-1].Tiles[Field_tiles[FieldHalfIdx - 1].Tiles.Count-1].GraphIndex; i > -1; i--)
+		//{
+		//	if (null != m_Graph[i].Tile.HYJ_Basic_onUnit)
+		//	{
+		//		GameObject FindObj = m_Graph[i].Tile.HYJ_Basic_onUnit;
+
+		//		FindObj = Enemy_Unit.Find(x => FindObj);
+
+		//		if (FindObj == m_Graph[i].Tile.HYJ_Basic_onUnit)
+		//			TmpList.Add(m_Graph[i].Tile.HYJ_Basic_onUnit);
+		//	}
+		//}
+
+		//Enemy_Unit = TmpList.ToList();
+		//TmpList.Clear();
+
 	}
 
 	public void LSY_Battle_End()
@@ -418,8 +464,9 @@ public class HYJ_Battle_Manager_Line
 {
     [SerializeField] List<HYJ_Battle_Tile> tiles;
 
-    //////////  Getter & Setter //////////
-    public HYJ_Battle_Tile HYJ_Data_Tile(int _count) { return tiles[_count]; }
+    //////////  Getter & Setter //////////    
+    public List<HYJ_Battle_Tile> Tiles { get { return tiles; } }
+	public HYJ_Battle_Tile HYJ_Data_Tile(int _count) { return tiles[_count]; }
 
     public int HYJ_Data_GetCount() { return tiles.Count; }
 
@@ -691,11 +738,17 @@ partial class HYJ_Battle_Manager
         for(int i = 0; i < size; i++)
         {
             m_Graph[i].Fcost = 0;
-			m_Graph[i].Gcost = 0;            
-            m_Graph[i].ParentIndex = 0;            
+			m_Graph[i].Gcost = 0;
+            m_Graph[i].ParentIndex = 0;
+
+			if (null == m_Graph[i].Tile.HYJ_Basic_onUnit)
+            {
+				m_Graph[i].Unit = null;
+				m_Graph[i].Marking = false;
+			}
 		}
 
-        return null;
+		return null;
     }
 
 	private void SetupGraph()
@@ -939,6 +992,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     [SerializeField]
     List<int> Prob_list = new List<int>();
+<<<<<<< HEAD
+=======
+    UnityEngine.UI.Image EXP_Img;
+    //[SerializeField]
+    //List<LSY_Shop_UnitList> Shop_Unit = new List<LSY_Shop_UnitList>();
+>>>>>>> 762e97a1f2ab22322daf9222d1df6bc2320efb8b
 
     List<Dictionary<string, object>> Unit_DB;
 
@@ -958,6 +1017,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     public void LSY_UnitList_Init()
     {
         // Level
+<<<<<<< HEAD
+=======
+        EXP_Img = EXP_Bar.GetComponent<UnityEngine.UI.Image>();
+>>>>>>> 762e97a1f2ab22322daf9222d1df6bc2320efb8b
         cur_EXP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP);
         Max_EXP = Max_EXP_List[Player_Lv];
         Shop_Exp_Cur.fillAmount = cur_EXP / Max_EXP;
@@ -1469,19 +1532,20 @@ partial class HYJ_Battle_Manager
         if (Num_Ally <= 0 || Num_Enemy <= 0)
             return;
 
-        // TODO : 거리가 똑같은게 있다면 현재 객체가 보고있는 방향 기준으로 각도가 작은것으로 타겟 설정
-
-        for (int i = 0; i < Num_Ally; i++)
+		// TODO : 거리가 똑같은게 있다면 현재 객체가 보고있는 방향 기준으로 각도가 작은것으로 타겟 설정
+		for (int i = 0; i < Num_Ally; i++)
         {
 			if (Field_Unit[i].GetComponent<Character>().Dead ||
-				Field_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL ||
-				Field_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL_IDLE)
+				Field_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL)
 				continue;
 
 			//Debug.Log("i"+i);
 			Vector3 A_pos = Field_Unit[i].gameObject.transform.position;
-            float min = 10000f;
-            for (int k = 0; k < Num_Enemy; k++)
+            float minDist = 10000.0f;
+			Vector3 Dir = Vector3.zero;
+			float minAngle = 10000.0f;
+
+			for (int k = 0; k < Num_Enemy; k++)
             {
                 // 죽어있으면 타겟 계산 X
                 if (Enemy_Unit[k].GetComponent<Character>().Dead)
@@ -1489,11 +1553,16 @@ partial class HYJ_Battle_Manager
                 //Debug.Log("k" + k);
                 Vector3 E_pos = Enemy_Unit[k].gameObject.transform.position;
                 float Dist = Vector3.Magnitude(A_pos - E_pos);
+                float Angle = 0.0f;
 
-				if (Dist < min)
+				Dir = Enemy_Unit[k].transform.position - Field_Unit[i].transform.position;				
+				Angle = Quaternion.Angle(Field_Unit[i].transform.rotation, Quaternion.LookRotation(Dir));
+
+				if (Dist <= minDist /*&& Angle < minAngle*/)
                 {
-                    //Debug.Log("min" + min);
-                    min = Dist;
+					//Debug.Log("min" + min);
+					minDist = Dist;
+                    minAngle = Angle;
                     MinIdx = k;
                 }
             }
@@ -1512,7 +1581,10 @@ partial class HYJ_Battle_Manager
 				continue;
 			//Debug.Log("i"+i);
 			Vector3 A_pos = Enemy_Unit[i].gameObject.transform.position;
-			float min = 10000f;
+			float minDist = 10000f;
+			Vector3 Dir = Vector3.zero;
+            float minAngle = 10000.0f;
+
 			for (int k = 0; k < Num_Ally; k++)
 			{
 				// 죽어있으면 타겟 계산 X
@@ -1522,11 +1594,16 @@ partial class HYJ_Battle_Manager
 				//Debug.Log("k" + k);
 				Vector3 E_pos = Field_Unit[k].gameObject.transform.position;
 				float Dist = Vector3.Magnitude(A_pos - E_pos);
+				float Angle = 0.0f;
 
-				if (Dist < min)
+				Dir = Field_Unit[k].transform.position - Enemy_Unit[i].transform.position;
+				Angle = Quaternion.Angle(Enemy_Unit[i].transform.rotation, Quaternion.LookRotation(Dir));
+
+				if (Dist < minDist && Angle < minAngle)
 				{
 					//Debug.Log("min" + min);
-					min = Dist;
+					minDist = Dist;
+					minAngle = Angle;
 					MinIdx = k;
 				}
 			}

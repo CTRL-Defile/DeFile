@@ -47,7 +47,7 @@ public class PathFinder : MonoBehaviour
 	bool m_IsArrived = true;	 
 	public bool Arrived { get { return m_IsArrived;} set { m_IsArrived = value;} }
 
-	//[SerializeField]
+	[SerializeField]
 	SerialLinkedList<int> m_FinalPath= new SerialLinkedList<int>();
 	public SerialLinkedList<int> FinalPath { get { return m_FinalPath; } }
 
@@ -88,7 +88,7 @@ public class PathFinder : MonoBehaviour
 		else if(true == BattleGraph[DestIdx].Marking && BattleGraph[m_DestTile.GraphIndex].Unit != gameObject)
 		{
 			m_IsArrived = true;
-			gameObject.GetComponent<Character>().State = Character.STATE.SKILL;
+			gameObject.GetComponent<Character>().State = Character.STATE.IDLE;
 			return;
 		}
 
@@ -103,7 +103,7 @@ public class PathFinder : MonoBehaviour
 			gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(m_DestTile.gameObject);			
 			BattleGraph[m_FinalPath.m_List.First()].Marking = false;
 			BattleGraph[m_FinalPath.m_List.First()].Unit = null;
-			BattleGraph[m_FinalPath.m_List.First()].Tile.HYJ_Basic_onUnit = null;
+			//BattleGraph[m_FinalPath.m_List.First()].Tile.HYJ_Basic_onUnit = null;
 			m_StartNode = BattleGraph[m_FinalPath.m_List.First()];
 			m_FinalPath.RemoveFirst();			
 			return;
@@ -168,7 +168,7 @@ public class PathFinder : MonoBehaviour
 		// 인자로 들어온 EndIdx 는 Target이 서있는 위치의 그래프 Idx이다. 따라서 Neighbor중 현재 위치에서 가장 가깝고 위에 객체가 없는 Neighbor를 찾아줘야함
 		// + 이미 도착지로 정해진 위치에 마킹해서 도착지점이 겹치지 않게 함
 		// + 나중에 Path Node 개수 저장해서 더 빨리 도착하는 객체가 도착지점 선점하고 도착지점 갱신하는 작업 할 예정
-		float MinDist = float.MaxValue;
+		float MinDist = 10000.0f;
 		m_NearNode = null;
 
 		//타겟하고 가까워졌을때를 체크하기위해서 거리계산
@@ -176,11 +176,8 @@ public class PathFinder : MonoBehaviour
 
 		foreach (var Neighbor in BattleGraph[EndIdx].m_Neighbors.m_List)
 		{
-			if (null != Neighbor.Tile.HYJ_Basic_onUnit)
-				continue;
-
 			// TODO : 매직넘버로 5.0f 해놨는데 나중에 타일간 거리 계산 기반으로 값 바꿀 예정
-			if(TargetDist < 5.0f &&
+			if (TargetDist < 5.0f &&
 				true == Neighbor.Marking &&
 				Neighbor.Unit == gameObject.GetComponent<Character>().Target)
 			{
@@ -189,6 +186,9 @@ public class PathFinder : MonoBehaviour
 				return false;
 			}
 			else if (true == Neighbor.Marking)
+				continue;
+
+			if (null != Neighbor.Tile.HYJ_Basic_onUnit)
 				continue;
 
 			float Dist = Vector3.Magnitude(Neighbor.Position - StartNode.Position);
@@ -232,6 +232,8 @@ public class PathFinder : MonoBehaviour
 			ParentIndex = BattleGraph[ParentIndex].ParentIndex;
 		}
 
+		BattleGraph[m_FinalPath.m_List.First()].Marking = true;
+		BattleGraph[m_FinalPath.m_List.First()].Unit = gameObject;
 	}
 
 	bool FindingPath(int startIdx, int endIdx)
