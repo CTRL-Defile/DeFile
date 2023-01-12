@@ -100,7 +100,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Shop_panel = Battle_Shop.GetChild(0);
         for (int i = 0; i < Shop_Panel_cnt; i++)
             Shop_UnitList.Add(Shop_panel.GetChild(0).GetChild(i).gameObject);
-        Shop_Exp_Cur = Shop_panel.GetChild(2).GetChild(0).GetChild(0).GetComponent<Image>();
+        Shop_Exp_Cur = Shop_panel.GetChild(2).GetChild(0).GetChild(0).GetComponent<UnityEngine.UI.Image>();
         Shop_Coin_Text = Shop_panel.GetChild(3).GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
 
         Battle_Synergy = Battle_Canvas.GetChild(1);
@@ -984,7 +984,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI Shop_Coin_Text, Battle_Ally_OnTile, Battle_Timer_TMP;
     [SerializeField]
-    Image Shop_Exp_Cur;
+    UnityEngine.UI.Image Shop_Exp_Cur;
     [SerializeField]
     GameObject End_Btn;
 
@@ -992,12 +992,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     [SerializeField]
     List<int> Prob_list = new List<int>();
-<<<<<<< HEAD
-=======
-    UnityEngine.UI.Image EXP_Img;
-    //[SerializeField]
-    //List<LSY_Shop_UnitList> Shop_Unit = new List<LSY_Shop_UnitList>();
->>>>>>> 762e97a1f2ab22322daf9222d1df6bc2320efb8b
+//<<<<<<< HEAD
+//=======
+//    UnityEngine.UI.Image EXP_Img;
+//    //[SerializeField]
+//    //List<LSY_Shop_UnitList> Shop_Unit = new List<LSY_Shop_UnitList>();
+//>>>>>>> 762e97a1f2ab22322daf9222d1df6bc2320efb8b
 
     List<Dictionary<string, object>> Unit_DB;
 
@@ -1017,10 +1017,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     public void LSY_UnitList_Init()
     {
         // Level
-<<<<<<< HEAD
-=======
-        EXP_Img = EXP_Bar.GetComponent<UnityEngine.UI.Image>();
->>>>>>> 762e97a1f2ab22322daf9222d1df6bc2320efb8b
+//<<<<<<< HEAD
+//=======
+//        EXP_Img = EXP_Bar.GetComponent<UnityEngine.UI.Image>();
+//>>>>>>> 762e97a1f2ab22322daf9222d1df6bc2320efb8b
         cur_EXP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP);
         Max_EXP = Max_EXP_List[Player_Lv];
         Shop_Exp_Cur.fillAmount = cur_EXP / Max_EXP;
