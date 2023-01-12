@@ -206,6 +206,7 @@ partial class HYJ_Player
     [SerializeField] HYJ_Player_Unit_Datas Unit_buyUnits;
     [SerializeField] HYJ_Player_Unit_Datas Unit_waitUnits;
     [SerializeField] List<HYJ_Player_Unit_Datas> Unit_fieldUnits;
+    [SerializeField] List<int> synergy_list;
 
     //////////  Getter & Setter //////////
     //
@@ -277,6 +278,8 @@ partial class HYJ_Player
         List<HYJ_Battle_Manager_Line>   field_tiles = (List<HYJ_Battle_Manager_Line>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES);
         HYJ_Battle_Manager_Line         wait_tiles  = (HYJ_Battle_Manager_Line)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_TILES);
 
+        synergy_list = new List<int> { 0, 0, 0, 0, 0, 0};
+
         //
         for(int y = 0; y < field_tiles.Count; y++)
         {
@@ -288,9 +291,13 @@ partial class HYJ_Player
                 GameObject obj = field_tiles[y].HYJ_Data_GetUnitOnTile(x);
                 if(obj != null)
                 {
-                    if (obj.tag.Equals("Ally"))
+                    //if (obj.tag.Equals("Ally"))
+                    if (obj.GetComponent<Character>().UnitType == Character.Unit_Type.Ally)
                     {
                         data = obj.GetComponent<Character>().HYJ_Status_saveData;
+                        // Synergy Update
+                        Debug.Log("[Synergy] ID : " + Int32.Parse(data.Data_ID));
+                        synergy_list[Int32.Parse(data.Data_ID)]++;
                     }
                 }
 
@@ -313,6 +320,8 @@ partial class HYJ_Player
             //
             Unit_waitUnits.HYJ_Data_SetUnitData(data, x);
         }
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, synergy_list);
 
         //
         return true;

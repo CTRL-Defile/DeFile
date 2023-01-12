@@ -29,9 +29,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     bool StatusBar_isInitialized = false;
     bool CharacterPool_isInitialized = false;
 
-    TextMeshProUGUI Battle_Timer_TMP;
-    GameObject End_Btn;
-
     GameObjectPool<HYJ_Battle_Tile> m_TilePool;
     [SerializeField]
     SerialList<GameObjectPool<Character>> m_CharacterPools = new SerialList<GameObjectPool<Character>>();
@@ -68,7 +65,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     object LSY_Set_ShopUI(params object[] _args)
     {
         bool _isActive = (bool)_args[0];
-        Shop_UI.SetActive(_isActive);
+        Battle_Shop.gameObject.SetActive(_isActive);
+        
         return null;
     }
 
@@ -82,10 +80,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Unit_pool = Battle_Units.GetChild(0).transform;
-        Unit_parent = Battle_Units.GetChild(1).transform;
-        Enemy_parent = Battle_Units.GetChild(2).transform;
-
+        // Battle_Map
+        Battle_Map = transform.GetChild(0);
         element = Battle_Map.GetChild(0).gameObject;
         std_element = Battle_Map.GetChild(2).gameObject;
         trash_element = Battle_Map.GetChild(3).gameObject;
@@ -93,8 +89,37 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Stand_parent = Battle_Map.GetChild(5);
         Trash_parent = Battle_Map.GetChild(6);
 
-        Battle_Timer_TMP = Battle_UI.transform.GetChild(0).transform.GetChild(1).transform.GetComponent<TextMeshProUGUI>();
-        End_Btn = Battle_UI.transform.GetChild(0).transform.GetChild(2).gameObject;
+        // Battle_UI
+        Battle_UI = transform.GetChild(1);
+        Battle_Canvas = Battle_UI.GetChild(0);
+
+        Battle_Shop = Battle_Canvas.GetChild(0);
+        Shop_panel = Battle_Shop.GetChild(0);
+        for (int i = 0; i < Shop_Panel_cnt; i++)
+            Shop_UnitList.Add(Shop_panel.GetChild(0).GetChild(i).gameObject);
+        Shop_Exp_Cur = Shop_panel.GetChild(2).GetChild(0).GetChild(0).GetComponent<Image>();
+        Shop_Coin_Text = Shop_panel.GetChild(3).GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
+
+        Battle_Synergy = Battle_Canvas.GetChild(1);
+        Synergy_Panel = Battle_Synergy.GetChild(0);
+        Synergy_Red = Battle_Synergy.GetChild(1);
+        Synergy_Green = Battle_Synergy.GetChild(2);
+        Synergy_Gray = Battle_Synergy.GetChild(3);
+
+        Battle_Text = Battle_Canvas.GetChild(2);
+        Battle_Ally_OnTile = Battle_Text.GetChild(0).GetComponent<TextMeshProUGUI>();
+        Battle_Timer_TMP = Battle_Text.GetChild(1).GetComponent<TextMeshProUGUI>();
+
+        End_Btn = Battle_Canvas.GetChild(3).gameObject;
+
+        // Battle_Units
+        Battle_Units = transform.GetChild(2);
+        Unit_pool = Battle_Units.GetChild(0).transform;
+        Unit_parent = Battle_Units.GetChild(1).transform;
+        Enemy_parent = Battle_Units.GetChild(2).transform;
+
+
+
         //
         Basic_phase = BATTLE_PHASE.PHASE_INIT;		
 
@@ -102,12 +127,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,   HYJ_Basic_GetPhase);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON,  HYJ_ActiveOn);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__SHOP_UI, LSY_Set_ShopUI);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, LSY_Battle_Synergy_Update);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Shop_Coin.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD).ToString();
+        //Shop_Coin.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD).ToString();
+        Shop_Coin_Text.text = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD).ToString();
 
         switch (Basic_phase)
         {
@@ -898,18 +925,20 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     [Header("SHOP")]
 
     [SerializeField]
-    GameObject Battle_UI;
+    Transform Battle_UI, Battle_Canvas, Battle_Shop, Battle_Synergy, Battle_Text, Shop_panel;
     [SerializeField]
-    GameObject Shop_UI;
+    List<GameObject> Shop_UnitList;
     [SerializeField]
-    GameObject[] Shop_UnitList = new GameObject[5];
+    TextMeshProUGUI Shop_Coin_Text, Battle_Ally_OnTile, Battle_Timer_TMP;
     [SerializeField]
-    GameObject Shop_Coin, EXP_Bar;
+    Image Shop_Exp_Cur;
+    [SerializeField]
+    GameObject End_Btn;
+
+
+
     [SerializeField]
     List<int> Prob_list = new List<int>();
-    Image EXP_Img;
-    //[SerializeField]
-    //List<LSY_Shop_UnitList> Shop_Unit = new List<LSY_Shop_UnitList>();
 
     List<Dictionary<string, object>> Unit_DB;
 
@@ -919,7 +948,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     List<int> UnitID_list = new List<int>();
     [SerializeField]
     List<int> UnitIdx_list = new List<int>();
-    int Shop_Pannel_cnt = 5;
+    int Shop_Panel_cnt = 5;
 
     List<int> Max_EXP_List = new List<int>() { 0, 2, 6, 10, 20, 36, 56, 80, 108, 140, 170, 190, 210 };
     float Max_EXP;
@@ -929,10 +958,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     public void LSY_UnitList_Init()
     {
         // Level
-        EXP_Img = EXP_Bar.GetComponent<Image>();
         cur_EXP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP);
         Max_EXP = Max_EXP_List[Player_Lv];
-        EXP_Img.fillAmount = cur_EXP / Max_EXP;
+        Shop_Exp_Cur.fillAmount = cur_EXP / Max_EXP;
         Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
 
         Show_Ally_OnTile();
@@ -1015,7 +1043,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public void LSY_Shop_Reload(int n)
     {
-        for(int i=0; i<Shop_Pannel_cnt; i++)
+        for(int i=0; i<Shop_Panel_cnt; i++)
         {
             Shop_UnitList[i].SetActive(true);
         }
@@ -1028,7 +1056,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         UnitIdx_list.Clear();
         LSY_Calc_Proba();
 
-        for (int i = 0; i < Shop_UnitList.Length; i++)  // 0~5
+        for (int i = 0; i < Shop_UnitList.Count; i++)  // 0~5
         {
             int idx = UnitIdx_list[i];
             Shop_UnitList[i].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = UnitName_list[idx].ToString();
@@ -1081,7 +1109,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
 
         // 유닛 코스트 배열 초기화
-        for(int i = 0; i < Shop_Pannel_cnt; i++)  // UnitIdx_list.Count => 아직 size가 0임
+        for(int i = 0; i < Shop_Panel_cnt; i++)  // UnitIdx_list.Count => 아직 size가 0임
         {
             System.Random r = new System.Random();
             int n = r.Next(1, tot_num + 1); // min 이상, max 미만
@@ -1099,7 +1127,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         List<int> tmp_cnt = new List<int>();
 
         // 코스트 별 유닛 랜덤 설정
-        for(int i = 0; i < Shop_Pannel_cnt; i++)
+        for(int i = 0; i < Shop_Panel_cnt; i++)
         {
             List<int> Unit_Candi = new List<int>();
             for(int j = 0; j < Unit_DB.Count - 1; j++)  // header 3줄 제외.. 할 필요가 없네 어차피 3줄떼고 읽어왔구나.
@@ -1290,7 +1318,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             Show_Ally_OnTile();
         }
 
-        EXP_Img.fillAmount = cur_EXP / Max_EXP;
+        Shop_Exp_Cur.fillAmount = cur_EXP / Max_EXP;
 
     }
 
@@ -1429,7 +1457,7 @@ partial class HYJ_Battle_Manager
     {
         int lv = Player_Lv + 1;
         string cnt_restrict = "(" + Field_Unit.Count + "/" + lv + ")";
-        Battle_UI.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = cnt_restrict;
+        Battle_Ally_OnTile.text = cnt_restrict;
     }
 
     public void Find_Target()
@@ -1514,3 +1542,69 @@ partial class HYJ_Battle_Manager
 
 }
 #endregion
+
+
+#region SYNERGE
+
+public partial class HYJ_Battle_Manager : MonoBehaviour
+{
+    [Header("==================================================")]
+    [Header("SYNERGY")]
+
+
+    [SerializeField]
+    Transform Synergy_Red, Synergy_Green, Synergy_Gray, Synergy_Panel;
+
+    object LSY_Battle_Synergy_Update(params object[] _args)
+    {
+        List<int> synergy_list = (List<int>)_args[0];
+
+        //int min = 10, idx = -1;
+        //for (int i = 0; i < synergy_list.Count; i++)
+        //{
+        //    if (synergy_list[i] < min)
+        //    {
+        //        min = synergy_list[i];
+        //        idx = i;
+        //    }
+
+        //    if (i == synergy_list.Count-1)
+        //    {
+                switch (synergy_list[0])
+                {
+                    case 0:
+                    case 1:
+                        break;
+                    case 2:
+                        Transform gray = Synergy_Gray.GetChild(0);
+                        gray.SetParent(Synergy_Panel);
+                        Debug.Log("ASDF");
+                        break;
+                    case 3:
+                    case 4:
+                        Transform bf_gray = Synergy_Panel.GetChild(0);
+                        bf_gray.SetParent(Synergy_Gray);
+
+                        Transform green = Synergy_Green.GetChild(0);
+                        green.SetParent(Synergy_Panel);
+                        break;
+                    case 5:
+                    case 6:
+
+                        
+                        break;
+                }
+        //    }
+
+        //}
+
+
+        return null;
+    }
+
+
+}
+
+
+#endregion
+
