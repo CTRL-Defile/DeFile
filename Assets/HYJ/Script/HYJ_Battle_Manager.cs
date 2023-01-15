@@ -351,24 +351,32 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         StatusBar_isInitialized = false;
 
         Field_Unit.Clear();
-        Enemy_Unit.Clear();
+        Enemy_Unit.Clear();        
 
         int UnitParent_num = Unit_parent.childCount;
         int EnemyParent_num = Enemy_parent.childCount;
+
+        foreach(var node in m_Graph)
+        {
+            node.Tile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
+        }
         
         for (int i = 0; i < UnitParent_num; i++)
         {
             Unit_parent.GetChild(i).gameObject.SetActive(true);
             Unit_parent.GetChild(i).GetComponent<Character>().Dead = false;
-            Transform tmp = Unit_parent.GetChild(i);
+			Unit_parent.GetChild(i).GetComponent<PathFinder>().InitPathFinder();
+			Transform tmp = Unit_parent.GetChild(i);
             if (!Stand_Unit.Contains(tmp.gameObject))
-                Field_Unit.Add(tmp.gameObject);
-        }
+				Field_Unit.Add(tmp.gameObject);
+
+		}
         for (int i = 0; i < EnemyParent_num; i++)
         {
             Enemy_parent.GetChild(i).gameObject.SetActive(true);
             Enemy_parent.GetChild(i).GetComponent<Character>().Dead = false;
-            Enemy_Unit.Add(Enemy_parent.GetChild(i).gameObject);
+			Enemy_parent.GetChild(i).GetComponent<PathFinder>().InitPathFinder();
+			Enemy_Unit.Add(Enemy_parent.GetChild(i).gameObject);
         }
         LSY_Unit_Init(Field_Unit);
         LSY_Unit_Init(Enemy_Unit);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using TMPro.EditorUtilities;
 using TMPro.Examples;
 using Unity.Mathematics;
 using UnityEditor.Experimental.GraphView;
@@ -352,6 +353,18 @@ public class PathFinder : MonoBehaviour
 
 		m_DestNode.Marking = false;
 		m_StartNode.Marking = false;
+	}
+	public void InitPathFinder()
+	{
+		m_CloseNodes.ClearList();
+		m_OpenNodes.ClearList();
+		m_FinalPath.ClearList();
+		m_CurrentTile = null;
+		m_DestTile = null;
+		m_DestNode = null;
+		m_NearNode = null;
+		m_IsArrived = true;
+		m_StartNode = null;		
 	}
 
 }
