@@ -2572,6 +2572,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c2d9a04b69126544bcb321500d17289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Level_text: {fileID: 6541119700526114935}
   Gold_text: {fileID: 6541119701281869858}
   Battle_powerText: {fileID: 0}
   Buff_parent: {fileID: 8955970544589349283}
@@ -8110,6 +8111,7 @@ GameObject:
   - component: {fileID: 4315995433970974408}
   - component: {fileID: 3022691497123090497}
   - component: {fileID: 5124875265668987571}
+  - component: {fileID: 803261178}
   m_Layer: 5
   m_Name: Option
   m_TagString: Untagged
@@ -8219,7 +8221,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3022691497123090497}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 803261178}
+        m_TargetAssemblyTypeName: JHW_OptionManager, Assembly-CSharp
+        m_MethodName: optionOnOff
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+--- !u!114 &803261178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8253371866835159981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca07779b4b632e443b7e58b2155ce5d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8610518548223678633
 GameObject:
   m_ObjectHideFlags: 0

@@ -27,8 +27,14 @@ public partial class HYJ_Event_Manager : MonoBehaviour
     // 이벤트 현재 위치(번호)
     private int eventIndex;
 
+    // 이벤트 선택할때 등장 스크립트
+    private string toDisplayScript = "event";
+
     // 이벤트 선택 후 결과 스크립트
     private string resultScript;
+
+    // 이벤트 클릭 시 스크립트 중단하고 텍스트 띄우기 위한 시퀀스
+    private Sequence scriptSequence;
 
     // 이벤트 버튼 오브젝트들
     private GameObject eventButton1;
@@ -463,7 +469,7 @@ partial class HYJ_Event_Manager
     private void JHW_displayEventText()
     {
         eventName.text = Event_datas[randomEventID].Data_NAME_KOR; // 이벤트 좌측상단 이벤트제목
-        script.text = Event_datas[randomEventID].Data_SCRIPT_KOR; // 이벤트 우측 내용
+        toDisplayScript = Event_datas[randomEventID].Data_SCRIPT_KOR; // 이벤트 우측 내용
 
         List<JHW_EventSelect> eventSelectResult = EventSelect_datas.FindAll(x => x.Data_EVENT_ID.Equals(randomEventID));// 이벤트셀렉트 선택지1,2
         if (eventSelectResult.Count == 2)
@@ -486,8 +492,9 @@ partial class HYJ_Event_Manager
         choice1.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f);
         choice2.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f);
         // ux적용
-        script.gameObject.GetComponent<TextMeshProUGUI>().DOText(Event_datas[randomEventID].Data_SCRIPT_KOR, 2f);
-        Sequence eventUX = DOTween.Sequence().Insert(1f, choice1.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.OutExpo))
+        scriptSequence = DOTween.Sequence();
+        scriptSequence.Append(script.gameObject.GetComponent<TextMeshProUGUI>().DOText(Event_datas[randomEventID].Data_SCRIPT_KOR, 2f));
+        scriptSequence.Insert(1f, choice1.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.OutExpo))
             .Insert(1.5f, choice2.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.OutExpo));
 
     }
@@ -495,6 +502,7 @@ partial class HYJ_Event_Manager
     // 첫번째 선택지 버튼 누를 때 발생하는 함수
     public void ClickButtonOne(bool isClicked)
     {
+        toDisplayScript = ""; // 이벤트 선택 시 등장하는 스크립트 비움
         GameObject.Find("EventButton1").GetComponent<Image>().DOColor(new Color(1f, 1f, 1f, 1f), 0f); // 투명도 원래대로
 
         // 이벤트 효과
@@ -502,7 +510,7 @@ partial class HYJ_Event_Manager
         SaveCSVFile(eventSelectResult[0]);
 
         // 결과 선택 후 등장하는 스크립트로 변경
-        string eventResultScript = Event_datas[randomEventID].Data_SELECTED1_SCRIPT_KOR.Replace("n", "\n");
+        resultScript = Event_datas[randomEventID].Data_SELECTED1_SCRIPT_KOR.Replace("n", "\n");
 
         // 이벤트 스크립트 사이즈조정
         if (script.text.Length > 100) script.fontSize = 25;
@@ -516,14 +524,16 @@ partial class HYJ_Event_Manager
         script.text = "";
         eventResultButton.gameObject.transform.DOScale(0f, 0);
         // ux적용
-        script.gameObject.GetComponent<TextMeshProUGUI>().DOText(eventResultScript, 2f); // 결과 선택 후 등장하는 스크립트로 변경
-        eventResultButton.gameObject.transform.DOScale(1f, 0.5f).SetEase(Ease.OutExpo).SetDelay(2f); // 2초뒤 결과 확인 버튼
+        scriptSequence = DOTween.Sequence();
+        scriptSequence.Append(script.gameObject.GetComponent<TextMeshProUGUI>().DOText(resultScript, 2f)); // 결과 선택 후 등장하는 스크립트로 변경
+        scriptSequence.Append(eventResultButton.gameObject.transform.DOScale(1f, 0.5f).SetEase(Ease.OutExpo).SetDelay(2f)); // 2초뒤 결과 확인 버튼
 
     }
 
     // 두번째 선택지 버튼 누를 때 
     public void ClickButtonTwo(bool isClicked)
     {
+        toDisplayScript = ""; // 이벤트 선택 시 등장하는 스크립트 비움
         GameObject.Find("EventButton2").GetComponent<Image>().DOColor(new Color(1f, 1f, 1f, 1f), 0f); // 투명도 원래대로
 
         // 이벤트 효과
@@ -531,7 +541,7 @@ partial class HYJ_Event_Manager
         SaveCSVFile(eventSelectResult[1]);
 
         // 결과 선택 후 등장하는 스크립트로 변경
-        string eventResultScript = Event_datas[randomEventID].Data_SELECTED2_SCRIPT_KOR.Replace("n","\n");
+        resultScript = Event_datas[randomEventID].Data_SELECTED2_SCRIPT_KOR.Replace("n","\n");
 
         // 이벤트 스크립트 사이즈조정
         if (script.text.Length > 100) script.fontSize = 25;
@@ -545,7 +555,8 @@ partial class HYJ_Event_Manager
         script.text = "";
         eventResultButton.gameObject.transform.DOScale(0f, 0);
         // ux적용
-        script.gameObject.GetComponent<TextMeshProUGUI>().DOText(eventResultScript, 2f); // 결과 선택 후 등장하는 스크립트로 변경
+        scriptSequence = DOTween.Sequence();
+        scriptSequence.Append(script.gameObject.GetComponent<TextMeshProUGUI>().DOText(resultScript, 2f)); // 결과 선택 후 등장하는 스크립트로 변경
         eventResultButton.gameObject.transform.DOScale(1f, 0).SetEase(Ease.OutExpo).SetDelay(2f); // 2초뒤 결과 확인 버튼
         
     }
@@ -610,7 +621,7 @@ partial class HYJ_Event_Manager
 
     public void EventButton_OnMouseDown(GameObject g)
     {
-        g.GetComponent<Image>().DOColor(new Color(1, 1, 1, 0.7f), 0.2f);
+        g.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f);
     }
 
     public void EventButton_OnMouseExit(GameObject g)
@@ -627,5 +638,25 @@ partial class HYJ_Event_Manager
 
         g.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0f);
     }
+
+    // 이벤트 책 배경 클릭시 텍스트 바로 띄워지기
+    public void Event_Skiptext()
+    {
+        if (toDisplayScript != "")
+        { // 결과창이 아닌 경우
+            scriptSequence.Kill();
+            script.text = toDisplayScript;
+            choice1.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.OutExpo);
+            choice2.transform.parent.DOScale(1f, 0.5f).SetEase(Ease.OutExpo);
+        }
+        else
+        { // 결과창일 경우
+            scriptSequence.Kill();
+            script.text = resultScript;
+            eventResultButton.gameObject.transform.DOScale(1f, 0.5f).SetEase(Ease.OutExpo);
+        }
+    }
 }
+
+
 #endregion

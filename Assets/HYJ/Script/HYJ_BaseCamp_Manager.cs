@@ -269,7 +269,7 @@ partial class HYJ_BaseCamp_Manager {
     public void Reroll()
     {
         // 사운드
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SOUND_NAME, "Bullet Impact 14");
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, "Bullet Impact 14");
 
         int minusActionCnt = 1; // 감소시킬 행동개수
         if (this.actionCnt < minusActionCnt) { ActionCntAlert(); return; } // 행동개수 부족하면 실행X 
@@ -464,7 +464,7 @@ partial class HYJ_BaseCamp_Manager
         isMouseEntered = true;
 
         // 사운드
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SOUND_NAME, "MP_Button");
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, "MP_Button");
 
         // 정보창
         info = GameObject.Find("InfoCanvas");
@@ -587,7 +587,7 @@ partial class HYJ_BaseCamp_Manager
         }
 
         // 사운드
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SOUND_NAME, "Bullet Impact 14");
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, "Bullet Impact 14");
 
         // ux 오브젝트
         GameObject uxObject = Instantiate(g, g.transform.position, g.transform.rotation);
