@@ -169,7 +169,8 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     TOPBAR___BUFF__VIEW,
 
     //
-    SOUNDMANAGER___PLAY__SOUND_NAME
+    SOUNDMANAGER___PLAY__BGM_NAME,
+    SOUNDMANAGER___PLAY__SFX_NAME,
 }
 
 public delegate object HYJ_ScriptBridge_Event(params object[] _args);
