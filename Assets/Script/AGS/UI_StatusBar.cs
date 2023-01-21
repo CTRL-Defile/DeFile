@@ -46,9 +46,7 @@ public class UI_StatusBar : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        Trans.rotation = Camera.main.transform.rotation;
-
+    {       
         switch (Bar)
         {
             case STATUS_BAR.HPBar:
@@ -65,7 +63,12 @@ public class UI_StatusBar : MonoBehaviour
 
     }
 
-    public void SetHPColor(STATUS_HP_COLOR color)
+	private void LateUpdate()
+	{
+		Trans.rotation = Camera.main.transform.rotation;
+	}
+
+	public void SetHPColor(STATUS_HP_COLOR color)
     {
         switch(color)
         {
