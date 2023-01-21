@@ -136,8 +136,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Shop_Coin.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD).ToString();
-        Shop_Coin_Text.text = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD).ToString();
+        //Shop_Coin.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD).ToString();        
 
         switch (Basic_phase)
         {
@@ -273,7 +272,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
     }
 
-    private void FindingPath()
+	private void LateUpdate()
+	{
+		Shop_Coin_Text.text = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD).ToString();
+	}
+
+
+	private void FindingPath()
     {
 		foreach (var Unit in Field_Unit)
 		{
@@ -1568,15 +1573,20 @@ partial class HYJ_Battle_Manager
 
 				if (Dist <= minDist /*&& Angle < minAngle*/)
                 {
-					//Debug.Log("min" + min);
-					minDist = Dist;
-                    minAngle = Angle;
-                    MinIdx = k;
+					foreach (var node in m_Graph[(Enemy_Unit[k].GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex)].m_Neighbors.m_List)
+                    {
+						if (false == node.Marking)
+                        {
+							minDist = Dist;
+							minAngle = Angle;
+							MinIdx = k;
+						}
+					}                   					
                 }
             }
 
-            if(null != Field_Unit[i].GetComponent<Character>().Target)
-                Field_Unit[i].GetComponent<Character>().PreTarget = Field_Unit[i].GetComponent<Character>().Target;
+			//if(null != Field_Unit[i].GetComponent<Character>().Target)
+			Field_Unit[i].GetComponent<Character>().PreTarget = Field_Unit[i].GetComponent<Character>().Target;
 			Field_Unit[i].GetComponent<Character>().Target = Enemy_Unit[MinIdx];            
 			//Enemy_Unit[MinIdx].GetComponent<Character>().Target = Field_Unit[i];
 		}
@@ -1607,17 +1617,23 @@ partial class HYJ_Battle_Manager
 				Dir = Field_Unit[k].transform.position - Enemy_Unit[i].transform.position;
 				Angle = Quaternion.Angle(Enemy_Unit[i].transform.rotation, Quaternion.LookRotation(Dir));
 
-				if (Dist < minDist && Angle < minAngle)
+				if (Dist < minDist /*&& Angle < minAngle*/)
 				{
-					//Debug.Log("min" + min);
-					minDist = Dist;
-					minAngle = Angle;
-					MinIdx = k;
+
+					foreach (var node in m_Graph[(Field_Unit[k].GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex)].m_Neighbors.m_List)
+					{
+						if (false == node.Marking)
+						{
+							minDist = Dist;
+							minAngle = Angle;
+							MinIdx = k;
+						}
+					}
 				}
 			}
 
-			if (null != Enemy_Unit[i].GetComponent<Character>().Target)
-				Enemy_Unit[i].GetComponent<Character>().PreTarget = Enemy_Unit[i].GetComponent<Character>().Target;
+			//if (null != Enemy_Unit[i].GetComponent<Character>().Target)
+			Enemy_Unit[i].GetComponent<Character>().PreTarget = Enemy_Unit[i].GetComponent<Character>().Target;
 			Enemy_Unit[i].GetComponent<Character>().Target = Field_Unit[MinIdx];
 
 		}
