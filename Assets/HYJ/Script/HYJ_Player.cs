@@ -5,6 +5,8 @@ using UnityEngine;
 //
 using System;
 using JetBrains.Annotations;
+using System.IO;
+using System.Linq;
 
 public partial class HYJ_Player : MonoBehaviour
 {
@@ -29,7 +31,21 @@ public partial class HYJ_Player : MonoBehaviour
             case -1: break;
             //
             case 0: { if (HYJ_Basic_Init()) { Basic_phase = 1; } } break;
-            case 1: { if (HYJ_Unit_Init()) { Basic_phase = 2; } } break;
+
+            case 1:
+                {
+                    int DB_phase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_PHASE);
+                    if (DB_phase == -1)
+                    {
+                        if (HYJ_Unit_Init())
+                        {
+                            Basic_phase = 2;
+                        }
+
+                    }
+                } 
+                break;
+
             case 2: { if (HYJ_Item_Init()) { Basic_phase = 3; } } break;
             case 3: { if (HYJ_Buff_Init()) { Basic_phase = -1; } } break;
         }
@@ -207,6 +223,8 @@ partial class HYJ_Player
     [SerializeField] HYJ_Player_Unit_Datas Unit_waitUnits;
     [SerializeField] List<HYJ_Player_Unit_Datas> Unit_fieldUnits;
     [SerializeField] List<int> synergy_list;
+    Dictionary<int, int> synergy_dic;
+    List<Dictionary<string, object>> Player_Unit_csv;
 
     //////////  Getter & Setter //////////
     //
@@ -278,7 +296,8 @@ partial class HYJ_Player
         List<HYJ_Battle_Manager_Line>   field_tiles = (List<HYJ_Battle_Manager_Line>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES);
         HYJ_Battle_Manager_Line         wait_tiles  = (HYJ_Battle_Manager_Line)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_TILES);
 
-        synergy_list = new List<int> { 0, 0, 0, 0, 0, 0};
+        synergy_list = new List<int> { 0, 0, 0, 0, 0, 0 };
+        synergy_dic = new Dictionary<int, int>();
 
         //
         for(int y = 0; y < field_tiles.Count; y++)
@@ -296,8 +315,9 @@ partial class HYJ_Player
                     {
                         data = obj.GetComponent<Character>().HYJ_Status_saveData;
                         // Synergy Update
-                        Debug.Log("[Synergy] ID : " + Int32.Parse(data.Data_ID));
-                        synergy_list[Int32.Parse(data.Data_ID)]++;
+                        Debug.Log("[Synergy] COST : " + obj.GetComponent<Character>().Stat_Cost);
+                        synergy_list[obj.GetComponent<Character>().Stat_Cost - 1]++;
+
                     }
                 }
 
@@ -321,7 +341,18 @@ partial class HYJ_Player
             Unit_waitUnits.HYJ_Data_SetUnitData(data, x);
         }
 
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, synergy_list);
+        // synergy_dic
+        int synergy_cnt = synergy_list.Count;
+        //Debug.Log(synergy_cnt);
+        for (int i=0; i<synergy_cnt; i++)
+        {
+            //Debug.Log(synergy_list[i]);
+            // Cost, Count
+            synergy_dic.Add(i+1, synergy_list[i]);
+        }
+
+        // Tile.Ally_Enter에서 Player.UnitDataUpdate 호출, 이후 SynergyUpdate 호출
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, synergy_dic);
 
         //
         return true;
@@ -330,21 +361,47 @@ partial class HYJ_Player
     //////////  Default Method  //////////
     bool HYJ_Unit_Init()
     {
-        bool res = true;
-
         object count0 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X);
-        if (count0 != null)
+        if (count0 == null)
         {
-            if(Unit_waitUnits.HYJ_Data_GetUnitDataCount() == 0)
-                Unit_waitUnits = new HYJ_Player_Unit_Datas((int)count0);
+            return false;
         }
         else
         {
-            res = false;
+            if (Unit_waitUnits.HYJ_Data_GetUnitDataCount() == 0)
+                Unit_waitUnits = new HYJ_Player_Unit_Datas((int)count0);
+
         }
 
+        Player_Unit_csv = (List<Dictionary<string, object>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+        StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase.csv");
+
+        // 헤더 추가
+        int row_cnt = Player_Unit_csv[0].Keys.ToList().Count;
+        for (int i=0; i< row_cnt - 1; i++)
+        {
+            outStream.Write(Player_Unit_csv[0].Keys.ToList()[i]);
+            outStream.Write(",");
+        }
+        outStream.Write(Player_Unit_csv[0].Keys.ToList()[row_cnt - 1]);
+        outStream.Write("\n");
+
+        // 내용 추가
+        int col_cnt = Player_Unit_csv.Count;
+        for (int k=0; k<col_cnt; k++)
+        {
+            for (int i = 0; i < row_cnt - 1; i++)
+            {
+                outStream.Write(Player_Unit_csv[k].Values.ToList()[i]);
+                outStream.Write(",");
+            }
+            outStream.Write(Player_Unit_csv[k].Values.ToList()[row_cnt - 1]);
+            outStream.Write("\n");
+        }
+        outStream.Close();
+
         //
-        if(res)
+        if (true)
         {
                     count0 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X);
             object  count1 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y);
@@ -371,7 +428,8 @@ partial class HYJ_Player
             }
             else
             {
-                res = false;
+                //res = false;
+                return false;
             }
         }
 
@@ -385,7 +443,7 @@ partial class HYJ_Player
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE,         HYJ_Unit_Data_Update_Bridge );
 
-        return res;
+        return true;
     }
 }
 

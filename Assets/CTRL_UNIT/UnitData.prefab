@@ -14080,7 +14080,8 @@ MonoBehaviour:
   Status_spellRegistance: 6
   Data_spell0: 9
   Data_spell1: 10
-  ori_Pos: {x: 0, y: 0, z: 0}
+  m_Basic_phase: 0
+  char_ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
@@ -14100,6 +14101,7 @@ MonoBehaviour:
   Status_critPer: 7
   Status_Cost: 2
   m_animator: {fileID: 0}
+  m_UnitType: 2
   m_state: 0
 --- !u!54 &6265973995579251703
 Rigidbody:
@@ -14147,6 +14149,30 @@ MonoBehaviour:
   m_Basic_phase: 0
   m_CurrentTile: {fileID: 0}
   m_DestTile: {fileID: 0}
+  PreNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_NearNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_FinalPath:
+    m_ShowList: 
 --- !u!1 &3586579302469860031
 GameObject:
   m_ObjectHideFlags: 0
@@ -14570,7 +14596,8 @@ MonoBehaviour:
   Status_spellRegistance: 6
   Data_spell0: 9
   Data_spell1: 10
-  ori_Pos: {x: 0, y: 0, z: 0}
+  m_Basic_phase: 0
+  char_ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
@@ -14590,6 +14617,7 @@ MonoBehaviour:
   Status_critPer: 7
   Status_Cost: 1
   m_animator: {fileID: 0}
+  m_UnitType: 2
   m_state: 0
 --- !u!54 &5404344496744357894
 Rigidbody:
@@ -14637,6 +14665,30 @@ MonoBehaviour:
   m_Basic_phase: 0
   m_CurrentTile: {fileID: 0}
   m_DestTile: {fileID: 0}
+  PreNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_NearNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_FinalPath:
+    m_ShowList: 
 --- !u!1 &4023105164463971769
 GameObject:
   m_ObjectHideFlags: 0
@@ -16800,7 +16852,8 @@ MonoBehaviour:
   Status_spellRegistance: 6
   Data_spell0: 9
   Data_spell1: 10
-  ori_Pos: {x: 0, y: 0, z: 0}
+  m_Basic_phase: 0
+  char_ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
@@ -16820,6 +16873,7 @@ MonoBehaviour:
   Status_critPer: 7
   Status_Cost: 3
   m_animator: {fileID: 0}
+  m_UnitType: 2
   m_state: 0
 --- !u!54 &2943985061178368812
 Rigidbody:
@@ -16867,6 +16921,30 @@ MonoBehaviour:
   m_Basic_phase: 0
   m_CurrentTile: {fileID: 0}
   m_DestTile: {fileID: 0}
+  PreNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_NearNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_FinalPath:
+    m_ShowList: 
 --- !u!1 &5014343886674835826
 GameObject:
   m_ObjectHideFlags: 0
@@ -22830,7 +22908,8 @@ MonoBehaviour:
   Status_spellRegistance: 6
   Data_spell0: 9
   Data_spell1: 10
-  ori_Pos: {x: 0, y: 0, z: 0}
+  m_Basic_phase: 0
+  char_ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
@@ -22850,6 +22929,7 @@ MonoBehaviour:
   Status_critPer: 7
   Status_Cost: 4
   m_animator: {fileID: 0}
+  m_UnitType: 2
   m_state: 0
 --- !u!54 &798294340493377292
 Rigidbody:
@@ -22897,6 +22977,30 @@ MonoBehaviour:
   m_Basic_phase: 0
   m_CurrentTile: {fileID: 0}
   m_DestTile: {fileID: 0}
+  PreNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_NearNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_FinalPath:
+    m_ShowList: 
 --- !u!1 &5191421316154645170
 GameObject:
   m_ObjectHideFlags: 0
@@ -40879,7 +40983,8 @@ MonoBehaviour:
   Status_spellRegistance: 6
   Data_spell0: 9
   Data_spell1: 10
-  ori_Pos: {x: 0, y: 0, z: 0}
+  m_Basic_phase: 0
+  char_ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
@@ -40899,6 +41004,7 @@ MonoBehaviour:
   Status_critPer: 7
   Status_Cost: 6
   m_animator: {fileID: 0}
+  m_UnitType: 2
   m_state: 0
 --- !u!54 &5309106266096442787
 Rigidbody:
@@ -40946,6 +41052,30 @@ MonoBehaviour:
   m_Basic_phase: 0
   m_CurrentTile: {fileID: 0}
   m_DestTile: {fileID: 0}
+  PreNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_NearNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_FinalPath:
+    m_ShowList: 
 --- !u!1 &5301566832862367471
 GameObject:
   m_ObjectHideFlags: 0
@@ -45449,7 +45579,8 @@ MonoBehaviour:
   Status_spellRegistance: 0
   Data_spell0: 0
   Data_spell1: 0
-  ori_Pos: {x: 0, y: 0, z: 0}
+  m_Basic_phase: 0
+  char_ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
@@ -45469,6 +45600,7 @@ MonoBehaviour:
   Status_critPer: 0
   Status_Cost: 0
   m_animator: {fileID: 0}
+  m_UnitType: 2
   m_state: 0
 --- !u!1 &7442990666417960120
 GameObject:
@@ -54161,7 +54293,8 @@ MonoBehaviour:
   Status_spellRegistance: 6
   Data_spell0: 9
   Data_spell1: 10
-  ori_Pos: {x: 0, y: 0, z: 0}
+  m_Basic_phase: 0
+  char_ori_Pos: {x: 0, y: 0, z: 0}
   on_Tile: {fileID: 0}
   IsDead: 0
   m_Target: {fileID: 0}
@@ -54181,6 +54314,7 @@ MonoBehaviour:
   Status_critPer: 7
   Status_Cost: 5
   m_animator: {fileID: 0}
+  m_UnitType: 2
   m_state: 0
 --- !u!54 &7994896041913717734
 Rigidbody:
@@ -54228,6 +54362,30 @@ MonoBehaviour:
   m_Basic_phase: 0
   m_CurrentTile: {fileID: 0}
   m_DestTile: {fileID: 0}
+  PreNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_NearNode:
+    m_MyIndex: 0
+    m_ParentIndex: 0
+    m_tile: {fileID: 0}
+    m_Fcost: 0
+    m_Gcost: 0
+    m_Marking: 0
+    m_Unit: {fileID: 0}
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Neighbors:
+      m_List: []
+  m_FinalPath:
+    m_ShowList: 
 --- !u!1 &8512935431629088126
 GameObject:
   m_ObjectHideFlags: 0

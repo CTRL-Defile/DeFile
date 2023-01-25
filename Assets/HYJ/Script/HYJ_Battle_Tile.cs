@@ -300,6 +300,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
         BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
         if (phase == BATTLE_PHASE.PHASE_PREPARE)
         {
+            // Player에 유닛 데이터 업데이트 -> 내부에 시너지 업데이트도 포함됨
             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE);
         }
     }

@@ -94,6 +94,7 @@ partial class HYJ_Character
 public class CTRL_Character_Data : IDisposable
 {
     public string Data_ID;
+    public int Data_COST;
     public List<HYJ_Item> Data_items;
 
     //////////  Getter & Setter //////////
@@ -108,6 +109,11 @@ public class CTRL_Character_Data : IDisposable
     public CTRL_Character_Data(string _ID)
     {
         Data_ID = _ID;
+    }
+    public CTRL_Character_Data(string _ID, int data_COST)
+    {
+        Data_ID = _ID;
+        Data_COST = data_COST;
     }
 }
 

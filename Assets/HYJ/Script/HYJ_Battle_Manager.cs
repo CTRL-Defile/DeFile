@@ -1,24 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-
-//
+﻿//
 using System;
-using TMPro;
-using System.Data.SqlTypes;
-using AutoBattles;
-using JetBrains.Annotations;
-using Newtonsoft.Json.Linq;
-using UnityEngine.Diagnostics;
-using TMPro.Examples;
+using System.Collections.Generic;
 using System.Linq;
-using static Unity.Burst.Intrinsics.X86.Avx;
-using static UnityEngine.GraphicsBuffer;
-using UnityEngine.UIElements;
-using System.Security.Cryptography;
-using UnityEditor.Experimental.GraphView;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
 public enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_COMBAT_OVER, PHASE_END };
 
@@ -32,6 +18,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     bool StatusBar_isInitialized = false;
     bool CharacterPool_isInitialized = false;
 
+    GameObject prefab;
     GameObjectPool<HYJ_Battle_Tile> m_TilePool;
     [SerializeField]
     SerialList<GameObjectPool<Character>> m_CharacterPools = new SerialList<GameObjectPool<Character>>();
@@ -159,7 +146,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 						this.gameObject.SetActive(false);
 						//Basic_phase = BATTLE_PHASE.PHASE_UPDATE; // 여기는 -1 업데이트내용 다 여기서 실행해야하는 부분 //받았다고 체크가 되야함                 
                     }
-                    
+                
                 }
                 break;
             //
@@ -412,13 +399,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             return tile;
         });
 
-        GameObject prefab = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_UNIT_PREFAB);
+        prefab = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_UNIT_PREFAB);
         int cnt = prefab.transform.childCount;
         Pool_cnt = Max_character / cnt;
         for (int i = 0; i < cnt; i++)
         {
             m_CharacterPool = new GameObjectPool<Character>(Pool_cnt, (int n) =>
             {
+                //Debug.Log(i);
                 var obj = Instantiate(prefab.transform.GetChild(i).gameObject);
                 obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
@@ -430,7 +418,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
                 string obj_name;
                 //obj_name = obj.name.Substring(0, 1);
-                obj_name = character.Character_Status_name;
+                obj_name = character.Character_Status_name_eng;
                 obj.name = obj_name + "_#" + n;
                 
                 return character;
@@ -1000,12 +988,15 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     [SerializeField]
     List<int> Prob_list = new List<int>();
-//<<<<<<< HEAD
-//=======
-//    UnityEngine.UI.Image EXP_Img;
-//    //[SerializeField]
-//    //List<LSY_Shop_UnitList> Shop_Unit = new List<LSY_Shop_UnitList>();
-//>>>>>>> 762e97a1f2ab22322daf9222d1df6bc2320efb8b
+    [SerializeField]
+    List<int> Cost_list;
+
+    //<<<<<<< HEAD
+    //=======
+    //    UnityEngine.UI.Image EXP_Img;
+    //    //[SerializeField]
+    //    //List<LSY_Shop_UnitList> Shop_Unit = new List<LSY_Shop_UnitList>();
+    //>>>>>>> 762e97a1f2ab22322daf9222d1df6bc2320efb8b
 
     List<Dictionary<string, object>> Unit_DB;
 
@@ -1025,10 +1016,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     public void LSY_UnitList_Init()
     {
         // Level
-//<<<<<<< HEAD
-//=======
 //        EXP_Img = EXP_Bar.GetComponent<UnityEngine.UI.Image>();
-//>>>>>>> 762e97a1f2ab22322daf9222d1df6bc2320efb8b
         cur_EXP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP);
         Max_EXP = Max_EXP_List[Player_Lv];
         Shop_Exp_Cur.fillAmount = cur_EXP / Max_EXP;
@@ -1106,7 +1094,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
             Enemy_Unit.Add(tmp);
 
-            Debug.Log(pos);
+            //Debug.Log(pos[i]);
         }
 
         Enemy_isInitialized = true;
@@ -1137,7 +1125,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     public void LSY_Calc_Proba()
     {
         // List<int> Prob_list = new List<int>();   // SerializeField로 인스펙터에서 보이게끔 위에서 선언
-        List<int> Cost_list = new List<int>();
+        // List<int> Cost_list = new List<int>();
+        Cost_list = new List<int>();
 
         // 확률 적용 방법에 따라, 전체 파이가 100이 아닐 수 있음. 그때 수정하면 됨.
         int tot_num = 100;
@@ -1208,8 +1197,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 int unit_cost = (int)Unit_DB[j]["COST"];
                 int unit_id = (int)Unit_DB[j]["ID"];
                 int unit_cnt = m_CharacterPools.m_List[unit_id].get_Count();
-                if (i == 0)
-                    tmp_cnt.Add(unit_cnt);
+                //if (i == 0)
+                //    tmp_cnt.Add(unit_cnt);
                 /*
                 //int unit_cnt = 0;
                 //Stack<Character> stk = m_CharacterPools[unit_id].get_Stack();
@@ -1225,9 +1214,28 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 //for (int n = 0; n < n_tmp; n++)
                 //    stk.Push(stk_tmp.Pop());
                 */
-                if (unit_cost == Cost_list[i] && tmp_cnt[j] > 0)
+                if (unit_cost == Cost_list[i])
                 {
-                    for (int k = 0; k < tmp_cnt[j]; k++)
+                    if (unit_cnt == 0)
+                    {
+                        Debug.Log("[BM] Allocate " + unit_id + " one more.");
+
+                        var obj = Instantiate(prefab.transform.GetChild(unit_id).gameObject);
+                        obj.SetActive(false);
+                        obj.transform.SetParent(Unit_pool);
+                        obj.transform.localScale = Vector3.one;
+                        var character = obj.GetComponent<Character>();
+                        character.m_UnitType = Character.Unit_Type.Ally;
+                        character.STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
+                        character.HYJ_Status_saveData = new CTRL_Character_Data(unit_id.ToString());
+                        string obj_name;
+                        obj_name = character.Character_Status_name_eng;
+                        obj.name = obj_name + "_#" + m_CharacterPools.m_List[unit_id].get_tot_count();
+
+                        m_CharacterPools.m_List[unit_id].allocate_onemore(character);
+                    }
+
+                    for (int k = 0; k < unit_cnt; k++)
                         Unit_Candi.Add(unit_id);
                 }
             }
@@ -1238,13 +1246,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 int n = r.Next(Unit_Candi.Count);
                 //Debug.Log(Unit_Candi.Count + "<-unitcandi.count || n->" + n);
                 UnitIdx_list.Add(Unit_Candi[n]);
-                tmp_cnt[Unit_Candi[n]]--;
+                //tmp_cnt[Unit_Candi[n]]--;
                 Unit_Candi.RemoveAt(n);
             }
             else
             {
                 Debug.Log("None of Unit COST " + Cost_list[i] + " is Available...");
-                UnitIdx_list.Add(6);
+
+                //UnitIdx_list.Add(6);
             }
         }
         //Debug.Log("db.count : " + Unit_DB.Count);
@@ -1280,7 +1289,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 if (pos_num == -1)
                     pos_num = cnt;
 
-                Debug.Log(pos_num + " " + cnt);
+                //Debug.Log(pos_num + " " + cnt);
 
                 GameObject _onTile = Stand_tiles.HYJ_Data_Tile(pos_num).gameObject;
                 //Vector3 pos = Stand_tiles.HYJ_Data_Tile(pos_num).transform.position;
@@ -1296,7 +1305,25 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         tmp = Instantiate(unitData, _onTile.transform.position, Quaternion.identity, Unit_parent);
                     else
                     {
-                        //tmp = m_CharacterPools.m_List[unit_idx].pop().gameObject;
+                        if (m_CharacterPools.m_List[unit_idx].get_Count() == 0)
+                        {
+                            Debug.Log("[BM] Allocate " + unit_idx + " one more.");
+
+                            var obj = Instantiate(prefab.transform.GetChild(unit_idx).gameObject);
+                            obj.SetActive(false);
+                            obj.transform.SetParent(Unit_pool);
+                            obj.transform.localScale = Vector3.one;
+                            var character = obj.GetComponent<Character>();
+                            character.m_UnitType = Character.Unit_Type.Ally;
+                            character.STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
+                            character.HYJ_Status_saveData = new CTRL_Character_Data(unit_idx.ToString());
+                            string obj_name;
+                            obj_name = character.Character_Status_name_eng;
+                            obj.name = obj_name + "_#" + m_CharacterPools.m_List[unit_idx].get_tot_count();
+
+                            m_CharacterPools.m_List[unit_idx].allocate_onemore(character);
+                        }
+
                         tmp = m_CharacterPools.m_List[unit_idx].objects.PopStack().gameObject;
                         tmp.SetActive(true);
                         tmp.transform.localPosition = _onTile.transform.position;
@@ -1642,49 +1669,114 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     object LSY_Battle_Synergy_Update(params object[] _args)
     {
-        List<int> synergy_list = (List<int>)_args[0];
+        Battle_Synergy_Init();
 
-        //int min = 10, idx = -1;
-        //for (int i = 0; i < synergy_list.Count; i++)
-        //{
-        //    if (synergy_list[i] < min)
-        //    {
-        //        min = synergy_list[i];
-        //        idx = i;
-        //    }
+        var synergy_dic = (Dictionary<int, int>)_args[0];
+        synergy_dic = synergy_dic.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
-        //    if (i == synergy_list.Count-1)
-        //    {
-                switch (synergy_list[0])
+        // gray1 green23 red45
+        bool init_red = false, init_green = false, init_gray = false;
+
+        for (int i=0; i<synergy_dic.Count; i++)
+        {
+            int sy_cnt = synergy_dic.Values.ToList()[i];
+            if (sy_cnt >= 4)
+            {
+                Transform red = Synergy_Red.GetChild(i);
+                red.SetParent(Synergy_Panel);
+                init_red = true;
+            }
+            else if(sy_cnt >= 2)
+            {
+                if (init_red)
                 {
-                    case 0:
-                    case 1:
-                        break;
-                    case 2:
-                        Transform gray = Synergy_Gray.GetChild(0);
-                        gray.SetParent(Synergy_Panel);
-                        Debug.Log("ASDF");
-                        break;
-                    case 3:
-                    case 4:
-                        Transform bf_gray = Synergy_Panel.GetChild(0);
-                        bf_gray.SetParent(Synergy_Gray);
-
-                        Transform green = Synergy_Green.GetChild(0);
-                        green.SetParent(Synergy_Panel);
-                        break;
-                    case 5:
-                    case 6:
-
-                        
-                        break;
+                    int n = Synergy_Red.childCount;
+                    Transform red_dot = Synergy_Red.GetChild(n - 1);
+                    red_dot.SetParent(Synergy_Panel);
+                    init_red = false;
                 }
-        //    }
 
-        //}
+                Transform green = Synergy_Green.GetChild(i);
+                green.SetParent(Synergy_Panel);
+                init_green = true;
+            }
+            else if(sy_cnt == 1)
+            {
+                if (init_red)
+                {
+                    int n = Synergy_Red.childCount;
+                    Transform red_dot = Synergy_Red.GetChild(n - 1);
+                    red_dot.SetParent(Synergy_Panel);
+                    init_red = false;
+                }
+                if (init_green)
+                {
+                    int n = Synergy_Green.childCount;
+                    Transform green_dot = Synergy_Green.GetChild(n - 1);
+                    green_dot.SetParent(Synergy_Panel);
+                    init_green = false;
+                }
+
+                Transform gray = Synergy_Gray.GetChild(i);
+                gray.SetParent(Synergy_Panel);
+                init_gray = true;
+            }
+        }
+
+        if (init_red)
+        {
+            int n = Synergy_Red.childCount;
+            Transform red_dot = Synergy_Red.GetChild(n - 1);
+            red_dot.SetParent(Synergy_Panel);
+            init_red = false;
+        }
+        if (init_green)
+        {
+            int n = Synergy_Green.childCount;
+            Transform green_dot = Synergy_Green.GetChild(n - 1);
+            green_dot.SetParent(Synergy_Panel);
+            init_green = false;
+        }
+        if (init_gray)
+        {
+            int n = Synergy_Gray.childCount;
+            Transform gray_dot = Synergy_Gray.GetChild(n - 1);
+            gray_dot.SetParent(Synergy_Panel);
+            init_gray = false;
+        }
 
 
         return null;
+    }
+
+    void Battle_Synergy_Init()
+    {
+        int cnt = Synergy_Panel.childCount;
+        Debug.Log(cnt);
+        if (cnt == 0) return;
+        for (int i=0; i<cnt; i++)
+        {
+            Transform tmp = Synergy_Panel.GetChild(0);
+            LSY_Battle_Synergy.Synergy_Level _Level = tmp.GetComponent<LSY_Battle_Synergy>().Get_synergy_lv;
+
+            switch(_Level)
+            {
+                case LSY_Battle_Synergy.Synergy_Level.Red:
+                    tmp.SetParent(Synergy_Red);
+                    tmp.localPosition = Vector3.zero;
+                    break;
+                case LSY_Battle_Synergy.Synergy_Level.Green:
+                    tmp.SetParent(Synergy_Green);
+                    tmp.localPosition = Vector3.zero;
+                    break;
+                case LSY_Battle_Synergy.Synergy_Level.Gray:
+                    tmp.SetParent(Synergy_Gray);
+                    tmp.localPosition = Vector3.zero;
+                    break;
+            }
+        }
+
+        //
     }
 
 
