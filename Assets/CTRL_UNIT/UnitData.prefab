@@ -13590,60 +13590,6 @@ Transform:
   m_Father: {fileID: 8016920267154848503}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-<<<<<<< HEAD
-=======
---- !u!114 &4404662457965607783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3579511156403711380}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f7f290ecf79a594e9a438f54e0e42ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Status_saveData:
-    Data_ID: 
-    Data_items: []
-  Status_name: Orc
-  Status_race: WILD
-  Status_job: WARRIOR
-  Status_affiliation: WILD
-  Status_mix: 1
-  Status_startMp: 5
-  Status_atkRange: 1
-  Status_atkPhysics: 2
-  Status_atkSpell: 3
-  Status_defence: 5
-  Status_spellRegistance: 6
-  Data_spell0: 9
-  Data_spell1: 10
-  m_Basic_phase: 0
-  char_ori_Pos: {x: 0, y: 0, z: 0}
-  on_Tile: {fileID: 0}
-  IsDead: 0
-  m_Target: {fileID: 0}
-  m_PreTarget: {fileID: 0}
-  m_PathFinder: {fileID: 0}
-  m_AnimEvent: {fileID: 0}
-  m_StatusBar: {fileID: 0}
-  Status_HP: 0
-  Status_MaxHP: 10
-  Status_MP: 0
-  Status_MaxMP: 10
-  Status_atk: 0
-  Status_magic: 0
-  Status_atkSpeed: 4
-  Status_moveSpeed: 0
-  Status_critValue: 8
-  Status_critPer: 7
-  Status_Cost: 2
-  m_animator: {fileID: 0}
-  m_UnitType: 2
-  m_state: 0
->>>>>>> sourcetree_lsy
 --- !u!54 &6265973995579251703
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -13714,7 +13660,6 @@ MonoBehaviour:
       m_List: []
   m_FinalPath:
     m_ShowList: 
-<<<<<<< HEAD
 --- !u!114 &6667588189831209474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13766,8 +13711,6 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_UnitType: 2
   m_state: 0
-=======
->>>>>>> sourcetree_lsy
 --- !u!1 &3586579302469860031
 GameObject:
   m_ObjectHideFlags: 0
@@ -14052,76 +13995,6 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3995788884653447335}
-<<<<<<< HEAD
-=======
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f7f290ecf79a594e9a438f54e0e42ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Status_saveData:
-    Data_ID: 
-    Data_items: []
-  Status_name: Bear
-  Status_race: WILD
-  Status_job: WARRIOR
-  Status_affiliation: WILD
-  Status_mix: 1
-  Status_startMp: 5
-  Status_atkRange: 1
-  Status_atkPhysics: 2
-  Status_atkSpell: 3
-  Status_defence: 5
-  Status_spellRegistance: 6
-  Data_spell0: 9
-  Data_spell1: 10
-  m_Basic_phase: 0
-  char_ori_Pos: {x: 0, y: 0, z: 0}
-  on_Tile: {fileID: 0}
-  IsDead: 0
-  m_Target: {fileID: 0}
-  m_PreTarget: {fileID: 0}
-  m_PathFinder: {fileID: 0}
-  m_AnimEvent: {fileID: 0}
-  m_StatusBar: {fileID: 0}
-  Status_HP: 0
-  Status_MaxHP: 10
-  Status_MP: 0
-  Status_MaxMP: 10
-  Status_atk: 0
-  Status_magic: 0
-  Status_atkSpeed: 4
-  Status_moveSpeed: 0
-  Status_critValue: 8
-  Status_critPer: 7
-  Status_Cost: 1
-  m_animator: {fileID: 0}
-  m_UnitType: 2
-  m_state: 0
---- !u!54 &5404344496744357894
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3995788884653447335}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!136 &4508474137191254123
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3995788884653447335}
->>>>>>> sourcetree_lsy
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
@@ -14169,7 +14042,6 @@ MonoBehaviour:
       m_List: []
   m_FinalPath:
     m_ShowList: 
-<<<<<<< HEAD
 --- !u!114 &871500833988684764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14221,8 +14093,6 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_UnitType: 2
   m_state: 0
-=======
->>>>>>> sourcetree_lsy
 --- !u!1 &4023105164463971769
 GameObject:
   m_ObjectHideFlags: 0
@@ -15908,60 +15778,6 @@ Transform:
   m_Father: {fileID: 8016920267154848503}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-<<<<<<< HEAD
-=======
---- !u!114 &1788865134667311096
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5014343886674835824}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f7f290ecf79a594e9a438f54e0e42ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Status_saveData:
-    Data_ID: 
-    Data_items: []
-  Status_name: Two
-  Status_race: WILD
-  Status_job: WARRIOR
-  Status_affiliation: WILD
-  Status_mix: 1
-  Status_startMp: 5
-  Status_atkRange: 1
-  Status_atkPhysics: 2
-  Status_atkSpell: 3
-  Status_defence: 5
-  Status_spellRegistance: 6
-  Data_spell0: 9
-  Data_spell1: 10
-  m_Basic_phase: 0
-  char_ori_Pos: {x: 0, y: 0, z: 0}
-  on_Tile: {fileID: 0}
-  IsDead: 0
-  m_Target: {fileID: 0}
-  m_PreTarget: {fileID: 0}
-  m_PathFinder: {fileID: 0}
-  m_AnimEvent: {fileID: 0}
-  m_StatusBar: {fileID: 0}
-  Status_HP: 0
-  Status_MaxHP: 10
-  Status_MP: 0
-  Status_MaxMP: 10
-  Status_atk: 0
-  Status_magic: 0
-  Status_atkSpeed: 4
-  Status_moveSpeed: 0
-  Status_critValue: 8
-  Status_critPer: 7
-  Status_Cost: 3
-  m_animator: {fileID: 0}
-  m_UnitType: 2
-  m_state: 0
->>>>>>> sourcetree_lsy
 --- !u!54 &2943985061178368812
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -16032,7 +15848,6 @@ MonoBehaviour:
       m_List: []
   m_FinalPath:
     m_ShowList: 
-<<<<<<< HEAD
 --- !u!114 &7429582693673261774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16084,8 +15899,6 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_UnitType: 2
   m_state: 0
-=======
->>>>>>> sourcetree_lsy
 --- !u!1 &5014343886674835826
 GameObject:
   m_ObjectHideFlags: 0
@@ -21983,60 +21796,6 @@ Transform:
   m_Father: {fileID: 8016920267154848503}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 7, z: 0}
-<<<<<<< HEAD
-=======
---- !u!114 &8937368241449392367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5191421316154643308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f7f290ecf79a594e9a438f54e0e42ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Status_saveData:
-    Data_ID: 
-    Data_items: []
-  Status_name: Three
-  Status_race: WILD
-  Status_job: WARRIOR
-  Status_affiliation: WILD
-  Status_mix: 1
-  Status_startMp: 5
-  Status_atkRange: 1
-  Status_atkPhysics: 2
-  Status_atkSpell: 3
-  Status_defence: 5
-  Status_spellRegistance: 6
-  Data_spell0: 9
-  Data_spell1: 10
-  m_Basic_phase: 0
-  char_ori_Pos: {x: 0, y: 0, z: 0}
-  on_Tile: {fileID: 0}
-  IsDead: 0
-  m_Target: {fileID: 0}
-  m_PreTarget: {fileID: 0}
-  m_PathFinder: {fileID: 0}
-  m_AnimEvent: {fileID: 0}
-  m_StatusBar: {fileID: 0}
-  Status_HP: 0
-  Status_MaxHP: 10
-  Status_MP: 0
-  Status_MaxMP: 10
-  Status_atk: 0
-  Status_magic: 0
-  Status_atkSpeed: 4
-  Status_moveSpeed: 0
-  Status_critValue: 8
-  Status_critPer: 7
-  Status_Cost: 4
-  m_animator: {fileID: 0}
-  m_UnitType: 2
-  m_state: 0
->>>>>>> sourcetree_lsy
 --- !u!54 &798294340493377292
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -22107,7 +21866,6 @@ MonoBehaviour:
       m_List: []
   m_FinalPath:
     m_ShowList: 
-<<<<<<< HEAD
 --- !u!114 &4115453703513295045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22159,8 +21917,6 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_UnitType: 2
   m_state: 0
-=======
->>>>>>> sourcetree_lsy
 --- !u!1 &5191421316154645170
 GameObject:
   m_ObjectHideFlags: 0
@@ -40206,60 +39962,6 @@ Transform:
   m_Father: {fileID: 8016920267154848503}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-<<<<<<< HEAD
-=======
---- !u!114 &4678839526145629840
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5301566832862367469}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f7f290ecf79a594e9a438f54e0e42ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Status_saveData:
-    Data_ID: 
-    Data_items: []
-  Status_name: Five
-  Status_race: WILD
-  Status_job: WARRIOR
-  Status_affiliation: WILD
-  Status_mix: 1
-  Status_startMp: 5
-  Status_atkRange: 1
-  Status_atkPhysics: 2
-  Status_atkSpell: 3
-  Status_defence: 5
-  Status_spellRegistance: 6
-  Data_spell0: 9
-  Data_spell1: 10
-  m_Basic_phase: 0
-  char_ori_Pos: {x: 0, y: 0, z: 0}
-  on_Tile: {fileID: 0}
-  IsDead: 0
-  m_Target: {fileID: 0}
-  m_PreTarget: {fileID: 0}
-  m_PathFinder: {fileID: 0}
-  m_AnimEvent: {fileID: 0}
-  m_StatusBar: {fileID: 0}
-  Status_HP: 0
-  Status_MaxHP: 10
-  Status_MP: 0
-  Status_MaxMP: 10
-  Status_atk: 0
-  Status_magic: 0
-  Status_atkSpeed: 4
-  Status_moveSpeed: 0
-  Status_critValue: 8
-  Status_critPer: 7
-  Status_Cost: 6
-  m_animator: {fileID: 0}
-  m_UnitType: 2
-  m_state: 0
->>>>>>> sourcetree_lsy
 --- !u!54 &5309106266096442787
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -40330,7 +40032,6 @@ MonoBehaviour:
       m_List: []
   m_FinalPath:
     m_ShowList: 
-<<<<<<< HEAD
 --- !u!114 &4262484590450551655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40382,8 +40083,6 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_UnitType: 2
   m_state: 0
-=======
->>>>>>> sourcetree_lsy
 --- !u!1 &5301566832862367471
 GameObject:
   m_ObjectHideFlags: 0
@@ -52600,60 +52299,6 @@ Transform:
   m_Father: {fileID: 8016920267154848503}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-<<<<<<< HEAD
-=======
---- !u!114 &5183948002169107927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8512935431629088124}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f7f290ecf79a594e9a438f54e0e42ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Status_saveData:
-    Data_ID: 
-    Data_items: []
-  Status_name: Four
-  Status_race: WILD
-  Status_job: WARRIOR
-  Status_affiliation: WILD
-  Status_mix: 1
-  Status_startMp: 5
-  Status_atkRange: 1
-  Status_atkPhysics: 2
-  Status_atkSpell: 3
-  Status_defence: 5
-  Status_spellRegistance: 6
-  Data_spell0: 9
-  Data_spell1: 10
-  m_Basic_phase: 0
-  char_ori_Pos: {x: 0, y: 0, z: 0}
-  on_Tile: {fileID: 0}
-  IsDead: 0
-  m_Target: {fileID: 0}
-  m_PreTarget: {fileID: 0}
-  m_PathFinder: {fileID: 0}
-  m_AnimEvent: {fileID: 0}
-  m_StatusBar: {fileID: 0}
-  Status_HP: 0
-  Status_MaxHP: 10
-  Status_MP: 0
-  Status_MaxMP: 10
-  Status_atk: 0
-  Status_magic: 0
-  Status_atkSpeed: 4
-  Status_moveSpeed: 0
-  Status_critValue: 8
-  Status_critPer: 7
-  Status_Cost: 5
-  m_animator: {fileID: 0}
-  m_UnitType: 2
-  m_state: 0
->>>>>>> sourcetree_lsy
 --- !u!54 &7994896041913717734
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -52724,7 +52369,6 @@ MonoBehaviour:
       m_List: []
   m_FinalPath:
     m_ShowList: 
-<<<<<<< HEAD
 --- !u!114 &697033046717755021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52776,8 +52420,6 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_UnitType: 2
   m_state: 0
-=======
->>>>>>> sourcetree_lsy
 --- !u!1 &8512935431629088126
 GameObject:
   m_ObjectHideFlags: 0

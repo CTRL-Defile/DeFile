@@ -306,7 +306,7 @@ partial class HYJ_DataBase
                     Unit_phase = 1;
 
                     //
-                    Addressables.LoadAssetAsync<GameObject>("Assets/HYJ/Resource/Unit/UnitData.prefab").Completed +=
+                    Addressables.LoadAssetAsync<GameObject>("Assets/CTRL_UNIT/UnitData.prefab").Completed +=
                         (_handle) =>
                         {
                             Unit_datas = _handle.Result;

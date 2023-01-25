@@ -18,7 +18,7 @@ MonoBehaviour:
   m_GUID: e03c745f8761d3c45bf36e117ab19c92
   m_SerializeEntries:
   - m_GUID: 61729f71fbba251429254dcf01956cf7
-    m_Address: Assets/HYJ/Resource/Unit/UnitData.prefab
+    m_Address: Assets/CTRL_UNIT/UnitData.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0
