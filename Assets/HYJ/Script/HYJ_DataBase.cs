@@ -323,9 +323,11 @@ partial class HYJ_DataBase
                 break;
             case 2:
                 {
+                    string csv_path = "HYJ/DB_Using_Character";
                     //List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_csv");
-                    Unit_csv = CSVReader.Read("HYJ/Unit_csv");
+                    Unit_csv = CSVReader.Read(csv_path);
 
+                    //string _index = "Index";
                     for (int i = 0; i < Unit_csv.Count; i++)
                     {
                         var Unit_trans = Unit_datas.transform.Find("" + (int)Unit_csv[i]["ID"]);

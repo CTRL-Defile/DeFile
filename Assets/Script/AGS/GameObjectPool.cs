@@ -29,6 +29,11 @@ public class GameObjectPool<T> where T : class
             this.objects.PushStack(this.create_fn(i));
         }
     }
+    public void allocate_onemore(T val)
+    {
+        count += 1;
+        this.objects.PushStack(val);
+    }
     public T pop()
     {
         if (this.objects.m_Stack.Count <= 0)
@@ -42,6 +47,11 @@ public class GameObjectPool<T> where T : class
     {
         this.objects.PushStack(obj);
     }
+    public int get_tot_count()
+    {
+        return this.count;
+    }
+
     public int get_Count()
     {
         return objects.m_Stack.Count;

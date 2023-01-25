@@ -7,7 +7,8 @@ partial class Character
     [Header("======================================= HYJ_STATUS =======================================")]
     [SerializeField] protected CTRL_Character_Data Status_saveData; // 저장용 클래스
 
-    [SerializeField] protected string Status_name;
+    [SerializeField] protected string Status_name_kor;
+    [SerializeField] protected string Status_name_eng;
     // 속성
     [SerializeField] protected string Status_race;
     [SerializeField] protected string Status_job;
@@ -33,17 +34,21 @@ partial class Character
         get { return Status_saveData;   }
         set { Status_saveData = value;  }
     }
-    virtual public string Character_Status_name { get { return Status_name; } }
+    virtual public string Character_Status_name_eng { get { return Status_name_eng; } }
 
 
     //////////  Method          //////////
 
     public void HYJ_Status_SettingData(Dictionary<string, object> _data)
     {
-        Status_name = (string)_data["NAME"];
+        Status_name_kor = (string)_data["NAME_KOR"];
+        Status_name_eng = (string)_data["NAME_ENG"];
         // 속성
         Status_race = (string)_data["RACE"];
         Status_job = (string)_data["JOB"];
+
+        /*
+
         Status_affiliation = (string)_data["AFFILIATION"];
         // 조합
         Status_mix = (int)_data["MIX"];
@@ -62,6 +67,9 @@ partial class Character
         // 스킬
         Data_spell0 = (int)_data["SPELL_0"];
         Data_spell1 = (int)_data["SPELL_1"];
+
+        */
+
         // 코스트
         Status_Cost = (int)_data["COST"];
     }

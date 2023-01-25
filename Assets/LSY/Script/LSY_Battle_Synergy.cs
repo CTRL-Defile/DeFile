@@ -6,28 +6,39 @@ using UnityEngine;
 public class LSY_Battle_Synergy : MonoBehaviour
 {
     TextMeshProUGUI Synergy_Name, Synergy_Unit_Number, Synergy_Activation;
-    private enum Synergy_Level
+    public enum Synergy_Level
     {
         Red,
         Green,
         Gray,
         Level_END
     }
-    private enum Synergy_Tribe
+    public enum Synergy_Tribe
     {
-        Bear,
-        Orc,
+        One,
+        Two,
+        Three,
+        Dot,
         Tribe_END
     }
 
-    [SerializeField] private Synergy_Level synerge_lv;
-    [SerializeField] private Synergy_Tribe synerge_tr;
+    //
+    [SerializeField] private Synergy_Level synergy_lv;
+    [SerializeField] private Synergy_Tribe synergy_tr;
+
+
+    //
+    public Synergy_Level Get_synergy_lv { get { return synergy_lv; } }
+    public Synergy_Tribe Get_synergy_tr { get { return synergy_tr; } }
 
 
     void Start()
     {
-        Synergy_Name = this.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        Synergy_Unit_Number = this.transform.GetChild(2).GetChild(0).GetComponent<TextMeshProUGUI>();
+        if (synergy_tr != Synergy_Tribe.Dot)
+        {
+            Synergy_Name = this.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            Synergy_Unit_Number = this.transform.GetChild(2).GetChild(0).GetComponent<TextMeshProUGUI>();
+        }
     }
 
     void Update()
