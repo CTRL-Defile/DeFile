@@ -1690,7 +1690,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         var synergy_dic = (Dictionary<int, int>)_args[0];
         synergy_dic = synergy_dic.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
-        // gray1 green23 red45
+        // gray1 green23 red456
         bool init_red = false, init_green = false, init_gray = false;
 
         for (int i=0; i<synergy_dic.Count; i++)
@@ -1700,6 +1700,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             {
                 Transform red = Synergy_Red.GetChild(i);
                 red.SetParent(Synergy_Panel);
+                red.GetChild(0).GetComponent<TextMeshProUGUI>().text = synergy_dic.Keys.ToList()[i].ToString() + " Cost";
+                if (sy_cnt >= 6)
+                    red.GetChild(1).GetComponent<TextMeshProUGUI>().text = "6";
+                else
+                    red.GetChild(1).GetComponent<TextMeshProUGUI>().text = "4>6";
+
+                red.GetChild(2).GetChild(0).GetComponent<TextMeshProUGUI>().text = sy_cnt.ToString();
+
                 init_red = true;
             }
             else if(sy_cnt >= 2)
@@ -1714,6 +1722,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
                 Transform green = Synergy_Green.GetChild(i);
                 green.SetParent(Synergy_Panel);
+
+                green.GetChild(0).GetComponent<TextMeshProUGUI>().text = synergy_dic.Keys.ToList()[i].ToString() + " Cost";
+                green.GetChild(1).GetComponent<TextMeshProUGUI>().text = "2>4";
+                green.GetChild(2).GetChild(0).GetComponent<TextMeshProUGUI>().text = sy_cnt.ToString();
+
                 init_green = true;
             }
             else if(sy_cnt == 1)
@@ -1735,6 +1748,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
                 Transform gray = Synergy_Gray.GetChild(i);
                 gray.SetParent(Synergy_Panel);
+
+                gray.GetChild(0).GetComponent<TextMeshProUGUI>().text = synergy_dic.Keys.ToList()[i].ToString() + " Cost";
+                gray.GetChild(1).GetComponent<TextMeshProUGUI>().text = "2>4";
+                gray.GetChild(2).GetChild(0).GetComponent<TextMeshProUGUI>().text = sy_cnt.ToString();
+
                 init_gray = true;
             }
         }
