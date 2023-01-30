@@ -96,6 +96,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Synergy_Green = Battle_Synergy.GetChild(2);
         Synergy_Gray = Battle_Synergy.GetChild(3);
 
+        for (int i=0; i<Synergy_Red.childCount-1; i++)
+        {
+            Red_list.Add(Synergy_Red.GetChild(i));
+            Green_list.Add(Synergy_Green.GetChild(i));
+            Gray_list.Add(Synergy_Gray.GetChild(i));
+        }
+
         Battle_Text = Battle_Canvas.GetChild(2);
         Battle_Ally_OnTile = Battle_Text.GetChild(0).GetComponent<TextMeshProUGUI>();
         Battle_Timer_TMP = Battle_Text.GetChild(1).GetComponent<TextMeshProUGUI>();
@@ -979,29 +986,21 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     [Header("SHOP")]
 
     [SerializeField]
-    Transform Battle_UI, Battle_Canvas, Battle_Shop, Battle_Synergy, Battle_Text, Shop_panel;
-    [SerializeField]
     List<GameObject> Shop_UnitList;
-    [SerializeField]
+    //[SerializeField]
+    Transform Battle_UI, Battle_Canvas, Battle_Shop, Battle_Synergy, Battle_Text, Shop_panel;
+    //[SerializeField]
     TextMeshProUGUI Shop_Coin_Text, Battle_Ally_OnTile, Battle_Timer_TMP;
-    [SerializeField]
+    //[SerializeField]
     UnityEngine.UI.Image Shop_Exp_Cur;
-    [SerializeField]
+    //[SerializeField]
     GameObject End_Btn;
-
 
 
     [SerializeField]
     List<int> Prob_list = new List<int>();
     [SerializeField]
     List<int> Cost_list;
-
-    //<<<<<<< HEAD
-    //=======
-    //    UnityEngine.UI.Image EXP_Img;
-    //    //[SerializeField]
-    //    //List<LSY_Shop_UnitList> Shop_Unit = new List<LSY_Shop_UnitList>();
-    //>>>>>>> 762e97a1f2ab22322daf9222d1df6bc2320efb8b
 
     List<Dictionary<string, object>> Unit_DB;
 
@@ -1099,7 +1098,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
             Enemy_Unit.Add(tmp);
 
-            //Debug.Log(pos[i]);
         }
 
         Enemy_isInitialized = true;
@@ -1118,8 +1116,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
         // Before Reload, Clear Idx list
         UnitIdx_list.Clear();
-        LSY_Calc_Proba();
-
+        while (!LSY_Calc_Proba()) { ; }
+        
         for (int i = 0; i < Shop_UnitList.Count; i++)  // 0~5
         {
             int idx = UnitIdx_list[i];
@@ -1127,10 +1125,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
     }
 
-    public void LSY_Calc_Proba()
+    public bool LSY_Calc_Proba()
     {
-        // List<int> Prob_list = new List<int>();   // SerializeField로 인스펙터에서 보이게끔 위에서 선언
-        // List<int> Cost_list = new List<int>();
         Cost_list = new List<int>();
 
         // 확률 적용 방법에 따라, 전체 파이가 100이 아닐 수 있음. 그때 수정하면 됨.
@@ -1189,8 +1185,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
         //Debug.Log(Cost_list.Count + "<-costlist cnt");
 
-        List<int> tmp_cnt = new List<int>();
-
         // 코스트 별 유닛 랜덤 설정
         for(int i = 0; i < Shop_Panel_cnt; i++)
         {
@@ -1202,23 +1196,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 int unit_cost = (int)Unit_DB[j]["COST"];
                 int unit_id = (int)Unit_DB[j]["ID"];
                 int unit_cnt = m_CharacterPools.m_List[unit_id].get_Count();
-                //if (i == 0)
-                //    tmp_cnt.Add(unit_cnt);
-                /*
-                //int unit_cnt = 0;
-                //Stack<Character> stk = m_CharacterPools[unit_id].get_Stack();
-                //Stack<Character> stk_tmp = new Stack<Character>();
-                //int n_tmp = stk.Count();
-                //for (int n = 0; n < n_tmp; n++)
-                //{
-                //    var tmp = stk.Pop();
-                //    if (tmp.gameObject.activeSelf == false)
-                //        unit_cnt++;
-                //    stk_tmp.Push(tmp);
-                //}
-                //for (int n = 0; n < n_tmp; n++)
-                //    stk.Push(stk_tmp.Pop());
-                */
+
                 if (unit_cost == Cost_list[i])
                 {
                     if (unit_cnt == 0)
@@ -1251,18 +1229,17 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 int n = r.Next(Unit_Candi.Count);
                 //Debug.Log(Unit_Candi.Count + "<-unitcandi.count || n->" + n);
                 UnitIdx_list.Add(Unit_Candi[n]);
-                //tmp_cnt[Unit_Candi[n]]--;
                 Unit_Candi.RemoveAt(n);
             }
             else
             {
                 Debug.Log("None of Unit COST " + Cost_list[i] + " is Available...");
-
                 //UnitIdx_list.Add(6);
+                return false;
             }
         }
-        //Debug.Log("db.count : " + Unit_DB.Count);
 
+        return true;
     }
 
     public void LSY_Buy_Unit()
@@ -1683,12 +1660,21 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     [SerializeField]
     Transform Synergy_Red, Synergy_Green, Synergy_Gray, Synergy_Panel;
 
+    List<Transform> Red_list = new List<Transform>();
+    List<Transform> Green_list = new List<Transform>();
+    List<Transform> Gray_list = new List<Transform>();
+
     object LSY_Battle_Synergy_Update(params object[] _args)
     {
         Battle_Synergy_Init();
 
         var synergy_dic = (Dictionary<int, int>)_args[0];
         synergy_dic = synergy_dic.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+        //foreach (var item in synergy_dic)
+        //{
+        //    Debug.Log("Key : " + item.Key + ", Value : " + item.Value);
+        //}
 
         // gray1 green23 red456
         bool init_red = false, init_green = false, init_gray = false;
@@ -1698,7 +1684,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             int sy_cnt = synergy_dic.Values.ToList()[i];
             if (sy_cnt >= 4)
             {
-                Transform red = Synergy_Red.GetChild(i);
+                //Transform red = Synergy_Red.GetChild(i);
+                Transform red = Red_list[i];
                 red.SetParent(Synergy_Panel);
                 red.GetChild(0).GetComponent<TextMeshProUGUI>().text = synergy_dic.Keys.ToList()[i].ToString() + " Cost";
                 if (sy_cnt >= 6)
@@ -1720,7 +1707,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     init_red = false;
                 }
 
-                Transform green = Synergy_Green.GetChild(i);
+                //Transform green = Synergy_Green.GetChild(i);
+                Transform green = Green_list[i];
                 green.SetParent(Synergy_Panel);
 
                 green.GetChild(0).GetComponent<TextMeshProUGUI>().text = synergy_dic.Keys.ToList()[i].ToString() + " Cost";
@@ -1746,7 +1734,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     init_green = false;
                 }
 
-                Transform gray = Synergy_Gray.GetChild(i);
+                //Transform gray = Synergy_Gray.GetChild(i);
+                Transform gray = Gray_list[i];
                 gray.SetParent(Synergy_Panel);
 
                 gray.GetChild(0).GetComponent<TextMeshProUGUI>().text = synergy_dic.Keys.ToList()[i].ToString() + " Cost";
@@ -1786,7 +1775,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     void Battle_Synergy_Init()
     {
         int cnt = Synergy_Panel.childCount;
-        Debug.Log(cnt);
         if (cnt == 0) return;
         for (int i=0; i<cnt; i++)
         {
