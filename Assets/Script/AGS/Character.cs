@@ -414,3 +414,49 @@ public partial class Character
 }
 
 #endregion
+
+
+public partial class Character
+{
+	public enum STAR
+	{
+		ONE = 1,
+		TWO = 2,
+		THREE = 3,
+		STAR_END = 4
+	}
+
+	STAR m_star = STAR.ONE;
+    public STAR Star { get { return m_star; } set { m_star = value; } }
+	public int StarInt()
+	{
+		switch(m_star)
+		{
+            case STAR.ONE:
+				return 0;
+			case STAR.TWO:
+				return 1;
+			case STAR.THREE:
+				return 2;
+        }
+		return 3;
+    }
+    virtual public void StarUp()
+	{
+		//int tmp = (int)STAR.THREE;
+
+		switch(m_star)
+		{
+			case STAR.ONE:
+				m_star = STAR.TWO;
+				this.transform.localScale *= 1.05f;
+				break;
+            case STAR.TWO:
+                m_star = STAR.THREE;
+                this.transform.localScale *= 1.05f; 
+				break;
+        }
+
+
+	}
+}

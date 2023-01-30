@@ -223,6 +223,8 @@ partial class HYJ_Player
     [SerializeField] HYJ_Player_Unit_Datas Unit_waitUnits;
     [SerializeField] List<HYJ_Player_Unit_Datas> Unit_fieldUnits;
     [SerializeField] List<int> synergy_list;
+    [SerializeField] List<int>[] id_list = new List<int>[3];
+    //[SerializeField] int[] id_array, synergy_array;
     Dictionary<int, int> synergy_dic;
     List<Dictionary<string, object>> Player_Unit_csv;
 
@@ -296,8 +298,20 @@ partial class HYJ_Player
         List<HYJ_Battle_Manager_Line>   field_tiles = (List<HYJ_Battle_Manager_Line>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES);
         HYJ_Battle_Manager_Line         wait_tiles  = (HYJ_Battle_Manager_Line)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_TILES);
 
-        synergy_list = new List<int> { 0, 0, 0, 0, 0, 0 };
-        synergy_dic = new Dictionary<int, int>();
+        int db_cnt = Player_Unit_csv.Count;
+
+        for (int i=0; i<3; i++) id_list[i] = new List<int>(db_cnt);
+        synergy_list = new List<int>(db_cnt);
+        synergy_dic = new Dictionary<int, int>(db_cnt);
+
+        for (int i=0; i<db_cnt; i++)
+        {
+            id_list[0].Add(0);
+            id_list[1].Add(0);
+            id_list[2].Add(0);
+            synergy_list.Add(0);
+            synergy_dic.Add(i, 0);
+        }
 
         //
         for(int y = 0; y < field_tiles.Count; y++)
@@ -310,13 +324,26 @@ partial class HYJ_Player
                 GameObject obj = field_tiles[y].HYJ_Data_GetUnitOnTile(x);
                 if(obj != null)
                 {
-                    //if (obj.tag.Equals("Ally"))
-                    if (obj.GetComponent<Character>().UnitType == Character.Unit_Type.Ally)
+                    Character obj_char = obj.GetComponent<Character>();
+                    if (obj_char.UnitType == Character.Unit_Type.Ally)
                     {
-                        data = obj.GetComponent<Character>().HYJ_Status_saveData;
+                        data = obj_char.HYJ_Status_saveData;
                         // Synergy Update
-                        Debug.Log("[Synergy] COST : " + obj.GetComponent<Character>().Stat_Cost);
-                        synergy_list[obj.GetComponent<Character>().Stat_Cost - 1]++;
+                        Debug.Log("[Synergy] COST : " + obj_char.Stat_Cost);
+                        synergy_list[obj_char.Stat_Cost - 1]++;
+
+                        int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
+                        int starint = obj_char.StarInt();
+                        id_list[starint][id]++;
+                        
+                        if (starint < 3 && id_list[starint][id] == 3)
+                        {
+                            obj_char.StarUp();
+                            Find_Unit_On_Tile(starint, id);
+
+                            id_list[starint][id] = 0;
+                            id_list[starint + 1][id]++;
+                        }
 
                     }
                 }
@@ -334,22 +361,28 @@ partial class HYJ_Player
             GameObject obj = wait_tiles.HYJ_Data_GetUnitOnTile(x);
             if (obj != null)
             {
+                Character obj_char = obj.GetComponent<Character>();
                 data = wait_tiles.HYJ_Data_GetUnitOnTile(x).GetComponent<Character>().HYJ_Status_saveData;
-            }
 
+                int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
+                int starint = obj_char.StarInt();
+                id_list[starint][id]++;
+
+                if (starint < 3 && id_list[starint][id] == 3)
+                {
+                    obj_char.StarUp();
+                    Find_Unit_On_Tile(starint, id);
+
+                    id_list[starint][id] = 0;
+                    id_list[starint + 1][id]++;
+                }
+            }
             //
             Unit_waitUnits.HYJ_Data_SetUnitData(data, x);
         }
 
-        // synergy_dic
-        int synergy_cnt = synergy_list.Count;
-        //Debug.Log(synergy_cnt);
-        for (int i=0; i<synergy_cnt; i++)
-        {
-            //Debug.Log(synergy_list[i]);
-            // Cost, Count
-            synergy_dic.Add(i+1, synergy_list[i]);
-        }
+        for (int i=0; i<db_cnt; i++)
+            synergy_dic[i+1] = synergy_list[i];
 
         // Tile.Ally_Enter에서 Player.UnitDataUpdate 호출, 이후 SynergyUpdate 호출
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, synergy_dic);
@@ -357,6 +390,59 @@ partial class HYJ_Player
         //
         return true;
     }
+
+    void Find_Unit_On_Tile(int _star, int _id)
+    {
+        Debug.Log("AAA");
+        List<HYJ_Battle_Manager_Line> field_tiles = (List<HYJ_Battle_Manager_Line>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES);
+        HYJ_Battle_Manager_Line wait_tiles = (HYJ_Battle_Manager_Line)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_TILES);
+
+        for (int y = 0; y < field_tiles.Count; y++)
+        {
+            for (int x = 0; x < field_tiles[y].HYJ_Data_GetCount(); x++)
+            {
+                GameObject obj = field_tiles[y].HYJ_Data_GetUnitOnTile(x);
+
+                if (obj != null)
+                {
+                    Character obj_char = obj.GetComponent<Character>();
+
+                    if (obj_char.StarInt() == _star && Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID) == _id && obj_char.UnitType == Character.Unit_Type.Ally)
+                    {
+                        object[] param = new object[2];
+                        param[0] = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().tile_type;
+                        param[1] = obj;
+                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, param);
+                    }
+
+                }
+
+            }
+
+        }
+
+
+        for (int x = 0; x < wait_tiles.HYJ_Data_GetCount(); x++)
+        {
+
+            GameObject obj = wait_tiles.HYJ_Data_GetUnitOnTile(x);
+            if (obj != null)
+            {
+                Character obj_char = obj.GetComponent<Character>();
+
+                if (obj_char.StarInt() == _star && Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID) == _id && obj_char.UnitType == Character.Unit_Type.Ally)
+                {
+                    object[] param = new object[2];
+                    param[0] = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().tile_type;
+                    param[1] = obj;
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, param);
+                }
+
+            }
+        }
+
+    }
+
 
     //////////  Default Method  //////////
     bool HYJ_Unit_Init()
