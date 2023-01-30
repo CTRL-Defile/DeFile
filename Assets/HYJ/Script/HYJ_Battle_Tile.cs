@@ -115,7 +115,6 @@ partial class HYJ_Battle_Tile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //if (other.CompareTag("Ally") || other.CompareTag("Enemy"))
         Character other_Script = other.GetComponent<Character>();
         if (other_Script != null)   // 다른 collider 검출 방지
         {

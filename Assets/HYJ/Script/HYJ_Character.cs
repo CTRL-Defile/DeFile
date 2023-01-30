@@ -110,11 +110,6 @@ public class CTRL_Character_Data : IDisposable
     {
         Data_ID = _ID;
     }
-    public CTRL_Character_Data(string _ID, int data_COST)
-    {
-        Data_ID = _ID;
-        Data_COST = data_COST;
-    }
 }
 
 partial class HYJ_Character
