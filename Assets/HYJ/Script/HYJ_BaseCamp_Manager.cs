@@ -36,9 +36,6 @@ public partial class HYJ_BaseCamp_Manager : MonoBehaviour
     private int rest_minusActionCnt = 2;
 
 
-    // 사운드
-    private static JHW_SoundManager sm;
-
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
@@ -57,6 +54,11 @@ public partial class HYJ_BaseCamp_Manager : MonoBehaviour
     {
         this.gameObject.SetActive(_isActive);
 
+        //if (_isActive == false)
+        //{
+        //    BaseCamp_ExitButton_OnClick(); // 베이스캠프 나갈때 ux
+        //}
+        
         //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, !_isActive);
     }
@@ -124,9 +126,8 @@ partial class HYJ_BaseCamp_Manager {
         GameObject.Find("UnitList").transform.GetChild(0).transform.gameObject.SetActive(true);
 
         // 베이스캠프 선택지 고르는거 비활성화
-        GameObject.Find("BaseCamp").transform.GetChild(0).transform.GetChild(1).transform.gameObject.SetActive(false);
-
-        List<Dictionary<string, object>> unitDatas = CSVReader.Read("DataBase/UnitDataBase");
+        this.transform.GetChild(0).transform.GetChild(1).transform.gameObject.SetActive(false);
+        List<Dictionary<string, object>> unitDatas = CSVReader.Read("DataBase/DB_Using_Character");
 
         // 유닛 랜덤 인덱스 중복제거 뽑기
         bool[] dataFlag = new bool[unitDatas.Count];
@@ -162,11 +163,14 @@ partial class HYJ_BaseCamp_Manager {
             {
                 GameObject.Find("UnitCard1").transform.DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360);
                 GameObject.Find("UnitCard1").transform.GetChild(0).transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack);
+                GameObject.Find("CardBack1").GetComponent<Image>().DOFade(0f, 0.5f).SetDelay(0.5f);
             })
-            .Insert(0.2f,GameObject.Find("UnitCard2").transform.DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360))
+            .Insert(0.2f, GameObject.Find("UnitCard2").transform.DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360))
             .Join(GameObject.Find("UnitCard2").transform.GetChild(0).transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack))
-            .Insert(0.4f,GameObject.Find("UnitCard3").transform.DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360))
-            .Join(GameObject.Find("UnitCard3").transform.GetChild(0).transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack)
+            .Join(GameObject.Find("CardBack2").GetComponent<Image>().DOFade(0f, 0.5f).SetDelay(0.5f))
+            .Insert(0.4f, GameObject.Find("UnitCard3").transform.DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360))
+            .Join(GameObject.Find("UnitCard3").transform.GetChild(0).transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack))
+            .Join(GameObject.Find("CardBack3").GetComponent<Image>().DOFade(0f, 0.5f).SetDelay(0.5f)
             );
 
         // 유닛카드에 보여지는 텍스트(여러 수치들) 변경
@@ -269,7 +273,7 @@ partial class HYJ_BaseCamp_Manager {
     public void Reroll()
     {
         // 사운드
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, "Bullet Impact 14");
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.REROLL);
 
         int minusActionCnt = 1; // 감소시킬 행동개수
         if (this.actionCnt < minusActionCnt) { ActionCntAlert(); return; } // 행동개수 부족하면 실행X 
@@ -339,37 +343,37 @@ partial class HYJ_BaseCamp_Manager {
         
 
         //카드1
-        GameObject.Find("ChampLabel1").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["NameKor"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_MaxHP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["MaxHP"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_MaxMP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["MaxMP"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_PhyAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["AttackPower"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_SpellAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["SpellPower"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_Defence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["Defence"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_SpellDefence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["SpellResistance"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_CritChance").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["CriticalChance"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_CritMulti").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["CriticalMultiplier"].ToString();
+        GameObject.Find("ChampLabel1").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["NAME_KOR"].ToString();
+        GameObject.Find("StatusLabel1/BaseCamp_MaxHP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["MAX_HP"].ToString();
+        GameObject.Find("StatusLabel1/BaseCamp_MaxMP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["MAX_MP"].ToString();
+        GameObject.Find("StatusLabel1/BaseCamp_PhyAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["ATK_PHYSICS"].ToString();
+        GameObject.Find("StatusLabel1/BaseCamp_SpellAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["ATK_SPELL"].ToString();
+        GameObject.Find("StatusLabel1/BaseCamp_Defence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["DEFENCE"].ToString();
+        GameObject.Find("StatusLabel1/BaseCamp_SpellDefence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["SPELL_REGISTANCE"].ToString();
+        GameObject.Find("StatusLabel1/BaseCamp_CritChance").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["CRIT_PERCENT"].ToString();
+        GameObject.Find("StatusLabel1/BaseCamp_CritMulti").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["CRIT_VALUE"].ToString();
 
         //카드2
-        GameObject.Find("ChampLabel2").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["NameKor"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_MaxHP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["MaxHP"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_MaxMP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["MaxMP"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_PhyAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["AttackPower"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_SpellAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["SpellPower"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_Defence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["Defence"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_SpellDefence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["SpellResistance"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_CritChance").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["CriticalChance"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_CritMulti").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["CriticalMultiplier"].ToString();
+        GameObject.Find("ChampLabel2").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["NAME_KOR"].ToString();
+        GameObject.Find("StatusLabel2/BaseCamp_MaxHP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["MAX_HP"].ToString();
+        GameObject.Find("StatusLabel2/BaseCamp_MaxMP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["MAX_MP"].ToString();
+        GameObject.Find("StatusLabel2/BaseCamp_PhyAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["ATK_PHYSICS"].ToString();
+        GameObject.Find("StatusLabel2/BaseCamp_SpellAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["ATK_SPELL"].ToString();
+        GameObject.Find("StatusLabel2/BaseCamp_Defence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["DEFENCE"].ToString();
+        GameObject.Find("StatusLabel2/BaseCamp_SpellDefence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["SPELL_REGISTANCE"].ToString();
+        GameObject.Find("StatusLabel2/BaseCamp_CritChance").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["CRIT_PERCENT"].ToString();
+        GameObject.Find("StatusLabel2/BaseCamp_CritMulti").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["CRIT_VALUE"].ToString();
 
         //카드3
-        GameObject.Find("ChampLabel3").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["NameKor"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_MaxHP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["MaxHP"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_MaxMP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["MaxMP"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_PhyAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["AttackPower"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_SpellAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["SpellPower"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_Defence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["Defence"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_SpellDefence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["SpellResistance"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_CritChance").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["CriticalChance"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_CritMulti").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["CriticalMultiplier"].ToString();
+        GameObject.Find("ChampLabel3").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["NAME_KOR"].ToString();
+        GameObject.Find("StatusLabel3/BaseCamp_MaxHP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["MAX_HP"].ToString();
+        GameObject.Find("StatusLabel3/BaseCamp_MaxMP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["MAX_MP"].ToString();
+        GameObject.Find("StatusLabel3/BaseCamp_PhyAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["ATK_PHYSICS"].ToString();
+        GameObject.Find("StatusLabel3/BaseCamp_SpellAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["ATK_SPELL"].ToString();
+        GameObject.Find("StatusLabel3/BaseCamp_Defence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["DEFENCE"].ToString();
+        GameObject.Find("StatusLabel3/BaseCamp_SpellDefence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["SPELL_REGISTANCE"].ToString();
+        GameObject.Find("StatusLabel3/BaseCamp_CritChance").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["CRIT_PERCENT"].ToString();
+        GameObject.Find("StatusLabel3/BaseCamp_CritMulti").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["CRIT_VALUE"].ToString();
 
     }
 
@@ -383,9 +387,9 @@ partial class HYJ_BaseCamp_Manager {
         string[] lines;
 
         // 유닛 데이터 읽어오기
-        lines = File.ReadAllLines("Assets/Resources/DataBase/UnitDataBase.csv");
+        lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character.csv");
         // 유닛 데이터 쓰기
-        StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/UnitDataBase1.csv");
+        StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase.csv");
         // 삭제되는 유닛 라인은 가장 마지막 라인으로 대체
         lines[deleteLineNumber] = lines[lines.Length-1];
         for (int i = 0; i < lines.Length-1; i++) {outStream.WriteLine(lines[i].ToString());}
@@ -423,10 +427,16 @@ partial class HYJ_BaseCamp_Manager {
         ChangeGaugeUI();
 
         //ux
-        GameObject.Find("BaseCamp/Canvas").transform.GetChild(1).transform.DOScale(new Vector3(1f, 1f), 0.5f).SetEase(Ease.InBack);
-        GameObject.Find("BaseCamp/Canvas").transform.GetChild(1).GetComponent<Image>().DOFade(1f, 0.5f);
+        GameObject g = this.transform.GetChild(0).GetChild(0).GetChild(0).gameObject;
+        //GameObject.Find("BaseCamp/Canvas").transform.GetChild(1).GetComponent<Image>().DOFade(1f, 0.5f);
+        g.transform.parent.gameObject.transform.DOScale(new Vector3(1f, 1f, 1f), 0.7f).SetEase(Ease.InSine);
+        g.transform.parent.GetChild(0).gameObject.transform.GetComponent<Image>().DOFade(0.66f, 0.8f);
+        g.transform.parent.GetChild(1).gameObject.transform.GetComponent<Image>().DOFade(0.5f, 0.8f);
+        g.transform.parent.GetChild(2).gameObject.transform.GetComponent<Image>().DOFade(0.5f, 0.8f);
+        g.transform.parent.GetChild(3).gameObject.transform.GetComponent<Image>().DOFade(0.5f, 0.8f);
+        g.transform.parent.GetChild(4).gameObject.transform.GetComponent<Image>().DOFade(0.5f, 0.8f);
 
-        
+
     }
 }
 
@@ -459,34 +469,35 @@ partial class HYJ_BaseCamp_Manager
         GameObject gauge = GameObject.Find("Gauge/Image");
 
         // 마우스 올려진상태면 크게/색변경
-        g.transform.DOScale(new Vector3(1.1f, 1.1f), .2f);
-        g.GetComponent<Image>().DOColor(new Color(1f, 0.5f, 1f, 1f), 0.1f);
+        g.transform.DOScale(new Vector3(1.1f, 1.1f,1f), .2f);
+        //g.GetComponent<Image>().DOColor(new Color(1f, 1f, 1f, 0.8f), 0.1f);
         isMouseEntered = true;
 
         // 사운드
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, "MP_Button");
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.BUTTON_MOUSEOVER);
 
         // 정보창
-        info = GameObject.Find("InfoCanvas");
+        info = GameObject.Find("Info_Canvas");
 
         //info.transform.position = g.transform.position; info.transform.GetComponent<RectTransform>().rect.x+=50; // 위치조정
         info.transform.GetComponent<Image>().DOFade(1, 0.2f); // 이미지 페이드
         info.transform.GetChild(0).gameObject.transform.GetComponent<Text>().DOFade(1, 0.2f); // 텍스트 페이드
         info.transform.SetParent(g.transform.parent);
+        Vector3 newPos = g.transform.position;
+        newPos.y += 1f;
+        info.transform.transform.position = newPos;
 
         // 휴식일 경우
         if (g == GameObject.Find("RestButton"))
         {
-            Vector3 newPos = new Vector3(g.transform.position.x + 5, g.transform.position.y);
-            info.transform.GetComponent<RectTransform>().position = newPos;
             if (actionCnt > 0)
             {
-                GameObject.Find("InfoText").transform.GetComponent<Text>().text = "행동개수 -" + (rest_minusActionCnt + restStack) + "\n체력 +10";
+                info.transform.GetChild(0).transform.GetComponent<Text>().text = "행동개수 -" + (rest_minusActionCnt + restStack) + "\n체력 +10";
                 for (int i = rest_minusActionCnt + restStack; i > 0; i--)
                 {
                     if (actionCnt - i < 0) break;
                     if (gauge.transform.GetChild(actionCnt - i) == null) break;
-                    gauge.transform.GetChild(actionCnt-i).DOScale(new Vector3(1.25f, 1.25f), 0.2f);
+                    gauge.transform.GetChild(actionCnt - i).DOScale(new Vector3(1.25f, 1.25f,1f), 0.2f);
                     gauge.transform.GetChild(actionCnt - i).GetChild(0).GetComponent<Image>().DOFade(0.7f, 0.2f);
                     actionCntStack.Push(gauge.transform.GetChild(actionCnt - i).gameObject);
                 }
@@ -495,13 +506,11 @@ partial class HYJ_BaseCamp_Manager
         // 정비일 경우
         if (g == GameObject.Find("MaintananceButton"))
         {
-            Vector3 newPos = new Vector3(g.transform.position.x + 5, g.transform.position.y);
-            info.transform.GetComponent<RectTransform>().position = newPos;
             GameObject.Find("InfoText").transform.GetComponent<Text>().text = "가진 유닛 3개 중\n1개를 버립니다.";
         }
 
-        // 마우스 올려져있을때 실행하는거
-        StartCoroutine(OnMouseOver(g));
+        //// 마우스 올려져있을때 실행하는거
+        //StartCoroutine(OnMouseOver(g));
     }
 
     private IEnumerator OnMouseOver(GameObject g)
@@ -537,18 +546,18 @@ partial class HYJ_BaseCamp_Manager
         // 실행할 수 없으면 실행x
         if (g == GameObject.Find("RestButton") && isRestAble == false) return;
 
-        g.transform.DOScale(new Vector3(1f, 1f), 0.2f);
+        g.transform.DOScale(new Vector3(1f, 1f,1f), 0.2f);
         isMouseEntered = false;
 
         info.transform.GetComponent<Image>().DOFade(0, 0.2f);
         info.transform.GetChild(0).gameObject.transform.GetComponent<Text>().DOFade(0, 0.2f);
-        g.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f).SetDelay(0.001f);
+        //g.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f).SetDelay(0.001f);
 
         // 행동개수 ux
         while (actionCntStack.Count != 0)
         {
             GameObject actionCntUX = actionCntStack.Pop();
-            actionCntUX.transform.DOScale(new Vector3(1f, 1f), 0.2f);
+            actionCntUX.transform.DOScale(new Vector3(1f, 1f,1f), 0.2f);
             actionCntUX.transform.GetChild(0).GetComponent<Image>().DOFade(1f, 0.2f);
         }
         //StopCoroutine(OnMouseOver(g));
@@ -581,13 +590,16 @@ partial class HYJ_BaseCamp_Manager
             Invoke("JHW_BaseCamp_Maintanance", 1f);
 
             //ux
-            g.transform.parent.gameObject.transform.DOScale(new Vector3(1.2f, 0f), 0.5f).SetEase(Ease.OutBack);
-            g.transform.parent.gameObject.transform.GetComponent<Image>().DOFade(0f, 0.5f);
-
+            g.transform.parent.gameObject.transform.DOScale(new Vector3(0f, 0f,1f), 0.7f).SetEase(Ease.InSine);
+            g.transform.parent.GetChild(0).gameObject.transform.GetComponent<Image>().DOFade(0f, 0.8f);
+            g.transform.parent.GetChild(1).gameObject.transform.GetComponent<Image>().DOFade(0f, 0.8f);
+            g.transform.parent.GetChild(2).gameObject.transform.GetComponent<Image>().DOFade(0f, 0.8f);
+            g.transform.parent.GetChild(3).gameObject.transform.GetComponent<Image>().DOFade(0f, 0.8f);
+            g.transform.parent.GetChild(4).gameObject.transform.GetComponent<Image>().DOFade(0f, 0.8f);
         }
 
         // 사운드
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, "Bullet Impact 14");
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.BASECAMP_OPEN_UNIT_DELETE_TITLE);
 
         // ux 오브젝트
         GameObject uxObject = Instantiate(g, g.transform.position, g.transform.rotation);
@@ -682,6 +694,9 @@ partial class HYJ_BaseCamp_Manager
     public void BaseCamp_ExitButton_OnExit(GameObject g)
     {
         g.transform.GetChild(1).gameObject.SetActive(true);
+    }
+    public void BaseCamp_ExitButton_OnClick()
+    {
     }
 
     // 점검 - 스탯정보
