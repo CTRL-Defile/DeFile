@@ -90,27 +90,27 @@ partial class HYJ_Character
 // 버프나 아이템, 전투 등의 외부요소로 인해 변하는 수치들을 적재해주기 위해 사용되는 변수들
 #region STATUS
 
-[Serializable]
-public class CTRL_Character_Data : IDisposable
-{
-    public string Data_ID;
-    public int Data_COST;
-    public List<HYJ_Item> Data_items;
+//[Serializable]
+//public class CTRL_Character_Data : IDisposable
+//{
+//    public string Data_ID;
+//    public int Data_COST;
+//    public List<HYJ_Item> Data_items;
 
-    //////////  Getter & Setter //////////
+//    //////////  Getter & Setter //////////
 
-    //////////  Method          //////////
-    public void Dispose()
-    {
+//    //////////  Method          //////////
+//    public void Dispose()
+//    {
 
-    }
+//    }
 
-    //////////  Default Method  //////////
-    public CTRL_Character_Data(string _ID)
-    {
-        Data_ID = _ID;
-    }
-}
+//    //////////  Default Method  //////////
+//    public CTRL_Character_Data(string _ID)
+//    {
+//        Data_ID = _ID;
+//    }
+//}
 
 partial class HYJ_Character
 {
