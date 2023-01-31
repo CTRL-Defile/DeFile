@@ -62,44 +62,44 @@ public partial class Character : MonoBehaviour
 		char_ori_Pos = new Vector3();
         m_Basic_phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
 
+		Status_HP = Status_MaxHP;
+
+
         // HP 테스트 용 초기화
-        Status_MaxMP = 60.0f;
-		Status_MP = 0.0f;
 
-
-		switch (m_AnimEvent.Anim_Type)
-		{
-			case ANIM_TYPE.BEAR:
-				Status_atk = 5.0f;
-				Status_MaxHP = 100.0f;
-				Status_HP = Status_MaxHP;
-				break;
-			case ANIM_TYPE.ORC:
-				Status_atk = 7.0f;
-				Status_MaxHP = 120.0f;
-				Status_HP = Status_MaxHP;
-				break;
-			case ANIM_TYPE.EVIL:
-				Status_atk = 9.0f;
-				Status_MaxHP = 140.0f;
-				Status_HP = Status_MaxHP;
-				break;
-			case ANIM_TYPE.GOBLIN_T:
-				Status_MaxHP = 160.0f;
-				Status_HP = Status_MaxHP;
-				Status_atk = 11.0f;
-				break;
-			case ANIM_TYPE.GOBLIN_N:
-				Status_MaxHP = 160.0f;
-				Status_HP = Status_MaxHP;
-				Status_atk = 13.0f;
-				break;
-			case ANIM_TYPE.WERERAT:
-				Status_MaxHP = 180.0f;
-				Status_HP = Status_MaxHP;
-				Status_atk = 15.0f;
-				break;
-		}
+		//switch (m_AnimEvent.Anim_Type)
+		//{
+		//	case ANIM_TYPE.BEAR:
+		//		Status_atk = 5.0f;
+		//		Status_MaxHP = 100.0f;
+		//		Status_HP = Status_MaxHP;
+		//		break;
+		//	case ANIM_TYPE.ORC:
+		//		Status_atk = 7.0f;
+		//		Status_MaxHP = 120.0f;
+		//		Status_HP = Status_MaxHP;
+		//		break;
+		//	case ANIM_TYPE.EVIL:
+		//		Status_atk = 9.0f;
+		//		Status_MaxHP = 140.0f;
+		//		Status_HP = Status_MaxHP;
+		//		break;
+		//	case ANIM_TYPE.GOBLIN_T:
+		//		Status_MaxHP = 160.0f;
+		//		Status_HP = Status_MaxHP;
+		//		Status_atk = 11.0f;
+		//		break;
+		//	case ANIM_TYPE.GOBLIN_N:
+		//		Status_MaxHP = 160.0f;
+		//		Status_HP = Status_MaxHP;
+		//		Status_atk = 13.0f;
+		//		break;
+		//	case ANIM_TYPE.WERERAT:
+		//		Status_MaxHP = 180.0f;
+		//		Status_HP = Status_MaxHP;
+		//		Status_atk = 15.0f;
+		//		break;
+		//}
         
 		Status_moveSpeed = 5.0f;
 		// Stat_MoveSpeed = UnityEngine.Random.Range(1.0f, 8.0f);
@@ -149,29 +149,12 @@ public partial class Character
     // Field
     //-------------------------------------------------------------------
     [Header("======================================= STATUS =======================================")]
-	[Space (10f)]	
-
+	[Space (10f)]
 	[SerializeField] protected float Status_HP;     // 체력
-    [SerializeField] protected float Status_MaxHP;  // 최대체력
+    [SerializeField] protected float Status_MP;     // 마나
+
 	[Space(10f)]
-
-	[SerializeField] protected float Status_MP;     // 마나
-    [SerializeField] protected float Status_MaxMP;  // 최대마나
-	[Space(10f)]
-
-	[SerializeField] protected float Status_atk;    // 공격력
-    [SerializeField] protected int Status_magic;  // 마력
-	[Space(10f)]
-
-	[SerializeField] protected int Status_atkSpeed;   // 공속
-	[SerializeField] protected float Status_moveSpeed;   // 공속
-	[Space(10f)]
-
-	[SerializeField] protected int Status_critValue;  // 치명타 수치
-    [SerializeField] protected int Status_critPer;    // 치명타 확률
-    [Space(10f)]
-
-	[SerializeField] protected int Status_Cost;
+	[SerializeField] protected float Status_moveSpeed;   // 이속
 
     //-------------------------------------------------------------------
     // Property
@@ -180,8 +163,9 @@ public partial class Character
 	public float Stat_MP { get { return Status_MP; } set { Status_MP = value; } }
 	public float Stat_MaxHP { get { return Status_MaxHP; } set { Status_MaxHP = value; } }
 	public float Stat_MaxMP { get { return Status_MaxMP; } set { Status_MaxMP = value; } }
-	public float Stat_Attack { get { return Status_atk; } set { Status_atk = value; } }
-	public float Stat_MoveSpeed { get { return Status_moveSpeed; } set { Status_moveSpeed = value; } }
+	public float Stat_Attack { get { return Status_atkPhysics; } set { Status_atkPhysics = value; } }
+    public float Stat_Attack_Spell { get { return Status_atkSpell; } set { Status_atkSpell = value; } }
+    public float Stat_MoveSpeed { get { return Status_moveSpeed; } set { Status_moveSpeed = value; } }
 	public int Stat_Cost { get { return Status_Cost; } set { Status_Cost = value; } }
 
 	//-------------------------------------------------------------------
@@ -459,4 +443,26 @@ public partial class Character
 
 
 	}
+}
+
+[Serializable]
+public class CTRL_Character_Data : IDisposable
+{
+    public string Data_ID;
+    public int Data_COST;
+    public List<HYJ_Item> Data_items;
+
+    //////////  Getter & Setter //////////
+
+    //////////  Method          //////////
+    public void Dispose()
+    {
+
+    }
+
+    //////////  Default Method  //////////
+    public CTRL_Character_Data(string _ID)
+    {
+        Data_ID = _ID;
+    }
 }

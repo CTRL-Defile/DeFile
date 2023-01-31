@@ -1,5 +1,5 @@
 ID,NAME,NAME_KOR,NAME_ENG,SCRIPT_KOR,RACE,JOB,MIX,COST,ATK_TYPE,MAX_HP,MAX_MP,START_MP,ATK_PHYSICS,ATK_SPELL,ATK_SPEED,DEFENCE,SPELL_REGISTANCE,CRIT_PERCENT,CRIT_VALUE,SPELL_0,SPELL_1
-Int,String,String,String,String,String,String,Int,Int,String,Int,Int,Int,Float,Float,Float,Float,Float,Int,Int,String,String
+Int,String,String,String,String,String,String,Int,Int,String,Float,Float,Float,Float,Float,Float,Float,Float,Int,Int,String,String
 ID,이름,한글명,영어명,스토리번호,종족,특성,등급,코스트,공격방식,최대 HP,최대 MP,시작 MP,물리공격력,마법공격력,공격속도,물리방어력,마법방어력,치명타확률,치명타배율,일반공격번호,스킬번호
 0,야수_3,야수_003,Beast_003,story_063,Beast,Assasin,1,1,Melee,650,70,0,50,50,0.75,35,35,25,0,skill01_063,skill02_063
 1,야수_5,야수_005,Beast_005,story_065,Beast,Warrior,1,1,Melee,800,60,0,65,65,0.7,40,40,25,0,skill01_065,skill02_065

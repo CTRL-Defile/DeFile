@@ -323,7 +323,8 @@ partial class HYJ_DataBase
                 break;
             case 2:
                 {
-                    string csv_path = "HYJ/DB_Using_Character";
+                    //Assets / Resources / DataBase / DB_Using_Character.csv
+                    string csv_path = "DataBase/DB_Using_Character";
                     //List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_csv");
                     Unit_csv = CSVReader.Read(csv_path);
 
