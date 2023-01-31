@@ -138,7 +138,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3488920190679517181}
   - component: {fileID: 3488920190679517182}
-  - component: {fileID: 333448933}
   m_Layer: 0
   m_Name: SoundManager
   m_TagString: Untagged
@@ -178,102 +177,154 @@ MonoBehaviour:
   Basic_initialize: 0
   volume_BGM: 1
   volume_SFX: 1
---- !u!82 &333448933
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3488920190679517183}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  BGM_datas: []
+  SFX_datas:
+  - sfx_name: 0
+    audio: {fileID: 8300000, guid: d1bcdb017c80b4893ae458698e00b268, type: 3}
+  - sfx_name: 1
+    audio: {fileID: 8300000, guid: bef82a911d8614cb4911f2e5fb6321ac, type: 3}
+  - sfx_name: 2
+    audio: {fileID: 8300000, guid: 450628711f1e0436e957442b32ed7bed, type: 3}
+  - sfx_name: 3
+    audio: {fileID: 8300000, guid: e9e7bb39a6ed14a509c348074442bf72, type: 3}
+  - sfx_name: 4
+    audio: {fileID: 8300000, guid: 6ba23416cdc4f4a8fbdfa0e844cdc453, type: 3}
+  - sfx_name: 5
+    audio: {fileID: 8300000, guid: 1cff0912a6bd548f5904fc6d5f7f2484, type: 3}
+  - sfx_name: 6
+    audio: {fileID: 8300000, guid: 67a74bbf2cf1c4778b1420959e1ae1a4, type: 3}
+  - sfx_name: 7
+    audio: {fileID: 8300000, guid: 100ed3ef95ee44153bff99fcf528111a, type: 3}
+  - sfx_name: 8
+    audio: {fileID: 8300000, guid: f062db6e63fa54216b10b8c298559dc2, type: 3}
+  - sfx_name: 9
+    audio: {fileID: 8300000, guid: 4f773344f26394d50bebed86d85f7feb, type: 3}
+  - sfx_name: 10
+    audio: {fileID: 8300000, guid: 5d9ecabca09c04d21a492e90168709ef, type: 3}
+  - sfx_name: 11
+    audio: {fileID: 8300000, guid: b756b27b5a1d248e2b3675db6d8f99f8, type: 3}
+  - sfx_name: 12
+    audio: {fileID: 8300000, guid: b26705ee55acd440097f4422d7908474, type: 3}
+  - sfx_name: 13
+    audio: {fileID: 8300000, guid: d12664fc08afa49a785e3e25a08ccb35, type: 3}
+  - sfx_name: 14
+    audio: {fileID: 8300000, guid: 708b014af61474da2964851b9918a644, type: 3}
+  - sfx_name: 15
+    audio: {fileID: 8300000, guid: 13e54a9b0a4c8460c8d4e62a090bb18d, type: 3}
+  - sfx_name: 16
+    audio: {fileID: 8300000, guid: cd2dc83535c444606b58af79a0f9d874, type: 3}
+  - sfx_name: 17
+    audio: {fileID: 8300000, guid: 88e6e147afe664446af4adff4f025da1, type: 3}
+  - sfx_name: 18
+    audio: {fileID: 8300000, guid: 3dc20f6693d7241ec84c8d21a6d341f2, type: 3}
+  - sfx_name: 19
+    audio: {fileID: 8300000, guid: f1b4331fe281649be8a7d75922e98feb, type: 3}
+  - sfx_name: 20
+    audio: {fileID: 8300000, guid: 871feb5757dda4a2f939ebe6219fd9fe, type: 3}
+  - sfx_name: 21
+    audio: {fileID: 8300000, guid: c6b059e0e3b8143af8d3de8731f6e007, type: 3}
+  - sfx_name: 22
+    audio: {fileID: 8300000, guid: 588bb158f6532406e907d19a4aca6eaf, type: 3}
+  - sfx_name: 23
+    audio: {fileID: 8300000, guid: 228d72b5084ed42f78151e5fbd549161, type: 3}
+  - sfx_name: 24
+    audio: {fileID: 8300000, guid: a296b7aab6fa342f5a4b5629bf127e8f, type: 3}
+  - sfx_name: 25
+    audio: {fileID: 8300000, guid: 2166837a937bc45939fcbb3ef36af1e8, type: 3}
+  - sfx_name: 26
+    audio: {fileID: 8300000, guid: b02e3cc87fdb14f7b8d2fcb5bd7b838d, type: 3}
+  - sfx_name: 27
+    audio: {fileID: 8300000, guid: 1696ee9e6c41644e78ce471cc16f7a97, type: 3}
+  - sfx_name: 28
+    audio: {fileID: 8300000, guid: 545cf9629497f47b996f2045c66eae2c, type: 3}
+  - sfx_name: 29
+    audio: {fileID: 8300000, guid: 34a7afedbb9964938b64069f98c2db72, type: 3}
+  - sfx_name: 30
+    audio: {fileID: 8300000, guid: eef05cc94f6be485eb3cb39a6554fc87, type: 3}
+  - sfx_name: 31
+    audio: {fileID: 8300000, guid: eef05cc94f6be485eb3cb39a6554fc87, type: 3}
+  - sfx_name: 32
+    audio: {fileID: 8300000, guid: 0438415543293438f9a42df5a21364a3, type: 3}
+  - sfx_name: 33
+    audio: {fileID: 8300000, guid: 2c4477431ffd74bdcad0aecf91e52fa8, type: 3}
+  - sfx_name: 34
+    audio: {fileID: 8300000, guid: 5bb7413bd7e3d4fefb0ad25482158e33, type: 3}
+  - sfx_name: 35
+    audio: {fileID: 8300000, guid: 2f69e9bdd29d74a13bfe9b2a4ef88abd, type: 3}
+  - sfx_name: 36
+    audio: {fileID: 8300000, guid: 57592c1ed2637472f9dd6ee325d9b399, type: 3}
+  - sfx_name: 37
+    audio: {fileID: 8300000, guid: e0428ba1c6f494b159d21f8088dc9260, type: 3}
+  - sfx_name: 38
+    audio: {fileID: 8300000, guid: 370fb23a677cb41e9af807ac33594fb2, type: 3}
+  - sfx_name: 39
+    audio: {fileID: 8300000, guid: 100ed3ef95ee44153bff99fcf528111a, type: 3}
+  - sfx_name: 40
+    audio: {fileID: 8300000, guid: 3364e475ac39b41d293de2ae9a973b4c, type: 3}
+  - sfx_name: 41
+    audio: {fileID: 8300000, guid: 3364e475ac39b41d293de2ae9a973b4c, type: 3}
+  - sfx_name: 42
+    audio: {fileID: 8300000, guid: cca4c65ed13cc4601b1ea34939ddf6c0, type: 3}
+  - sfx_name: 43
+    audio: {fileID: 8300000, guid: c2b180c56273f468197551fba20a082e, type: 3}
+  - sfx_name: 44
+    audio: {fileID: 0}
+  - sfx_name: 45
+    audio: {fileID: 0}
+  - sfx_name: 46
+    audio: {fileID: 0}
+  - sfx_name: 47
+    audio: {fileID: 0}
+  - sfx_name: 48
+    audio: {fileID: 0}
+  - sfx_name: 49
+    audio: {fileID: 0}
+  - sfx_name: 50
+    audio: {fileID: 0}
+  - sfx_name: 51
+    audio: {fileID: 0}
+  - sfx_name: 52
+    audio: {fileID: 0}
+  - sfx_name: 53
+    audio: {fileID: 0}
+  - sfx_name: 54
+    audio: {fileID: 0}
+  - sfx_name: 55
+    audio: {fileID: 0}
+  - sfx_name: 56
+    audio: {fileID: 0}
+  - sfx_name: 57
+    audio: {fileID: 0}
+  - sfx_name: 58
+    audio: {fileID: 8300000, guid: 100ed3ef95ee44153bff99fcf528111a, type: 3}
+  - sfx_name: 59
+    audio: {fileID: 0}
+  - sfx_name: 60
+    audio: {fileID: 0}
+  - sfx_name: 61
+    audio: {fileID: 0}
+  - sfx_name: 62
+    audio: {fileID: 0}
+  - sfx_name: 63
+    audio: {fileID: 0}
+  - sfx_name: 64
+    audio: {fileID: 0}
+  - sfx_name: 65
+    audio: {fileID: 8300000, guid: 66d7a405833f248cdb851629dc72fc01, type: 3}
+  - sfx_name: 66
+    audio: {fileID: 8300000, guid: f1afffac1422e4f78a63e3b042e9cd10, type: 3}
+  - sfx_name: 67
+    audio: {fileID: 8300000, guid: 01b3a7073157c4a349ee4bbee9ab1569, type: 3}
+  - sfx_name: 68
+    audio: {fileID: 8300000, guid: 1213f8ca649f34a3088909a5317a8bf9, type: 3}
+  - sfx_name: 69
+    audio: {fileID: 8300000, guid: d63e36e3c267b4b90b8a5797df58db26, type: 3}
+  - sfx_name: 70
+    audio: {fileID: 0}
+  - sfx_name: 71
+    audio: {fileID: 0}
+  - sfx_name: 72
+    audio: {fileID: 0}
 --- !u!1 &5176124803368678020
 GameObject:
   m_ObjectHideFlags: 0

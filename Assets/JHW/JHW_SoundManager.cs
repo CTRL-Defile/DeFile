@@ -7,10 +7,14 @@ using UnityEngine.UI;
 public class JHW_SoundManager : MonoBehaviour
 {
     [SerializeField] int Basic_initialize;
-    [SerializeField] Dictionary<string, AudioClip> _audioClips = new Dictionary<string, AudioClip>();
+    [SerializeField] Dictionary<BGM_list, AudioClip> BGM_audioclips = new Dictionary<BGM_list, AudioClip>();
+    [SerializeField] Dictionary<SFX_list, AudioClip> SFX_audioclips = new Dictionary<SFX_list, AudioClip>();
 
     [SerializeField] private float volume_BGM = 1f;
-    [SerializeField] private float volume_SFX = 1f; 
+    [SerializeField] private float volume_SFX = 1f;
+
+    [SerializeField] public List<BGM_Datas> BGM_datas = new List<BGM_Datas>();
+    [SerializeField] public List<SFX_Datas> SFX_datas = new List<SFX_Datas>();
 
     private static JHW_SoundManager instance;
 
@@ -18,7 +22,107 @@ public class JHW_SoundManager : MonoBehaviour
         BGM,
         SFX,
     }
-    
+
+    [System.Serializable]
+    [SerializeField]
+    public struct SFX_Datas
+    {
+        public SFX_list sfx_name;
+        public AudioClip audio;
+    }
+
+    [System.Serializable]
+    [SerializeField]
+    public struct BGM_Datas
+    {
+        public BGM_list bgm_name;
+        public AudioClip audio;
+    }
+
+
+    // 효과음 목록
+    public enum SFX_list
+    {
+        EQUIP_ON_UNIT,
+        UI_CLICK1,
+        UI_CLICK2,
+        BOW_ATTACK1,
+        BOW_ATTACK2,
+        BOW_ATTACK3,
+        ITEM_UNEQUIP,
+        SHOP_SELL,
+        HUMAN_005_ATTACK,
+        HUMAN_005_CRIT,
+        DWARP_001_ATTACK,
+        UNLOCK1,
+        UNLOCK2,
+        UNLOCK3,
+        UNLOCK4,
+        UPGRADE,
+        DARKELF_005_SKILL,
+        HIGHELF_002_SKILL,
+        HIGHELF_004_SKILL,
+        HIGHELF_001_SKILL,
+        SPIRIT_007_SKILL1,
+        SPIRIT_007_SKILL3,
+        SPIRIT_007_SKILL_ICE1,
+        SPIRIT_007_SKILL_ICE2,
+        SPIRIT_007_SKILL_ICE3,
+        DWARP_003_SKILLL,
+        CELESTIAL_003_SKILL,
+        DEVIL_004_SKILL,
+        DEVIL_005_SKILL,
+        GOBLIN_006_SKILL,
+        DEVIL_002_SKILL,
+        UNDEAD_001_SKILL,
+        UNIT_DEATH,
+        EVENT_OPEN,
+        EVENT_SELECT_CHOICE,
+        GOLD_GET,
+        PAPER_WHIP,
+        BUTTON_MOUSEOVER,
+        UNIT_PURCHASE,
+        ITEM_PURCHASE,
+        UNIT_2STAR,
+        UNIT_3STAR,
+        ITEM_EQUIP,
+        BUTTON_CLICK,
+        DUNGEON_ENTER,
+        SHOP_ENTER,
+        BASECAMP_OPEN_UNIT_DELETE_TITLE,
+        BASECAMP_DELETE_UNIT,
+        RECOVER,
+        BUFF_ACTIVE,
+        BUFF_DEACTIVE,
+        DRINK_POTION,
+        UNIT_ARRANGE,
+        UNIT_HOLD,
+        SYNERGY_FLATINUM,
+        SYNERGY_GOLD,
+        SYNERGY_SILVER,
+        SYNERGY_BRONZE,
+        REROLL,
+        LEVELUP_PURCHASE_CLICK,
+        LEVELUP,
+        UNIT_PANEL_OPEN,
+        UNIT_DROP,
+        UNIT_PANEL_CLOSE,
+        BONFIRE,
+        BATTLEFIELD_ANY_SOUND,
+        OPTION_OPEN,
+        OPTION_CLOSE,
+        BOOKSHELF_WHIP,
+        GAME_VICTORY,
+        GAME_DEFEAT,
+        ROUND_VICTORY,
+        ROUND_DEFEAT
+    }
+
+    // 배경음 목록
+    public enum BGM_list
+    {
+
+    }
 
     //////////  Default Method  //////////
     // Start is called before the first frame update
@@ -50,10 +154,22 @@ public class JHW_SoundManager : MonoBehaviour
                 break;
             case 1:
                 {
+                    // 리스트에 넣은 SFX audioClip 을 모두 dictionary에 저장
+                    for(int i = 0; i < SFX_datas.Count; i++)
+                    {
+                        if (SFX_datas[i].audio == null) continue; // 효과음 없으면 저장X
+                        SFX_audioclips.Add(SFX_datas[i].sfx_name, SFX_datas[i].audio);
+                    }
+                    // 리스트에 넣은 BGM audioClip 을 모두 dictionary에 저장
+                    for (int i = 0; i < BGM_datas.Count; i++)
+                    {
+                        if (BGM_datas[i].audio == null) continue; // 배경음 없으면 저장X
+                        BGM_audioclips.Add(BGM_datas[i].bgm_name, BGM_datas[i].audio);
+                    }
                     // 메서드 등록
                     //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___GET__INSTANCE, JHW_GetSoundManager);
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__BGM_NAME, JHW_playBGM);
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_playSFX);
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__BGM_NAME, PlayBGM);
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, PlaySFX);
 
                     Basic_initialize = -1;
                 }
@@ -62,21 +178,21 @@ public class JHW_SoundManager : MonoBehaviour
         }
 
 
-    // 음악 또는 효과음 불러오기 또는 저장
-    AudioClip GetOrAddAudioClip(string name, SoundType st)
+    //// 음악 또는 효과음 불러오기 또는 저장
+    AudioClip GetOrAddAudioClip(SFX_list name, SoundType st)
     {
         AudioClip audioClip = null;
-        
+
 
         // 배경음을 찾는다
-        if(st == SoundType.BGM)
+        if (st == SoundType.BGM)
         {
             // 배경음 클립 없으면 딕셔너리에 붙이기
-            if (_audioClips.TryGetValue(name, out audioClip) == false)
+            if (SFX_audioclips.TryGetValue(name, out audioClip) == false)
             {
                 // 배경음 불러오고 딕셔너리 저장
                 audioClip = Resources.Load<AudioClip>("Sounds/BGM/" + name);
-                _audioClips.Add(name, audioClip);
+                SFX_audioclips.Add(name, audioClip);
             }
 
             // 찾지 못하면 에러
@@ -88,11 +204,11 @@ public class JHW_SoundManager : MonoBehaviour
         else if (st == SoundType.SFX)
         {
             // 효과음 클립 없으면 딕셔너리에 붙이기
-            if (_audioClips.TryGetValue(name, out audioClip) == false)
+            if (SFX_audioclips.TryGetValue(name, out audioClip) == false)
             {
                 // 효과음 불러오고 딕셔너리 저장
                 audioClip = Resources.Load<AudioClip>("Sounds/SFX/" + name);
-                _audioClips.Add(name, audioClip);
+                SFX_audioclips.Add(name, audioClip);
             }
 
             // 찾지 못하면 에러
@@ -113,13 +229,13 @@ public class JHW_SoundManager : MonoBehaviour
     //    }
     //    return instance;
     //}
-    
-    
+
+
     // 사운드 재생 - 배경
-    public object JHW_playBGM(params object[] _arg)
+    public object PlayBGM(params object[] _arg)
     {
         // 사운드 이름
-        string playSoundName = (string)_arg[0];
+        BGM_list playSoundName = (BGM_list)_arg[0];
 
         // 사운드 객체
         GameObject soundObject = null;
@@ -129,7 +245,7 @@ public class JHW_SoundManager : MonoBehaviour
         {
             soundObject = GameObject.Find("SoundManager/BGM").transform.GetChild(0).gameObject;
             AudioSource audioSource = soundObject.GetComponent<AudioSource>(); // 컴포넌트 불러오기
-            audioSource.clip = GetOrAddAudioClip(playSoundName, SoundType.BGM); // 음악 불러오기
+            audioSource.clip = BGM_audioclips[playSoundName]; // 음악 불러오기
             audioSource.Play(); // 음악 재생
         }
 
@@ -139,7 +255,7 @@ public class JHW_SoundManager : MonoBehaviour
             soundObject = new GameObject("Sound");
             soundObject.transform.parent = GameObject.Find("SoundManager/BGM").transform;
             AudioSource audioSource = soundObject.AddComponent<AudioSource>(); // 컴포넌트 생성
-            audioSource.clip = GetOrAddAudioClip(playSoundName, SoundType.BGM); // 음악 불러오기
+            audioSource.clip = BGM_audioclips[playSoundName]; // 음악 불러오기
             audioSource.loop = true; // 반복재생
             audioSource.Play(); // 음악 재생
         }
@@ -148,10 +264,10 @@ public class JHW_SoundManager : MonoBehaviour
     }
 
     // 사운드 재생 - 효과음 (풀링 적용됨)
-    public object JHW_playSFX(params object[] _arg)
+    public object PlaySFX(params object[] _arg)
     {
         // 사운드 이름
-        string playSoundName = (string)_arg[0];
+        SFX_list playSoundName = (SFX_list)_arg[0];
 
         // 효과음 풀 없으면 생성
         GameObject soundPool = GameObject.Find(playSoundName + "Pool");
@@ -170,7 +286,8 @@ public class JHW_SoundManager : MonoBehaviour
             soundObject = new GameObject(playSoundName + "Sound");
             soundObject.transform.parent = soundPool.transform; // 사운드풀에 저장
             AudioSource audioSource = soundObject.AddComponent<AudioSource>(); // 컴포넌트 생성
-            audioSource.clip = GetOrAddAudioClip(playSoundName, SoundType.SFX);
+            //audioSource.clip = GetOrAddAudioClip(playSoundName, SoundType.SFX);
+            audioSource.clip = SFX_audioclips[playSoundName];
             soundObject.SetActive(false);
         }
         // 사운드 오브젝트 선택
@@ -188,7 +305,8 @@ public class JHW_SoundManager : MonoBehaviour
             soundObject = new GameObject(playSoundName + "Sound");
             soundObject.transform.parent = soundPool.transform; // 사운드풀에 저장
             AudioSource audioSource = soundObject.AddComponent<AudioSource>(); // 컴포넌트 생성
-            audioSource.clip = GetOrAddAudioClip(playSoundName, SoundType.SFX);
+            //audioSource.clip = GetOrAddAudioClip(playSoundName, SoundType.SFX);
+            audioSource.clip = SFX_audioclips[playSoundName];
             soundObject.SetActive(false);
         }
             
@@ -197,7 +315,8 @@ public class JHW_SoundManager : MonoBehaviour
         soundObject.SetActive(true);
 
         // 사운드 재생 (Play -> PlayOneshot 으로 변경됨)
-        soundObject.GetComponent<AudioSource>().PlayOneShot(GetOrAddAudioClip(playSoundName, SoundType.SFX),volume_SFX);
+        //soundObject.GetComponent<AudioSource>().PlayOneShot(GetOrAddAudioClip(playSoundName, SoundType.SFX),volume_SFX);
+        soundObject.GetComponent<AudioSource>().PlayOneShot(SFX_audioclips[playSoundName], volume_SFX);
 
         // 사운드 다 재생되면 비활성화
         StartCoroutine(soundSetActive(soundObject));
@@ -246,6 +365,16 @@ public class JHW_SoundManager : MonoBehaviour
             }
         }
     }
+    
+    // 음악 일시정지 또는 플레이
+    public void BGM_pauseOrPlay()
+    {
+        AudioSource audioSource = GameObject.Find("SoundManager/BGM").transform.GetChild(0).gameObject.GetComponent<AudioSource>();
+        if (audioSource == null) return;
+        if (audioSource.isPlaying) audioSource.Pause();
+        else audioSource.Play();
+    }
+
 
     // 음악 재생/일시정지 버튼
     public void BGM_playButton()
@@ -253,7 +382,7 @@ public class JHW_SoundManager : MonoBehaviour
         // 재생중인 음악 없으면 음악 재생
         if (GameObject.Find("SoundManager/BGM").transform.childCount == 0)
         {
-            JHW_playBGM("Leafre");
+            PlayBGM("Leafre");
             return;
         }
         
