@@ -282,7 +282,7 @@ partial class HYJ_BaseCamp_Manager {
 
         ChangeGaugeUI(); // 게이지 UI 변경
 
-        List<Dictionary<string, object>> unitDatas = CSVReader.Read("DataBase/UnitDataBase");
+        List<Dictionary<string, object>> unitDatas = CSVReader.Read("DataBase/Player_Unit_DataBase");
 
         // 유닛 랜덤 인덱스 중복제거 뽑기
         bool[] dataFlag = new bool[unitDatas.Count];
