@@ -223,7 +223,7 @@ partial class HYJ_Player
     [SerializeField] HYJ_Player_Unit_Datas Unit_waitUnits;
     [SerializeField] List<HYJ_Player_Unit_Datas> Unit_fieldUnits;
     [SerializeField] List<int> synergy_list;
-    [SerializeField] List<int>[] id_list = new List<int>[3];
+    [SerializeField] SerialList<int>[] id_list = new SerialList<int>[3];
     //[SerializeField] int[] id_array, synergy_array;
     Dictionary<int, int> synergy_dic;
     List<Dictionary<string, object>> Player_Unit_csv;
@@ -300,15 +300,15 @@ partial class HYJ_Player
 
         int db_cnt = Player_Unit_csv.Count;
 
-        for (int i=0; i<3; i++) id_list[i] = new List<int>(db_cnt);
+        for (int i=0; i<3; i++) id_list[i] = new SerialList<int>(db_cnt);
         synergy_list = new List<int>(db_cnt);
         synergy_dic = new Dictionary<int, int>(db_cnt);
 
         for (int i=0; i<db_cnt; i++)
         {
-            id_list[0].Add(0);
-            id_list[1].Add(0);
-            id_list[2].Add(0);
+            id_list[0].m_List.Add(0);
+            id_list[1].m_List.Add(0);
+            id_list[2].m_List.Add(0);
             synergy_list.Add(0);
             synergy_dic.Add(i, 0);
         }
@@ -334,15 +334,15 @@ partial class HYJ_Player
 
                         int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
                         int starint = obj_char.StarInt();
-                        id_list[starint][id]++;
+                        id_list[starint].m_List[id]++;
                         
-                        if (starint < 3 && id_list[starint][id] == 3)
+                        if (starint < 3 && id_list[starint].m_List[id] == 3)
                         {
                             obj_char.StarUp();
                             Find_Unit_On_Tile(starint, id);
 
-                            id_list[starint][id] = 0;
-                            id_list[starint + 1][id]++;
+                            id_list[starint].m_List[id] = 0;
+                            id_list[starint + 1].m_List[id]++;
                         }
 
                     }
@@ -366,15 +366,15 @@ partial class HYJ_Player
 
                 int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
                 int starint = obj_char.StarInt();
-                id_list[starint][id]++;
+                id_list[starint].m_List[id]++;
 
-                if (starint < 3 && id_list[starint][id] == 3)
+                if (starint < 3 && id_list[starint].m_List[id] == 3)
                 {
                     obj_char.StarUp();
                     Find_Unit_On_Tile(starint, id);
 
-                    id_list[starint][id] = 0;
-                    id_list[starint + 1][id]++;
+                    id_list[starint].m_List[id] = 0;
+                    id_list[starint + 1].m_List[id]++;
                 }
             }
             //
@@ -393,7 +393,6 @@ partial class HYJ_Player
 
     void Find_Unit_On_Tile(int _star, int _id)
     {
-        Debug.Log("AAA");
         List<HYJ_Battle_Manager_Line> field_tiles = (List<HYJ_Battle_Manager_Line>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES);
         HYJ_Battle_Manager_Line wait_tiles = (HYJ_Battle_Manager_Line)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_TILES);
 
@@ -413,8 +412,7 @@ partial class HYJ_Player
                         param[0] = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().tile_type;
                         param[1] = obj;
                         //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, param);
-                        obj.SetActive(false);
-
+                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
                     }
 
                 }
@@ -438,7 +436,7 @@ partial class HYJ_Player
                     param[0] = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().tile_type;
                     param[1] = obj;
                     //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, param);
-                    obj.SetActive(false);
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
                 }
 
             }

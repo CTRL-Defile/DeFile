@@ -270,7 +270,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                     else if (this.tile_type == Tile_Type.Trash)
                     {
                         //Debug.Log("Trash Collider Enter");
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, _Type, other.gameObject);
+                        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, _Type, other.gameObject);
                     }
                     break;
 
@@ -288,16 +288,20 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                     else if (this.tile_type == Tile_Type.Trash)
                     {
                         //Debug.Log("Trash Collider Enter");
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, _Type, other.gameObject);
+                        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, _Type, other.gameObject);
                     }
                     break;
 
             }
         }
 
+        // TODO
+        // Player에 연결, 시너지, 2성 갱신 타이밍 -> tile의 triggerEnter (특정 phase 일 때..)
+        // 전투 중에서도 2성 갱신이 되어야함 (stand 에서만)
+
         // 영재가 추가
         BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
-        if (phase == BATTLE_PHASE.PHASE_PREPARE)
+        if (phase == BATTLE_PHASE.PHASE_PREPARE || phase == BATTLE_PHASE.PHASE_COMBAT_OVER)
         {
             // Player에 유닛 데이터 업데이트 -> 내부에 시너지 업데이트도 포함됨
             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE);

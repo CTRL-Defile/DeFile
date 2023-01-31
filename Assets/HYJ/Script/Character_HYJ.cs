@@ -9,6 +9,7 @@ partial class Character
     [SerializeField] protected CTRL_Character_Data Status_saveData; // 저장용 클래스
 
     // 이름
+    [SerializeField] protected int Status_id;
     [SerializeField] protected string Status_name;
     [SerializeField] protected string Status_name_kor;
     [SerializeField] protected string Status_name_eng;
@@ -51,6 +52,7 @@ partial class Character
         set { Status_saveData = value;  }
     }
     virtual public string Character_Status_name_eng { get { return Status_name_eng; } }
+    virtual public int Character_Status_ID { get { return Status_id; } }
 
 
     //////////  Method          //////////
@@ -58,6 +60,7 @@ partial class Character
     public void HYJ_Status_SettingData(Dictionary<string, object> _data)
     {
         // 이름
+        Status_id = (int)_data["ID"];
         Status_name = (string)_data["NAME"];
         Status_name_kor = (string)_data["NAME_KOR"];
         Status_name_eng = (string)_data["NAME_ENG"];

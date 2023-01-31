@@ -424,8 +424,11 @@ public class SerialList<T>
 	{
 		m_List = new List<T>();
 	}
-
-	public void ClearList()
+    public SerialList(int capacity)
+    {
+        m_List = new List<T>(capacity);
+    }
+    public void ClearList()
 	{
 		m_List.Clear();		
 	}

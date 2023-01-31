@@ -402,7 +402,7 @@ public partial class Character
 
 public partial class Character
 {
-	public enum STAR
+	public enum Unit_Star
 	{
 		ONE = 1,
 		TWO = 2,
@@ -411,17 +411,17 @@ public partial class Character
 	}
 
 	[SerializeField]
-	STAR m_star = STAR.ONE;
-    public STAR Star { get { return m_star; } set { m_star = value; } }
+    Unit_Star m_star = Unit_Star.ONE;
+    public Unit_Star UnitStar { get { return m_star; } set { m_star = value; } }
 	public int StarInt()
 	{
 		switch(m_star)
 		{
-            case STAR.ONE:
+            case Unit_Star.ONE:
 				return 0;
-			case STAR.TWO:
+			case Unit_Star.TWO:
 				return 1;
-			case STAR.THREE:
+			case Unit_Star.THREE:
 				return 2;
         }
 		return 3;
@@ -432,12 +432,12 @@ public partial class Character
 
 		switch(m_star)
 		{
-			case STAR.ONE:
-				m_star = STAR.TWO;
+			case Unit_Star.ONE:
+				m_star = Unit_Star.TWO;
 				this.transform.localScale *= 1.05f;
 				break;
-            case STAR.TWO:
-                m_star = STAR.THREE;
+            case Unit_Star.TWO:
+                m_star = Unit_Star.THREE;
                 this.transform.localScale *= 1.05f; 
 				break;
         }

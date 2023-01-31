@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static HYJ_Battle_Tile;
 
 public enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_COMBAT_OVER, PHASE_END };
 
@@ -114,6 +115,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Unit_pool = Battle_Units.GetChild(0).transform;
         Unit_parent = Battle_Units.GetChild(1).transform;
         Enemy_parent = Battle_Units.GetChild(2).transform;
+        Unit_Sacrificed = Battle_Units.GetChild(3).transform;
 
 
 
@@ -526,8 +528,6 @@ partial class HYJ_Battle_Manager
     //[SerializeField]
     GameObject element, std_element, trash_element;
     Transform Field_parent, Stand_parent, Trash_parent;
-    [SerializeField] Transform Battle_Units;
-    Transform Unit_pool, Unit_parent, Enemy_parent;
     [SerializeField] int Field_x;
     [SerializeField] int Field_y;
     [SerializeField] int Stand_x;
@@ -967,6 +967,9 @@ partial class HYJ_Battle_Manager
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD,              Stand_to_Field                  );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIELD_TO_STAND,              Field_to_Stand                  );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH,                     Unit_to_Trash                   );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED,                Unit_to_Sacrificed              );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__SACRIFICED_TO_POOL,           Unit_Sacrificed_to_Pool         );
+
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE,                           Unit_Die                        );
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___COUNT__FIELD_UNIT,                 Count_Field_Unit                );
@@ -1324,7 +1327,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
                     int cost = unitData.GetComponent<Character>().Stat_Cost;
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost);
-                    Debug.Log("Unit " + unit_idx + " is spawned");
+                    Debug.Log(tmp.name + " is spawned");
 
                     // 구매한 카드 사라지게.
                     Btn_idx.SetActive(false);
@@ -1412,12 +1415,16 @@ partial class HYJ_Battle_Manager
     [Header("==================================================")]
     [Header("UNIT")]
 
+    [SerializeField] Transform Battle_Units;
+    Transform Unit_pool, Unit_parent, Enemy_parent, Unit_Sacrificed;
     [SerializeField]
     List<GameObject> Stand_Unit;
     [SerializeField]
     List<GameObject> Field_Unit;
     [SerializeField]
     List<GameObject> Enemy_Unit;
+    [SerializeField]
+    List<GameObject> Sacrificed_Unit;
 
     /// Method
     object Stand_to_Field(params object[] _args)
@@ -1444,11 +1451,11 @@ partial class HYJ_Battle_Manager
     }
     object Unit_to_Trash(params object[] _args)
     {
-        string tile_tag = _args[0].ToString();
+        string tile_type = _args[0].ToString();
         GameObject obj = (GameObject)_args[1];
         int id = int.Parse(obj.GetComponent<Character>().HYJ_Status_saveData.Data_ID);
 
-        switch (tile_tag)
+        switch (tile_type)
         {
             case "Stand":
                 Stand_Unit.Remove(obj);
@@ -1479,6 +1486,68 @@ partial class HYJ_Battle_Manager
         }
 
         Show_Ally_OnTile();
+
+        return null;
+    }
+    object Unit_to_Sacrificed(params object[] _args)
+    {
+        string tile_type = _args[0].ToString();
+        GameObject obj = (GameObject)_args[1];
+
+        switch (tile_type)
+        {
+            case "Stand":
+                Stand_Unit.Remove(obj);
+                Sacrificed_Unit.Add(obj);
+                obj.SetActive(false);
+                break;
+
+            case "Field":
+                Field_Unit.Remove(obj);
+                Sacrificed_Unit.Add(obj);
+                obj.SetActive(false);
+                break;
+        }
+
+        // TriggerExit 으로 tile의 onUnit이 갱신되지 않음
+        obj.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
+        obj.transform.SetParent(Unit_Sacrificed);
+
+        return null;
+    }
+    object Unit_Sacrificed_to_Pool(params object[] _args)
+    {
+        int _id = (int)_args[0], cnt = 0;
+        Character.Unit_Star _star = (Character.Unit_Star)_args[1];
+
+        // 2성 -> 1성 2개 부활
+        // 3성 -> 2성 2개 + 1성 6개 부활
+        switch(_star)
+        {
+            case Character.Unit_Star.TWO:
+                cnt = 2;
+                break;
+            case Character.Unit_Star.THREE:
+                cnt = 8;
+                break;
+        }
+
+        int _len = Sacrificed_Unit.Count, num = 0;
+        for (int i=0; i<_len; i++)
+        {
+            GameObject obj = Sacrificed_Unit[i - num];
+            if (obj.GetComponent<Character>().Character_Status_ID == _id)
+            {
+                Sacrificed_Unit.Remove(obj);
+                obj.transform.SetParent(Unit_pool);
+                m_CharacterPools.m_List[_id].objects.PushStack(obj.GetComponent<Character>());
+                num++;
+                if (num == cnt)
+                    return null;
+            }
+        }
+
+
 
         return null;
     }
@@ -1521,8 +1590,6 @@ partial class HYJ_Battle_Manager
                 break;
 
         }
-
-
         Show_Ally_OnTile();
 
         return null;
