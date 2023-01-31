@@ -1649,7 +1649,7 @@ partial class HYJ_Battle_Manager
 #endregion
 
 
-#region SYNERGE
+#region SYNERGY
 
 public partial class HYJ_Battle_Manager : MonoBehaviour
 {

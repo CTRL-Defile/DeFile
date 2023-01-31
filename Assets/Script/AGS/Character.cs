@@ -410,6 +410,7 @@ public partial class Character
 		STAR_END = 4
 	}
 
+	[SerializeField]
 	STAR m_star = STAR.ONE;
     public STAR Star { get { return m_star; } set { m_star = value; } }
 	public int StarInt()
@@ -443,26 +444,4 @@ public partial class Character
 
 
 	}
-}
-
-[Serializable]
-public class CTRL_Character_Data : IDisposable
-{
-    public string Data_ID;
-    public int Data_COST;
-    public List<HYJ_Item> Data_items;
-
-    //////////  Getter & Setter //////////
-
-    //////////  Method          //////////
-    public void Dispose()
-    {
-
-    }
-
-    //////////  Default Method  //////////
-    public CTRL_Character_Data(string _ID)
-    {
-        Data_ID = _ID;
-    }
 }

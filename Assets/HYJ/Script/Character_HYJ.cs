@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -99,4 +100,27 @@ partial class Character
     }
 
     //////////  Default Method  //////////
+}
+
+
+[Serializable]
+public class CTRL_Character_Data : IDisposable
+{
+    public string Data_ID;
+    public int Data_COST;
+    public List<HYJ_Item> Data_items;
+
+    //////////  Getter & Setter //////////
+
+    //////////  Method          //////////
+    public void Dispose()
+    {
+
+    }
+
+    //////////  Default Method  //////////
+    public CTRL_Character_Data(string _ID)
+    {
+        Data_ID = _ID;
+    }
 }
