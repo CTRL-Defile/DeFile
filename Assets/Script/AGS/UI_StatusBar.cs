@@ -89,7 +89,7 @@ public class UI_StatusBar : MonoBehaviour
 				}				    
                 break;
             case STATUS_BAR.MPBar:
-                float CurMp = Target_Obj.Stat_MP / Target_Obj.Stat_MaxHP;
+                float CurMp = Target_Obj.Stat_MP / Target_Obj.Stat_MaxMP;
                 HPBarSlider.value = CurMp;
                 break;
             default:
@@ -134,7 +134,7 @@ public class UI_StatusBar : MonoBehaviour
 
     public void SetHpLine()
     {
-        float scaleX = 100.0f / Target_Obj.Stat_MaxHP;
+        float scaleX = 1250.0f / Target_Obj.Stat_MaxHP;
 		LineParent.GetComponent<HorizontalLayoutGroup>().gameObject.SetActive(false);
         foreach(Transform child in LineParent.transform)
         {
