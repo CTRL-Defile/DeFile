@@ -621,47 +621,17 @@ partial class HYJ_Player
 // 버프 정보
 #region Buff
 
-// 버프의 정보를 담은 클래스. 버프와 디버프가 공유함.
-[Serializable]
-public class HYJ_Player_Buff : IDisposable
-{
-    public string Data_name;
-    public int Data_value;
-    public int Data_count;
-
-    //////////  Getter & Setter //////////
-
-    //////////  Method          //////////
-    public void Dispose()
-    {
-
-    }
-
-    public void HYJ_Data_AddCount(int _count)
-    {
-        Data_count = _count;
-    }
-
-    //////////  Default Method  //////////
-    public HYJ_Player_Buff(HYJ_Item _data)
-    {
-        Data_name = _data.HYJ_Data_name;
-        Data_value = UnityEngine.Random.Range(_data.HYJ_Data_valueMin, _data.HYJ_Data_valueMax + 1);
-        Data_count = _data.HYJ_Data_limit;
-    }
-}
-
 partial class HYJ_Player
 {
-    [SerializeField] List<HYJ_Player_Buff> Buff_buffs;
-    [SerializeField] List<HYJ_Player_Buff> Buff_debuffs;
+    [SerializeField] List<CTRL_Buff_Save> Buff_buffs;
+    [SerializeField] List<CTRL_Buff_Save> Buff_debuffs;
 
     //////////  Getter & Setter //////////
 
     //
     object HYJ_Buff_GetBuffFromCount(params object[] _args)
     {
-        HYJ_Player_Buff res = null;
+        CTRL_Buff_Save res = null;
 
         //
         int count = (int)_args[0];
@@ -686,7 +656,7 @@ partial class HYJ_Player
     //
     object HYJ_Buff_GetDeBuffFromCount(params object[] _args)
     {
-        HYJ_Player_Buff res = null;
+        CTRL_Buff_Save res = null;
 
         //
         int count = (int)_args[0];
@@ -723,7 +693,7 @@ partial class HYJ_Player
             case "BUFF":
             case "FRIENDLY":
                 {
-                    Buff_buffs.Add(new HYJ_Player_Buff(element));
+                    //Buff_buffs.Add(new HYJ_Player_Buff(element));
                 }
                 break;
         }
@@ -747,6 +717,60 @@ partial class HYJ_Player
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_FROM_COUNT,   HYJ_Buff_GetDeBuffFromCount );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_COUNT,        HYJ_Buff_GetDeBuffCount     );
+
+        return true;
+    }
+}
+
+#endregion
+
+// 평판 정보
+#region Reputation
+
+public enum HYJ_Player_REPUTATION_RACE
+{
+    HIGH_ELF = 0
+}
+
+partial class HYJ_Player
+{
+    [SerializeField] List<int> Reputation_races;
+    const int Reputation_defaultValue = 1000;
+
+    //////////  Getter & Setter //////////
+
+    //////////  Method          //////////
+    void HYJ_Reputation_ChangeValue(float _value)
+    {
+    }
+
+    object HYJ_Reputation_ChangeValue_Bridge(params object[] _args)
+    {
+        float value = (float)_args[0];
+
+        HYJ_Reputation_ChangeValue(value);
+
+        //
+        return true;
+    }
+
+    //////////  Default Method  //////////
+    bool HYJ_Reputation_Init()
+    {
+        Reputation_races = new List<int>();
+
+        for (int i = 0; i < 10; i++)
+        {
+            Reputation_races.Add(Reputation_defaultValue);
+        }
+
+        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__SETTING, HYJ_Buff_Insert_Bridge);
+        //
+        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_BUFF_FROM_COUNT, HYJ_Buff_GetBuffFromCount);
+        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_BUFF_COUNT, HYJ_Buff_GetBuffCount);
+        //
+        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_FROM_COUNT, HYJ_Buff_GetDeBuffFromCount);
+        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_COUNT, HYJ_Buff_GetDeBuffCount);
 
         return true;
     }

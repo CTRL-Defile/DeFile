@@ -143,7 +143,7 @@ partial class HYJ_TopBar
 
         for(int i = 0; i < count; i++)
         {
-            HYJ_Player_Buff element = (HYJ_Player_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_BUFF_FROM_COUNT, i);
+            CTRL_Buff_Save element = (CTRL_Buff_Save)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_BUFF_FROM_COUNT, i);
 
             Buff_buffs[Buff_buffs.Count - 1 - i].gameObject.SetActive(true);
         }
@@ -153,7 +153,7 @@ partial class HYJ_TopBar
 
         for (int i = 0; i < count; i++)
         {
-            HYJ_Player_Buff element = (HYJ_Player_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_FROM_COUNT, i);
+            CTRL_Buff_Save element = (CTRL_Buff_Save)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_FROM_COUNT, i);
 
             Buff_buffs[i].gameObject.SetActive(true);
         }
