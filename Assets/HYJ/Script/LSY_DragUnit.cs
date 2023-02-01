@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using TMPro;
 using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
@@ -72,11 +73,14 @@ public class LSY_DragUnit : MonoBehaviour
     Ray m_TileRay, m_UnitRay;
     RaycastHit tile_hit, unit_hit;
 
-    [SerializeField] bool isHeld = false, isPhaseChange = false;
-    bool isRayHit;
+    [SerializeField] bool isHeld = false, isPhaseChange = false, isRayHit;
+
+    Transform Battle_Status;
 
     private void Start()
     {
+        Battle_Status = transform.GetChild(1).GetChild(0).GetChild(4);
+
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_POSITION, LSY_Set_blkPos);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DRAG___UNIT__SET_ORIGINAL, LSY_Set_oriPos);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DRAG___INIT, Drag_Init);
@@ -134,12 +138,12 @@ public class LSY_DragUnit : MonoBehaviour
             Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.white);
         }
 
-
+        unit_hit = CastRay("Unit");
         switch (m_Battle_Phase)
         {
             case BATTLE_PHASE.PHASE_PREPARE:
                 {
-                    unit_hit = CastRay("Unit");
+                    //unit_hit = CastRay("Unit");
                     if (Input.GetMouseButtonDown(0))
                     {
                         MouseDown();
@@ -171,7 +175,7 @@ public class LSY_DragUnit : MonoBehaviour
 
                     if (selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Stand)
                     {
-                        unit_hit = CastRay("Unit");
+                        //unit_hit = CastRay("Unit");
                         if (Input.GetMouseButtonDown(0))
                         {
                             MouseDown();
@@ -219,8 +223,11 @@ public class LSY_DragUnit : MonoBehaviour
         // Unit Ray
         if (unit_hit.collider != null)
         {
+            Set_Status(unit_hit.transform.gameObject);
             Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.red);
         }
+        else if (!isHeld)
+            Battle_Status.gameObject.SetActive(false);
 
         if (isHeld)
         {
@@ -284,17 +291,17 @@ public class LSY_DragUnit : MonoBehaviour
         //Debug.Log("BtnDown collider : " + unit_hit.collider);
         if (selectedObject == null && unit_hit.collider != null)
         {
-            Set_isHeld(true);
             Character.Unit_Type _Type = unit_hit.collider.gameObject.GetComponent<Character>().UnitType;
             switch (_Type)
             {
                 case Character.Unit_Type.Ally:
+                    Set_isHeld(true);
                     //case "HitArea":
                     selectedObject = unit_hit.collider.gameObject;
                     oriPos = selectedObject.transform.position;
+                    Cursor.visible = false;
                     break;
             }
-            Cursor.visible = false;
         }
     }
 
@@ -454,4 +461,15 @@ public class LSY_DragUnit : MonoBehaviour
 
     }
 
+    public void Set_Status(GameObject obj)
+    {
+        //Debug.Log(obj.name);
+        Battle_Status.gameObject.SetActive(true);
+
+        Battle_Status.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = obj.GetComponent<Character>().Character_Status_name;
+
+
+    }
+
+    //
 }
