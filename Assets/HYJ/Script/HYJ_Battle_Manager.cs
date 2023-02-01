@@ -1014,12 +1014,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     [SerializeField]
     List<int> UnitIdx_list = new List<int>();
     int Shop_Panel_cnt = 5;
-
+    int Player_Lv = 1, cur_EXP = 0;
     List<int> Max_EXP_List = new List<int>() { 0, 2, 6, 10, 20, 36, 56, 80, 108, 140, 170, 190, 210 };
     float Max_EXP;
-    int Player_Lv = 1, cur_EXP = 0;
+    bool UL_isInitialized = false;
 
-    bool UL_isInitialized = false;    
+    // Method
     public void LSY_UnitList_Init()
     {
         // Level
