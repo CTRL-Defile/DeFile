@@ -52,6 +52,7 @@ partial class Character
         set { Status_saveData = value;  }
     }
     virtual public string Character_Status_name_eng { get { return Status_name_eng; } }
+    virtual public string Character_Status_name { get { return Status_name; } }
     virtual public int Character_Status_ID { get { return Status_id; } }
 
 

@@ -426,9 +426,11 @@ public partial class Character
         }
 		return 3;
     }
-    virtual public void StarUp()
+    virtual public void StarUp(Vector3 _pos)
 	{
 		//int tmp = (int)STAR.THREE;
+		if (_pos != Vector3.zero)
+			this.transform.position = _pos;
 
 		switch(m_star)
 		{
