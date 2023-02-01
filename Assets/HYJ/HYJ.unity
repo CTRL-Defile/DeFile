@@ -38,11 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-<<<<<<< HEAD
   m_IndirectSpecularColor: {r: 0.67433286, g: 0.77783763, b: 0.78887975, a: 1}
-=======
-  m_IndirectSpecularColor: {r: 0.67571104, g: 0.77805585, b: 0.78891784, a: 1}
->>>>>>> origin/develop
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -713,6 +709,7 @@ MonoBehaviour:
   Item_relicsEquip: []
   Buff_buffs: []
   Buff_debuffs: []
+  Reputation_races: 
 --- !u!1 &407752421
 GameObject:
   m_ObjectHideFlags: 0
@@ -1003,7 +1000,7 @@ PrefabInstance:
     - target: {fileID: 3488920190679517181, guid: 1b977cfb2232a104fad4e2d6de1857b4,
         type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3488920190679517181, guid: 1b977cfb2232a104fad4e2d6de1857b4,
         type: 3}
@@ -1573,7 +1570,7 @@ Transform:
   - {fileID: 365964949}
   - {fileID: 2017265338}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1685348365
 GameObject:
@@ -18196,8 +18193,7 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 1
-  m_Cameras:
-  - {fileID: 1936266800}
+  m_Cameras: []
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
