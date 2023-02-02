@@ -1583,7 +1583,7 @@ GameObject:
   - component: {fileID: 8759336781707779248}
   - component: {fileID: 5637236834501023369}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: skill_Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3740,7 +3740,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6083505830198878948}
   m_Layer: 5
-  m_Name: MinMP
+  m_Name: StartMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6779,7 +6779,7 @@ GameObject:
   - component: {fileID: 3835128575256985798}
   - component: {fileID: 1363763084156791722}
   m_Layer: 5
-  m_Name: unitMask
+  m_Name: unit_Mask
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6796,7 +6796,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6844295373272586957}
   m_Father: {fileID: 6937733580914249360}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7088,7 +7089,7 @@ GameObject:
   - component: {fileID: 8255244337777845997}
   - component: {fileID: 320672882901895575}
   m_Layer: 5
-  m_Name: skill_des
+  m_Name: skill_Des
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8321,6 +8322,82 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!1 &4770403872161427359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6844295373272586957}
+  - component: {fileID: 4622280879868544244}
+  - component: {fileID: 7551898151529861629}
+  m_Layer: 5
+  m_Name: unit_Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6844295373272586957
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770403872161427359}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5698194668710207328}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 40}
+  m_SizeDelta: {x: 150, y: 150}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &4622280879868544244
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770403872161427359}
+  m_CullTransparentMesh: 1
+--- !u!114 &7551898151529861629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4770403872161427359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: d6f35146102752f4c8cfc9f4849f64e4, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &4947832648687092696
 GameObject:
   m_ObjectHideFlags: 0
@@ -9081,7 +9158,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1220979584645632654}
   m_Layer: 5
-  m_Name: StatusLabel1
+  m_Name: Status_Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9293,6 +9370,8 @@ GameObject:
   - component: {fileID: 8314798711363606110}
   - component: {fileID: 7211111036240695993}
   - component: {fileID: 6087703308297578448}
+  - component: {fileID: 2486657522825518783}
+  - component: {fileID: 172084613}
   m_Layer: 5
   m_Name: Battle_Status
   m_TagString: Untagged
@@ -9358,6 +9437,64 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!114 &2486657522825518783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5638354715552922376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5b3cdcf91297484594246c09347a80e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentCanvas: {fileID: 0}
+  Imagelist:
+  - {fileID: 21300000, guid: cf865865438981747bf48e42359c3da8, type: 3}
+  - {fileID: 21300000, guid: d6f35146102752f4c8cfc9f4849f64e4, type: 3}
+  - {fileID: 21300000, guid: c4cb22a85d3555044828b7367c0ba18f, type: 3}
+  - {fileID: 21300000, guid: ab6c29d7b7b559242be5843dee65d9c5, type: 3}
+  - {fileID: 21300000, guid: 0501e6442c067a243972ff23b92cbf39, type: 3}
+  - {fileID: 21300000, guid: 6abb0b7cadbcacc48b9d3f9f708e4642, type: 3}
+  unitImage: {fileID: 6844295373272586957}
+  unitName: {fileID: 3027660456849549718}
+  skillName: {fileID: 2407484513322892346}
+  skillDes: {fileID: 320672882901895575}
+  maxHp: {fileID: 9154490163661721556}
+  startMp: {fileID: 8375894282570911399}
+  phyAttk: {fileID: 5325150780032944502}
+  defence: {fileID: 6442105420321821357}
+  spellAttk: {fileID: 1238571216751298323}
+  spellDefence: {fileID: 968762151883063377}
+  critChance: {fileID: 6224372858264751012}
+  critMulti: {fileID: 1048501269236354568}
+--- !u!114 &172084613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5638354715552922376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5b3cdcf91297484594246c09347a80e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentCanvas: {fileID: 0}
+  Imagelist: []
+  unitImage: {fileID: 0}
+  unitName: {fileID: 0}
+  skillName: {fileID: 0}
+  skillDes: {fileID: 0}
+  maxHp: {fileID: 0}
+  startMp: {fileID: 0}
+  phyAttk: {fileID: 0}
+  defence: {fileID: 0}
+  spellAttk: {fileID: 0}
+  spellDefence: {fileID: 0}
+  critChance: {fileID: 0}
+  critMulti: {fileID: 0}
 --- !u!1 &5693674975418856970
 GameObject:
   m_ObjectHideFlags: 0
@@ -16025,7 +16162,7 @@ GameObject:
   - component: {fileID: 4603979403788625315}
   - component: {fileID: 3027660456849549718}
   m_Layer: 5
-  m_Name: unitName
+  m_Name: unit_Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16815,7 +16952,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6937733580914249360}
   m_Layer: 5
-  m_Name: UnitLabel1
+  m_Name: Unit_Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21394,6 +21531,7 @@ MonoBehaviour:
   isHeld: 0
   isPhaseChange: 0
   isRayHit: 0
+  rightClick: 0
 --- !u!1 &8397736453849995200
 GameObject:
   m_ObjectHideFlags: 0
@@ -21404,7 +21542,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4636397057784579082}
   m_Layer: 5
-  m_Name: SkillLabel1
+  m_Name: Skill_Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
