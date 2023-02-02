@@ -39,6 +39,8 @@ public class UI_StatusBar : MonoBehaviour
     [SerializeField]
     bool m_bEffect = false;
 
+    float PreMaxHP = 0.0f;
+
     Canvas canvas;
 
 	// Start is called before the first frame update
@@ -100,20 +102,23 @@ public class UI_StatusBar : MonoBehaviour
 
 	private void LateUpdate()
 	{
-		Transform Rootparent = transform.parent;
+		Transform Rootparent = transform.parent;        
 
 		if (Bar == STATUS_BAR.HPBar)
         {           
             transform.position = Rootparent.position + Vector3.up * (Rootparent.GetComponent<CapsuleCollider>().bounds.size.y + 0.6f);
 			//Trans.position = new Vector3(Target_Obj.transform.position.x, Target_Obj.transform.position.y + 3.1f, Target_Obj.transform.position.z);
-			SetHpLine();
+
+            if(PreMaxHP != Target_Obj.Stat_MaxHP)
+			    SetHpLine();
 		}
             
         else if(Bar == STATUS_BAR.MPBar)
         {			
 			transform.position = Rootparent.position + Vector3.up * (Rootparent.GetComponent<CapsuleCollider>().bounds.size.y + 0.4f) + Vector3.forward * -0.1f;
 		}
-	
+
+		PreMaxHP = Target_Obj.Stat_MaxHP;
 		transform.rotation = Camera.main.transform.rotation;
 	}
 
