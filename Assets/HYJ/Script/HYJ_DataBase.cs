@@ -331,11 +331,12 @@ partial class HYJ_DataBase
                     //string _index = "Index";
                     for (int i = 0; i < Unit_csv.Count; i++)
                     {
-                        var Unit_trans = Unit_datas.transform.Find("" + (int)Unit_csv[i]["ID"]);
+                        Unit_csv[i]["Index"] = i;
+                        var Unit_trans = Unit_datas.transform.Find("" + (int)Unit_csv[i]["Index"]);
                         if (Unit_trans)
                             Unit_trans.GetComponent<Character>().HYJ_Status_SettingData(Unit_csv[i]);
                         else
-                            Debug.Log((int)Unit_csv[i]["ID"] + " is NULL Unit object in ADDRESSABLE");
+                            Debug.Log((int)Unit_csv[i]["Index"] + " is NULL Unit object in ADDRESSABLE");
 
                         //Unit_datas.transform.Find("" + (int)Unit_csv[i]["ID"]).GetComponent<Character>().HYJ_Status_SettingData(Unit_csv[i]);
                         //Unit_datas.transform.Find(data[i]["ID"].ToString()).GetComponent<Character>().HYJ_Status_SettingData(data[i]);

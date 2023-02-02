@@ -431,8 +431,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 character.HYJ_Status_saveData = new CTRL_Character_Data(i.ToString());
 
                 string obj_name;
-                //obj_name = obj.name.Substring(0, 1);
                 obj_name = character.Character_Status_name_eng;
+                //Debug.Log(obj_name);
                 obj.name = obj_name + "_#" + n;
                 
                 return character;
@@ -440,10 +440,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             m_CharacterPools.m_List.Add(m_CharacterPool);
         }
 
-        //for (int i = 0; i < Max_tile; i++)
-        //{
-
-        //}
 
 
     }
@@ -1119,12 +1115,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
         // Before Reload, Clear Idx list
         UnitIdx_list.Clear();
+        // 유닛 초기화 성공할 때 까지 리롤
         while (!LSY_Calc_Proba()) { ; }
         
         for (int i = 0; i < Shop_UnitList.Count; i++)  // 0~5
         {
             int idx = UnitIdx_list[i];
-            Shop_UnitList[i].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = UnitName_list[idx].ToString();
+            Shop_UnitList[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = UnitName_list[idx].ToString();
         }
     }
 
@@ -1197,32 +1194,32 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 //Debug.Log((int)Unit_DB[j]["COST"] + "<-db.cost || costlist->" + Cost_list[i]);
 
                 int unit_cost = (int)Unit_DB[j]["COST"];
-                int unit_id = (int)Unit_DB[j]["ID"];
-                int unit_cnt = m_CharacterPools.m_List[unit_id].get_Count();
+                int unit_idx = (int)Unit_DB[j]["Index"];
+                int unit_cnt = m_CharacterPools.m_List[unit_idx].get_Count();
 
                 if (unit_cost == Cost_list[i])
                 {
                     if (unit_cnt == 0)
                     {
-                        Debug.Log("[BM] Allocate " + unit_id + " one more.");
+                        Debug.Log("[BM] Allocate " + unit_idx + " one more.");
 
-                        var obj = Instantiate(prefab.transform.GetChild(unit_id).gameObject);
+                        var obj = Instantiate(prefab.transform.GetChild(unit_idx).gameObject);
                         obj.SetActive(false);
                         obj.transform.SetParent(Unit_pool);
                         obj.transform.localScale = Vector3.one;
                         var character = obj.GetComponent<Character>();
                         character.m_UnitType = Character.Unit_Type.Ally;
                         character.STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
-                        character.HYJ_Status_saveData = new CTRL_Character_Data(unit_id.ToString());
+                        character.HYJ_Status_saveData = new CTRL_Character_Data(unit_idx.ToString());
                         string obj_name;
                         obj_name = character.Character_Status_name_eng;
-                        obj.name = obj_name + "_#" + m_CharacterPools.m_List[unit_id].get_tot_count();
+                        obj.name = obj_name + "_#" + m_CharacterPools.m_List[unit_idx].get_tot_count();
 
-                        m_CharacterPools.m_List[unit_id].allocate_onemore(character);
+                        m_CharacterPools.m_List[unit_idx].allocate_onemore(character);
                     }
 
                     for (int k = 0; k < unit_cnt; k++)
-                        Unit_Candi.Add(unit_id);
+                        Unit_Candi.Add(unit_idx);
                 }
             }
 

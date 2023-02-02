@@ -9,6 +9,7 @@ partial class Character
     [SerializeField] protected CTRL_Character_Data Status_saveData; // 저장용 클래스
 
     // 이름
+    [SerializeField] protected int Status_idx;
     [SerializeField] protected int Status_id;
     [SerializeField] protected string Status_name;
     [SerializeField] protected string Status_name_kor;
@@ -38,8 +39,8 @@ partial class Character
     [SerializeField] protected float Status_spellRegistance;    // 마방
 
     // 치명타
-    [SerializeField] protected int Status_critValue;  // 치명타 수치
-    [SerializeField] protected int Status_critPer;    // 치명타 확률
+    [SerializeField] protected float Status_critValue;  // 치명타 수치
+    [SerializeField] protected float Status_critPer;    // 치명타 확률
 
     // 스킬
     [SerializeField] protected string Data_spell0; // 일반 공격 번호
@@ -51,16 +52,30 @@ partial class Character
         get { return Status_saveData;   }
         set { Status_saveData = value;  }
     }
-    virtual public string Character_Status_name_eng { get { return Status_name_eng; } }
-    virtual public string Character_Status_name { get { return Status_name; } }
+    virtual public int Character_Status_Index { get { return Status_idx; } }
     virtual public int Character_Status_ID { get { return Status_id; } }
+    virtual public string Character_Status_name { get { return Status_name; } }
+    virtual public string Character_Status_name_eng { get { return Status_name_eng; } }
 
+    virtual public float Character_Status_maxHp { get { return Status_MaxHP; } }
+    virtual public float Character_Status_startMp { get { return Status_startMp; } }
+
+    virtual public float Character_Status_atkPhysics { get { return Status_atkPhysics;} }
+    virtual public float Character_Status_atkSpell { get { return Status_atkSpell; } }
+
+    virtual public float Character_Status_defence { get { return Status_defence; } }
+    virtual public float Character_Status_spellRegistance { get { return Status_spellRegistance; } }
+
+    virtual public float Character_Status_critPer { get { return Status_critPer; } }
+
+    virtual public float Character_Status_critValue { get { return Status_critValue; } }
 
     //////////  Method          //////////
 
     public void HYJ_Status_SettingData(Dictionary<string, object> _data)
     {
         // 이름
+        Status_idx = (int)_data["Index"];
         Status_id = (int)_data["ID"];
         Status_name = (string)_data["NAME"];
         Status_name_kor = (string)_data["NAME_KOR"];
@@ -93,8 +108,8 @@ partial class Character
         Status_spellRegistance = (float)_data["SPELL_REGISTANCE"];
 
         // 치명타
-        Status_critPer = (int)_data["CRIT_PERCENT"];
-        Status_critValue = (int)_data["CRIT_VALUE"];
+        Status_critPer = (float)_data["CRIT_PERCENT"];
+        Status_critValue = (float)_data["CRIT_VALUE"];
 
         // 스킬
         Data_spell0 = (string)_data["SPELL_0"];
