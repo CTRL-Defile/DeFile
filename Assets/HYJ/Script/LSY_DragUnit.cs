@@ -73,7 +73,8 @@ public class LSY_DragUnit : MonoBehaviour
     Ray m_TileRay, m_UnitRay;
     RaycastHit tile_hit, unit_hit;
 
-    [SerializeField] bool isHeld = false, isPhaseChange = false, isRayHit;
+    [SerializeField] bool isHeld = false, isPhaseChange = false, isRayHit, rightClick = false;
+    double Hover_timer = 1.0, Time_Acc = 0.0;
 
     Transform Battle_Status;
 
@@ -138,6 +139,7 @@ public class LSY_DragUnit : MonoBehaviour
             Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.white);
         }
 
+        // Unit Ray
         unit_hit = CastRay("Unit");
         switch (m_Battle_Phase)
         {
@@ -221,17 +223,85 @@ public class LSY_DragUnit : MonoBehaviour
         }
 
         // Unit Ray
-        if (unit_hit.collider != null)
+        //if (unit_hit.collider != null)
+        //{
+        //    Hover_timer = 1.0;
+        //    Time_Acc += Time.deltaTime;
+
+        //    if (Hover_timer - Time_Acc <= 0.0)
+        //    {
+        //        rightClick = false;
+        //        Set_Status(unit_hit.transform.gameObject);
+        //    }
+
+        //    Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.red);
+        //}
+        //else if (!rightClick)
+        //{
+        //    Time_Acc = 0.0;
+        //    Battle_Status.gameObject.SetActive(false);
+        //}
+
+        if (Input.GetMouseButton(1))
         {
-            Set_Status(unit_hit.transform.gameObject);
-            Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.red);
+            Debug.Log("Right Click");
+            if (unit_hit.collider != null)
+            {
+                rightClick = true;
+                Battle_Status.gameObject.SetActive(false);
+                Set_Status(unit_hit.transform.gameObject);
+            }
+            else
+            {
+                rightClick = false;
+                Battle_Status.gameObject.SetActive(false);
+            }
+            Time_Acc = 0.0;
+
         }
-        else if (!isHeld)
-            Battle_Status.gameObject.SetActive(false);
+
+        if (rightClick)
+        {
+            if (unit_hit.collider != null)
+            {
+                Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.red);
+                Hover_timer = 1.0;
+                Time_Acc += Time.deltaTime;
+
+                if (Hover_timer - Time_Acc <= 0.0)
+                {
+                    if (rightClick)
+                    {
+                        rightClick = false;
+                        Battle_Status.gameObject.SetActive(false);
+                    }
+                    Set_Status(unit_hit.transform.gameObject);
+                }
+            }
+        }
+        else
+        {
+            if (unit_hit.collider != null)
+            {
+                Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.red);
+                Hover_timer = 1.0;
+                Time_Acc += Time.deltaTime;
+                if (Hover_timer - Time_Acc <= 0.0)
+                    Set_Status(unit_hit.transform.gameObject);
+
+            }
+            else
+            {
+                Time_Acc = 0.0;
+                Battle_Status.gameObject.SetActive(false);
+            }
+        }
+
 
         if (isHeld)
         {
             m_UnitRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Battle_Status.gameObject.SetActive(false);
             Debug.DrawRay(m_TileRay.origin, m_TileRay.direction * 1000, Color.green);
         }
 
@@ -241,13 +311,20 @@ public class LSY_DragUnit : MonoBehaviour
         // 2. 
 
         //if (selectedObject != null) // Draging...
-        if (Input.GetMouseButton(0) && selectedObject != null)
+        if (Input.GetMouseButton(0))
         {
-            Vector3 screenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
-            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
-            selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y + 0.25f, worldPosition.z);
+            rightClick = false;
+            Battle_Status.gameObject.SetActive(false);
+
+            if (selectedObject != null)
+            {
+                Vector3 screenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(selectedObject.transform.position).z);
+                Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+                selectedObject.transform.position = new Vector3(worldPosition.x, oriPos.y + 0.25f, worldPosition.z);
+            }
         }
 
+        //
     }
 
     private RaycastHit CastRay(string layer)
@@ -466,7 +543,9 @@ public class LSY_DragUnit : MonoBehaviour
         //Debug.Log(obj.name);
         Battle_Status.gameObject.SetActive(true);
 
-        Battle_Status.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = obj.GetComponent<Character>().Character_Status_name;
+        Battle_Status.GetComponent<Battle_Status_Script>().Set_Status(obj);
+
+        //Battle_Status.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = obj.GetComponent<Character>().Character_Status_name;
 
 
     }
