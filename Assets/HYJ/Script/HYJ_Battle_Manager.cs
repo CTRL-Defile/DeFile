@@ -216,7 +216,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     {
 						foreach (var OBJ in Enemy_Unit)
 						{
-							OBJ.GetComponent<Character>().STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.RED);
+							OBJ.GetComponent<Character>().STATUS_HPBAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.RED);
 						}
 
 						StatusBar_isInitialized = true;
@@ -224,7 +224,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
                     foreach (var OBJ in Stand_Unit)
                     {
-                        OBJ.GetComponent<Character>().STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
+                        OBJ.GetComponent<Character>().STATUS_HPBAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
                     }
 
                 }
@@ -366,7 +366,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         {
             Unit_parent.GetChild(i).gameObject.SetActive(true);
             Unit_parent.GetChild(i).GetComponent<Character>().Dead = false;
-			Unit_parent.GetChild(i).GetComponent<PathFinder>().InitPathFinder();
+			Unit_parent.GetChild(i).GetComponent<PathFinder>().InitPathFinder();            
 			Transform tmp = Unit_parent.GetChild(i);
             if (!Stand_Unit.Contains(tmp.gameObject))
 				Field_Unit.Add(tmp.gameObject);
@@ -376,7 +376,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         {
             Enemy_parent.GetChild(i).gameObject.SetActive(true);
             Enemy_parent.GetChild(i).GetComponent<Character>().Dead = false;
-			Enemy_parent.GetChild(i).GetComponent<PathFinder>().InitPathFinder();
+			Enemy_parent.GetChild(i).GetComponent<PathFinder>().InitPathFinder();			
 			Enemy_Unit.Add(Enemy_parent.GetChild(i).gameObject);
         }
         LSY_Unit_Init(Field_Unit);
@@ -427,7 +427,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 obj.transform.localScale = Vector3.one;
                 var character = obj.GetComponent<Character>();
                 character.m_UnitType = Character.Unit_Type.Ally;
-                character.STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
+                character.STATUS_HPBAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
                 character.HYJ_Status_saveData = new CTRL_Character_Data(i.ToString());
 
                 string obj_name;
@@ -461,7 +461,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             Char_tmp.Stat_HP = max_hp;
             Char_tmp.Stat_MP = 0.0f;
             Char_tmp.CharacterInit();
-        }
+			unit_list[i].GetComponent<Phase_Dissolve_Effect>().Set_EffectMode(Phase_Dissolve_Effect.EFFECT_MODE.MODE_PHASE);
+		}
     }
 
 }
@@ -1212,7 +1213,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         obj.transform.localScale = Vector3.one;
                         var character = obj.GetComponent<Character>();
                         character.m_UnitType = Character.Unit_Type.Ally;
-                        character.STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
+                        character.STATUS_HPBAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
                         character.HYJ_Status_saveData = new CTRL_Character_Data(unit_id.ToString());
                         string obj_name;
                         obj_name = character.Character_Status_name_eng;
@@ -1300,7 +1301,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                             obj.transform.localScale = Vector3.one;
                             var character = obj.GetComponent<Character>();
                             character.m_UnitType = Character.Unit_Type.Ally;
-                            character.STATUS_BAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
+                            character.STATUS_HPBAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
                             character.HYJ_Status_saveData = new CTRL_Character_Data(unit_idx.ToString());
                             string obj_name;
                             obj_name = character.Character_Status_name_eng;

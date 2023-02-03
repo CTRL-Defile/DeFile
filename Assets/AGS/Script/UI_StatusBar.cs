@@ -120,6 +120,9 @@ public class UI_StatusBar : MonoBehaviour
 
 		PreMaxHP = Target_Obj.Stat_MaxHP;
 		transform.rotation = Camera.main.transform.rotation;
+
+        if(Target_Obj.GetComponent<Character>().Stat_HP == 0)
+            gameObject.SetActive(false);
 	}
 
 	public void SetHPColor(STATUS_HP_COLOR color)

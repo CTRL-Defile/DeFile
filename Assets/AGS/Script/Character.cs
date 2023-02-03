@@ -35,7 +35,10 @@ public partial class Character : MonoBehaviour
 	[SerializeField]
 	protected AnimationEvent m_AnimEvent = null;
 	[SerializeField]
-	protected UI_StatusBar m_StatusBar = null;
+	protected UI_StatusBar m_StatusHpBar = null;	
+	protected UI_StatusBar m_StatusMpBar = null;
+	[SerializeField]
+	protected GameObject[] m_WeaponEffect;
 
 	//-------------------------------------------------------------------
 	// Property
@@ -45,7 +48,8 @@ public partial class Character : MonoBehaviour
 	public GameObject PreTarget { get { return m_PreTarget; } set { m_PreTarget = value; } }
 	public bool Dead { get { return IsDead; } set { IsDead = value; } }
 	//public int CurPosIndex { get { return m_CurPosIndex; } set { m_CurPosIndex = value; } }
-	public UI_StatusBar STATUS_BAR { get { return m_StatusBar; } set { m_StatusBar = value; } }
+	public UI_StatusBar STATUS_HPBAR { get { return m_StatusHpBar; } set { m_StatusHpBar = value; } }
+	public UI_StatusBar STATUS_MPBAR { get { return m_StatusMpBar; } set { m_StatusMpBar = value; } }
 
 	//-------------------------------------------------------------------
 	// Method
@@ -111,7 +115,8 @@ public partial class Character : MonoBehaviour
 		m_animator = GetComponentInChildren<Animator>();
 		m_PathFinder = GetComponent<PathFinder>();
 		m_AnimEvent = GetComponentInChildren<AnimationEvent>();
-		m_StatusBar = GetComponentInChildren<UI_StatusBar>();
+		m_StatusHpBar = transform.GetChild(1).GetComponent< UI_StatusBar>();
+		m_StatusMpBar = transform.GetChild(2).GetComponent<UI_StatusBar>();
 	}
 
 	private void LateUpdate()
@@ -200,7 +205,22 @@ public partial class Character
 		  m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
 		{
 			on_Tile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
-			gameObject.SetActive(false);
+			//gameObject.SetActive(false);
+
+			// Dissolve Ω¶¿Ã¥ı SetUp
+			if(IsDead == false)
+				gameObject.GetComponent<Phase_Dissolve_Effect>().Set_EffectMode(Phase_Dissolve_Effect.EFFECT_MODE.MODE_DISSOLVE);
+
+			// π´±‚ ¿Ã∆Â∆Æ OFF
+			int EffectCnt = m_WeaponEffect.Length;
+			if (EffectCnt != 0)
+			{
+				foreach (GameObject Effect in m_WeaponEffect)
+				{
+					Effect.SetActive(false);
+				}
+			}
+
 			IsDead = true;
 		}
 		
@@ -394,6 +414,20 @@ public partial class Character
 		this.State = STATE.IDLE;
 		this.Target = null;
 		this.PreTarget = null;
+
+		// π´±‚ ¿Ã∆Â∆ÆµÈ ON
+		int EffectCnt = m_WeaponEffect.Length;
+		if (EffectCnt != 0)
+		{
+			foreach(GameObject Effect in m_WeaponEffect)
+			{
+				Effect.SetActive(true);
+			}
+		}
+
+		// Status_Bar UI ON
+		m_StatusHpBar.gameObject.SetActive(true);
+		m_StatusMpBar.gameObject.SetActive(true);
 	}
 }
 
