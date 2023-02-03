@@ -209,7 +209,7 @@ public partial class Character
 
 			// Dissolve Ω¶¿Ã¥ı SetUp
 			if(IsDead == false)
-				gameObject.GetComponent<Phase_Dissolve_Effect>().Set_EffectMode(Phase_Dissolve_Effect.EFFECT_MODE.MODE_DISSOLVE);
+				gameObject.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DISSOLVE);
 
 			// π´±‚ ¿Ã∆Â∆Æ OFF
 			int EffectCnt = m_WeaponEffect.Length;

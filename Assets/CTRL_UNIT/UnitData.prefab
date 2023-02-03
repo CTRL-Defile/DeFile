@@ -13570,6 +13570,7 @@ MonoBehaviour:
     Data_ID: 
     Data_COST: 0
     Data_items: []
+  Status_idx: 0
   Status_id: 0
   Status_name: 
   Status_name_kor: 
@@ -13611,6 +13612,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 63e0b57f45a08af42b43f5aa14363777, type: 2}
   - {fileID: 2100000, guid: e1303ea796bfaf94daee9506401200ca, type: 2}
   - {fileID: 2100000, guid: 35ca4c7b9e213bc4c825a89d56ecf612, type: 2}
+  - {fileID: 2100000, guid: e30cf2bd4d8651949ac6e77c45a3a69d, type: 2}
+  - {fileID: 2100000, guid: e2acb7f33683a444da13b9b027d31891, type: 2}
+  - {fileID: 2100000, guid: 26977d7efef94ad408ff5dacd01b2fa0, type: 2}
   TimeEffect: 5
   TimeAcc: 0
   EffectMode: 0
@@ -13951,6 +13955,7 @@ MonoBehaviour:
     Data_ID: 
     Data_COST: 0
     Data_items: []
+  Status_idx: 0
   Status_id: 0
   Status_name: 
   Status_name_kor: 
@@ -13992,6 +13997,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: e39e7b1578e25cb4bb3445fd16327e35, type: 2}
   - {fileID: 2100000, guid: e1303ea796bfaf94daee9506401200ca, type: 2}
   - {fileID: 2100000, guid: 35ca4c7b9e213bc4c825a89d56ecf612, type: 2}
+  - {fileID: 2100000, guid: e30cf2bd4d8651949ac6e77c45a3a69d, type: 2}
+  - {fileID: 2100000, guid: e2acb7f33683a444da13b9b027d31891, type: 2}
+  - {fileID: 2100000, guid: 26977d7efef94ad408ff5dacd01b2fa0, type: 2}
   TimeEffect: 5
   TimeAcc: 0
   EffectMode: 0
@@ -15786,6 +15794,7 @@ MonoBehaviour:
     Data_ID: 
     Data_COST: 0
     Data_items: []
+  Status_idx: 0
   Status_id: 0
   Status_name: 
   Status_name_kor: 
@@ -15827,6 +15836,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 26f5c93602cc9db4996206831256f647, type: 2}
   - {fileID: 2100000, guid: e1303ea796bfaf94daee9506401200ca, type: 2}
   - {fileID: 2100000, guid: 35ca4c7b9e213bc4c825a89d56ecf612, type: 2}
+  - {fileID: 2100000, guid: e30cf2bd4d8651949ac6e77c45a3a69d, type: 2}
+  - {fileID: 2100000, guid: e2acb7f33683a444da13b9b027d31891, type: 2}
+  - {fileID: 2100000, guid: 26977d7efef94ad408ff5dacd01b2fa0, type: 2}
   TimeEffect: 5
   TimeAcc: 0
   EffectMode: 0
@@ -21834,6 +21846,7 @@ MonoBehaviour:
     Data_ID: 
     Data_COST: 0
     Data_items: []
+  Status_idx: 0
   Status_id: 0
   Status_name: 
   Status_name_kor: 
@@ -21875,6 +21888,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 33ce20d792c44fd47beabf1f81653586, type: 2}
   - {fileID: 2100000, guid: e1303ea796bfaf94daee9506401200ca, type: 2}
   - {fileID: 2100000, guid: 35ca4c7b9e213bc4c825a89d56ecf612, type: 2}
+  - {fileID: 2100000, guid: e30cf2bd4d8651949ac6e77c45a3a69d, type: 2}
+  - {fileID: 2100000, guid: e2acb7f33683a444da13b9b027d31891, type: 2}
+  - {fileID: 2100000, guid: 26977d7efef94ad408ff5dacd01b2fa0, type: 2}
   TimeEffect: 5
   TimeAcc: 0
   EffectMode: 0
@@ -40029,6 +40045,7 @@ MonoBehaviour:
     Data_ID: 
     Data_COST: 0
     Data_items: []
+  Status_idx: 0
   Status_id: 0
   Status_name: 
   Status_name_kor: 
@@ -40070,6 +40087,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 0710561baf72056419bcc0f28fce613f, type: 2}
   - {fileID: 2100000, guid: e1303ea796bfaf94daee9506401200ca, type: 2}
   - {fileID: 2100000, guid: 35ca4c7b9e213bc4c825a89d56ecf612, type: 2}
+  - {fileID: 2100000, guid: e30cf2bd4d8651949ac6e77c45a3a69d, type: 2}
+  - {fileID: 2100000, guid: e2acb7f33683a444da13b9b027d31891, type: 2}
+  - {fileID: 2100000, guid: 26977d7efef94ad408ff5dacd01b2fa0, type: 2}
   TimeEffect: 5
   TimeAcc: 0
   EffectMode: 0
@@ -43886,6 +43906,7 @@ MonoBehaviour:
     Data_ID: 
     Data_COST: 0
     Data_items: []
+  Status_idx: 0
   Status_id: 0
   Status_name: 
   Status_name_kor: 
@@ -52399,6 +52420,7 @@ MonoBehaviour:
     Data_ID: 
     Data_COST: 0
     Data_items: []
+  Status_idx: 0
   Status_id: 0
   Status_name: 
   Status_name_kor: 
@@ -52440,6 +52462,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: c378b13368860394b9c6f354d38e54f2, type: 2}
   - {fileID: 2100000, guid: e1303ea796bfaf94daee9506401200ca, type: 2}
   - {fileID: 2100000, guid: 35ca4c7b9e213bc4c825a89d56ecf612, type: 2}
+  - {fileID: 2100000, guid: e30cf2bd4d8651949ac6e77c45a3a69d, type: 2}
+  - {fileID: 2100000, guid: e2acb7f33683a444da13b9b027d31891, type: 2}
+  - {fileID: 2100000, guid: 26977d7efef94ad408ff5dacd01b2fa0, type: 2}
   TimeEffect: 5
   TimeAcc: 0
   EffectMode: 0

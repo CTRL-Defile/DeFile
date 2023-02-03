@@ -191,7 +191,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 			// 전투 준비
 			case BATTLE_PHASE.PHASE_PREPARE:
                 {
-                    Phase_timer = 20.0;
+                    Phase_timer = 50.0;
 					Time_Acc += Time.deltaTime;
                     Battle_Timer();
 					//시간 체크 후 전투 상태로 Phase 전환
@@ -457,7 +457,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             Char_tmp.Stat_HP = max_hp;
             Char_tmp.Stat_MP = 0.0f;
             Char_tmp.CharacterInit();
-			unit_list[i].GetComponent<Phase_Dissolve_Effect>().Set_EffectMode(Phase_Dissolve_Effect.EFFECT_MODE.MODE_PHASE);
+			unit_list[i].GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
 		}
     }
 

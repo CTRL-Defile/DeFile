@@ -342,6 +342,7 @@ partial class HYJ_Player
                             if (Find_Unit_On_Tile(starint, id))
                             {
                                 obj_char.StarUp(pos);
+                                obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
                                 pos = Vector3.zero;
                             }
 
@@ -377,7 +378,8 @@ partial class HYJ_Player
                     if (Find_Unit_On_Tile(starint, id))
                     {
                         obj_char.StarUp(pos);
-                        pos = Vector3.zero;
+						obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
+						pos = Vector3.zero;
                     }
 
 
