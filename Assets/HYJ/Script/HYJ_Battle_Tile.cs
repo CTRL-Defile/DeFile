@@ -14,7 +14,7 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     [SerializeField] public List<int> Tile_Idx; // Tile의 행/열 정보
     [SerializeField] public Vector3 Tile_Position;  // Tile의 localPosition 저장
     [SerializeField] private int m_GraphIdx = -1;
-    [SerializeField] bool isHovering = false, isDraging = false;
+    [SerializeField] bool isHovering = false, isDraging = false, isSwap = false;
     MeshRenderer m_mesh;
     Material m_material;
     Color ori_Color;
@@ -48,6 +48,10 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     public void LSY_Set_Drag(bool tf)
     {
         isDraging = tf;
+    }
+    public void Set_Swap(bool tf)
+    {
+        isSwap = tf;
     }
 
     //////////  Default Method  //////////
@@ -222,6 +226,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
 
     private void Ally_Enter(Collider other)
     {
+        Debug.Log(this.name + " is enter " + other.name);
         if (tile_Available == Tile_Available.Non_Available)
         {
             Debug.Log("[BattleTile] NonAvailable Tile Enter");
@@ -257,14 +262,24 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                     {
                         if (cnt_FieldUnit < Player_Lv + 1)
                         {
-                            Debug.Log(Player_Lv + " Lv... and " + cnt_FieldUnit + " of Ally is on tile.");
+                            Debug.Log(Player_Lv + " Lv... and " + cnt_FieldUnit + " of Ally is on tile." + this.name + " " + other.name);
+                            Move_Unit(other);
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD, other.gameObject);
+                        }
+                        else if (isSwap)
+                        {
+                            Debug.Log("[Tile] It's swapping now..");
+                            isSwap = false;
+                            Debug.Log(Player_Lv + " Lv... and " + cnt_FieldUnit + " of Ally is on tile." + this.name + " " + other.name);
                             Move_Unit(other);
                             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD, other.gameObject);
                         }
                         else
                         {
                             // 필드 위 유닛 개수 초과 시,
-                            other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
+                            Debug.Log("!! Count over");
+                            //other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
+                            other.transform.position = other.GetComponent<Character>().LSY_Character_Get_OnTile().transform.position;
                         }
                     }
                     else if (this.tile_type == Tile_Type.Trash)
@@ -281,7 +296,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                     }
                     else if (this.tile_type == Tile_Type.Stand)
                     {
-                        Debug.Log(Player_Lv + " Lv... and " + cnt_FieldUnit + " of Ally is on tile.");
+                        Debug.Log(Player_Lv + " Lv... and " + cnt_FieldUnit + " of Ally is on tile. " + this.name + " " + other.name);
                         Move_Unit(other);
                         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIELD_TO_STAND, other.gameObject);
                     }
@@ -363,7 +378,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                 case Character.Unit_Type.Ally:
                     if (Basic_onUnit == null /* && detectedUnit.Count == 0 */ )
                     {
-                        Debug.Log(this.name + " isEmpty");
+                        Debug.Log(this.name + " isEmpty, " + other.name + " is now onUnit");
                         Basic_onUnit = other.gameObject;
 
                         other.gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(this.gameObject);

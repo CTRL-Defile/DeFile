@@ -227,7 +227,7 @@ partial class HYJ_Player
     [SerializeField] SerialList<int>[] id_list = new SerialList<int>[3];
     //[SerializeField] int[] id_array, synergy_array;
     Dictionary<int, int> synergy_dic;
-    List<Dictionary<string, object>> Player_Unit_csv;
+    List<List<Dictionary<string, object>>> Player_Unit_csv;
 
     //////////  Getter & Setter //////////
     //
@@ -299,7 +299,7 @@ partial class HYJ_Player
         List<HYJ_Battle_Manager_Line>   field_tiles = (List<HYJ_Battle_Manager_Line>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES);
         HYJ_Battle_Manager_Line         wait_tiles  = (HYJ_Battle_Manager_Line)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_TILES);
 
-        int db_cnt = Player_Unit_csv.Count;
+        int db_cnt = Player_Unit_csv[0].Count;
 
         for (int i=0; i<3; i++) id_list[i] = new SerialList<int>(db_cnt);
         synergy_list = new List<int>(db_cnt);
@@ -330,13 +330,13 @@ partial class HYJ_Player
                     {
                         data = obj_char.HYJ_Status_saveData;
                         // Synergy Update
-                        Debug.Log("[Synergy] COST : " + obj_char.Stat_Cost);
+                        //Debug.Log("[Synergy] COST : " + obj_char.Stat_Cost);
                         synergy_list[obj_char.Stat_Cost - 1]++;
 
                         int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
                         int starint = obj_char.StarInt();
                         id_list[starint].m_List[id]++;
-                        
+                        Debug.Log(obj.name + " " + id_list[starint].m_List[id]);
                         if (starint < 3 && id_list[starint].m_List[id] == 3)
                         {
                             if (Find_Unit_On_Tile(starint, id))
@@ -348,6 +348,12 @@ partial class HYJ_Player
 
                             id_list[starint].m_List[id] = 0;
                             id_list[starint + 1].m_List[id]++;
+                            Debug.Log(obj.name + " " + id_list[starint].m_List[id]);
+
+                            if (id_list[starint + 1].m_List[id] == 3 && starint < 2)
+                            {
+                                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE);
+                            }
                         }
 
                     }
@@ -372,9 +378,11 @@ partial class HYJ_Player
                 int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
                 int starint = obj_char.StarInt();
                 id_list[starint].m_List[id]++;
+                Debug.Log(obj.name + " " + id_list[starint].m_List[id]);
 
                 if (starint < 3 && id_list[starint].m_List[id] == 3)
                 {
+                    Debug.Log(obj.name + " " + id_list[starint].m_List[id]);
                     if (Find_Unit_On_Tile(starint, id))
                     {
                         obj_char.StarUp(pos);
@@ -382,9 +390,16 @@ partial class HYJ_Player
 						pos = Vector3.zero;
                     }
 
-
                     id_list[starint].m_List[id] = 0;
                     id_list[starint + 1].m_List[id]++;
+                    Debug.Log(obj.name + " " + id_list[starint].m_List[id]);
+
+                    if (id_list[starint + 1].m_List[id] == 3 && starint < 2)
+                    {
+                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE);
+                    }
+
+
                 }
             }
             //
@@ -482,32 +497,39 @@ partial class HYJ_Player
 
         }
 
-        Player_Unit_csv = (List<Dictionary<string, object>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
-        StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase.csv");
+        Player_Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
 
-        // 헤더 추가
-        int row_cnt = Player_Unit_csv[0].Keys.ToList().Count;
-        for (int i=0; i< row_cnt - 1; i++)
+        for(int _star=0; _star<3; _star++)
         {
-            outStream.Write(Player_Unit_csv[0].Keys.ToList()[i]);
-            outStream.Write(",");
-        }
-        outStream.Write(Player_Unit_csv[0].Keys.ToList()[row_cnt - 1]);
-        outStream.Write("\n");
-
-        // 내용 추가
-        int col_cnt = Player_Unit_csv.Count;
-        for (int k=0; k<col_cnt; k++)
-        {
+            StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" + (_star+1).ToString() + ".csv");
+            // 헤더 추가
+            int row_cnt = Player_Unit_csv[_star][0].Keys.ToList().Count;
             for (int i = 0; i < row_cnt - 1; i++)
             {
-                outStream.Write(Player_Unit_csv[k].Values.ToList()[i]);
+                outStream.Write(Player_Unit_csv[_star][0].Keys.ToList()[i]);
                 outStream.Write(",");
             }
-            outStream.Write(Player_Unit_csv[k].Values.ToList()[row_cnt - 1]);
+            outStream.Write(Player_Unit_csv[_star][0].Keys.ToList()[row_cnt - 1]);
             outStream.Write("\n");
+
+            // 내용 추가
+            int col_cnt = Player_Unit_csv[0].Count;
+            for (int k = 0; k < col_cnt; k++)
+            {
+                for (int i = 0; i < row_cnt - 1; i++)
+                {
+                    outStream.Write(Player_Unit_csv[_star][k].Values.ToList()[i]);
+                    outStream.Write(",");
+                }
+                outStream.Write(Player_Unit_csv[_star][k].Values.ToList()[row_cnt - 1]);
+                outStream.Write("\n");
+            }
+            outStream.Close();
+
         }
-        outStream.Close();
+
+
+
 
         //
         if (true)

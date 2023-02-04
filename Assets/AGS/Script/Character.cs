@@ -462,8 +462,12 @@ public partial class Character
     }
     virtual public void StarUp(Vector3 _pos)
 	{
-		//int tmp = (int)STAR.THREE;
-		if (_pos != Vector3.zero)
+        //int tmp = (int)STAR.THREE;
+
+        List<List<Dictionary<string, object>>> Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+
+
+        if (_pos != Vector3.zero)
 			this.transform.position = _pos;
 
 		switch(m_star)
@@ -471,13 +475,14 @@ public partial class Character
 			case Unit_Star.ONE:
 				m_star = Unit_Star.TWO;
 				this.transform.localScale *= 1.05f;
-				break;
+                HYJ_Status_SettingData(Unit_csv[1][Status_idx]);
+                break;
             case Unit_Star.TWO:
                 m_star = Unit_Star.THREE;
-                this.transform.localScale *= 1.05f; 
-				break;
+                this.transform.localScale *= 1.05f;
+                HYJ_Status_SettingData(Unit_csv[2][Status_idx]);
+                break;
         }
 
-
-	}
+    }
 }

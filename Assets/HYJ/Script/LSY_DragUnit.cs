@@ -463,13 +463,13 @@ public class LSY_DragUnit : MonoBehaviour
             // 지정된 타일이 있는가
             if (selectedTile != null)
             {
-                GameObject _tile_onUnit = selectedTile_Script.HYJ_Basic_onUnit;
+                GameObject _selectedtile_onUnit = selectedTile_Script.HYJ_Basic_onUnit;
                 HYJ_Battle_Tile.Tile_Available _available = selectedTile_Script.tile_Available;
 
                 // 지정된 타일의 onUnit 이 비었는가
-                if (_tile_onUnit == null)
+                if (_selectedtile_onUnit == null)
                 {
-                    Debug.Log("[Tile] " + selectedTile + " is null");
+                    Debug.Log("[Tile] " + selectedTile.name + " is null");
                     // 둘 수 없는 타일인가
                     if (_available == HYJ_Battle_Tile.Tile_Available.Non_Available)
                     {
@@ -486,17 +486,21 @@ public class LSY_DragUnit : MonoBehaviour
                 else if (_available == HYJ_Battle_Tile.Tile_Available.Available)
                 {
                     //  Unit Swap -> selectedObject와 selectedTile.onUnit 의 position 및 onTile 교환
-                    Debug.Log("[Drag] SWAP " + _tile_onUnit + " " + selectedObject);
+                    Debug.Log("[Drag] SWAP " + _selectedtile_onUnit.name + "<-s tile, s obj-> " + selectedObject.name);
 
-                    Vector3 tile_pos = _tile_onUnit.transform.position;
-                    //GameObject tile_tmp = selectedTile_Script.HYJ_Basic_onUnit.GetComponent<Character>().LSY_Character_Get_OnTile();
-                    GameObject tile_tmp = selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile();
+                    Vector3 sel_tile_pos = selectedTile.transform.position;
+                    GameObject sel_obj_ontile = selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile();
 
 
-                    _tile_onUnit.transform.position = selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile().transform.position;
+                    //_tile_onUnit.transform.position = selectedObject.GetComponent<Character>().LSY_Character_Get_OnTile().transform.position;
+                    Debug.Log("Go " + _selectedtile_onUnit.name + " to " + sel_obj_ontile.name);
+                    _selectedtile_onUnit.transform.position = sel_obj_ontile.transform.position;
+
                     //_tile_onUnit.GetComponent<Character>().LSY_Character_Set_OnTile(tile_tmp);
 
-                    selectedObject.transform.position = tile_pos;
+                    selectedTile.GetComponent<HYJ_Battle_Tile>().Set_Swap(true);
+                    Debug.Log("Go " + selectedObject.name + " to " + selectedTile.name);
+                    selectedObject.transform.position = selectedTile.transform.position;
                     //selectedObject_Script.LSY_Character_Set_OnTile(selectedTile);
 
                 }

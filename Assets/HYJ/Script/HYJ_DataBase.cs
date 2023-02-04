@@ -244,7 +244,7 @@ partial class HYJ_DataBase
 {
     [SerializeField] GameObject Unit_datas; // UnitData.prefab
     [SerializeField] int Unit_phase;
-    [SerializeField] List<Dictionary<string, object>> Unit_csv;
+    [SerializeField] List<List<Dictionary<string, object>>> Unit_csv = new List<List<Dictionary<string, object>>>();
 
     //////////  Getter & Setter //////////
 
@@ -275,7 +275,7 @@ partial class HYJ_DataBase
             return null;
     }
 
-    List<Dictionary<string, object>> LSY_Unit_GetDB_CSV(params object[] _args)
+    List<List<Dictionary<string, object>>> LSY_Unit_GetDB_CSV(params object[] _args)
     {
         return Unit_csv;
     }
@@ -323,20 +323,39 @@ partial class HYJ_DataBase
                 break;
             case 2:
                 {
-                    //Assets / Resources / DataBase / DB_Using_Character.csv
                     string csv_path = "DataBase/DB_Using_Character";
-                    //List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_csv");
-                    Unit_csv = CSVReader.Read(csv_path);
+                    //Unit_csv.AddRange(CSVReader.Read(csv_path));
+                    //Unit_csv[1] = CSVReader.Read(csv_path+"_2");
+                    //Unit_csv[2] = CSVReader.Read(csv_path+"_3");
 
-                    //string _index = "Index";
-                    for (int i = 0; i < Unit_csv.Count; i++)
+                    for (int i=0; i<3; i++)
                     {
-                        Unit_csv[i]["Index"] = i;
-                        var Unit_trans = Unit_datas.transform.Find("" + (int)Unit_csv[i]["Index"]);
+                        List<Dictionary<string, object>> tmp = CSVReader.Read(csv_path + "_" + (i+1).ToString());
+                        Unit_csv.Add(new List<Dictionary<string, object>>());
+
+                        int len = tmp.Count;
+                        for (int k=0; k<len; k++)
+                        {
+                            Unit_csv[i].Add(tmp[k]);
+                        }
+
+                    }
+
+
+
+
+
+                    for (int i = 0; i < Unit_csv[0].Count; i++)
+                    {
+                        Unit_csv[0][i]["Index"] = i;
+                        Unit_csv[1][i]["Index"] = i;
+                        Unit_csv[2][i]["Index"] = i;
+
+                        var Unit_trans = Unit_datas.transform.Find("" + (int)Unit_csv[0][i]["Index"]);
                         if (Unit_trans)
-                            Unit_trans.GetComponent<Character>().HYJ_Status_SettingData(Unit_csv[i]);
+                            Unit_trans.GetComponent<Character>().HYJ_Status_SettingData(Unit_csv[0][i]);
                         else
-                            Debug.Log((int)Unit_csv[i]["Index"] + " is NULL Unit object in ADDRESSABLE");
+                            Debug.Log((int)Unit_csv[0][i]["Index"] + " is NULL Unit object in ADDRESSABLE");
 
                         //Unit_datas.transform.Find("" + (int)Unit_csv[i]["ID"]).GetComponent<Character>().HYJ_Status_SettingData(Unit_csv[i]);
                         //Unit_datas.transform.Find(data[i]["ID"].ToString()).GetComponent<Character>().HYJ_Status_SettingData(data[i]);

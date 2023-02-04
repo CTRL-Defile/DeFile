@@ -1002,7 +1002,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     [SerializeField]
     List<int> Cost_list;
 
-    List<Dictionary<string, object>> Unit_DB;
+    List<List<Dictionary<string, object>>> Unit_DB;
 
     [SerializeField]
     List<string> UnitName_list = new List<string>();
@@ -1029,12 +1029,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Show_Ally_OnTile();
 
         // Text, Image, Cost
-        Unit_DB = (List<Dictionary<string, object>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+        Unit_DB = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
 
-        for (int i = 0; i < Unit_DB.Count; i++)
+        for (int i = 0; i < Unit_DB[0].Count; i++)
         {
-            UnitName_list.Add(Unit_DB[i]["NAME"].ToString());
-            UnitID_list.Add((int)Unit_DB[i]["ID"]);
+            UnitName_list.Add(Unit_DB[0][i]["NAME"].ToString());
+            UnitID_list.Add((int)Unit_DB[0][i]["ID"]);
         }
 
         LSY_Shop_Reload(1);
@@ -1190,12 +1190,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         for(int i = 0; i < Shop_Panel_cnt; i++)
         {
             List<int> Unit_Candi = new List<int>();
-            for(int j = 0; j < Unit_DB.Count - 1; j++)  // header 3줄 제외.. 할 필요가 없네 어차피 3줄떼고 읽어왔구나.
+            for(int j = 0; j < Unit_DB[0].Count - 1; j++)  // header 3줄 제외.. 할 필요가 없네 어차피 3줄떼고 읽어왔구나.
             {
                 //Debug.Log((int)Unit_DB[j]["COST"] + "<-db.cost || costlist->" + Cost_list[i]);
 
-                int unit_cost = (int)Unit_DB[j]["COST"];
-                int unit_idx = (int)Unit_DB[j]["Index"];
+                int unit_cost = (int)Unit_DB[0][j]["COST"];
+                int unit_idx = (int)Unit_DB[0][j]["Index"];
                 int unit_cnt = m_CharacterPools.m_List[unit_idx].get_Count();
 
                 if (unit_cost == Cost_list[i])
@@ -1429,6 +1429,7 @@ partial class HYJ_Battle_Manager
     {
         GameObject obj = (GameObject)_args[0];
 
+        Debug.Log("Move " + obj.name + "stand to field");
         Stand_Unit.Remove(obj);
         Field_Unit.Add(obj);
 
@@ -1440,6 +1441,7 @@ partial class HYJ_Battle_Manager
     {
         GameObject obj = (GameObject)_args[0];
 
+        Debug.Log("Move " + obj.name + "field to stand");
         Stand_Unit.Add(obj);
         Field_Unit.Remove(obj);
 
