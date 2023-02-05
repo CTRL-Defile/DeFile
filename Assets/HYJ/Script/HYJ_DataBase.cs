@@ -39,6 +39,7 @@ public partial class HYJ_DataBase : MonoBehaviour
 
         HYJ_Relic_Start();
         HYJ_Unit_Start();
+        HYJ_UnitSkill_Start();
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BASIC__GET_IS_INITIALIZE, HYJ_Basic_GetIsInitialize);
     }
 
@@ -74,6 +75,14 @@ public partial class HYJ_DataBase : MonoBehaviour
                 }
                 break;
             case 3:
+                {
+                    if(HYJ_UnitSkill_Init())
+                    {
+                        Basic_phase = 4;
+                    }
+                }
+                break;
+            case 4:
                 {
                     //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BASIC__GET_IS_INITIALIZE, HYJ_Basic_GetIsInitialize);
 
@@ -388,6 +397,87 @@ partial class HYJ_DataBase
     }
 
 
+}
+
+#endregion
+
+#region UNIT_SKILL
+
+partial class HYJ_DataBase
+{
+    [SerializeField] Dictionary<int, HYJ_CharacterSkill> UnitSkill_datas;
+    [SerializeField] int UnitSkill_phase;
+
+    //////////  Getter & Setter //////////
+    object HYJ_UnitSkill_GetData(params object[] _args)
+    {
+        int id = (int)_args[0];
+        return UnitSkill_datas[id];
+    }
+
+    //////////  Method          //////////
+
+    //////////  Default Method  //////////
+    void HYJ_UnitSkill_Start()
+    {
+        UnitSkill_phase = 0;
+    }
+
+    // 초기화
+    bool HYJ_UnitSkill_Init()
+    {
+        switch (UnitSkill_phase)
+        {
+            case 0:
+                {
+                    UnitSkill_datas = new Dictionary<int, HYJ_CharacterSkill>();
+
+                    UnitSkill_phase = 1;
+                }
+                break;
+            case 1:
+                {
+                    List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_Skill_csv");
+
+                    //
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        UnitSkill_datas.Add((int)data[i]["ID"], new HYJ_CharacterSkill(data[i]));
+                    }
+
+                    UnitSkill_phase = 2;
+                }
+                break;
+            case 2:
+                {
+                    List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_Skill_Effect_csv");
+
+                    //
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        HYJ_CharacterSkillEffect element = new HYJ_CharacterSkillEffect(data[i]);
+                        UnitSkill_datas[element.HYJ_Data_skillId].HYJ_Data_AddEffect(element);
+                    }
+
+                    UnitSkill_phase = 3;
+                }
+                break;
+            case 3:
+                {
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, HYJ_UnitSkill_GetData);
+
+                    UnitSkill_phase = 4;
+                }
+                break;
+            case 4:
+                {
+                    UnitSkill_phase = -1;
+                }
+                break;
+        }
+
+        return (UnitSkill_phase == -1);
+    }
 }
 
 #endregion

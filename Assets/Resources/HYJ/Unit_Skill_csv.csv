@@ -1,4 +1,4 @@
-ID,NAME,NAME_KOR,ATTACK_TYPE,SEARCH_TEAM,SEARCH_RANGE,SEARCH_CONDITION,RANGE,TARGETING,DURATION,REPEAT_CYCLE,FIGURE,DEGREE,AREA,TARGET_MAX,DAMAGE_TYPE,DAMAGE_VALUE,DAMAGE_STATUS,DAMAGE_RATIO,CHAIN,PIERCING,DIVIDE,EFFECT_TYPE,EFFECT_TRIGGER,EFFECT_VALUE,EFFECT_STATUS,EFFECT_RATIO,EFFECT_DURATION,EFFECT_REPEAT_CYCLE
-Int,String,String,String,String,Int,String,Float,String,Float,Float,String,Float,Float,Int,String,Float,String,Float,Int,Int,Int,String,String,Float,String,Float,Float,Float
-ID,이름,한글 이름,공격 타입,피아구분,탐색 사거리,탐색 조건,사거리,타겟팅,지속시간,반복주기,범위형태,스킬길이,스킬넓이,최대대상개수,피해유형,기본피해량,피해량 능력치,스킬 계수,스킬 연쇄,스킬 관통,스킬 분리,효과유형,발동조건,기본피해량,상관 능력치,스킬 계수,지속시간,반복주기
-0,1000,0,NONE,ENEMY,1,NONE,0,NONE,0,0,NONE,0,0,0,PHYSICS,0,NONE,0,0,0,0,NONE,NONE,0,NONE,0,0,0
+ID,NAME,NAME_KOR,ATTACK_TYPE,SEARCH_TEAM,SEARCH_RANGE,SEARCH_CONDITION,RANGE,DELAY_PRE,DELAY_AFTER,TARGETING,DURATION,REPEAT_CYCLE,AOE_FIGURE,AOE_DEGREE,AOE_AREA,TARGET_RACE,TARGET_MAX,TARGET_CONDITION,DAMAGE_TYPE,DAMAGE_VALUE,DAMAGE_STATUS,DAMAGE_RATIO,CHAIN,PIERCING,DIVIDE
+Int,String,String,String,String,Int,String,Float,Float,Float,String,Float,Float,String,Float,Float,String,Int,String,String,Float,String,Float,Int,Int,Int
+ID,이름,한글 이름,공격 타입,피아구분,탐색 사거리,탐색 조건,사거리,선딜레이,후딜레이,타겟팅,지속시간,반복주기,범위형태,범위길이,범위넓이,효과적용진영,최대대상개수,효과대상조건,피해유형,기본피해량,피해량 능력치,스킬 계수,스킬 연쇄,스킬 관통,스킬 분리
+0,1000,0,NONE,ENEMY,1,NONE,0,0,0,TRUE,0,0,NONE,0,0,NONE,0,NONE,PHYSICS,0,NONE,0,0,0,0
