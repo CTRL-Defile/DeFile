@@ -260,9 +260,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 {
                     End_Btn.SetActive(true);
                     if (Enemy_Unit.Count == 0)
-                        End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Win";
+                        End_Btn.transform.GetChild(0).gameObject.SetActive(true);
+                    //End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Win";
                     else
-                        End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Lose";
+                        End_Btn.transform.GetChild(1).gameObject.SetActive(true);
+                        //End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Lose";
                 }
                 break;
         }
@@ -346,6 +348,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 	public void LSY_Battle_End()
     {
         End_Btn.SetActive(false);
+        End_Btn.transform.GetChild(0).gameObject.SetActive(false);
+        End_Btn.transform.GetChild(1).gameObject.SetActive(false);
         HYJ_SetActive(false);
         Basic_phase = BATTLE_PHASE.PHASE_INIT;
         //UL_isInitialized= false;
@@ -1512,6 +1516,7 @@ partial class HYJ_Battle_Manager
         // TriggerExit 으로 tile의 onUnit이 갱신되지 않음
         obj.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
         obj.transform.SetParent(Unit_Sacrificed);
+        obj.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DEFAULT);
 
         return null;
     }

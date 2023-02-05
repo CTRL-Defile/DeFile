@@ -1,5 +1,5 @@
 ID,NAME,NAME_KOR,NAME_ENG,SCRIPT_KOR,RACE,JOB,AFFILIATION,MIX,COST,ATK_TYPE,MAX_HP,MAX_MP,START_MP,ATK_PHYSICS,ATK_SPELL,ATK_SPEED,DEFENCE,SPELL_REGISTANCE,CRIT_PERCENT,CRIT_VALUE,SPELL_0,SPELL_1
-Int,String,String,String,String,String,String,String,Int,Int,String,Float,Float,Float,Float,Float,Float,Float,Float,Int,Int,String,String
+Int,String,String,String,String,String,String,String,Int,Int,String,Float,Float,Float,Float,Float,Float,Float,Float,Float,Float,String,String
 ID,이름,한글명,영어명,스토리번호,종족,특성,소속,등급,코스트,공격방식,최대 HP,최대 MP,시작 MP,물리공격력,마법공격력,공격속도,물리방어력,마법방어력,치명타확률,치명타배율,일반공격번호,스킬번호
 003,야수_005,Beast_005,야수_005,story_065,Beast,Warrior,closed-doorism dwarf,3,1,Melee,2592,60,0,146,146,0.7,40,40,25,0,001,005
 006,고블린_002,Goblin_002,고블린_002,story_041,Goblin,Tanker,Goblin primitive tribe,3,2,Melee,2592,60,0,158,158,0.6,45,45,25,0,001,005
