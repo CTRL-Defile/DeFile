@@ -460,17 +460,28 @@ public partial class Character
         }
 		return 3;
     }
-    virtual public void StarUp(Vector3 _pos)
+    virtual public void StarUp(HYJ_Battle_Tile _tile)
 	{
         //int tmp = (int)STAR.THREE;
 
         List<List<Dictionary<string, object>>> Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
 
+  //      if (_pos != Vector3.zero)
+		//{
+  //          this.transform.position = _pos;
+  //      }
 
-        if (_pos != Vector3.zero)
-			this.transform.position = _pos;
+		if (_tile != null)
+		{
+			this.LSY_Character_Set_OnTile(_tile.gameObject);
+			this.transform.position = _tile.transform.position;
+			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD, this.gameObject);
+			//_tile.Ally_Enter(this.gameObject.GetComponent<CapsuleCollider>());
 
-		switch(m_star)
+		}
+
+
+        switch (m_star)
 		{
 			case Unit_Star.ONE:
 				m_star = Unit_Star.TWO;

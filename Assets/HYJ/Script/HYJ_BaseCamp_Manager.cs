@@ -127,7 +127,8 @@ partial class HYJ_BaseCamp_Manager {
 
         // 베이스캠프 선택지 고르는거 비활성화
         this.transform.GetChild(0).transform.GetChild(1).transform.gameObject.SetActive(false);
-        List<Dictionary<string, object>> unitDatas = CSVReader.Read("DataBase/DB_Using_Character");
+        int _lv = 1;
+        List<Dictionary<string, object>> unitDatas = CSVReader.Read("DataBase/DB_Using_Character_" + _lv.ToString());
 
         // 유닛 랜덤 인덱스 중복제거 뽑기
         bool[] dataFlag = new bool[unitDatas.Count];

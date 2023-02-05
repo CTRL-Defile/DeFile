@@ -341,9 +341,10 @@ partial class HYJ_Player
                         {
                             if (Find_Unit_On_Tile(starint, id))
                             {
-                                obj_char.StarUp(pos);
+                                obj_char.StarUp(_Tile);
                                 obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
-                                pos = Vector3.zero;
+                                //pos = Vector3.zero;
+                                _Tile= null;
                             }
 
                             id_list[starint].m_List[id] = 0;
@@ -385,9 +386,10 @@ partial class HYJ_Player
                     Debug.Log(obj.name + " " + id_list[starint].m_List[id]);
                     if (Find_Unit_On_Tile(starint, id))
                     {
-                        obj_char.StarUp(pos);
+                        obj_char.StarUp(_Tile);
 						obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
-						pos = Vector3.zero;
+						//pos = Vector3.zero;
+                        _Tile= null;
                     }
 
                     id_list[starint].m_List[id] = 0;
@@ -416,6 +418,7 @@ partial class HYJ_Player
         return true;
     }
     Vector3 pos = Vector3.zero;
+    HYJ_Battle_Tile _Tile;
 
     bool Find_Unit_On_Tile(int _star, int _id)
     {
@@ -442,7 +445,8 @@ partial class HYJ_Player
                         //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, param);
                         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
                         if ((HYJ_Battle_Tile.Tile_Type)param[0] == HYJ_Battle_Tile.Tile_Type.Field)
-                            pos = obj.transform.position;
+                            //pos = obj.transform.position;
+                            _Tile = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>();
                         cnt++;
                         if (cnt == 2) return true;
                     }
@@ -470,7 +474,8 @@ partial class HYJ_Player
                     //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, param);
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
                     if ((HYJ_Battle_Tile.Tile_Type)param[0] == HYJ_Battle_Tile.Tile_Type.Field)
-                        pos = obj.transform.position;
+                        //pos = obj.transform.position;
+                        _Tile = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>();
                     cnt++;
                     if (cnt == 2) return true;
                 }
