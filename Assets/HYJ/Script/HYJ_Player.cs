@@ -336,7 +336,8 @@ partial class HYJ_Player
                         int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
                         int starint = obj_char.StarInt();
                         id_list[starint].m_List[id]++;
-                        Debug.Log(obj.name + " " + id_list[starint].m_List[id]);
+                        Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
+
                         if (starint < 3 && id_list[starint].m_List[id] == 3)
                         {
                             if (Find_Unit_On_Tile(starint, id))
@@ -349,7 +350,7 @@ partial class HYJ_Player
 
                             id_list[starint].m_List[id] = 0;
                             id_list[starint + 1].m_List[id]++;
-                            Debug.Log(obj.name + " " + id_list[starint].m_List[id]);
+                            Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
 
                             if (id_list[starint + 1].m_List[id] == 3 && starint < 2)
                             {
@@ -379,11 +380,11 @@ partial class HYJ_Player
                 int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
                 int starint = obj_char.StarInt();
                 id_list[starint].m_List[id]++;
-                Debug.Log(obj.name + " " + id_list[starint].m_List[id]);
+                Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
 
                 if (starint < 3 && id_list[starint].m_List[id] == 3)
                 {
-                    Debug.Log(obj.name + " " + id_list[starint].m_List[id]);
+                    Debug.Log("STARUP " + obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
                     if (Find_Unit_On_Tile(starint, id))
                     {
                         obj_char.StarUp(_Tile);
@@ -394,7 +395,8 @@ partial class HYJ_Player
 
                     id_list[starint].m_List[id] = 0;
                     id_list[starint + 1].m_List[id]++;
-                    Debug.Log(obj.name + " " + id_list[starint].m_List[id]);
+                    Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
+
 
                     if (id_list[starint + 1].m_List[id] == 3 && starint < 2)
                     {
@@ -444,6 +446,7 @@ partial class HYJ_Player
                         param[1] = obj;
                         //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, param);
                         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
+                        Debug.Log(obj.name + " Find it");
                         if ((HYJ_Battle_Tile.Tile_Type)param[0] == HYJ_Battle_Tile.Tile_Type.Field)
                             //pos = obj.transform.position;
                             _Tile = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>();
@@ -473,6 +476,7 @@ partial class HYJ_Player
                     param[1] = obj;
                     //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, param);
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
+                    Debug.Log(obj.name + " Find it");
                     if ((HYJ_Battle_Tile.Tile_Type)param[0] == HYJ_Battle_Tile.Tile_Type.Field)
                         //pos = obj.transform.position;
                         _Tile = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>();

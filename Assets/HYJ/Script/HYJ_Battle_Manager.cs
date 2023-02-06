@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using static HYJ_Battle_Tile;
@@ -127,6 +128,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON,  HYJ_ActiveOn);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__SHOP_UI, LSY_Set_ShopUI);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, LSY_Battle_Synergy_Update);
+
+        Battle_UI_Font();
     }
 
     // Update is called once per frame
@@ -1407,6 +1410,27 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     }
 
+    //Font JSong_Bold, JSong_Light, Chosun_Bold, Chosun_Light;
+    public const string FONT_JSONG = "Assets/TextMesh Pro/Fonts/JSONGMYEONG SDF.asset";
+    public const string FONT_CHOSUN = "Assets/TextMesh Pro/Fonts/CHOSUNCENTENNIAL_TTF SDF.asset";
+    public void Battle_UI_Font()
+    {
+        int _cnt = Shop_UnitList.Count;
+        for (int i=0; i<_cnt; i++)
+        {
+            Shop_UnitList[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().font =
+                AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+        }
+        Shop_Coin_Text.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+        Battle_Ally_OnTile.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+        Battle_Timer_TMP.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+
+    }
+
+
+
+    //
+
 }
 #endregion
 
@@ -1527,11 +1551,13 @@ partial class HYJ_Battle_Manager
         obj.transform.SetParent(Unit_Sacrificed);
         obj.SetActive(false);
 
+        Show_Ally_OnTile();
+
         return null;
     }
     object Unit_Sacrificed_to_Pool(params object[] _args)
     {
-        int _id = (int)_args[0], cnt = 0;
+        int _idx = (int)_args[0], cnt = 0;
         Character.Unit_Star _star = (Character.Unit_Star)_args[1];
 
         // 2성 -> 1성 2개 부활
@@ -1550,11 +1576,11 @@ partial class HYJ_Battle_Manager
         for (int i=0; i<_len; i++)
         {
             GameObject obj = Sacrificed_Unit[i - num];
-            if (obj.GetComponent<Character>().Character_Status_ID == _id)
+            if (obj.GetComponent<Character>().Character_Status_Index == _idx)
             {
                 Sacrificed_Unit.Remove(obj);
                 obj.transform.SetParent(Unit_pool);
-                m_CharacterPools.m_List[_id].objects.PushStack(obj.GetComponent<Character>());
+                m_CharacterPools.m_List[_idx].objects.PushStack(obj.GetComponent<Character>());
                 num++;
                 if (num == cnt)
                     return null;
