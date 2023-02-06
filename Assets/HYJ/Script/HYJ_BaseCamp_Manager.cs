@@ -294,7 +294,8 @@ partial class HYJ_BaseCamp_Manager {
 
         ChangeGaugeUI(); // 게이지 UI 변경
 
-        List<Dictionary<string, object>> unitDatas = CSVReader.Read_Dictionary("DataBase/Player_Unit_DataBase");
+        int _lv = 1;
+        List<Dictionary<string, object>> unitDatas = CSVReader.Read("DataBase/DB_Using_Character_" + _lv.ToString());
 
         // 유닛 랜덤 인덱스 중복제거 뽑기
         bool[] dataFlag = new bool[unitDatas.Count];
@@ -392,14 +393,17 @@ partial class HYJ_BaseCamp_Manager {
 
         string[] lines;
 
-        // 유닛 데이터 읽어오기
-        lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character.csv");
-        // 유닛 데이터 쓰기
-        StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase.csv");
-        // 삭제되는 유닛 라인은 가장 마지막 라인으로 대체
-        lines[deleteLineNumber] = lines[lines.Length-1];
-        for (int i = 0; i < lines.Length-1; i++) {outStream.WriteLine(lines[i].ToString());}
-        outStream.Close();
+        for (int i = 1; i <= 3; i++)
+        {
+            // 유닛 데이터 읽어오기
+            lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character_"+i.ToString()+".csv");
+            // 유닛 데이터 쓰기
+            StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_"+i.ToString()+".csv");
+            // 삭제되는 유닛 라인은 가장 마지막 라인으로 대체
+            lines[deleteLineNumber] = lines[lines.Length - 1];
+            for (int j = 0; j < lines.Length - 1; j++) { outStream.WriteLine(lines[j].ToString()); }
+            outStream.Close();
+        }
     }
 
     public void DeleteCard(int deleteNumber)
