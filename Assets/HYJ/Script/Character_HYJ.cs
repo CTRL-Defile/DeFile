@@ -115,7 +115,8 @@ partial class Character
         Data_spell0 = (string)_data["SPELL_0"];
         Data_spell1 = (string)_data["SPELL_1"];
 
-
+        // Current HP √ ±‚»≠
+        Status_HP = Status_MaxHP;
     }
 
     //////////  Default Method  //////////
