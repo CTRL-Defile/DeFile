@@ -1457,37 +1457,39 @@ partial class HYJ_Battle_Manager
     {
         string tile_type = _args[0].ToString();
         GameObject obj = (GameObject)_args[1];
-        int id = int.Parse(obj.GetComponent<Character>().HYJ_Status_saveData.Data_ID);
+        //int id = int.Parse(obj.GetComponent<Character>().HYJ_Status_saveData.Data_ID);
+
+        Character obj_char = obj.GetComponent<Character>();
+        int id = obj_char.Character_Status_Index;
 
         switch (tile_type)
         {
             case "Stand":
                 Stand_Unit.Remove(obj);
-                obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
-                //m_CharacterPools.m_List[id].push(obj.GetComponent<Character>());
                 m_CharacterPools.m_List[id].objects.PushStack(obj.GetComponent<Character>());
                 break;
 
             case "Field":
                 Field_Unit.Remove(obj);
-                obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
-                //id = int.Parse(obj.GetComponent<Character>().HYJ_Status_saveData.Data_ID);
-                //m_CharacterPools.m_List[id].push(obj.GetComponent<Character>());
                 m_CharacterPools.m_List[id].objects.PushStack(obj.GetComponent<Character>());
                 break;
 
             case "Enemy":
                 Debug.Log(obj + " Enemy remove");
                 Enemy_Unit.Remove(obj);
-                obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
                 obj.tag = "Ally";
-                //m_CharacterPools.m_List[id].push(obj.GetComponent<Character>());
                 m_CharacterPools.m_List[id].objects.PushStack(obj.GetComponent<Character>());
                 break;
         }
+
+        List<List<Dictionary<string, object>>> Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+        obj.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DEFAULT);
+        obj_char.HYJ_Status_SettingData(Unit_csv[0][obj_char.Character_Status_Index]);
+        obj.SetActive(false);
+
 
         Show_Ally_OnTile();
 
@@ -1503,20 +1505,27 @@ partial class HYJ_Battle_Manager
             case "Stand":
                 Stand_Unit.Remove(obj);
                 Sacrificed_Unit.Add(obj);
-                obj.SetActive(false);
+                //obj.SetActive(false);
                 break;
 
             case "Field":
                 Field_Unit.Remove(obj);
                 Sacrificed_Unit.Add(obj);
-                obj.SetActive(false);
+                //obj.SetActive(false);
                 break;
         }
 
+        Character obj_char = obj.GetComponent<Character>();
+
         // TriggerExit 으로 tile의 onUnit이 갱신되지 않음
-        obj.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
-        obj.transform.SetParent(Unit_Sacrificed);
+        obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
+
+        List<List<Dictionary<string, object>>> Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
         obj.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DEFAULT);
+        obj_char.HYJ_Status_SettingData(Unit_csv[0][obj_char.Character_Status_Index]);
+
+        obj.transform.SetParent(Unit_Sacrificed);
+        obj.SetActive(false);
 
         return null;
     }
