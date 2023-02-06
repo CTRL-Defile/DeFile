@@ -80,8 +80,8 @@ public partial class HYJ_BaseCamp_Manager : MonoBehaviour
             //
             case 0:
                 {
-                    gaugeText = GameObject.Find("GaugeText").transform.GetChild(0).GetComponent<Text>(); // 게이지 텍스트
-                    gaugeImgs = GameObject.Find("Gauge").transform.GetChild(1); // 게이지 이미지 아이콘
+                    gaugeText = this.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>(); // 게이지 텍스트
+                    gaugeImgs = this.transform.GetChild(0).GetChild(1).GetChild(1); // 게이지 이미지 아이콘
                     this.actionCnt = this.actionCntMax; // 행동개수를 최대 행동개수로설정
 
                     ChangeGaugeUI(); // UI 변경
@@ -120,15 +120,16 @@ partial class HYJ_BaseCamp_Manager {
     // 정비
     public void JHW_BaseCamp_Maintanance()
     {
-        
-
         // 베이스캠프 유닛 선택하는 이미지 활성화
-        GameObject.Find("UnitList").transform.GetChild(0).transform.gameObject.SetActive(true);
+        this.transform.GetChild(0).GetChild(3).GetChild(0).transform.gameObject.SetActive(true);
 
         // 베이스캠프 선택지 고르는거 비활성화
         this.transform.GetChild(0).transform.GetChild(1).transform.gameObject.SetActive(false);
         int _lv = 1;
         List<Dictionary<string, object>> unitDatas = CSVReader.Read("DataBase/DB_Using_Character_" + _lv.ToString());
+
+        // 카드 뒷면 뒤집은 횟수 0으로 초기화
+        CardBack_UX.checkBackCardCnt = 0;
 
         // 유닛 랜덤 인덱스 중복제거 뽑기
         bool[] dataFlag = new bool[unitDatas.Count];
@@ -144,45 +145,49 @@ partial class HYJ_BaseCamp_Manager {
         selectedUnit2 = unitDatas[randomSelectUnitNumber2];
         selectedUnit3 = unitDatas[randomSelectUnitNumber3];
 
-        GameObject unitList = GameObject.Find("UnitList").transform.GetChild(0).transform.gameObject;
+        GameObject unitList = this.transform.GetChild(0).GetChild(3).GetChild(0).transform.gameObject;
         unitList1 = unitList.transform.GetChild(0).gameObject;
         unitList2 = unitList.transform.GetChild(1).gameObject;
         unitList3 = unitList.transform.GetChild(2).gameObject;
 
         // ux
         // 카드1
-        GameObject.Find("UnitCard1").transform.DOScale(1f, .5f);
-        GameObject.Find("UnitCard1").transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
+        unitList1.transform.DOScale(1f, .5f);
+        unitList1.transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
         // 카드2
-        GameObject.Find("UnitCard2").transform.DOScale(1f, .5f);
-        GameObject.Find("UnitCard2").transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
+        unitList2.transform.DOScale(1f, .5f);
+        unitList2.transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
         // 카드3
-        GameObject.Find("UnitCard3").transform.DOScale(1f, .5f);
-        GameObject.Find("UnitCard3").transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
+        unitList3.transform.DOScale(1f, .5f);
+        unitList3.transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
         Sequence cardSequence = DOTween.Sequence()
             .OnStart(() =>
             {
-                GameObject.Find("UnitCard1").transform.DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360);
-                GameObject.Find("UnitCard1").transform.GetChild(0).transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack);
-                GameObject.Find("CardBack1").GetComponent<Image>().DOFade(0f, 0.5f).SetDelay(0.5f);
+                unitList1.transform.GetChild(2).DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360); // 카드뒷면
+                unitList1.transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack);
+                //GameObject.Find("CardBack1").GetComponent<Image>().DOFade(0f, 0.5f).SetDelay(0.5f);
             })
-            .Insert(0.2f, GameObject.Find("UnitCard2").transform.DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360))
-            .Join(GameObject.Find("UnitCard2").transform.GetChild(0).transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack))
-            .Join(GameObject.Find("CardBack2").GetComponent<Image>().DOFade(0f, 0.5f).SetDelay(0.5f))
-            .Insert(0.4f, GameObject.Find("UnitCard3").transform.DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360))
-            .Join(GameObject.Find("UnitCard3").transform.GetChild(0).transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack))
-            .Join(GameObject.Find("CardBack3").GetComponent<Image>().DOFade(0f, 0.5f).SetDelay(0.5f)
+            .Insert(0.2f, unitList2.transform.GetChild(2).DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360))
+            .Join(unitList2.transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack))
+            //.Join(GameObject.Find("CardBack2").GetComponent<Image>().DOFade(0f, 0.5f).SetDelay(0.5f))
+            .Insert(0.4f, unitList3.transform.GetChild(2).DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360))
+            .Join(unitList3.transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack)
+            //.Join(GameObject.Find("CardBack3").GetComponent<Image>().DOFade(0f, 0.5f).SetDelay(0.5f)
             );
 
         // 유닛카드에 보여지는 텍스트(여러 수치들) 변경
         ChangeCardUI();
 
-        // ux
-        GameObject.Find("RerollButton").transform.GetChild(0).gameObject.SetActive(true);
-        GameObject.Find("RerollButton").transform.GetChild(0).GetComponent<Image>().DOFade(0f, 0f);
-        GameObject.Find("RerollButton").transform.GetChild(0).GetComponent<Image>().DOFade(1f, 0.5f).SetDelay(2f);
-        GameObject.Find("RerollButton").transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().DOFade(0f, 0f);
-        GameObject.Find("RerollButton").transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().DOFade(1f, 0.5f).SetDelay(2f);
+
+
+        // 카드 앞면 안보이게
+        unitList1.transform.GetChild(0).transform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
+        unitList2.transform.GetChild(0).transform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
+        unitList3.transform.GetChild(0).transform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
+        // 카드 뒷면 활성화
+        unitList1.transform.GetChild(2).transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+        unitList2.transform.GetChild(2).transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+        unitList3.transform.GetChild(2).transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
     }
 
     // 휴식
@@ -220,38 +225,38 @@ partial class HYJ_BaseCamp_Manager {
         if (gameObject.name == "1")
         {
             // 카드1
-            GameObject.Find("UnitCard1").transform.DOScale(1.05f, .5f);
-            GameObject.Find("UnitCard1").transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
+            unitList1.transform.DOScale(1.05f, .5f);
+            unitList1.transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
             // 카드2
-            GameObject.Find("UnitCard2").transform.DOScale(0.9f, .5f);
-            GameObject.Find("UnitCard2").transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
+            unitList2.transform.DOScale(0.9f, .5f);
+            unitList2.transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
             // 카드3
-            GameObject.Find("UnitCard3").transform.DOScale(0.9f, .5f);
-            GameObject.Find("UnitCard3").transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
+            unitList3.transform.DOScale(0.9f, .5f);
+            unitList3.transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
         }
         if (gameObject.name == "2")
         {
             // 카드1
-            GameObject.Find("UnitCard1").transform.DOScale(0.9f, .5f);
-            GameObject.Find("UnitCard1").transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
+            unitList1.transform.DOScale(0.9f, .5f);
+            unitList1.transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
             // 카드2
-            GameObject.Find("UnitCard2").transform.DOScale(1.05f, .5f);
-            GameObject.Find("UnitCard2").transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
+            unitList2.transform.DOScale(1.05f, .5f);
+            unitList2.transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
             // 카드3
-            GameObject.Find("UnitCard3").transform.DOScale(0.9f, .5f);
-            GameObject.Find("UnitCard3").transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
+            unitList3.transform.DOScale(0.9f, .5f);
+            unitList3.transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
         }
         if (gameObject.name == "3")
         {
             // 카드1
-            GameObject.Find("UnitCard1").transform.DOScale(0.9f, .5f);
-            GameObject.Find("UnitCard1").transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
+            unitList1.transform.DOScale(0.9f, .5f);
+            unitList1.transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
             // 카드2
-            GameObject.Find("UnitCard2").transform.DOScale(0.9f, .5f);
-            GameObject.Find("UnitCard2").transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
+            unitList2.transform.DOScale(0.9f, .5f);
+            unitList2.transform.GetChild(0).GetComponent<RawImage>().DOFade(0.6f, .5f);
             // 카드3
-            GameObject.Find("UnitCard3").transform.DOScale(1.05f, .5f);
-            GameObject.Find("UnitCard3").transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
+            unitList3.transform.DOScale(1.05f, .5f);
+            unitList3.transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
         }
     }
 
@@ -276,6 +281,12 @@ partial class HYJ_BaseCamp_Manager {
         // 사운드
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.REROLL);
 
+        // 카드 뒷면 뒤집은 횟수 초기화
+        CardBack_UX.checkBackCardCnt = 0;
+
+        // reroll 버튼 비활성화
+        this.transform.GetChild(0).GetChild(3).GetChild(0).GetChild(4).GetChild(0).gameObject.SetActive(false);
+
         int minusActionCnt = 1; // 감소시킬 행동개수
         if (this.actionCnt < minusActionCnt) { ActionCntAlert(); return; } // 행동개수 부족하면 실행X 
 
@@ -295,47 +306,42 @@ partial class HYJ_BaseCamp_Manager {
         do { randomSelectUnitNumber3 = Random.Range(0, unitDatas.Count); } while (dataFlag[randomSelectUnitNumber3] == true);
         dataFlag[randomSelectUnitNumber3] = true;
 
-        // 랜덤하게 선택된 유닛
-        selectedUnit1 = unitDatas[randomSelectUnitNumber1];
-        selectedUnit2 = unitDatas[randomSelectUnitNumber2];
-        selectedUnit3 = unitDatas[randomSelectUnitNumber3];
-
-        GameObject unitList = GameObject.Find("UnitList").transform.GetChild(0).transform.gameObject;
-        unitList1 = unitList.transform.GetChild(0).gameObject;
-        unitList2 = unitList.transform.GetChild(1).gameObject;
-        unitList3 = unitList.transform.GetChild(2).gameObject;
+        //// 랜덤하게 선택된 유닛
+        //selectedUnit1 = unitDatas[randomSelectUnitNumber1];
+        //selectedUnit2 = unitDatas[randomSelectUnitNumber2];
+        //selectedUnit3 = unitDatas[randomSelectUnitNumber3];
 
         // 카드 내에 수치 및 이름 설정
         ChangeCardUI();
 
         //삭제버튼 안보이게
-        GameObject.Find("UnitList").transform.GetChild(0).transform.GetChild(0).transform.GetChild(1).transform.gameObject.SetActive(false);
-        GameObject.Find("UnitList").transform.GetChild(0).transform.GetChild(1).transform.GetChild(1).transform.gameObject.SetActive(false);
-        GameObject.Find("UnitList").transform.GetChild(0).transform.GetChild(2).transform.GetChild(1).transform.gameObject.SetActive(false);
+        unitList1.transform.GetChild(1).transform.gameObject.SetActive(false);
+        unitList2.transform.GetChild(1).transform.gameObject.SetActive(false);
+        unitList3.transform.GetChild(1).transform.gameObject.SetActive(false);
 
 
         // ux
         Sequence cardSequence = DOTween.Sequence()
             .OnStart(() =>
             {
-                GameObject.Find("UnitCard1").transform.DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360);
-                GameObject.Find("UnitCard1").transform.GetChild(0).transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack);
+                unitList1.transform.GetChild(0).DOLocalRotate(new Vector3(0, -90, 0), 0.3f, RotateMode.Fast); //카드 앞면
+                unitList1.transform.GetChild(2).DOLocalRotate(new Vector3(0, 0, 0), 0.3f, RotateMode.Fast).SetDelay(0.3f); //카드 뒷면
             })
-            .Insert(0.1f, GameObject.Find("UnitCard2").transform.DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360))
-            .Join(GameObject.Find("UnitCard2").transform.GetChild(0).transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack))
-            .Insert(0.2f, GameObject.Find("UnitCard3").transform.DOLocalRotate(new Vector3(0, -360, 0), 1, RotateMode.FastBeyond360))
-            .Join(GameObject.Find("UnitCard3").transform.GetChild(0).transform.DOLocalMoveY(0, 1f).SetEase(Ease.OutBack)
+            .Insert(0.2f, unitList2.transform.GetChild(0).DOLocalRotate(new Vector3(0, -90, 0), 0.3f, RotateMode.Fast))
+            .Join(unitList2.transform.GetChild(2).DOLocalRotate(new Vector3(0, 0, 0), 0.3f, RotateMode.Fast).SetDelay(0.3f))
+            .Insert(0.4f, unitList3.transform.GetChild(0).DOLocalRotate(new Vector3(0, -90, 0), 0.3f, RotateMode.Fast))
+            .Join(unitList3.transform.GetChild(2).DOLocalRotate(new Vector3(0, 0, 0), 0.3f, RotateMode.Fast).SetDelay(0.3f)
             );
 
         // 카드1
-        GameObject.Find("UnitCard1").transform.DOScale(1f, .5f);
-        GameObject.Find("UnitCard1").transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
+        unitList1.transform.DOScale(1f, .5f);
+        unitList1.transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
         // 카드2
-        GameObject.Find("UnitCard2").transform.DOScale(1f, .5f);
-        GameObject.Find("UnitCard2").transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
+        unitList2.transform.DOScale(1f, .5f);
+        unitList2.transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
         // 카드3
-        GameObject.Find("UnitCard3").transform.DOScale(1f, .5f);
-        GameObject.Find("UnitCard3").transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
+        unitList3.transform.DOScale(1f, .5f);
+        unitList3.transform.GetChild(0).GetComponent<RawImage>().DOFade(1f, .5f);
     }
 
     // 카드 내에 수치 및 이름 설정
@@ -344,38 +350,37 @@ partial class HYJ_BaseCamp_Manager {
         
 
         //카드1
-        GameObject.Find("ChampLabel1").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["NAME_KOR"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_MaxHP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["MAX_HP"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_MaxMP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["MAX_MP"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_PhyAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["ATK_PHYSICS"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_SpellAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["ATK_SPELL"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_Defence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["DEFENCE"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_SpellDefence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["SPELL_REGISTANCE"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_CritChance").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["CRIT_PERCENT"].ToString();
-        GameObject.Find("StatusLabel1/BaseCamp_CritMulti").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["CRIT_VALUE"].ToString();
+        unitList1.transform.GetChild(0).GetChild(0).transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["NAME_KOR"].ToString(); // 챔피언 이름
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["MAX_HP"].ToString(); // 최대HP
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(2).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["MAX_MP"].ToString(); // 최대MP
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["ATK_PHYSICS"].ToString(); // 물리공격력
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(4).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["DEFENCE"].ToString(); // 방어력
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(5).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["ATK_SPELL"].ToString(); // 마법공격력
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["SPELL_REGISTANCE"].ToString(); // 마법저항력
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(7).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["CRIT_PERCENT"].ToString(); // 크리티컬확률
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(8).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["CRIT_VALUE"].ToString(); // 크리티컬배율
 
         //카드2
-        GameObject.Find("ChampLabel2").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["NAME_KOR"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_MaxHP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["MAX_HP"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_MaxMP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["MAX_MP"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_PhyAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["ATK_PHYSICS"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_SpellAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["ATK_SPELL"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_Defence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["DEFENCE"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_SpellDefence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["SPELL_REGISTANCE"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_CritChance").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["CRIT_PERCENT"].ToString();
-        GameObject.Find("StatusLabel2/BaseCamp_CritMulti").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["CRIT_VALUE"].ToString();
+        unitList2.transform.GetChild(0).GetChild(0).transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["NAME_KOR"].ToString(); // 챔피언 이름
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["MAX_HP"].ToString(); // 최대HP
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(2).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["MAX_MP"].ToString(); // 최대MP
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["ATK_PHYSICS"].ToString(); // 물리공격력
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(4).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["DEFENCE"].ToString(); // 방어력
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(5).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["ATK_SPELL"].ToString(); // 마법공격력
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["SPELL_REGISTANCE"].ToString(); // 마법저항력
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(7).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["CRIT_PERCENT"].ToString(); // 크리티컬확률
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(8).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["CRIT_VALUE"].ToString(); // 크리티컬배율
 
         //카드3
-        GameObject.Find("ChampLabel3").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["NAME_KOR"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_MaxHP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["MAX_HP"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_MaxMP").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["MAX_MP"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_PhyAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["ATK_PHYSICS"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_SpellAttk").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["ATK_SPELL"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_Defence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["DEFENCE"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_SpellDefence").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["SPELL_REGISTANCE"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_CritChance").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["CRIT_PERCENT"].ToString();
-        GameObject.Find("StatusLabel3/BaseCamp_CritMulti").transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["CRIT_VALUE"].ToString();
-
+        unitList3.transform.GetChild(0).GetChild(0).transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["NAME_KOR"].ToString(); // 챔피언 이름
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["MAX_HP"].ToString(); // 최대HP
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(2).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["MAX_MP"].ToString(); // 최대MP
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["ATK_PHYSICS"].ToString(); // 물리공격력
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(4).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["DEFENCE"].ToString(); // 방어력
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(5).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["ATK_SPELL"].ToString(); // 마법공격력
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["SPELL_REGISTANCE"].ToString(); // 마법저항력
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(7).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["CRIT_PERCENT"].ToString(); // 크리티컬확률
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(8).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["CRIT_VALUE"].ToString(); // 크리티컬배율
     }
 
     public void DeleteUnit(int number)
@@ -408,21 +413,24 @@ partial class HYJ_BaseCamp_Manager {
         actionCnt -= minusActionCnt; // 행동개수 삭제
 
         // ux
-        GameObject.Find("RerollButton/Image").GetComponent<Image>().DOFade(0f, 0.5f);
-        GameObject.Find("RerollButton/Image/Text").GetComponent<Text>().DOFade(0f, 0.5f);
+        if (GameObject.Find("RerollButton/Image") != null)
+        {
+            GameObject.Find("RerollButton/Image").GetComponent<Image>().DOFade(0f, 0.5f);
+            GameObject.Find("RerollButton/Image/Text").GetComponent<Text>().DOFade(0f, 0.5f);
+        }
 
         // 카드 일단 뒤로 보낸다
-        GameObject.Find("UnitCard1").transform.GetChild(0).transform.DOLocalMoveY(-1000f, 1f);
-        GameObject.Find("UnitCard2").transform.GetChild(0).transform.DOLocalMoveY(-1000f, 1f);
-        GameObject.Find("UnitCard3").transform.GetChild(0).transform.DOLocalMoveY(-1000f, 1f);
+        unitList1.transform.DOLocalMoveY(-1000f, 1f);
+        unitList2.transform.DOLocalMoveY(-1000f, 1f);
+        unitList3.transform.DOLocalMoveY(-1000f, 1f);
 
-        GameObject.Find("BaseCamp").transform.GetChild(0).transform.GetChild(1).transform.gameObject.SetActive(true); // 베이스캠프 UI 활성화
-        GameObject.Find("UnitList").transform.GetChild(0).transform.gameObject.SetActive(false); // 유닛 편성 UI 비활성화
+        this.transform.GetChild(0).transform.GetChild(1).transform.gameObject.SetActive(true); // 베이스캠프 UI 활성화
+        this.transform.GetChild(0).GetChild(3).GetChild(0).transform.gameObject.SetActive(false); // 유닛 편성 UI 비활성화
 
         //삭제버튼 안보이게
-        GameObject.Find("UnitList").transform.GetChild(0).transform.GetChild(0).transform.GetChild(1).transform.gameObject.SetActive(false);
-        GameObject.Find("UnitList").transform.GetChild(0).transform.GetChild(1).transform.GetChild(1).transform.gameObject.SetActive(false);
-        GameObject.Find("UnitList").transform.GetChild(0).transform.GetChild(2).transform.GetChild(1).transform.gameObject.SetActive(false);
+        unitList1.transform.GetChild(1).transform.gameObject.SetActive(false);
+        unitList2.transform.GetChild(1).transform.gameObject.SetActive(false);
+        unitList3.transform.GetChild(1).transform.gameObject.SetActive(false);
 
         // 게이지 이미지 on/off
         ChangeGaugeUI();
