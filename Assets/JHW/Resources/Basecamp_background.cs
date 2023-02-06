@@ -5,8 +5,7 @@ using DG.Tweening;
 
 public class Basecamp_background : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void StartBaseCamp_BackGround_UX()
     {
         // 초기 설정
         this.transform.GetChild(0).DOScale(1.2f, 0f);

@@ -15,7 +15,7 @@ public class Basecamp_ux : MonoBehaviour
     bool isActiveAble = false;
 
     // Start is called before the first frame update
-    void Start()
+    public void StartBaseCamp_Button_UX()
     {
         title = this.transform.GetChild(0).gameObject;
         Btn1 = this.transform.GetChild(1).gameObject;
@@ -47,9 +47,4 @@ public class Basecamp_ux : MonoBehaviour
         isActiveAble = !isActiveAble;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
