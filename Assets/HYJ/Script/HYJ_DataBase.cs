@@ -453,11 +453,11 @@ partial class HYJ_DataBase
                     List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_Skill_Effect_csv");
 
                     //
-                    for (int i = 0; i < data.Count; i++)
-                    {
-                        HYJ_CharacterSkillEffect element = new HYJ_CharacterSkillEffect(data[i]);
-                        UnitSkill_datas[element.HYJ_Data_skillId].HYJ_Data_AddEffect(element);
-                    }
+                    //for (int i = 0; i < data.Count; i++)
+                    //{
+                    //    HYJ_CharacterSkillEffect element = new HYJ_CharacterSkillEffect(data[i]);
+                    //    UnitSkill_datas[element.HYJ_Data_skillId].HYJ_Data_AddEffect(element);
+                    //}
 
                     UnitSkill_phase = 3;
                 }

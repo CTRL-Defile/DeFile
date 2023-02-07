@@ -7,9 +7,36 @@ using System;
 
 #region HYJ_CharacterSkill
 
+public enum HYJ_CharacterSkill_SLOT
+{
+    BASIC,
+    SKILL
+}
+
 public enum HYJ_CharacterSkill_ATTACK_TYPE
 {
+    ATTACK,
+    SPELL
+}
+
+public enum HYJ_CharacterSkill_BUFF
+{
     NONE
+}
+
+public enum HYJ_CharacterSkill_IMPOSSIBLE_TAG
+{
+    NONE,
+
+    CHAIN,
+    PIERCING,
+    DIVIDE
+}
+
+public enum HYJ_CharacterSkill_SKILL_ACTIVE
+{
+    ACTIVE,
+    PASSIVE
 }
 
 public enum HYJ_CharacterSkill_SEARCH_TEAM
@@ -26,13 +53,19 @@ public enum HYJ_CharacterSkill_SEARCH_CONDITION
 //
 public enum HYJ_CharacterSkill_AOE_FIGURE
 {
-    NONE
+    NONE,
+    CIRCLE,
+    SECTOR,
+    SQUARE,
+    BULLET_SECTOR,
+    BULLET_SQUARE
 }
 
 //
 public enum HYJ_CharacterSkill_TARGET_RACE
 {
-    NONE
+    ALLY,
+    ENEMY
 }
 
 public enum HYJ_CharacterSkill_TARGET_CONDITION
@@ -43,12 +76,22 @@ public enum HYJ_CharacterSkill_TARGET_CONDITION
 //
 public enum HYJ_CharacterSkill_DAMAGE_TYPE
 {
-    PHYSICS
+    PHYSICS,
+    MAGIC,
+    DOT,
+    FIX
 }
 
 public enum HYJ_CharacterSkill_DAMAGE_STATUS
 {
-    NONE
+    HP,
+    DAMAGE_PHYSICS,
+    DAMAGE_MAGIC,
+    ATTACK_SPEED,
+    DEFENCE_PHYSICS,
+    DEFENCE_MAGIC,
+    CRITICAL_PERCENT,
+    CRITICAL_VALUE
 }
 
 //
@@ -58,11 +101,16 @@ public class HYJ_CharacterSkill :IDisposable
     [SerializeField] string Data_name;
     [SerializeField] string Data_nameKor;
 
+    [SerializeField] HYJ_CharacterSkill_SLOT    Data_slot;  // 기본, 스킬 여부
+
     //
-    [SerializeField] HYJ_CharacterSkill_ATTACK_TYPE         Data_attackType;
-    [SerializeField] HYJ_CharacterSkill_SEARCH_TEAM         Data_searchTeam;
-    [SerializeField] int                                    Data_searchRange;
-    [SerializeField] HYJ_CharacterSkill_SEARCH_CONDITION    Data_searchCondition;
+    [SerializeField] HYJ_CharacterSkill_ATTACK_TYPE             Data_attackType;
+    [SerializeField] HYJ_CharacterSkill_BUFF                    Data_buff;
+    [SerializeField] List<HYJ_CharacterSkill_IMPOSSIBLE_TAG>    Data_impossibleTags;
+    [SerializeField] HYJ_CharacterSkill_SKILL_ACTIVE            Data_skillActive;
+    [SerializeField] HYJ_CharacterSkill_SEARCH_TEAM             Data_searchTeam;
+    [SerializeField] int                                        Data_searchRange;
+    [SerializeField] HYJ_CharacterSkill_SEARCH_CONDITION        Data_searchCondition;
 
     //
     [SerializeField] float  Data_range;
@@ -107,8 +155,21 @@ public class HYJ_CharacterSkill :IDisposable
     public string   HYJ_Data_nameKor    { get { return Data_nameKor; } }
 
     //
+    /// <summary>기본, 스킬 여부</summary>
+    public HYJ_CharacterSkill_SLOT HYJ_Data_slot { get { return Data_slot; } }
+
+    //
     /// <summary>공격 타입</summary>
     public HYJ_CharacterSkill_ATTACK_TYPE       HYJ_Data_attackType         { get { return Data_attackType; } }
+    /// <summary>버프 적용 여부</summary>
+    public HYJ_CharacterSkill_BUFF              HYJ_Data_buff               { get { return Data_buff; } }
+    // Data_impossibleTags
+    /// <summary>불가능 태그</summary>
+    public HYJ_CharacterSkill_IMPOSSIBLE_TAG    HYJ_Data_GetImpossibleTag(int _num) { return Data_impossibleTags[_num]; }
+    /// <summary>불가능 태그 갯수</summary>
+    public int                                  HYJ_Data_GetImpossibleTagCount() { return Data_impossibleTags.Count; }
+    /// <summary>액티브, 패시브 여부</summary>
+    public HYJ_CharacterSkill_SKILL_ACTIVE      HYJ_Data_skillActive        { get { return Data_skillActive; } }
     /// <summary>피아구분</summary>
     public HYJ_CharacterSkill_SEARCH_TEAM       HYJ_Data_searchTeam         { get { return Data_searchTeam; } }
     /// <summary>탐색 사거리</summary>
@@ -189,10 +250,20 @@ public class HYJ_CharacterSkill :IDisposable
         Data_name       = (string)_data["NAME"];
         Data_nameKor    = (string)_data["NAME_KOR"];
 
-        Data_attackType         = (HYJ_CharacterSkill_ATTACK_TYPE)Enum.Parse(       typeof(HYJ_CharacterSkill_ATTACK_TYPE),         (string)_data["ATTACK_TYPE"]);
-        Data_searchTeam         = (HYJ_CharacterSkill_SEARCH_TEAM)Enum.Parse(       typeof(HYJ_CharacterSkill_SEARCH_TEAM),         (string)_data["SEARCH_TEAM"]);
+        Data_slot   = (HYJ_CharacterSkill_SLOT)Enum.Parse(  typeof(HYJ_CharacterSkill_SLOT),    (string)_data["SLOT"]);
+
+        Data_attackType         = (HYJ_CharacterSkill_ATTACK_TYPE)Enum.Parse(       typeof(HYJ_CharacterSkill_ATTACK_TYPE),         (string)_data["ATTACK_TYPE"]        );
+        Data_buff               = (HYJ_CharacterSkill_BUFF)Enum.Parse(              typeof(HYJ_CharacterSkill_BUFF),                (string)_data["BUFF"]               );
+        Data_impossibleTags = new List<HYJ_CharacterSkill_IMPOSSIBLE_TAG>();
+        string[] impossibleTags_Strs = ((string)_data["IMPOSSIBLE_TAG"]).Split('|');
+        for(int i = 0; i < impossibleTags_Strs.Length; i++)
+        {
+            Data_impossibleTags.Add((HYJ_CharacterSkill_IMPOSSIBLE_TAG)Enum.Parse(typeof(HYJ_CharacterSkill_IMPOSSIBLE_TAG), impossibleTags_Strs[i]));
+        }
+        Data_skillActive        = (HYJ_CharacterSkill_SKILL_ACTIVE)Enum.Parse(      typeof(HYJ_CharacterSkill_SKILL_ACTIVE),        (string)_data["SKILL_ACTIVE"]       );
+        Data_searchTeam         = (HYJ_CharacterSkill_SEARCH_TEAM)Enum.Parse(       typeof(HYJ_CharacterSkill_SEARCH_TEAM),         (string)_data["SEARCH_TEAM"]        );
         Data_searchRange        = (int)_data["SEARCH_RANGE"];
-        Data_searchCondition    = (HYJ_CharacterSkill_SEARCH_CONDITION)Enum.Parse(  typeof(HYJ_CharacterSkill_SEARCH_CONDITION),    (string)_data["SEARCH_CONDITION"]);
+        Data_searchCondition    = (HYJ_CharacterSkill_SEARCH_CONDITION)Enum.Parse(  typeof(HYJ_CharacterSkill_SEARCH_CONDITION),    (string)_data["SEARCH_CONDITION"]   );
 
         Data_range      = (float)_data["RANGE"];
         Data_delayPre   = (float)_data["DELAY_PRE"];
