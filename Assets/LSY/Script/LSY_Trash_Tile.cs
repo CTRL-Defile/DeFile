@@ -18,12 +18,13 @@ public class LSY_Trash_Tile : MonoBehaviour
             if (_type != Character.Unit_Type.Ally) return;
 
             tile_Type = other_character.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().TileType;
-            int _id = other_character.Character_Status_ID;
-
+            //int _id = other_character.Character_Status_ID;
+            int _idx = other_character.Character_Status_Index;
+            Debug.Log(other.name + " star : " + _star + " _id : " + _idx);
             if (_star != Character.Unit_Star.ONE)
             {
                 other_character.UnitStar = Character.Unit_Star.ONE;
-                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__SACRIFICED_TO_POOL, _id, _star);
+                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__SACRIFICED_TO_POOL, _idx, _star);
             }
 
             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, tile_Type, other.gameObject);

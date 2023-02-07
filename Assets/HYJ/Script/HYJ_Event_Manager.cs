@@ -53,6 +53,8 @@ public partial class HYJ_Event_Manager : MonoBehaviour
             // 이벤트 클릭시 이벤트ID 랜덤으로 뽑고, 그 ID에 따른 사진/스크립트 변경
             randomEventID = JHW_setRandomEventID();
             JHW_displayEventText();
+            // 사운드
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_OPEN);
         }
         //
         this.gameObject.SetActive(aa);
@@ -76,6 +78,11 @@ public partial class HYJ_Event_Manager : MonoBehaviour
     void Start()
     {
         Basic_initialize = 0;
+
+        // 버튼 게임오브젝트 불러오기
+        eventButton1 = this.transform.GetChild(0).GetChild(3).GetChild(3).gameObject;
+        eventButton2 = this.transform.GetChild(0).GetChild(3).GetChild(4).gameObject;
+        eventResultButton = this.transform.GetChild(0).GetChild(3).GetChild(5).gameObject;
 
         JHW_Event_start();
     }
@@ -101,10 +108,7 @@ public partial class HYJ_Event_Manager : MonoBehaviour
                         Basic_initialize = 1;
                     }
 
-                    // 버튼 게임오브젝트 불러오기
-                    eventButton1 = GameObject.Find("EventButton1");
-                    eventButton2 = GameObject.Find("EventButton2");
-                    eventResultButton = GameObject.Find("ResultButton");
+                    
                 }
                 break;
             case 1:
@@ -489,8 +493,8 @@ partial class HYJ_Event_Manager
         script.text = "";
         //GameObject.Find("EventButton1").transform.DOScale(0f, 0);
         //GameObject.Find("EventButton2").transform.DOScale(0f, 0);
-        choice1.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f);
-        choice2.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f);
+        //choice1.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f);
+        //choice2.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f);
         // ux적용
         scriptSequence = DOTween.Sequence();
         scriptSequence.Append(script.gameObject.GetComponent<TextMeshProUGUI>().DOText(Event_datas[randomEventID].Data_SCRIPT_KOR, 2f));
@@ -503,7 +507,7 @@ partial class HYJ_Event_Manager
     public void ClickButtonOne(bool isClicked)
     {
         toDisplayScript = ""; // 이벤트 선택 시 등장하는 스크립트 비움
-        GameObject.Find("EventButton1").GetComponent<Image>().DOColor(new Color(1f, 1f, 1f, 1f), 0f); // 투명도 원래대로
+        eventButton1.GetComponent<Image>().DOColor(new Color(1f, 1f, 1f, 1f), 0f); // 투명도 원래대로
 
         // 이벤트 효과
         List<JHW_EventSelect> eventSelectResult = EventSelect_datas.FindAll(x => x.Data_EVENT_ID.Equals(randomEventID));// 이벤트셀렉트 선택지1,2
@@ -528,6 +532,8 @@ partial class HYJ_Event_Manager
         scriptSequence.Append(script.gameObject.GetComponent<TextMeshProUGUI>().DOText(resultScript, 2f)); // 결과 선택 후 등장하는 스크립트로 변경
         scriptSequence.Append(eventResultButton.gameObject.transform.DOScale(1f, 0.5f).SetEase(Ease.OutExpo).SetDelay(2f)); // 2초뒤 결과 확인 버튼
 
+        // 사운드
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_SELECT_CHOICE);
     }
 
     // 두번째 선택지 버튼 누를 때 
@@ -558,7 +564,9 @@ partial class HYJ_Event_Manager
         scriptSequence = DOTween.Sequence();
         scriptSequence.Append(script.gameObject.GetComponent<TextMeshProUGUI>().DOText(resultScript, 2f)); // 결과 선택 후 등장하는 스크립트로 변경
         eventResultButton.gameObject.transform.DOScale(1f, 0).SetEase(Ease.OutExpo).SetDelay(2f); // 2초뒤 결과 확인 버튼
-        
+
+        // 사운드
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_SELECT_CHOICE);
     }
 
     // 결과창 버튼
@@ -573,6 +581,9 @@ partial class HYJ_Event_Manager
         eventButton2.SetActive(true);
         eventResultButton.SetActive(false);
         script.fontSize = 30;
+
+        // 사운드
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_SELECT_CHOICE);
     }
 
     public object JHW_GetSelectedData(params object[] _args) // EventSelectedDataBase.csv의 가장 최근 데이터 리턴

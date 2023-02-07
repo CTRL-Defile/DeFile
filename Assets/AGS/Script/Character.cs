@@ -473,12 +473,16 @@ public partial class Character
 
 		if (_tile != null)
 		{
-			this.LSY_Character_Set_OnTile(_tile.gameObject);
-			this.transform.position = _tile.transform.position;
-			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD, this.gameObject);
-			//_tile.Ally_Enter(this.gameObject.GetComponent<CapsuleCollider>());
 
-		}
+			if (on_Tile.GetComponent<HYJ_Battle_Tile>().tile_type == HYJ_Battle_Tile.Tile_Type.Stand)
+				HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD, this.gameObject);
+
+            this.LSY_Character_Set_OnTile(_tile.gameObject);
+            this.transform.position = _tile.transform.position;
+
+
+
+        }
 
 
         switch (m_star)

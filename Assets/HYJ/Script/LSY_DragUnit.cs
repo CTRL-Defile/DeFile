@@ -175,7 +175,7 @@ public class LSY_DragUnit : MonoBehaviour
                         }
                     }
 
-                    if (selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Stand)
+                    if (selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Stand || selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Trash)
                     {
                         //unit_hit = CastRay("Unit");
                         if (Input.GetMouseButtonDown(0))

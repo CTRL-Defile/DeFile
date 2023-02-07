@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using static HYJ_Battle_Tile;
@@ -127,6 +128,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON,  HYJ_ActiveOn);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__SHOP_UI, LSY_Set_ShopUI);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, LSY_Battle_Synergy_Update);
+
+        Battle_UI_Font();
     }
 
     // Update is called once per frame
@@ -1407,6 +1410,27 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     }
 
+    //Font JSong_Bold, JSong_Light, Chosun_Bold, Chosun_Light;
+    public const string FONT_JSONG = "Assets/TextMesh Pro/Fonts/JSONGMYEONG SDF.asset";
+    public const string FONT_CHOSUN = "Assets/TextMesh Pro/Fonts/CHOSUNCENTENNIAL_TTF SDF.asset";
+    public void Battle_UI_Font()
+    {
+        int _cnt = Shop_UnitList.Count;
+        for (int i=0; i<_cnt; i++)
+        {
+            Shop_UnitList[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().font =
+                AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+        }
+        Shop_Coin_Text.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+        Battle_Ally_OnTile.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+        Battle_Timer_TMP.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+
+    }
+
+
+
+    //
+
 }
 #endregion
 
@@ -1457,37 +1481,39 @@ partial class HYJ_Battle_Manager
     {
         string tile_type = _args[0].ToString();
         GameObject obj = (GameObject)_args[1];
-        int id = int.Parse(obj.GetComponent<Character>().HYJ_Status_saveData.Data_ID);
+        //int id = int.Parse(obj.GetComponent<Character>().HYJ_Status_saveData.Data_ID);
+
+        Character obj_char = obj.GetComponent<Character>();
+        int id = obj_char.Character_Status_Index;
 
         switch (tile_type)
         {
             case "Stand":
                 Stand_Unit.Remove(obj);
-                obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
-                //m_CharacterPools.m_List[id].push(obj.GetComponent<Character>());
                 m_CharacterPools.m_List[id].objects.PushStack(obj.GetComponent<Character>());
                 break;
 
             case "Field":
                 Field_Unit.Remove(obj);
-                obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
-                //id = int.Parse(obj.GetComponent<Character>().HYJ_Status_saveData.Data_ID);
-                //m_CharacterPools.m_List[id].push(obj.GetComponent<Character>());
                 m_CharacterPools.m_List[id].objects.PushStack(obj.GetComponent<Character>());
                 break;
 
             case "Enemy":
                 Debug.Log(obj + " Enemy remove");
                 Enemy_Unit.Remove(obj);
-                obj.SetActive(false);
                 obj.transform.SetParent(Unit_pool);
                 obj.tag = "Ally";
-                //m_CharacterPools.m_List[id].push(obj.GetComponent<Character>());
                 m_CharacterPools.m_List[id].objects.PushStack(obj.GetComponent<Character>());
                 break;
         }
+
+        List<List<Dictionary<string, object>>> Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+        obj.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DEFAULT);
+        obj_char.HYJ_Status_SettingData(Unit_csv[0][obj_char.Character_Status_Index]);
+        obj.SetActive(false);
+
 
         Show_Ally_OnTile();
 
@@ -1503,26 +1529,35 @@ partial class HYJ_Battle_Manager
             case "Stand":
                 Stand_Unit.Remove(obj);
                 Sacrificed_Unit.Add(obj);
-                obj.SetActive(false);
+                //obj.SetActive(false);
                 break;
 
             case "Field":
                 Field_Unit.Remove(obj);
                 Sacrificed_Unit.Add(obj);
-                obj.SetActive(false);
+                //obj.SetActive(false);
                 break;
         }
 
+        Character obj_char = obj.GetComponent<Character>();
+
         // TriggerExit 으로 tile의 onUnit이 갱신되지 않음
-        obj.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
-        obj.transform.SetParent(Unit_Sacrificed);
+        obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
+
+        List<List<Dictionary<string, object>>> Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
         obj.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DEFAULT);
+        obj_char.HYJ_Status_SettingData(Unit_csv[0][obj_char.Character_Status_Index]);
+
+        obj.transform.SetParent(Unit_Sacrificed);
+        obj.SetActive(false);
+
+        Show_Ally_OnTile();
 
         return null;
     }
     object Unit_Sacrificed_to_Pool(params object[] _args)
     {
-        int _id = (int)_args[0], cnt = 0;
+        int _idx = (int)_args[0], cnt = 0;
         Character.Unit_Star _star = (Character.Unit_Star)_args[1];
 
         // 2성 -> 1성 2개 부활
@@ -1541,11 +1576,11 @@ partial class HYJ_Battle_Manager
         for (int i=0; i<_len; i++)
         {
             GameObject obj = Sacrificed_Unit[i - num];
-            if (obj.GetComponent<Character>().Character_Status_ID == _id)
+            if (obj.GetComponent<Character>().Character_Status_Index == _idx)
             {
                 Sacrificed_Unit.Remove(obj);
                 obj.transform.SetParent(Unit_pool);
-                m_CharacterPools.m_List[_id].objects.PushStack(obj.GetComponent<Character>());
+                m_CharacterPools.m_List[_idx].objects.PushStack(obj.GetComponent<Character>());
                 num++;
                 if (num == cnt)
                     return null;
