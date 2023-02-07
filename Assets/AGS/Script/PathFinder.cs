@@ -45,6 +45,7 @@ public class PathFinder : MonoBehaviour
 	[SerializeField]
 	NODE m_NearNode = null;
 
+	[SerializeField]
 	bool m_IsArrived = true;	 
 	public bool Arrived { get { return m_IsArrived;} set { m_IsArrived = value;} }
 
@@ -68,8 +69,11 @@ public class PathFinder : MonoBehaviour
 	{
 		if (gameObject.GetComponent<Character>().State == Character.STATE.SKILL ||
 			gameObject.GetComponent<Character>().State == Character.STATE.SKILL_IDLE)
+		{
+			m_IsArrived = true;
 			return;
-
+		}
+			
 		if( m_FinalPath.m_List.Count == 0 ||
 			null == gameObject.GetComponent<Character>().Target)
 		{
@@ -136,7 +140,7 @@ public class PathFinder : MonoBehaviour
 			BattleGraph[StartIdx].Marking = true;
 			BattleGraph[StartIdx].Unit = gameObject;
 			gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(BattleGraph[StartIdx].Tile.gameObject);
-			m_FinalPath.ClearList();
+			//m_FinalPath.ClearList();
 			return false;
 		}
 
@@ -149,7 +153,7 @@ public class PathFinder : MonoBehaviour
 				BattleGraph[StartIdx].Unit = gameObject;
 				gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(BattleGraph[StartIdx].Tile.gameObject);
 				gameObject.GetComponent<Character>().State = Character.STATE.IDLE;
-				m_FinalPath.ClearList();				
+				//m_FinalPath.ClearList();				
 				return false;
 			}				
 		}
@@ -200,7 +204,7 @@ public class PathFinder : MonoBehaviour
 			}
 		}
 
-		// 타겟의 Neighbor중 갈 수 있는 노드가 없으면 길찾기 안하고 IDLE상태로 전환
+		// 타겟의 Neighbor중 갈 수 있는 노드가 없으면 길찾기 안하고 IDLE상태로 전환		
 		if(m_NearNode == null)
 		{
 			gameObject.GetComponent<Character>().State = Character.STATE.IDLE;
@@ -340,6 +344,9 @@ public class PathFinder : MonoBehaviour
 
 	public void InitMarking()
 	{
+		if (null == m_DestNode && null == m_StartNode)
+			return;
+
 		if (null == m_DestNode)
 		{
 			m_StartNode.Marking = false;
