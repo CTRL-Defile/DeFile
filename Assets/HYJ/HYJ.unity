@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.6757515, g: 0.77903193, b: 0.7893794, a: 1}
+  m_IndirectSpecularColor: {r: 0.67433286, g: 0.77783763, b: 0.78887975, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3557,6 +3557,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4793267535551650671, guid: 5c8913600e1c55b4da67868b0e5fc936,
+        type: 3}
+      propertyPath: GameVolume
+      value: 
+      objectReference: {fileID: 1903905629}
     - target: {fileID: 4936616461193956199, guid: 5c8913600e1c55b4da67868b0e5fc936,
         type: 3}
       propertyPath: m_fontAsset
