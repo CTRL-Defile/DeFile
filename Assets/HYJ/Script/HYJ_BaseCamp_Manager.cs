@@ -32,6 +32,8 @@ public partial class HYJ_BaseCamp_Manager : MonoBehaviour
     Dictionary<string, object> selectedUnit2; // 랜덤하게 선택된 유닛 데이터1
     Dictionary<string, object> selectedUnit3; // 랜덤하게 선택된 유닛 데이터1
 
+    private GameObject info; // 정보창
+
     // 휴식에서 감소시킬 행동개수
     private int rest_minusActionCnt = 2;
 
@@ -54,11 +56,13 @@ public partial class HYJ_BaseCamp_Manager : MonoBehaviour
     {
         this.gameObject.SetActive(_isActive);
 
-        //if (_isActive == false)
-        //{
-        //    BaseCamp_ExitButton_OnClick(); // 베이스캠프 나갈때 ux
-        //}
-        
+        if (_isActive == false)
+        {
+            // 사운드
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.BOOKSHELF_WHIP);
+            //BaseCamp_ExitButton_OnClick(); // 베이스캠프 나갈때 ux
+        }
+
         //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, !_isActive);
     }
@@ -82,6 +86,8 @@ public partial class HYJ_BaseCamp_Manager : MonoBehaviour
                 {
                     gaugeText = this.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>(); // 게이지 텍스트
                     gaugeImgs = this.transform.GetChild(0).GetChild(1).GetChild(1); // 게이지 이미지 아이콘
+                    info = this.transform.GetChild(0).GetChild(6).gameObject; // 정보창
+
                     this.actionCnt = this.actionCntMax; // 행동개수를 최대 행동개수로설정
 
                     ChangeGaugeUI(); // UI 변경
@@ -195,7 +201,7 @@ partial class HYJ_BaseCamp_Manager {
     {
         if (isClicked == true) return; // 이미 누른 상태면 실행X
 
-        if (this.actionCnt < rest_minusActionCnt) {
+        if (this.actionCnt < rest_minusActionCnt +restStack) {
             ActionCntAlert();
             return; 
         }  // 행동개수 부족시 ux 및 리턴
@@ -210,6 +216,9 @@ partial class HYJ_BaseCamp_Manager {
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__HP_INCREASE, 10);
 
         ChangeGaugeUI(); // Gauge UI 변경
+
+        // 사운드
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.RECOVER);
     }
 
     // 삭제버튼 on/off
@@ -416,13 +425,6 @@ partial class HYJ_BaseCamp_Manager {
 
         actionCnt -= minusActionCnt; // 행동개수 삭제
 
-        // ux
-        if (GameObject.Find("RerollButton/Image") != null)
-        {
-            GameObject.Find("RerollButton/Image").GetComponent<Image>().DOFade(0f, 0.5f);
-            GameObject.Find("RerollButton/Image/Text").GetComponent<Text>().DOFade(0f, 0.5f);
-        }
-
         // 카드 일단 뒤로 보낸다
         unitList1.transform.DOLocalMoveY(-1000f, 1f);
         unitList2.transform.DOLocalMoveY(-1000f, 1f);
@@ -438,6 +440,9 @@ partial class HYJ_BaseCamp_Manager {
 
         // 게이지 이미지 on/off
         ChangeGaugeUI();
+
+        //사운드
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.BASECAMP_DELETE_UNIT);
 
         //ux
         GameObject g = this.transform.GetChild(0).GetChild(0).GetChild(0).gameObject;
@@ -466,7 +471,7 @@ partial class HYJ_BaseCamp_Manager
 
     private Stack<GameObject> actionCntStack = new Stack<GameObject>();
 
-    private GameObject info;
+    
 
     public void Button_OnMouseEnter(GameObject g)
     {
@@ -479,7 +484,7 @@ partial class HYJ_BaseCamp_Manager
         }
 
         // 게이지
-        GameObject gauge = GameObject.Find("Gauge/Image");
+        GameObject gauge = this.transform.GetChild(0).GetChild(1).GetChild(1).gameObject; //게이지 이미지
 
         // 마우스 올려진상태면 크게/색변경
         g.transform.DOScale(new Vector3(1.1f, 1.1f,1f), .2f);
@@ -490,9 +495,6 @@ partial class HYJ_BaseCamp_Manager
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.BUTTON_MOUSEOVER);
 
         // 정보창
-        info = GameObject.Find("Info_Canvas");
-
-        //info.transform.position = g.transform.position; info.transform.GetComponent<RectTransform>().rect.x+=50; // 위치조정
         info.transform.GetComponent<Image>().DOFade(1, 0.2f); // 이미지 페이드
         info.transform.GetChild(0).gameObject.transform.GetComponent<Text>().DOFade(1, 0.2f); // 텍스트 페이드
         info.transform.SetParent(g.transform.parent);
@@ -501,7 +503,7 @@ partial class HYJ_BaseCamp_Manager
         info.transform.transform.position = newPos;
 
         // 휴식일 경우
-        if (g == GameObject.Find("RestButton"))
+        if (g == GameObject.Find("RestButton") && actionCnt >= rest_minusActionCnt + restStack)
         {
             if (actionCnt > 0)
             {
@@ -556,9 +558,6 @@ partial class HYJ_BaseCamp_Manager
     {
 
 
-        // 실행할 수 없으면 실행x
-        if (g == GameObject.Find("RestButton") && isRestAble == false) return;
-
         g.transform.DOScale(new Vector3(1f, 1f,1f), 0.2f);
         isMouseEntered = false;
 
@@ -567,6 +566,8 @@ partial class HYJ_BaseCamp_Manager
         //g.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f).SetDelay(0.001f);
 
         // 행동개수 ux
+        // 실행할 수 없으면 실행x
+        // if (g == GameObject.Find("RestButton") && isRestAble == false) return;
         while (actionCntStack.Count != 0)
         {
             GameObject actionCntUX = actionCntStack.Pop();
@@ -593,14 +594,34 @@ partial class HYJ_BaseCamp_Manager
         isClicked = true;
         Invoke("clickFlagChange", 1f);
 
-        // 휴식 할 수 없으면 리턴
-        if (g == GameObject.Find("RestButton") && isRestAble == false) { ActionCntAlert(); return; }
         // 점검 할 수 없으면 리턴
         if (g == GameObject.Find("MaintananceButton") && isMaintananceAble == false) return;
+
+        // 휴식 클릭시
+        if (g == GameObject.Find("RestButton"))
+        {
+            // ux 오브젝트
+            GameObject uxObject = Instantiate(g, g.transform.position, g.transform.rotation);
+            uxObject.GetComponent<Button>().enabled = false;
+            uxObject.GetComponent<EventTrigger>().enabled = false;
+            uxObject.transform.SetParent(g.transform);
+            uxObject.transform.DOScale(new Vector3(1f, 1f, 1f), 0f);
+            uxObject.transform.DOScale(new Vector3(1.3f, 1.3f, 1.3f), 1f);
+            uxObject.GetComponent<Image>().DOFade(0f, 1f);
+            uxObject.transform.GetChild(0).gameObject.GetComponent<Text>().DOFade(0f, 1f);
+            Destroy(uxObject, 1f);
+
+            // 휴식 - 행동개수 검사
+            if (actionCnt >= rest_minusActionCnt + restStack) isRestAble = true;
+            else isRestAble = false;
+        }
 
         // 점검 클릭시 1초 뒤 점검ㄱ
         if (g == GameObject.Find("MaintananceButton")) {
             Invoke("JHW_BaseCamp_Maintanance", 1f);
+
+            // 사운드
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.BASECAMP_OPEN_UNIT_DELETE_TITLE);
 
             //ux
             g.transform.parent.gameObject.transform.DOScale(new Vector3(0f, 0f,1f), 0.7f).SetEase(Ease.InSine);
@@ -611,40 +632,11 @@ partial class HYJ_BaseCamp_Manager
             g.transform.parent.GetChild(4).gameObject.transform.GetComponent<Image>().DOFade(0f, 0.8f);
         }
 
-        // 사운드
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.BASECAMP_OPEN_UNIT_DELETE_TITLE);
-
-        // ux 오브젝트
-        GameObject uxObject = Instantiate(g, g.transform.position, g.transform.rotation);
-        uxObject.GetComponent<Button>().enabled = false;
-        uxObject.GetComponent<EventTrigger>().enabled = false;
-        uxObject.transform.SetParent(g.transform);
-        uxObject.transform.DOScale(new Vector3(1f, 1f, 1f), 0f);
-        uxObject.transform.DOScale(new Vector3(1.3f, 1.3f, 1.3f), 1f);
-        uxObject.GetComponent<Image>().DOFade(0f, 1f);
-        uxObject.transform.GetChild(0).gameObject.GetComponent<Text>().DOFade(0f, 1f);
-        Destroy(uxObject, 1f);
         
-
+        // 버튼 원래크기로
         g.transform.DOScale(new Vector3(1f, 1f, 1f), 0f);
-        g.GetComponent<Image>().DOFade(1f, 0f);
 
-        // 행동개수 검사 및 ux
-        CheckActionCntAndChangeUX(g);
-
-        // 행동개수 ux
-        while (actionCntStack.Count != 0)
-        {
-            GameObject actionCntUX = actionCntStack.Pop();
-            actionCntUX.transform.DOScale(new Vector3(1f, 1f), 0.2f);
-
-            GameObject actionCntTempUX = Instantiate(actionCntUX, actionCntUX.transform.position, actionCntUX.transform.rotation);
-            actionCntTempUX.transform.SetParent(actionCntUX.transform);
-            actionCntTempUX.transform.DOScale(new Vector3(1f, 1f), 0f);
-            actionCntTempUX.transform.DOScale(new Vector3(1.7f, 1.7f), 1f);
-            actionCntTempUX.GetComponent<Image>().DOFade(0f, 1f);
-            Destroy(actionCntTempUX, 1f);
-        }
+        
     }
 
     private void clickFlagChange()
@@ -688,17 +680,6 @@ partial class HYJ_BaseCamp_Manager
         g.transform.GetChild(0).gameObject.SetActive(false);
     }
 
-    // 휴식 - 행동개수를 세고 그에 맞춰 UX 조정
-    private void CheckActionCntAndChangeUX(GameObject g)
-    {
-        if (actionCnt >= rest_minusActionCnt + restStack) isRestAble = true;
-        else
-        {
-            isRestAble = false;
-            g.GetComponent<Image>().DOFade(0.5f, 0.5f);
-        }
-    }
-
     // 캠프 나가기 버튼
     public void BaseCamp_ExitButton_OnEnter(GameObject g)
     {
@@ -708,63 +689,60 @@ partial class HYJ_BaseCamp_Manager
     {
         g.transform.GetChild(1).gameObject.SetActive(true);
     }
-    public void BaseCamp_ExitButton_OnClick()
-    {
-    }
 
-    // 점검 - 스탯정보
-    bool isStatusMouseOver = false;
-    public void Maintanance_Status_OnEnter(GameObject g)
-    {
-        isStatusMouseOver = true;
+    //// 점검 - 스탯정보
+    //bool isStatusMouseOver = false;
+    //public void Maintanance_Status_OnEnter(GameObject g)
+    //{
+    //    isStatusMouseOver = true;
 
-        GameObject statusInfo = GameObject.Find("StatusInfoLabel");
-        statusInfo.transform.GetChild(0).transform.gameObject.SetActive(true);
+    //    GameObject statusInfo = GameObject.Find("StatusInfoLabel");
+    //    statusInfo.transform.GetChild(0).transform.gameObject.SetActive(true);
 
-        string infoText = "";
+    //    string infoText = "";
 
-        switch (g.name)
-        {
-            case "BaseCamp_MaxHP": infoText = "최대 HP"; break;
-            case "BaseCamp_MaxMP": infoText = "최대 MP"; break;
-            case "BaseCamp_PhyAttk": infoText = "물리공격력"; break;
-            case "BaseCamp_Defence": infoText = "방어력"; break;
-            case "BaseCamp_SpellAttk": infoText = "주문공격력"; break;
-            case "BaseCamp_SpellDefence": infoText = "주문저항력"; break;
-            case "BaseCamp_CritChance": infoText = "치명타확률"; break;
-            case "BaseCamp_CritMulti": infoText = "치명타배율"; break;
-        }
+    //    switch (g.name)
+    //    {
+    //        case "BaseCamp_MaxHP": infoText = "최대 HP"; break;
+    //        case "BaseCamp_MaxMP": infoText = "최대 MP"; break;
+    //        case "BaseCamp_PhyAttk": infoText = "물리공격력"; break;
+    //        case "BaseCamp_Defence": infoText = "방어력"; break;
+    //        case "BaseCamp_SpellAttk": infoText = "주문공격력"; break;
+    //        case "BaseCamp_SpellDefence": infoText = "주문저항력"; break;
+    //        case "BaseCamp_CritChance": infoText = "치명타확률"; break;
+    //        case "BaseCamp_CritMulti": infoText = "치명타배율"; break;
+    //    }
 
-        //statusInfo.transform.SetParent(g.transform);
-        statusInfo.transform.localPosition = g.transform.localPosition;
-        statusInfo.transform.DOScale(1f, 1f).SetEase(Ease.OutExpo);
-        statusInfo.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = infoText;
-        StartCoroutine("Maintanance_Status_OnOver");
+    //    //statusInfo.transform.SetParent(g.transform);
+    //    statusInfo.transform.localPosition = g.transform.localPosition;
+    //    statusInfo.transform.DOScale(1f, 1f).SetEase(Ease.OutExpo);
+    //    statusInfo.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = infoText;
+    //    StartCoroutine("Maintanance_Status_OnOver");
 
         
-    }
+    //}
 
-    IEnumerator Maintanance_Status_OnOver()
-    {
-        while (isStatusMouseOver)
-        {
-            GameObject statusInfo = GameObject.Find("StatusInfoLabel");
+    //IEnumerator Maintanance_Status_OnOver()
+    //{
+    //    while (isStatusMouseOver)
+    //    {
+    //        GameObject statusInfo = GameObject.Find("StatusInfoLabel");
 
-            Vector3 newVector = new Vector3(Input.mousePosition.x - Screen.width / 2 + 60, Input.mousePosition.y - Screen.height / 2 +20);
-            statusInfo.transform.DOLocalMove(newVector,1f);
+    //        Vector3 newVector = new Vector3(Input.mousePosition.x - Screen.width / 2 + 60, Input.mousePosition.y - Screen.height / 2 +20);
+    //        statusInfo.transform.DOLocalMove(newVector,1f);
 
-            yield return new WaitForSeconds(0.001f);
-        }
-    }
+    //        yield return new WaitForSeconds(0.001f);
+    //    }
+    //}
 
-    public void Maintanance_Status_OnExit(GameObject g)
-    {
-        isStatusMouseOver = false;
+    //public void Maintanance_Status_OnExit(GameObject g)
+    //{
+    //    isStatusMouseOver = false;
 
-        GameObject statusInfo = GameObject.Find("StatusInfoLabel");
-        statusInfo.transform.DOScale(0f, 1f).SetEase(Ease.OutExpo);
-        StopCoroutine("Maintanance_Status_OnOver");
-    }
+    //    GameObject statusInfo = GameObject.Find("StatusInfoLabel");
+    //    statusInfo.transform.DOScale(0f, 1f).SetEase(Ease.OutExpo);
+    //    StopCoroutine("Maintanance_Status_OnOver");
+    //}
 
     
 }

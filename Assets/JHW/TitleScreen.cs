@@ -39,6 +39,9 @@ public class TitleScreen : MonoBehaviour
         GameObject.Find("BasecampUI").GetComponent<Basecamp_ux>().StartBaseCamp_Button_UX();
         //2초 뒤 타이틀화면 OFF
         Invoke("Basecamp_disable", 2f);
+
+        // 사운드
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UI_CLICK1);
     }
 
     void Basecamp_disable()
