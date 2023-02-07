@@ -200,7 +200,7 @@ public partial class Character
 		}
 		
 		// Dissolve Shader 적용 예정
-		// 일단 조절 값 없어서 Die 애니메이션 끝났을 때 IsDead true로
+		// 일단 조절 값 없어서 Die 애니메이션 끝났을 때 IsDead true로		
 		if (m_animator.GetCurrentAnimatorStateInfo(0).IsName("Die") &&
 		  m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
 		{
@@ -209,7 +209,9 @@ public partial class Character
 
 			// Dissolve 쉐이더 SetUp
 			if(IsDead == false)
-				gameObject.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DISSOLVE);
+			{
+				gameObject.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DISSOLVE);				
+			}				
 
 			// 무기 이펙트 OFF
 			int EffectCnt = m_WeaponEffect.Length;
@@ -217,14 +219,16 @@ public partial class Character
 			{
 				foreach (GameObject Effect in m_WeaponEffect)
 				{
-					Effect.SetActive(false);
+					if(Effect.activeSelf == true)
+						Effect.SetActive(false);
 				}
 			}
 
-			IsDead = true;
+			IsDead = true;			
 		}
-		
-		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE, this.gameObject);
+
+		if(IsDead == false)
+			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE, this.gameObject);
 	}
 
 	virtual public void BattleProcess()
@@ -272,7 +276,7 @@ public partial class Character
 			{
 				switch (State) 
 				{
-					case STATE.IDLE:
+					case STATE.IDLE:						
 						break;
 					case STATE.SKILL:
 						State = STATE.IDLE;
