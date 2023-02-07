@@ -6,6 +6,8 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using static HYJ_Battle_Tile;
 
 public enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_COMBAT_OVER, PHASE_END };
@@ -23,15 +25,19 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     GameObject prefab;
     GameObjectPool<HYJ_Battle_Tile> m_TilePool;
     [SerializeField]
-    SerialList<GameObjectPool<Character>> m_CharacterPools = new SerialList<GameObjectPool<Character>>();
+    SerialList<GameObjectPool<Character>> m_CharacterPools = new SerialList<GameObjectPool<Character>>();    
+    
     GameObjectPool<Character> m_CharacterPool;
     int Max_tile = 80, Max_character = 40, Pool_cnt = 0;
 
     [SerializeField]
     bool _StopVar = false, _StartVar = false;
 
-    //////////  Getter & Setter //////////
-    object HYJ_Basic_GetPhase(params object[] _args)
+	[SerializeField]
+    private Volume GameVolume;
+
+	//////////  Getter & Setter //////////
+	object HYJ_Basic_GetPhase(params object[] _args)
     {
         return Basic_phase;
     }
@@ -267,8 +273,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     //End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Win";
                     else
                         End_Btn.transform.GetChild(1).gameObject.SetActive(true);
-                        //End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Lose";
-                }
+					//End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Lose";
+
+					DepthOfField dof;
+					if (GameVolume.profile.TryGet<DepthOfField>(out dof))
+					{
+						dof.active = true;
+					}
+				}
                 break;
         }
     }
@@ -350,7 +362,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
 	public void LSY_Battle_End()
     {
-        End_Btn.SetActive(false);
+		DepthOfField dof;
+		if (GameVolume.profile.TryGet<DepthOfField>(out dof))
+		{
+			dof.active = false;
+		}
+
+		End_Btn.SetActive(false);
         End_Btn.transform.GetChild(0).gameObject.SetActive(false);
         End_Btn.transform.GetChild(1).gameObject.SetActive(false);
         HYJ_SetActive(false);
@@ -1660,7 +1678,8 @@ partial class HYJ_Battle_Manager
 		for (int i = 0; i < Num_Ally; i++)
         {
 			if (Field_Unit[i].GetComponent<Character>().Dead ||
-				Field_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL)
+				Field_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL ||
+				Field_Unit[i].GetComponent<Character>().State == Character.STATE.SKILL_IDLE)
 				continue;
 
 			//Debug.Log("i"+i);
@@ -1686,7 +1705,10 @@ partial class HYJ_Battle_Manager
                 {
 					foreach (var node in m_Graph[(Enemy_Unit[k].GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex)].m_Neighbors.m_List)
                     {
-						if (false == node.Marking)
+                        if(false == node.Marking && node.Unit == Field_Unit[i])
+                        {							
+						}
+						else if (false == node.Marking)
                         {
 							minDist = Dist;
 							minAngle = Angle;
@@ -1695,6 +1717,11 @@ partial class HYJ_Battle_Manager
 					}                   					
                 }
             }
+
+			// TODO : 타겟한테 갈 길 없으면 / 다음 가까운적 체크해서 길체크 없으면 다음
+			// PathFinding 해서 그적한테 갈길이없어야해. -> 다시리타겟팅? 모든 몬스터 기준으로 갈 길 있는얘를 골라내야해 -> Start Path Finding이 Enemy다돌면서 갈길있는애 찾을때까지 A*를 계속 돌려야함.
+            // Dictionary < Monstername, GraphDistCount > -> 오름차순order -> Path 돌려서 생성된 monster로 Target 설정. 이게 findTarget 대체해야할듯.
+            // 칸 계산 괜찮은 아이디어 있으면 적용하면 좋을듯..
 
 			//if(null != Field_Unit[i].GetComponent<Character>().Target)
 			Field_Unit[i].GetComponent<Character>().PreTarget = Field_Unit[i].GetComponent<Character>().Target;
@@ -1733,7 +1760,12 @@ partial class HYJ_Battle_Manager
 
 					foreach (var node in m_Graph[(Field_Unit[k].GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex)].m_Neighbors.m_List)
 					{
-						if (false == node.Marking)
+						if (false == node.Marking &&
+                            node.Unit != null &&
+                            node.Unit == Field_Unit[k])
+						{
+						}
+						else if (false == node.Marking)
 						{
 							minDist = Dist;
 							minAngle = Angle;
