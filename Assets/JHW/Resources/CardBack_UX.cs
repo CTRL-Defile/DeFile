@@ -16,6 +16,8 @@ public class CardBack_UX : MonoBehaviour
         this.transform.parent.GetChild(0).DOLocalRotate(new Vector3(0, 0, 0), 0.3f, RotateMode.Fast).SetDelay(0.3f);
         // 뒷면 클릭 3번일 때 reroll 버튼 활성화
         if (++checkBackCardCnt >= 3) Check_reroll_able();
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.PAPER_WHIP);
     }
 
     // 카드 전부 뒷면 누르면 reroll 버튼 활성화
