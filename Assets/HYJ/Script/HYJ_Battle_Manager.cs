@@ -364,16 +364,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     {
 		DepthOfField dof;
 		if (GameVolume.profile.TryGet<DepthOfField>(out dof))
-		{
 			dof.active = false;
-		}
 
 		End_Btn.SetActive(false);
         End_Btn.transform.GetChild(0).gameObject.SetActive(false);
         End_Btn.transform.GetChild(1).gameObject.SetActive(false);
         HYJ_SetActive(false);
         Basic_phase = BATTLE_PHASE.PHASE_INIT;
-        //UL_isInitialized= false;
         StatusBar_isInitialized = false;
 
         Field_Unit.Clear();
@@ -1045,7 +1042,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     public void LSY_UnitList_Init()
     {
         // Level
-//        EXP_Img = EXP_Bar.GetComponent<UnityEngine.UI.Image>();
         cur_EXP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP);
         Max_EXP = Max_EXP_List[Player_Lv];
         Shop_Exp_Cur.fillAmount = cur_EXP / Max_EXP;
@@ -1196,7 +1192,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
 
         // 유닛 코스트 배열 초기화
-        for(int i = 0; i < Shop_Panel_cnt; i++)  // UnitIdx_list.Count => 아직 size가 0임
+        for(int i = 0; i < Shop_Panel_cnt; i++)
         {
             System.Random r = new System.Random();
             int n = r.Next(1, tot_num + 1); // min 이상, max 미만
@@ -1209,16 +1205,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 }
             }
         }
-        //Debug.Log(Cost_list.Count + "<-costlist cnt");
 
         // 코스트 별 유닛 랜덤 설정
         for(int i = 0; i < Shop_Panel_cnt; i++)
         {
             List<int> Unit_Candi = new List<int>();
-            for(int j = 0; j < Unit_DB[0].Count - 1; j++)  // header 3줄 제외.. 할 필요가 없네 어차피 3줄떼고 읽어왔구나.
+            for(int j = 0; j < Unit_DB[0].Count - 1; j++)
             {
-                //Debug.Log((int)Unit_DB[j]["COST"] + "<-db.cost || costlist->" + Cost_list[i]);
-
                 int unit_cost = (int)Unit_DB[0][j]["COST"];
                 int unit_idx = (int)Unit_DB[0][j]["Index"];
                 int unit_cnt = m_CharacterPools.m_List[unit_idx].get_Count();
@@ -1810,12 +1803,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         var synergy_dic = (Dictionary<int, int>)_args[0];
         synergy_dic = synergy_dic.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
-        //foreach (var item in synergy_dic)
-        //{
-        //    Debug.Log("Key : " + item.Key + ", Value : " + item.Value);
-        //}
-
-        // gray1 green23 red456
         bool init_red = false, init_green = false, init_gray = false;
 
         for (int i=0; i<synergy_dic.Count; i++)
@@ -1906,7 +1893,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             gray_dot.SetParent(Synergy_Panel);
             init_gray = false;
         }
-
 
         return null;
     }

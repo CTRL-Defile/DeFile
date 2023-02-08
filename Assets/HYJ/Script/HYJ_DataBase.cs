@@ -333,9 +333,6 @@ partial class HYJ_DataBase
             case 2:
                 {
                     string csv_path = "DataBase/DB_Using_Character";
-                    //Unit_csv.AddRange(CSVReader.Read(csv_path));
-                    //Unit_csv[1] = CSVReader.Read(csv_path+"_2");
-                    //Unit_csv[2] = CSVReader.Read(csv_path+"_3");
 
                     for (int i=0; i<3; i++)
                     {
@@ -365,9 +362,6 @@ partial class HYJ_DataBase
                             Unit_trans.GetComponent<Character>().HYJ_Status_SettingData(Unit_csv[0][i]);
                         else
                             Debug.Log((int)Unit_csv[0][i]["Index"] + " is NULL Unit object in ADDRESSABLE");
-
-                        //Unit_datas.transform.Find("" + (int)Unit_csv[i]["ID"]).GetComponent<Character>().HYJ_Status_SettingData(Unit_csv[i]);
-                        //Unit_datas.transform.Find(data[i]["ID"].ToString()).GetComponent<Character>().HYJ_Status_SettingData(data[i]);
                     }
                     Unit_phase = 3;
                 }

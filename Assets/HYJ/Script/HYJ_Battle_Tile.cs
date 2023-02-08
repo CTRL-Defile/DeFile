@@ -122,10 +122,10 @@ partial class HYJ_Battle_Tile : MonoBehaviour
         Character other_Script = other.GetComponent<Character>();
         if (other_Script != null)   // 다른 collider 검출 방지
         {
-            //Debug.Log("[Tile] " + other + " " + this);
             if (other_Script.m_UnitType == Character.Unit_Type.Ally || other_Script.m_UnitType == Character.Unit_Type.Enemy)
             {
-                BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
+                BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.
+                    HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
                 if (phase == BATTLE_PHASE.PHASE_COMBAT && !this.CompareTag("TrashTile"))
                 {
                     if (Basic_onUnit == null)
@@ -230,7 +230,6 @@ partial class HYJ_Battle_Tile : MonoBehaviour
         if (tile_Available == Tile_Available.Non_Available)
         {
             Debug.Log("[BattleTile] NonAvailable Tile Enter");
-            //other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
         }
         else
         {
@@ -239,14 +238,6 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                 _Type = other.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().TileType;
             else
                 _Type = Tile_Type.Stand;
-
-
-            //string Tag_UnitTile;
-            //if (other.GetComponent<Character>().LSY_Character_Get_OnTile() == null)
-            //    // 첫 생성(구매) 시 Stand로 설정
-            //    Tag_UnitTile = "StandTile";
-            //else
-            //    Tag_UnitTile = other.GetComponent<Character>().LSY_Character_Get_OnTile().tag;
 
             int Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
             int cnt_FieldUnit = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___COUNT__FIELD_UNIT);
@@ -278,14 +269,8 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                         {
                             // 필드 위 유닛 개수 초과 시,
                             Debug.Log("!! Count over");
-                            //other.gameObject.transform.position = this.transform.parent.transform.parent.transform.parent.GetComponent<LSY_DragUnit>().oriPos;
                             other.transform.position = other.GetComponent<Character>().LSY_Character_Get_OnTile().transform.position;
                         }
-                    }
-                    else if (this.tile_type == Tile_Type.Trash)
-                    {
-                        //Debug.Log("Trash Collider Enter");
-                        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, _Type, other.gameObject);
                     }
                     break;
 
@@ -299,11 +284,6 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                         Debug.Log(Player_Lv + " Lv... and " + cnt_FieldUnit + " of Ally is on tile. " + this.name + " " + other.name);
                         Move_Unit(other);
                         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIELD_TO_STAND, other.gameObject);
-                    }
-                    else if (this.tile_type == Tile_Type.Trash)
-                    {
-                        //Debug.Log("Trash Collider Enter");
-                        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH, _Type, other.gameObject);
                     }
                     break;
 

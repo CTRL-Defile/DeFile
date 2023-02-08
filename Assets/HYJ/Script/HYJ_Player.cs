@@ -506,11 +506,13 @@ partial class HYJ_Player
 
         }
 
-        Player_Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+        Player_Unit_csv = (List<List<Dictionary<string, object>>>)
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
 
         for(int _star=0; _star<3; _star++)
         {
-            StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" + (_star+1).ToString() + ".csv");
+            StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" 
+                + (_star+1).ToString() + ".csv");
             // 헤더 추가
             int row_cnt = Player_Unit_csv[_star][0].Keys.ToList().Count;
             for (int i = 0; i < row_cnt - 1; i++)

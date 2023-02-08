@@ -145,15 +145,8 @@ public class LSY_DragUnit : MonoBehaviour
         {
             case BATTLE_PHASE.PHASE_PREPARE:
                 {
-                    //unit_hit = CastRay("Unit");
-                    if (Input.GetMouseButtonDown(0))
-                    {
-                        MouseDown();
-                    }
-                    if (Input.GetMouseButtonUp(0))
-                    {
-                        MouseUp();
-                    }
+                    if (Input.GetMouseButtonDown(0)) MouseDown();
+                    if (Input.GetMouseButtonUp(0))   MouseUp();
                     break;
                 }
 
@@ -175,17 +168,12 @@ public class LSY_DragUnit : MonoBehaviour
                         }
                     }
 
-                    if (selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Stand || selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Trash)
+                    if (selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Stand || 
+                        selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Trash)
                     {
                         //unit_hit = CastRay("Unit");
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            MouseDown();
-                        }
-                        if (Input.GetMouseButtonUp(0))
-                        {
-                            MouseUp_COMBAT();
-                        }
+                        if (Input.GetMouseButtonDown(0)) MouseDown();
+                        if (Input.GetMouseButtonUp(0))   MouseUp_COMBAT();
                     }
                     else if (selectedTile_Script.tile_type == HYJ_Battle_Tile.Tile_Type.Field)
                     {
@@ -194,7 +182,6 @@ public class LSY_DragUnit : MonoBehaviour
                             Debug.Log("BTNUP with ...");
                             selectedObject.transform.position = selectedObject.GetComponent<Character>().LSY_Character_OriPos;
                             selectedObject = null;
-                            //isHeld = false;
                             Set_isHeld(false);
                             Cursor.visible = true;
 
@@ -451,8 +438,6 @@ public class LSY_DragUnit : MonoBehaviour
     }
     private void MouseUp()
     {
-        //Debug.Log("BtnUP collider : " + unit_hit.collider);
-        //isHeld = false;
         Set_isHeld(false);
         Cursor.visible = true;
 

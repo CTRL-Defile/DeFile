@@ -470,11 +470,6 @@ public partial class Character
 
         List<List<Dictionary<string, object>>> Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
 
-  //      if (_pos != Vector3.zero)
-		//{
-  //          this.transform.position = _pos;
-  //      }
-
 		if (_tile != null)
 		{
 
