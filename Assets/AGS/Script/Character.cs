@@ -13,10 +13,12 @@ using UnityEditor;
 
 public partial class Character : MonoBehaviour
 {
-    //-------------------------------------------------------------------
-    // Field
-    //-------------------------------------------------------------------
-    [SerializeField]
+	public enum MODEL_TYPE { BEAR, ORC, EVIL, GOBLIN_N, GOBLIN_T, WERERAT };
+
+	//-------------------------------------------------------------------
+	// Field
+	//-------------------------------------------------------------------
+	[SerializeField]
     BATTLE_PHASE m_Basic_phase;
 	[SerializeField]
     protected Vector3 char_ori_Pos; // Update/MouseUp 에서 갱신
@@ -39,7 +41,15 @@ public partial class Character : MonoBehaviour
 	protected UI_StatusBar m_StatusMpBar = null;
 	[SerializeField]
 	protected GameObject[] m_WeaponEffect;
+	[SerializeField]
+	MODEL_TYPE m_Modeltype;	
+	[SerializeField]
+	protected HYJ_CharacterSkill m_Spell_0;
+	[SerializeField]
+	protected HYJ_CharacterSkill m_Spell_1;
 
+	[SerializeField]
+	protected bool m_IsInRange = false;	
 	//-------------------------------------------------------------------
 	// Property
 	//-------------------------------------------------------------------
@@ -50,6 +60,11 @@ public partial class Character : MonoBehaviour
 	//public int CurPosIndex { get { return m_CurPosIndex; } set { m_CurPosIndex = value; } }
 	public UI_StatusBar STATUS_HPBAR { get { return m_StatusHpBar; } set { m_StatusHpBar = value; } }
 	public UI_StatusBar STATUS_MPBAR { get { return m_StatusMpBar; } set { m_StatusMpBar = value; } }
+	public MODEL_TYPE Model_Type { get { return m_Modeltype; } set { m_Modeltype = value; } }
+
+	public HYJ_CharacterSkill Spell_0 { get { return m_Spell_0; } }
+	public HYJ_CharacterSkill Spell_1 { get { return m_Spell_1; } }
+	public bool InRange { get { return m_IsInRange; } set { m_IsInRange = value; } }
 
 	//-------------------------------------------------------------------
 	// Method
@@ -68,43 +83,40 @@ public partial class Character : MonoBehaviour
 
 		Status_HP = Status_MaxHP;
 
+		// 스킬 넘버 얻어와야함
+		int Spell0_Idx = 1;
+		int Spell1_Idx = 3;
 
-        // HP 테스트 용 초기화
+		switch (m_Modeltype)
+		{
+			case MODEL_TYPE.BEAR:
+				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
+				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);				
+				break;
+			case MODEL_TYPE.ORC:
+				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
+				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
+				break;
+			case MODEL_TYPE.EVIL:
+				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, 2);
+				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
+				break;
+			case MODEL_TYPE.GOBLIN_N:
+				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
+				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
+				break;
+			case MODEL_TYPE.GOBLIN_T:
+				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
+				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
+				break;
+			case MODEL_TYPE.WERERAT:
+				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
+				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
+				break;
+			default:
+				break;
+		}
 
-		//switch (m_AnimEvent.Anim_Type)
-		//{
-		//	case ANIM_TYPE.BEAR:
-		//		Status_atk = 5.0f;
-		//		Status_MaxHP = 100.0f;
-		//		Status_HP = Status_MaxHP;
-		//		break;
-		//	case ANIM_TYPE.ORC:
-		//		Status_atk = 7.0f;
-		//		Status_MaxHP = 120.0f;
-		//		Status_HP = Status_MaxHP;
-		//		break;
-		//	case ANIM_TYPE.EVIL:
-		//		Status_atk = 9.0f;
-		//		Status_MaxHP = 140.0f;
-		//		Status_HP = Status_MaxHP;
-		//		break;
-		//	case ANIM_TYPE.GOBLIN_T:
-		//		Status_MaxHP = 160.0f;
-		//		Status_HP = Status_MaxHP;
-		//		Status_atk = 11.0f;
-		//		break;
-		//	case ANIM_TYPE.GOBLIN_N:
-		//		Status_MaxHP = 160.0f;
-		//		Status_HP = Status_MaxHP;
-		//		Status_atk = 13.0f;
-		//		break;
-		//	case ANIM_TYPE.WERERAT:
-		//		Status_MaxHP = 180.0f;
-		//		Status_HP = Status_MaxHP;
-		//		Status_atk = 15.0f;
-		//		break;
-		//}
-        
 		Status_moveSpeed = 5.0f;
 		// Stat_MoveSpeed = UnityEngine.Random.Range(1.0f, 8.0f);
 		//CurPosIndex = 0;
@@ -178,7 +190,12 @@ public partial class Character
 	//-------------------------------------------------------------------
 	virtual public void HitProcess(float Attack)
     {
-        if (Status_HP >= Attack)
+		//여기서 Hit Effect 발생
+		CapsuleCollider Col = GetComponent<CapsuleCollider>();
+		Vector3 Pos = new Vector3(transform.position.x, transform.position.y + (Col.height / 3.0f), transform.position.z);
+		EffectPool.Instance.Create(EFFECT_TYPE.EFFECT_SPARK, Pos);				
+
+		if (Status_HP >= Attack)
             Status_HP -= Attack;
         else if (Status_HP < Attack)
         {
@@ -196,7 +213,8 @@ public partial class Character
 			BattleGraph[on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex].Marking = false;
 			//m_PathFinder.InitMarking();			
 			on_Tile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
-			State = STATE.DIE;			
+			State = STATE.DIE;
+			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE, this.gameObject);
 		}
 		
 		// Dissolve Shader 적용 예정
@@ -226,9 +244,6 @@ public partial class Character
 
 			IsDead = true;			
 		}
-
-		if(IsDead == false)
-			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE, this.gameObject);
 	}
 
 	virtual public void BattleProcess()
@@ -239,6 +254,8 @@ public partial class Character
 		if (PreTarget != Target)
 		{			
 			m_PathFinder.InitCloseNodes();
+			m_IsInRange = false;
+			m_PathFinder.CheckRange();
 		}
 			
 
@@ -278,21 +295,37 @@ public partial class Character
 				{
 					case STATE.IDLE:						
 						break;
-					case STATE.SKILL:
-						State = STATE.IDLE;
-						m_PathFinder.InitCloseNodes();
-						m_PathFinder.InitMarking();
-						break;
-					case STATE.SKILL_IDLE:
-						Dir = Target.transform.position - transform.position;
-						transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 5.0f * Time.deltaTime);
-
-						if (Target.GetComponent<Character>().State == STATE.SKILL)
+					case STATE.SKILL:	
+						if(true == m_IsInRange)
 						{
+
+						}
+						else
+						{
+							State = STATE.IDLE;
 							m_PathFinder.InitCloseNodes();
 							m_PathFinder.InitMarking();
-							State = STATE.IDLE;
-						}							
+						}
+						break;
+					case STATE.SKILL_IDLE:
+						if (true == m_IsInRange)
+						{
+							Dir = Target.transform.position - transform.position;
+							transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Dir), 5.0f * Time.deltaTime);
+							Angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Dir));
+
+							if (Angle <= 5.0f)
+								State = STATE.SKILL;
+						}
+						else
+						{
+							if (Target.GetComponent<Character>().State == STATE.SKILL)
+							{
+								m_PathFinder.InitCloseNodes();
+								m_PathFinder.InitMarking();
+								State = STATE.IDLE;
+							}
+						}					
 						break;
 					default:
 						break;
@@ -505,3 +538,4 @@ public partial class Character
 
     }
 }
+

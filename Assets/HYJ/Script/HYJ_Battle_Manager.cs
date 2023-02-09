@@ -275,11 +275,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         End_Btn.transform.GetChild(1).gameObject.SetActive(true);
 					//End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Lose";
 
-					DepthOfField dof;
-					if (GameVolume.profile.TryGet<DepthOfField>(out dof))
-					{
-						dof.active = true;
-					}
+					//DepthOfField dof;
+					//if (GameVolume.profile.TryGet<DepthOfField>(out dof))
+					//{
+     //                  // dof.active = true;
+					//	dof.focusDistance.value = Mathf.Lerp(dof.focusDistance.value, 0.95f, 3.0f * Time.deltaTime);
+					//}
 				}
                 break;
         }
@@ -362,11 +363,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
 	public void LSY_Battle_End()
     {
-		DepthOfField dof;
-		if (GameVolume.profile.TryGet<DepthOfField>(out dof))
-		{
-			dof.active = false;
-		}
+		//DepthOfField dof;
+		//if (GameVolume.profile.TryGet<DepthOfField>(out dof))
+		//{
+  //          dof.focusDistance.value = 10.0f;
+		//	//dof.active = false;
+		//}
 
 		End_Btn.SetActive(false);
         End_Btn.transform.GetChild(0).gameObject.SetActive(false);
@@ -1170,10 +1172,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             case 4:
                 List<int> Prob_4 = new List<int>() { 60, 30, 10, 0, 0, 0 }; Prob_list = Prob_4; break;
             case 5:
-                List<int> Prob_5 = new List<int>() { 45, 38, 15, 2, 0, 0 }; Prob_list = Prob_5; break;
-            case 6:
-                List<int> Prob_6 = new List<int>() { 35, 40, 20, 5, 0, 0 }; Prob_list = Prob_6; break;
-            case 7:
+                List<int> Prob_5 = new List<int>() { 45, 38, 15, 2, 0, 0 }; Prob_list = Prob_5; break;				
+			case 6:
+                List<int> Prob_6 = new List<int>() { 35, 40, 20, 5, 0, 0 }; Prob_list = Prob_6; break;				
+			case 7:
                 List<int> Prob_7 = new List<int>() { 34, 30, 25, 10, 1, 0 }; Prob_list = Prob_7; break;
             case 8:
                 List<int> Prob_8 = new List<int>() { 18, 20, 40, 20, 2, 0 }; Prob_list = Prob_8; break;
