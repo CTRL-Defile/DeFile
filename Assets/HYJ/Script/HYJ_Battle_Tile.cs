@@ -130,6 +130,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                 {
                     if (Basic_onUnit == null)
                     {
+                        //Debug.Log("[Tile/Combat] " + this.name + ", obj : " + other.name);  // 전투중 필드, 스탠드 타일
                         Basic_onUnit = other.gameObject;
                         other_Script.LSY_Character_Set_OnTile(this.gameObject);
                     }
@@ -299,7 +300,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
         if (phase == BATTLE_PHASE.PHASE_PREPARE || phase == BATTLE_PHASE.PHASE_COMBAT_OVER)
         {
             // Player에 유닛 데이터 업데이트 -> 내부에 시너지 업데이트도 포함됨
-            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE);
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, phase);
         }
     }
     private void Ally_Exit(Collider other)

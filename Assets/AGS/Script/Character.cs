@@ -472,15 +472,15 @@ public partial class Character
 
 		if (_tile != null)
 		{
-
-			if (on_Tile.GetComponent<HYJ_Battle_Tile>().tile_type == HYJ_Battle_Tile.Tile_Type.Stand)
+			if (_tile.GetComponent<HYJ_Battle_Tile>().tile_type == HYJ_Battle_Tile.Tile_Type.Field 
+				&& on_Tile.GetComponent<HYJ_Battle_Tile>().tile_type == HYJ_Battle_Tile.Tile_Type.Stand)
 				HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD, this.gameObject);
 
             this.LSY_Character_Set_OnTile(_tile.gameObject);
             this.transform.position = _tile.transform.position;
 
-
-
+			_tile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = this.gameObject;
+            //Debug.Log(_tile.name + " 's onUnit : " + _tile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit);
         }
 
 
