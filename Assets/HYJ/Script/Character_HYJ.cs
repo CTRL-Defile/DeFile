@@ -43,8 +43,8 @@ partial class Character
     [SerializeField] protected float Status_critPer;    // 치명타 확률
 
     // 스킬
-    [SerializeField] protected string Data_spell0; // 일반 공격 번호
-    [SerializeField] protected string Data_spell1; // 스킬 번호
+    [SerializeField] protected int Data_spell0; // 일반 공격 번호
+    [SerializeField] protected int Data_spell1; // 스킬 번호
 
     //////////  Getter & Setter //////////
     public CTRL_Character_Data HYJ_Status_saveData
@@ -67,8 +67,10 @@ partial class Character
     virtual public float Character_Status_spellRegistance { get { return Status_spellRegistance; } }
 
     virtual public float Character_Status_critPer { get { return Status_critPer; } }
-
     virtual public float Character_Status_critValue { get { return Status_critValue; } }
+
+    virtual public int Character_Status_spell0 { get { return Data_spell0; } }
+    virtual public int Character_Status_spell1 { get { return Data_spell1; } }
 
     //////////  Method          //////////
 
@@ -112,8 +114,8 @@ partial class Character
         Status_critValue = (float)_data["CRIT_VALUE"];
 
         // 스킬
-        Data_spell0 = (string)_data["SPELL_0"];
-        Data_spell1 = (string)_data["SPELL_1"];
+        Data_spell0 = (int)_data["SPELL_0"];
+        Data_spell1 = (int)_data["SPELL_1"];
 
         // Current HP 초기화
         Status_HP = Status_MaxHP;
