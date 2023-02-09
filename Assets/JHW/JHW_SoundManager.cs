@@ -316,7 +316,7 @@ public class JHW_SoundManager : MonoBehaviour
 
         // 사운드 재생 (Play -> PlayOneshot 으로 변경됨)
         //soundObject.GetComponent<AudioSource>().PlayOneShot(GetOrAddAudioClip(playSoundName, SoundType.SFX),volume_SFX);
-        soundObject.GetComponent<AudioSource>().PlayOneShot(SFX_audioclips[playSoundName], volume_SFX);
+        soundObject.GetComponent<AudioSource>().PlayOneShot(SFX_audioclips[playSoundName], volume_SFX * 0.1f);
 
         // 사운드 다 재생되면 비활성화
         StartCoroutine(soundSetActive(soundObject));
