@@ -861,7 +861,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1044922920485168318}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0010004044, y: -0.393, z: -0.176}
+  m_LocalPosition: {x: 0.0010004044, y: 0.05, z: -0.176}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -881,7 +881,7 @@ CapsuleCollider:
   m_Radius: 0.61
   m_Height: 1.38
   m_Direction: 1
-  m_Center: {x: -0.005037546, y: 1.0721358, z: 0.13999999}
+  m_Center: {x: -0.005037546, y: 0.63, z: 0.13999999}
 --- !u!54 &2679233192245821446
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2042,7 +2042,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Collider: {fileID: 5673517294749867905}
-  type: 5
 --- !u!1 &2083318031170697968
 GameObject:
   m_ObjectHideFlags: 0
@@ -2492,7 +2491,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Collider: {fileID: 5849460601348154042}
-  type: 4
 --- !u!1 &2404633411500495281
 GameObject:
   m_ObjectHideFlags: 0
@@ -2853,7 +2851,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Collider: {fileID: 7914387865258022695}
-  type: 1
 --- !u!1 &2743697232388440678
 GameObject:
   m_ObjectHideFlags: 0
@@ -13534,6 +13531,7 @@ MonoBehaviour:
     m_Position: {x: 0, y: 0, z: 0}
     m_Neighbors:
       m_List: []
+  m_IsArrived: 1
   m_FinalPath:
     m_ShowList: 
 --- !u!114 &6667588189831209474
@@ -13559,6 +13557,8 @@ MonoBehaviour:
   m_StatusHpBar: {fileID: 0}
   m_WeaponEffect:
   - {fileID: 2907647033745359781}
+  m_Modeltype: 1
+  m_IsInRange: 0
   Status_HP: 0
   Status_MP: 0
   Status_moveSpeed: 0
@@ -13919,6 +13919,7 @@ MonoBehaviour:
     m_Position: {x: 0, y: 0, z: 0}
     m_Neighbors:
       m_List: []
+  m_IsArrived: 1
   m_FinalPath:
     m_ShowList: 
 --- !u!114 &871500833988684764
@@ -13944,6 +13945,8 @@ MonoBehaviour:
   m_StatusHpBar: {fileID: 0}
   m_WeaponEffect:
   - {fileID: 3042280970109951420}
+  m_Modeltype: 0
+  m_IsInRange: 0
   Status_HP: 0
   Status_MP: 0
   Status_moveSpeed: 0
@@ -14480,7 +14483,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Collider: {fileID: 660998660406125520}
-  type: 2
 --- !u!1 &4718312530160045759
 GameObject:
   m_ObjectHideFlags: 0
@@ -15759,6 +15761,7 @@ MonoBehaviour:
     m_Position: {x: 0, y: 0, z: 0}
     m_Neighbors:
       m_List: []
+  m_IsArrived: 1
   m_FinalPath:
     m_ShowList: 
 --- !u!114 &7429582693673261774
@@ -15783,6 +15786,8 @@ MonoBehaviour:
   m_AnimEvent: {fileID: 0}
   m_StatusHpBar: {fileID: 0}
   m_WeaponEffect: []
+  m_Modeltype: 2
+  m_IsInRange: 0
   Status_HP: 0
   Status_MP: 0
   Status_moveSpeed: 0
@@ -21810,6 +21815,7 @@ MonoBehaviour:
     m_Position: {x: 0, y: 0, z: 0}
     m_Neighbors:
       m_List: []
+  m_IsArrived: 1
   m_FinalPath:
     m_ShowList: 
 --- !u!114 &4115453703513295045
@@ -21835,6 +21841,8 @@ MonoBehaviour:
   m_StatusHpBar: {fileID: 0}
   m_WeaponEffect:
   - {fileID: 5191421316154629894}
+  m_Modeltype: 3
+  m_IsInRange: 0
   Status_HP: 0
   Status_MP: 0
   Status_moveSpeed: 0
@@ -28859,7 +28867,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Collider: {fileID: 3897295586899737266}
-  type: 3
 --- !u!1 &5291015222135580929
 GameObject:
   m_ObjectHideFlags: 0
@@ -40010,6 +40017,7 @@ MonoBehaviour:
     m_Position: {x: 0, y: 0, z: 0}
     m_Neighbors:
       m_List: []
+  m_IsArrived: 1
   m_FinalPath:
     m_ShowList: 
 --- !u!114 &4262484590450551655
@@ -40034,6 +40042,8 @@ MonoBehaviour:
   m_AnimEvent: {fileID: 0}
   m_StatusHpBar: {fileID: 0}
   m_WeaponEffect: []
+  m_Modeltype: 5
+  m_IsInRange: 0
   Status_HP: 0
   Status_MP: 0
   Status_moveSpeed: 0
@@ -43682,7 +43692,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Collider: {fileID: 7538087812259463762}
-  type: 0
 --- !u!1 &7411297171384818411
 GameObject:
   m_ObjectHideFlags: 0
@@ -43895,6 +43904,8 @@ MonoBehaviour:
   m_AnimEvent: {fileID: 0}
   m_StatusHpBar: {fileID: 0}
   m_WeaponEffect: []
+  m_Modeltype: 0
+  m_IsInRange: 0
   Status_HP: 0
   Status_MP: 0
   Status_moveSpeed: 0
@@ -52385,6 +52396,7 @@ MonoBehaviour:
     m_Position: {x: 0, y: 0, z: 0}
     m_Neighbors:
       m_List: []
+  m_IsArrived: 1
   m_FinalPath:
     m_ShowList: 
 --- !u!114 &697033046717755021
@@ -52409,6 +52421,8 @@ MonoBehaviour:
   m_AnimEvent: {fileID: 0}
   m_StatusHpBar: {fileID: 0}
   m_WeaponEffect: []
+  m_Modeltype: 4
+  m_IsInRange: 0
   Status_HP: 0
   Status_MP: 0
   Status_moveSpeed: 0

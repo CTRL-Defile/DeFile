@@ -16,12 +16,12 @@ using static UnityEngine.GraphicsBuffer;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class PathFinder : MonoBehaviour
-{	       
-    [SerializeField]
-    GameObject m_HostObj;
+{
+	[SerializeField]
+	GameObject m_HostObj;
 
-	[SerializeField] 
-    BATTLE_PHASE m_Basic_phase;
+	[SerializeField]
+	BATTLE_PHASE m_Basic_phase;
 
 	[SerializeField]
 	private HYJ_Battle_Tile m_CurrentTile = null;
@@ -32,7 +32,7 @@ public class PathFinder : MonoBehaviour
 	//[SerializeField]
 	private NODE m_StartNode = null;
 	//[SerializeField]
-	private NODE m_DestNode = null;	
+	private NODE m_DestNode = null;
 
 	[SerializeField]
 	private NODE PreNode = null;
@@ -46,23 +46,23 @@ public class PathFinder : MonoBehaviour
 	NODE m_NearNode = null;
 
 	[SerializeField]
-	bool m_IsArrived = true;	 
-	public bool Arrived { get { return m_IsArrived;} set { m_IsArrived = value;} }
+	bool m_IsArrived = true;
+	public bool Arrived { get { return m_IsArrived; } set { m_IsArrived = value; } }
 
 	[SerializeField]
-	SerialLinkedList<int> m_FinalPath= new SerialLinkedList<int>();
+	SerialLinkedList<int> m_FinalPath = new SerialLinkedList<int>();
 	public SerialLinkedList<int> FinalPath { get { return m_FinalPath; } }
 
 	// Start is called before the first frame update
 	void Start()
-    {
+	{
 		m_HostObj = gameObject;
-		m_Basic_phase = 0;		
+		m_Basic_phase = 0;
 	}
 
 	private void LateUpdate()
 	{
-		m_Basic_phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);		
+		m_Basic_phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
 	}
 
 	public void MoveOnPath()
@@ -73,8 +73,8 @@ public class PathFinder : MonoBehaviour
 			m_IsArrived = true;
 			return;
 		}
-			
-		if( m_FinalPath.m_List.Count == 0 ||
+
+		if (m_FinalPath.m_List.Count == 0 ||
 			null == gameObject.GetComponent<Character>().Target)
 		{
 			gameObject.GetComponent<Character>().State = Character.STATE.IDLE;
@@ -82,15 +82,16 @@ public class PathFinder : MonoBehaviour
 		}
 
 		int DestIdx = m_FinalPath.m_List.First();
-		m_DestTile = (HYJ_Battle_Tile)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, DestIdx);		
+		m_DestTile = (HYJ_Battle_Tile)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_IN_GRAPH, DestIdx);
 		List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);
+
 
 		if (false == BattleGraph[DestIdx].Marking)
 		{
 			BattleGraph[m_DestTile.GraphIndex].Marking = true;
-			BattleGraph[m_DestTile.GraphIndex].Unit = gameObject;			
+			BattleGraph[m_DestTile.GraphIndex].Unit = gameObject;
 		}
-		else if(true == BattleGraph[DestIdx].Marking && BattleGraph[m_DestTile.GraphIndex].Unit != gameObject)
+		else if (true == BattleGraph[DestIdx].Marking && BattleGraph[m_DestTile.GraphIndex].Unit != gameObject)
 		{
 			m_IsArrived = true;
 			gameObject.GetComponent<Character>().State = Character.STATE.IDLE;
@@ -99,23 +100,27 @@ public class PathFinder : MonoBehaviour
 
 		gameObject.transform.LookAt(m_DestTile.transform);
 		Vector3 Dir = m_DestTile.Tile_Position - gameObject.transform.position;
-		Dir.Normalize();		
+		Dir.Normalize();
 
 		float MoveLength = Vector3.Magnitude(gameObject.transform.position - m_DestTile.Tile_Position);
-		if(0.1f >= MoveLength)
+		if (0.1f >= MoveLength)
 		{
 			m_IsArrived = true;
-			gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(m_DestTile.gameObject);			
+			gameObject.GetComponent<Character>().LSY_Character_Set_OnTile(m_DestTile.gameObject);
 			BattleGraph[m_FinalPath.m_List.First()].Marking = false;
 			BattleGraph[m_FinalPath.m_List.First()].Unit = null;
 			//BattleGraph[m_FinalPath.m_List.First()].Tile.HYJ_Basic_onUnit = null;
 			m_StartNode = BattleGraph[m_FinalPath.m_List.First()];
-			m_FinalPath.RemoveFirst();			
+			m_FinalPath.RemoveFirst();
+
+			// 이동 끝났을 때 빼고나서 사거리 들어오면 Check Range
+			CheckRange();
+
 			return;
 		}
 
 		m_IsArrived = false;
-		m_DestNode = BattleGraph[DestIdx];		
+		m_DestNode = BattleGraph[DestIdx];
 		gameObject.GetComponent<Character>().State = Character.STATE.RUN;
 		transform.position = Vector3.MoveTowards(transform.position, m_DestTile.Tile_Position, gameObject.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime);
 
@@ -126,10 +131,10 @@ public class PathFinder : MonoBehaviour
 		// 타일에서 타일로 이동중이면 리턴 -> 이미 정해진 경로에서 타일 이동중에 다시 길을 찾으면 타일이동이 아니라 일반적인 이동할 것 예상
 		if (false == m_IsArrived)
 			return false;
-		
+
 		// 잘못된 인덱스면 리턴
-		if(StartIdx < 0 || EndIdx < 0) 
-			return false;		
+		if (StartIdx < 0 || EndIdx < 0)
+			return false;
 
 		List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);
 
@@ -155,7 +160,7 @@ public class PathFinder : MonoBehaviour
 				gameObject.GetComponent<Character>().State = Character.STATE.IDLE;
 				//m_FinalPath.ClearList();				
 				return false;
-			}				
+			}
 		}
 
 		// 그래프가 없거나 도착지점 이웃이 없다면 길찾기 실패
@@ -166,9 +171,9 @@ public class PathFinder : MonoBehaviour
 		m_FinalPath.ClearList();
 		m_OpenNodes.ClearList();
 		m_CloseNodes.ClearList();
-		
+
 		NODE StartNode = BattleGraph[StartIdx];
-		NODE DestNode = BattleGraph[EndIdx];		
+		NODE DestNode = BattleGraph[EndIdx];
 
 		// 인자로 들어온 EndIdx 는 Target이 서있는 위치의 그래프 Idx이다. 따라서 Neighbor중 현재 위치에서 가장 가깝고 위에 객체가 없는 Neighbor를 찾아줘야함
 		// + 이미 도착지로 정해진 위치에 마킹해서 도착지점이 겹치지 않게 함
@@ -181,7 +186,7 @@ public class PathFinder : MonoBehaviour
 
 		foreach (var Neighbor in BattleGraph[EndIdx].m_Neighbors.m_List)
 		{
-			// TODO : 매직넘버로 5.0f 해놨는데 나중에 타일간 거리 계산 기반으로 값 바꿀 예정
+			//// TODO : 매직넘버로 5.0f 해놨는데 나중에 타일간 거리 계산 기반으로 값 바꿀 예정
 			if (TargetDist < 5.0f &&
 				true == Neighbor.Marking &&
 				Neighbor.Unit == gameObject.GetComponent<Character>().Target)
@@ -205,7 +210,7 @@ public class PathFinder : MonoBehaviour
 		}
 
 		// 타겟의 Neighbor중 갈 수 있는 노드가 없으면 길찾기 안하고 IDLE상태로 전환		
-		if(m_NearNode == null)
+		if (m_NearNode == null)
 		{
 			gameObject.GetComponent<Character>().State = Character.STATE.IDLE;
 			return false;
@@ -214,11 +219,11 @@ public class PathFinder : MonoBehaviour
 		// A* 알고리즘으로 길 찾고 FinalPath 생성
 		if (true == FindingPath(StartIdx, m_NearNode.MyIndex))
 		{
-			MakePath(StartIdx, m_NearNode.MyIndex);			
+			MakePath(StartIdx, m_NearNode.MyIndex);
 			m_StartNode = StartNode;
 		}
 
-		return true;		
+		return true;
 	}
 
 	void MakePath(int StartIdx, int EndIdx)
@@ -254,7 +259,7 @@ public class PathFinder : MonoBehaviour
 
 		//객체가 위에 있으면 클로즈 리스트에 추가
 		int size = BattleGraph.Count;
-		for(int i = 0; i < size; i++)
+		for (int i = 0; i < size; i++)
 		{
 			if (null != BattleGraph[i].Tile.HYJ_Basic_onUnit)
 				m_CloseNodes.m_List.Add(BattleGraph[i]);
@@ -288,7 +293,7 @@ public class PathFinder : MonoBehaviour
 		m_OpenNodes.m_List = m_OpenNodes.m_List.OrderBy(x => x.Fcost).ToList();
 
 		// 재귀함수를 사용해서 DFS 구현
-		return FindingPath(m_OpenNodes.m_List[0].MyIndex, endIdx);		
+		return FindingPath(m_OpenNodes.m_List[0].MyIndex, endIdx);
 	}
 
 	bool CheckExistInClose(NODE node)
@@ -338,7 +343,7 @@ public class PathFinder : MonoBehaviour
 
 
 	public void InitCloseNodes()
-	{		
+	{
 		m_CloseNodes.ClearList();
 	}
 
@@ -352,7 +357,7 @@ public class PathFinder : MonoBehaviour
 			m_StartNode.Marking = false;
 			return;
 		}
-		if(null == m_StartNode)
+		if (null == m_StartNode)
 		{
 			m_DestNode.Marking = false;
 			return;
@@ -371,7 +376,43 @@ public class PathFinder : MonoBehaviour
 		m_DestNode = null;
 		m_NearNode = null;
 		m_IsArrived = true;
-		m_StartNode = null;		
+		m_StartNode = null;
+	}
+
+	public void CheckRange()
+	{
+		// 사거리 적용 현재 마나체크해서 다음 공격이 기본 공격인지 일반공격인지 구분 후 Spell종류에 따른 사거리 범위로 이동.
+
+		Character ThisUnit = GetComponent<Character>();
+		// 1. 마나체크
+		if (ThisUnit.Stat_MP < ThisUnit.Stat_MaxMP)
+		{
+			int range = (int)ThisUnit.Spell_0.HYJ_Data_range;
+
+			if (range == 1)
+				--range;
+
+			if (m_FinalPath.m_List.Count == 0)
+				return;
+
+			// spell_0 공격
+			if (GetComponent<Character>().Target != null &&
+				m_FinalPath.m_List.Count <= range)
+			{
+				if(m_StartNode != null)
+				{
+					m_StartNode.Marking = true;
+					m_StartNode.Unit = gameObject;
+				}
+				ThisUnit.State = Character.STATE.SKILL_IDLE;
+				ThisUnit.InRange = true;
+			}
+
+		}
+		else if (ThisUnit.Stat_MP >= ThisUnit.Stat_MaxMP)
+		{
+			//spell_1 공격
+		}
 	}
 
 }
