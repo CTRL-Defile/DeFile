@@ -346,6 +346,7 @@ partial class HYJ_Player
     Vector3 pos = Vector3.zero;
     HYJ_Battle_Tile _Tile;
 
+    [SerializeField]
     List<GameObject> field_units, stand_units, _candidate_units;
     int field_cnt, stand_cnt;
 
@@ -357,6 +358,7 @@ partial class HYJ_Player
         int _star = _char.StarInt();
         int _id = _char.Character_Status_ID;
 
+        _candidate_units.Clear();
         object[] param = new object[3];
 
         for (int i = 0; i < field_cnt; i++)
@@ -366,7 +368,7 @@ partial class HYJ_Player
 
             if (obj_char.StarInt() == _star && obj_char.Character_Status_ID == _id && obj_char.UnitType == Character.Unit_Type.Ally)
             {
-                Debug.Log(obj.name + " Find it");
+                Debug.Log(obj.name + " Find it, star : " + obj_char.StarInt());
                 _Tile = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>();
                 _candidate_units.Add(obj);
                 param[cnt++] = obj;
@@ -383,7 +385,7 @@ partial class HYJ_Player
 
             if (obj_char.StarInt() == _star && obj_char.Character_Status_ID == _id && obj_char.UnitType == Character.Unit_Type.Ally)
             {
-                Debug.Log(obj.name + " Find it");
+                Debug.Log(obj.name + " Find it, star : " + obj_char.StarInt());
                 if (_Tile == null)
                     _Tile = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>();
                 _candidate_units.Add(obj);
@@ -527,12 +529,13 @@ partial class HYJ_Player
 
             synergy_list[obj_char.Stat_Cost - 1]++;
             id_list[_star].m_List[_id]++;
-            //Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
+            Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
 
             if (_star < 3 && id_list[_star].m_List[_id] == 3)
             {
                 if (Find_Unit_On_Tile(obj))
                 {
+                    Debug.Log("Candidate count " + _candidate_units.Count);
                     _candidate_units.Remove(obj);
                     object[] param = new object[2];
                     param[0] = _candidate_units[0];
@@ -547,10 +550,15 @@ partial class HYJ_Player
 
                     id_list[_star].m_List[_id] = 0;
                     id_list[_star + 1].m_List[_id]++;
-                    Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
+                    Debug.Log(obj.name + " _star : " + obj_char.StarInt() + ", _cnt : " + id_list[obj_char.StarInt()].m_List[_id]);
                 }
                 if (id_list[_star + 1].m_List[_id] == 3 && _star < 2)
+                {
+                    //Debug.Log("STAR: " + (_star + 1) + " is 3! candi num " + _candidate_units.Count);
+                    //_candidate_units.Clear();
+                    //Debug.Log("STAR: " + (_star + 1) + " is 3! candi num " + _candidate_units.Count);
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, _PHASE);
+                }
             }
 
         }
@@ -623,12 +631,13 @@ partial class HYJ_Player
             int _star = obj_char.StarInt(), _id = obj_char.Character_Status_Index;
 
             id_list[_star].m_List[_id]++;
-            //Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
+            Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
 
             if (_star < 3 && id_list[_star].m_List[_id] == 3)
             {
                 if (Find_Unit_On_Tile(obj))
                 {
+                    Debug.Log("Candidate count " + _candidate_units.Count);
                     _candidate_units.Remove(obj);
                     object[] param = new object[2];
                     param[0] = _candidate_units[0];
@@ -643,10 +652,13 @@ partial class HYJ_Player
 
                     id_list[_star].m_List[_id] = 0;
                     id_list[_star + 1].m_List[_id]++;
-                    Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
+                    Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[obj_char.StarInt()].m_List[_id]);
                 }
                 if (id_list[_star + 1].m_List[_id] == 3 && _star < 2)
+                {
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, _PHASE);
+                }
+
             }
 
         }

@@ -1615,6 +1615,9 @@ partial class HYJ_Battle_Manager
         for (int i=0; i<_cnt; i++)
         {
             GameObject obj = (GameObject)_args[i];
+
+            Debug.Log("Sacrificed.. " + obj.name);
+
             string tile_type = obj.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().tile_type.ToString();
 
 
@@ -1632,6 +1635,7 @@ partial class HYJ_Battle_Manager
                     //obj.SetActive(false);
                     break;
             }
+            obj.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DEFAULT);
 
             Character obj_char = obj.GetComponent<Character>();
 
@@ -1639,9 +1643,8 @@ partial class HYJ_Battle_Manager
             obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
 
             List<List<Dictionary<string, object>>> Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
-            obj.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DEFAULT);
             obj_char.HYJ_Status_SettingData(Unit_csv[0][obj_char.Character_Status_Index]);
-
+            obj_char.UnitStar = Character.Unit_Star.ONE;
             obj.transform.SetParent(Unit_Sacrificed);
             obj.SetActive(false);
 
