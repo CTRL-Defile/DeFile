@@ -228,7 +228,10 @@ public partial class Character
 			// Dissolve Ω¶¿Ã¥ı SetUp
 			if(IsDead == false)
 			{
-				gameObject.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DISSOLVE);				
+                // Sound : ¿Ø¥÷ ªÁ∏¡
+                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_DEATH);
+
+                gameObject.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DISSOLVE);				
 			}				
 
 			// π´±‚ ¿Ã∆Â∆Æ OFF
@@ -523,11 +526,19 @@ public partial class Character
 				m_star = Unit_Star.TWO;
 				this.transform.localScale *= 1.05f;
                 HYJ_Status_SettingData(Unit_csv[1][Status_idx]);
+
+                // Sound : ±‚π∞ 2º∫
+                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_2STAR);
+
                 break;
             case Unit_Star.TWO:
                 m_star = Unit_Star.THREE;
                 this.transform.localScale *= 1.05f;
                 HYJ_Status_SettingData(Unit_csv[2][Status_idx]);
+
+                // Sound : ±‚π∞ 2º∫
+                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_3STAR);
+
                 break;
         }
 

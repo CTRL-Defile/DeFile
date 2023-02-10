@@ -188,6 +188,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DRAG___INIT);
                         // 필드 생성 후 그래프 셋업
 					    SetupGraph();
+
+                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, Basic_phase);
+
+                        // Sound : 던전 입장
+                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.DUNGEON_ENTER);
                     }
                     else //(this.gameObject.activeSelf == true && CharacterPool_isInitialized == true)
                     {
@@ -276,22 +281,33 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             // 전투 끝난 상태
             case BATTLE_PHASE.PHASE_COMBAT_OVER:
                 {
-                    Combat_isInitialized = false;
                     End_Btn.SetActive(true);
                     if (Enemy_Unit.Count == 0)
+                    {
+                        if (Combat_isInitialized)
+                            // Sound : 게임 승리
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.GAME_VICTORY);
                         End_Btn.transform.GetChild(0).gameObject.SetActive(true);
-                    //End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Win";
-                    else
-                        End_Btn.transform.GetChild(1).gameObject.SetActive(true);
-					//End_Btn.transform.GetComponentInChildren<TextMeshProUGUI>().text = "You Lose";
 
-					//DepthOfField dof;
-					//if (GameVolume.profile.TryGet<DepthOfField>(out dof))
-					//{
-     //                  // dof.active = true;
-					//	dof.focusDistance.value = Mathf.Lerp(dof.focusDistance.value, 0.95f, 3.0f * Time.deltaTime);
-					//}
-				}
+                    }
+
+                    else
+                    {
+                        if (Combat_isInitialized)
+                            // Sound : 게임 패배
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.GAME_DEFEAT);
+                        End_Btn.transform.GetChild(1).gameObject.SetActive(true);
+                    }
+
+                    Combat_isInitialized = false;
+
+                    //DepthOfField dof;
+                    //if (GameVolume.profile.TryGet<DepthOfField>(out dof))
+                    //{
+                    //                  // dof.active = true;
+                    //	dof.focusDistance.value = Mathf.Lerp(dof.focusDistance.value, 0.95f, 3.0f * Time.deltaTime);
+                    //}
+                }
                 break;
         }
     }
@@ -421,6 +437,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         string str = "Enemy";
         LSY_Unit_to_Pool(str, Enemy_Unit);
         Enemy_isInitialized = false;
+
+
+
     }
 
     public void LSY_Unit_to_Pool(string _type, List<GameObject> unit_list)
@@ -1543,7 +1562,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
         // Status_saveData를 꼭 구매할 때 저장해야 하는가?
         tmp_char.HYJ_Status_saveData = new CTRL_Character_Data(unit_idx + "");
-        
+
+        // Sound : 기물 구매
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_PURCHASE);
+
     }
 
 
@@ -1554,8 +1576,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_INCREASE, 4);
         cur_EXP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP);
 
+        // Sound : 레벨업 구매 클릭 시
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.LEVELUP_PURCHASE_CLICK);
+
         if (cur_EXP >= Max_EXP)
         {
+            // Sound : 레벨업 시
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.LEVELUP);
+
             Debug.Log("cur : " + cur_EXP + ", Max_Exp : " + Max_EXP + ", LV : " + Player_Lv);
             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__LEVEL_INCREASE, 1);
             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_DECREASE, Max_EXP_List[Player_Lv]);
@@ -2012,6 +2040,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             int sy_cnt = synergy_dic.Values.ToList()[i];
             if (sy_cnt >= 4)
             {
+                // Sound : 시너지 맞춰 졌을 때 - 플래티넘
+                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.SYNERGY_FLATINUM);
+
                 //Transform red = Synergy_Red.GetChild(i);
                 Transform red = Red_list[i];
                 red.SetParent(Synergy_Panel);
@@ -2034,6 +2065,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     red_dot.SetParent(Synergy_Panel);
                     init_red = false;
                 }
+
+                // Sound : 시너지 맞춰 졌을 때 - 골드
+                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.SYNERGY_GOLD);
+
 
                 //Transform green = Synergy_Green.GetChild(i);
                 Transform green = Green_list[i];
