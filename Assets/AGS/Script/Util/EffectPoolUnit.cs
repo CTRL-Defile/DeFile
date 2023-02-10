@@ -18,7 +18,7 @@ public class EffectPoolUnit : MonoBehaviour {
     EffectPool m_objectPool;
 
     [SerializeField]
-	private EFFECT_TYPE m_effectType = EFFECT_TYPE.EFFECT_END;
+	private EFFECT_TYPE m_effectType = EFFECT_TYPE.EFFECT_SPARK;
 
     public EFFECT_TYPE EffectType { get { return m_effectType; } set { m_effectType = value; } }
 

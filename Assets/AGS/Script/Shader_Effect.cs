@@ -6,7 +6,7 @@ public class Shader_Effect : MonoBehaviour
 {
     public enum EFFECT_MODE { MODE_DEFAULT, MODE_PHASE, MODE_DISSOLVE, MODE_RIM, MODE_END };
 	public enum PHASE_DISSOLVE_MODE { MODE_RIM_PHASE = 4, MODE_RIM_DISSOLVE = 5 };
-	public enum RIM_TYPE { RIM_SILVER, RIM_GOLD, RIM_END };
+	public enum RIM_TYPE { RIM_SILVER, RIM_GOLD, RIM_SEAGREEN, RIM_END };
 
     [SerializeField]
     private Renderer[] _renderer = new Renderer[2];
@@ -242,12 +242,12 @@ public class Shader_Effect : MonoBehaviour
 		    _renderer[1].material.SetFloat("_Split_Value", val);
 	}
 
-	void Set_RimColor(RIM_TYPE color)
+	void Set_RimColor(RIM_TYPE color, int apply = -1)
 	{
 		if (EFFECT_MODE.MODE_DEFAULT == EffectMode || EFFECT_MODE.MODE_END == EffectMode)
 			return;
 
-		// Lim Color Gold == 200 159 35 or 218 165 32, Silver 192 192 192
+		// Lim Color Gold == 200 159 35 or 218 165 32, Silver 192 192 192 , mediumseagreen 60 179 113
 		switch (color)
 		{
 			case RIM_TYPE.RIM_SILVER:
@@ -256,17 +256,40 @@ public class Shader_Effect : MonoBehaviour
 			case RIM_TYPE.RIM_GOLD:
 				Rim_Color = new Color(0.784f, 0.624f, 0.137f);
 				break;
+			case RIM_TYPE.RIM_SEAGREEN:
+				Rim_Color = new Color(0.235f, 0.702f, 0.443f);
+				break;
 			default:
 				break;
 		}
 
-		if (_renderer[0] != null)
+		switch(apply)
 		{
-			_renderer[0].material.SetColor("_RimColor", Rim_Color);
+			case -1:
+				if (_renderer[0] != null)
+				{
+					_renderer[0].material.SetColor("_RimColor", Rim_Color);
+				}
+				if (_renderer[1] != null)
+				{
+					_renderer[1].material.SetColor("_RimColor", Rim_Color);
+				}
+				break;
+			case 0:
+				if (_renderer[0] != null)
+				{
+					_renderer[0].material.SetColor("_RimColor", Rim_Color);
+				}
+				break;
+			case 1:
+				if (_renderer[1] != null)
+				{
+					_renderer[1].material.SetColor("_RimColor", Rim_Color);
+				}
+				break;
+			default:
+				break;
 		}
-		if (_renderer[1] != null)
-		{
-			_renderer[1].material.SetColor("_RimColor", Rim_Color);
-		}
-	}
+
+	}	
 }

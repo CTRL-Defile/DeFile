@@ -50514,15 +50514,8 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.33333334
-    functionName: SetEnableCollider
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.8333333
-    functionName: SetDisableCollider
+  - time: 0.4
+    functionName: CreateProjectile
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
