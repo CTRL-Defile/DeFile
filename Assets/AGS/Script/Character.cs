@@ -253,6 +253,9 @@ public partial class Character
 
 	virtual public void BattleProcess()
 	{
+		if (State == STATE.DIE)
+			return;
+
 		if (null == Target)
 			State = STATE.IDLE;
 
@@ -437,13 +440,7 @@ public partial class Character
 	{
 		m_animator.SetBool("Skill", false);
 		m_animator.SetBool("Skill2", false);
-
-
-		if (m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
-		{
-			m_animator.SetBool("Run Forward", true);
-		}
-
+		m_animator.SetBool("Run Forward", true);
 	}
 
 	virtual protected void UpdateDie()
@@ -482,6 +479,7 @@ public partial class Character
 		this.State = STATE.IDLE;
 		this.Target = null;
 		this.PreTarget = null;
+		m_IsOneShot = false;
 
 		// 무기 이펙트들 ON
 		int EffectCnt = m_WeaponEffect.Length;
