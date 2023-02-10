@@ -296,19 +296,28 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     if (Enemy_Unit.Count == 0)
                     {
                         if (Combat_isInitialized)
-                            // Sound : 게임 승리
-                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.GAME_VICTORY);
-                        End_Btn.transform.GetChild(0).gameObject.SetActive(true);
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_INCREASE, Gold_win);
+                        {
+							// Sound : 게임 승리
+							HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.GAME_VICTORY);
+							// 승리 골드 수급
+							HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_PLUS, Gold_win);
+						}
+
+                        End_Btn.transform.GetChild(0).gameObject.SetActive(true);                        
                     }
 
                     else
                     {
                         if (Combat_isInitialized)
-                            // Sound : 게임 패배
-                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.GAME_DEFEAT);
+                        {
+							// Sound : 게임 패배
+							HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.GAME_DEFEAT);
+                            // 패배 골드 수급
+							HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_PLUS, Gold_lose);
+						}
+
                         End_Btn.transform.GetChild(1).gameObject.SetActive(true);
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_INCREASE, Gold_lose);
+                        
                     }
 
                     DepthOfField dof;
@@ -1729,7 +1738,10 @@ partial class HYJ_Battle_Manager
     }
     object Unit_to_Trash(params object[] _args)
     {
-        string tile_type = _args[0].ToString();
+		// 유닛 판매 sound
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_PURCHASE);
+
+		string tile_type = _args[0].ToString();
         GameObject obj = (GameObject)_args[1];
         //int id = int.Parse(obj.GetComponent<Character>().HYJ_Status_saveData.Data_ID);
 
