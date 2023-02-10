@@ -51,6 +51,7 @@ public partial class HYJ_Battle_Tile : MonoBehaviour
     }
     public void Set_Swap(bool tf)
     {
+        Debug.Log(this.name + " Set Swap");
         isSwap = tf;
     }
 
@@ -261,7 +262,7 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                         else if (isSwap)
                         {
                             Debug.Log("[Tile] It's swapping now..");
-                            isSwap = false;
+                            //isSwap = false;
                             Debug.Log(Player_Lv + " Lv... and " + cnt_FieldUnit + " of Ally is on tile." + this.name + " " + other.name);
                             Move_Unit(other);
                             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD, other.gameObject);
@@ -289,6 +290,8 @@ partial class HYJ_Battle_Tile : MonoBehaviour
                     break;
 
             }
+            isSwap = false;
+
         }
 
         // TODO
