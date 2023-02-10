@@ -38,7 +38,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.08, y: 0.35}
+  m_AnchoredPosition: {x: -0.08001709, y: 0.3499756}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &3150304419451604412
@@ -84,7 +84,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &4592618956043873124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,8 +114,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: beccd4e1de75a804493e019c88c8c2d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Bar: 0
+  FillImage: {fileID: 0}
+  HPColor: 0
   Target_Obj: {fileID: 0}
   HPBarSlider: {fileID: 0}
+  EffectHPBarSlider: {fileID: 0}
+  LineParent: {fileID: 0}
+  m_bEffect: 0
 --- !u!1 &3715013961858560004
 GameObject:
   m_ObjectHideFlags: 0
