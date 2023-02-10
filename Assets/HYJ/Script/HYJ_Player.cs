@@ -153,11 +153,26 @@ partial class HYJ_Player
         return res;
     }
 
+    object Basic_getCurHP(params object[] _args)
+    {
+        return Basic_hp;
+    }
+
+    object Basic_getMaxHP(params object[] _args)
+    {
+        return Basic_hpMax;
+    }
+
     // 플레이어 체력 회복
     object JHW_Basic_hp_Increase(params object[] _args)
     {
         int value = (int)_args[0];
-        Basic_hp = (Basic_hp + value) % Basic_hpMax;
+        if (Basic_hpMax < Basic_hp + value) Basic_hp = Basic_hpMax;
+        else Basic_hp = Basic_hp + value;
+
+        // 플레이어 HP 상단바 조정
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___HP__VIEW_HP);
+
         return true;
     }
 
@@ -170,7 +185,8 @@ partial class HYJ_Player
 
         //
         Basic_hpMax = 99;
-        Basic_hp = Basic_hpMax;
+        Basic_hp = 80;
+
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD, LSY_Basic_getGold);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_IS_ENOUGH, HYJ_Basic_GoldIsEnough);
@@ -182,6 +198,13 @@ partial class HYJ_Player
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP, LSY_Basic_getExp);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__LEVEL_INCREASE, LSY_Basic_IncLevel);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL, LSY_Basic_getLevel);
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__CURRENT_HP, Basic_getCurHP);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__MAX_HP, Basic_getMaxHP);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__HP_INCREASE, JHW_Basic_hp_Increase);
+
+        // 플레이어 HP 상단바 조정
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___HP__VIEW_HP);
 
         return true;
     }

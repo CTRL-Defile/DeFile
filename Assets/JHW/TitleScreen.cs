@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
+using TMPro;
 
 public class TitleScreen : MonoBehaviour
 {
@@ -30,9 +31,13 @@ public class TitleScreen : MonoBehaviour
         // 로비화면 페이드
         this.transform.GetChild(0).GetChild(0).GetComponent<Image>().DOFade(0f, 2f);
 
+        // De'file 텍스트 페이드
+        this.transform.GetChild(0).GetChild(0).GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().DOFade(0f, 2f);
         // 버튼 disable
         this.transform.GetChild(0).GetChild(0).GetChild(0).gameObject.SetActive(false); // 플레이버튼
         this.transform.GetChild(0).GetChild(0).GetChild(1).gameObject.SetActive(false); // 게임설명버튼
+
+        
 
         // 베이스캠프 입장 UX,
         GameObject.Find("BaseCampBackgroundCanvas").GetComponent<Basecamp_background>().StartBaseCamp_BackGround_UX();
@@ -41,6 +46,7 @@ public class TitleScreen : MonoBehaviour
         Invoke("Basecamp_disable", 2f);
 
         // 사운드
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__BGM_NAME, JHW_SoundManager.BGM_list.temp_BGM);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UI_CLICK1);
     }
 

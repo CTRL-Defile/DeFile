@@ -353,6 +353,7 @@ GameObject:
   - component: {fileID: 3358419299424711882}
   - component: {fileID: 3358419299424711880}
   - component: {fileID: 3358419299424711883}
+  - component: {fileID: 995888439}
   m_Layer: 5
   m_Name: OptionPopup
   m_TagString: Untagged
@@ -419,6 +420,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &995888439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3358419299424711877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca07779b4b632e443b7e58b2155ce5d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3358419299435520235
 GameObject:
   m_ObjectHideFlags: 0
@@ -640,7 +653,7 @@ MonoBehaviour:
   m_text: "\uD6A8\uACFC\uC74C"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 95a1ac354a37a384f8a2dc2e43ee00db, type: 2}
-  m_sharedMaterial: {fileID: 5871488809287876508, guid: 95a1ac354a37a384f8a2dc2e43ee00db,
+  m_sharedMaterial: {fileID: 648274141602492692, guid: 95a1ac354a37a384f8a2dc2e43ee00db,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -776,7 +789,7 @@ MonoBehaviour:
   m_text: "\uBC30\uACBD\uC74C"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 95a1ac354a37a384f8a2dc2e43ee00db, type: 2}
-  m_sharedMaterial: {fileID: 5871488809287876508, guid: 95a1ac354a37a384f8a2dc2e43ee00db,
+  m_sharedMaterial: {fileID: 648274141602492692, guid: 95a1ac354a37a384f8a2dc2e43ee00db,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -912,7 +925,7 @@ MonoBehaviour:
   m_text: "\uC74C\uC545 \uC7AC\uC0DD/\uC77C\uC2DC\uC815\uC9C0"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 95a1ac354a37a384f8a2dc2e43ee00db, type: 2}
-  m_sharedMaterial: {fileID: 5871488809287876508, guid: 95a1ac354a37a384f8a2dc2e43ee00db,
+  m_sharedMaterial: {fileID: 648274141602492692, guid: 95a1ac354a37a384f8a2dc2e43ee00db,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2193,7 +2206,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 995888439}
         m_TargetAssemblyTypeName: JHW_OptionManager, Assembly-CSharp
         m_MethodName: optionOnOff
         m_Mode: 6

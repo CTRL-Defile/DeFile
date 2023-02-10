@@ -18,6 +18,9 @@ public class JHW_SoundManager : MonoBehaviour
 
     private static JHW_SoundManager instance;
 
+    // 멈출 효과음
+    private SFX_list toStopSfx;
+
     private enum SoundType {
         BGM,
         SFX,
@@ -121,7 +124,7 @@ public class JHW_SoundManager : MonoBehaviour
     // 배경음 목록
     public enum BGM_list
     {
-
+        temp_BGM,
     }
 
     //////////  Default Method  //////////
@@ -170,6 +173,8 @@ public class JHW_SoundManager : MonoBehaviour
                     //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___GET__INSTANCE, JHW_GetSoundManager);
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__BGM_NAME, PlayBGM);
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, PlaySFX);
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_STOP, SFX_stop);
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_ISPLAYING, SFX_isPlaying);
 
                     Basic_initialize = -1;
                 }
@@ -288,6 +293,7 @@ public class JHW_SoundManager : MonoBehaviour
             AudioSource audioSource = soundObject.AddComponent<AudioSource>(); // 컴포넌트 생성
             //audioSource.clip = GetOrAddAudioClip(playSoundName, SoundType.SFX);
             audioSource.clip = SFX_audioclips[playSoundName];
+            audioSource.volume = volume_SFX;
             soundObject.SetActive(false);
         }
         // 사운드 오브젝트 선택
@@ -307,6 +313,7 @@ public class JHW_SoundManager : MonoBehaviour
             AudioSource audioSource = soundObject.AddComponent<AudioSource>(); // 컴포넌트 생성
             //audioSource.clip = GetOrAddAudioClip(playSoundName, SoundType.SFX);
             audioSource.clip = SFX_audioclips[playSoundName];
+            audioSource.volume = volume_SFX;
             soundObject.SetActive(false);
         }
             
@@ -379,16 +386,30 @@ public class JHW_SoundManager : MonoBehaviour
     // 음악 재생/일시정지 버튼
     public void BGM_playButton()
     {
-        // 재생중인 음악 없으면 음악 재생
-        if (GameObject.Find("SoundManager/BGM").transform.childCount == 0)
-        {
-            PlayBGM("Leafre");
-            return;
-        }
-        
         // 음악 재생중이면 일시정지, 일시정지면 재생
         AudioSource audioSource = GameObject.Find("SoundManager/BGM").transform.GetChild(0).gameObject.GetComponent<AudioSource>();
         if (audioSource.isPlaying) audioSource.Pause();
         else audioSource.Play();
+    }
+
+    // 지연시간 뒤 효과음 정지
+    public object SFX_stop(params object[] _arg)
+    {
+        toStopSfx = (SFX_list)_arg[0];
+        float playtime = (float)_arg[1];
+        Invoke("sfxStop", playtime);
+        return true;
+    }
+    private void sfxStop()
+    {
+        GameObject.Find(toStopSfx.ToString() + "Pool").transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    // 효과음 재생중인지 체크
+    public object SFX_isPlaying(params object[] _arg)
+    {
+        SFX_list toCheckSfx = (SFX_list)_arg[0];
+        if (GameObject.Find(toCheckSfx.ToString() + "Pool").transform.GetChild(0).gameObject.activeSelf == true) return true;
+        else return false;
     }
 }
