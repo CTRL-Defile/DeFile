@@ -529,7 +529,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         for (int i=0; i<num; i++)
         {
             //GameObject _obj = Stand_Unit[i - n];
-            GameObject _obj = Stand_tiles.Tiles[n++].HYJ_Basic_onUnit;
+            GameObject _obj = Stand_tiles.Tiles[n].HYJ_Basic_onUnit;
             //Debug.Log(_obj.name + " adf");
             while (_obj == null)
             {
@@ -557,8 +557,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 _obj.transform.position = _tile.transform.position;
                 _obj.GetComponent<Character>().LSY_Character_Set_OnTile(_tile.gameObject);
                 _obj.GetComponent<Character>().LSY_Character_OriPos = _tile.transform.position;
+                Stand_tiles.Tiles[n].HYJ_Basic_onUnit = null;
 
-                
+
+
                 break;
             }
 
@@ -1243,6 +1245,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             Shop_UnitList[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = UnitName_list[idx].ToString();
             Shop_UnitList[i].transform.GetChild(1).GetChild(0).GetComponent<Image>().sprite = Shop_ImageList[idx];
         }
+
+        // Sound : 리롤
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.LEVELUP_PURCHASE_CLICK);
+
     }
 
     public bool LSY_Calc_Proba()
