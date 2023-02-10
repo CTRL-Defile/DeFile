@@ -330,6 +330,7 @@ partial class HYJ_Player
 
         switch (_PHASE)
         {
+            case BATTLE_PHASE.PHASE_INIT:
             case BATTLE_PHASE.PHASE_PREPARE:
                 Update_Stand_Tiles(_PHASE);
                 Update_Field_Tiles(_PHASE);
