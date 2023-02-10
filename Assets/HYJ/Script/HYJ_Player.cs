@@ -35,20 +35,33 @@ public partial class HYJ_Player : MonoBehaviour
 
             case 1:
                 {
+                    //Debug.Log("Player : " + Basic_phase);
+
                     int DB_phase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_PHASE);
                     if (DB_phase == -1)
                     {
-                        if (HYJ_Unit_Init())
-                        {
-                            Basic_phase = 2;
-                        }
-
+                        Player_DB_Init();
+                        Basic_phase = 2;
                     }
                 } 
                 break;
 
-            case 2: { if (HYJ_Item_Init()) { Basic_phase = 3; } } break;
-            case 3: { if (HYJ_Buff_Init()) { Basic_phase = -1; } } break;
+            case 2:
+                {
+                    BATTLE_PHASE _phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
+
+                    //Debug.Log("Player : " + Basic_phase);
+                    if (_phase == BATTLE_PHASE.PHASE_PREPARE)
+                    {
+                        if (HYJ_Unit_Init())
+                        {
+                            Basic_phase = 3;
+                        }
+                    }
+                }
+                break;
+            case 3: { if (HYJ_Item_Init()) { Basic_phase = 4; } } break;
+            case 4: { if (HYJ_Buff_Init()) { Basic_phase = -1; } } break;
         }
     }
 }
@@ -110,7 +123,7 @@ partial class HYJ_Player
 
         //
         int pay = (int)_args[0];
-        if(Basic_gold >= pay)
+        if (Basic_gold >= pay)
         {
             res = true;
         }
@@ -153,6 +166,24 @@ partial class HYJ_Player
         return res;
     }
 
+    // 금화 이자
+    object Basic_GoldInterest(params object[] _args)
+    {
+        if (Basic_gold >= 50)
+            Basic_gold += 5;
+        else if (Basic_gold >= 40)
+            Basic_gold += 4;
+        else if (Basic_gold >= 30)
+            Basic_gold += 3;
+        else if (Basic_gold >= 20)
+            Basic_gold += 2;
+        else if (Basic_gold >= 10)
+            Basic_gold += 1;
+        else
+            ;
+
+        return true;
+    }
     object Basic_getCurHP(params object[] _args)
     {
         return Basic_hp;
@@ -179,7 +210,7 @@ partial class HYJ_Player
     //////////  Default Method  //////////
     bool HYJ_Basic_Init()
     {
-        Basic_gold = 10000;
+        Basic_gold = 10;
         Basic_level = 1;
         Basic_exp = 0;
 
@@ -202,6 +233,9 @@ partial class HYJ_Player
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__CURRENT_HP, Basic_getCurHP);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__MAX_HP, Basic_getMaxHP);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__HP_INCREASE, JHW_Basic_hp_Increase);
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_PLAYER_UNIT_DATABASE, Player_Unit_GetUnitDataBase);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE, Player_DB_Update);
 
         // 플레이어 HP 상단바 조정
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___HP__VIEW_HP);
@@ -277,6 +311,13 @@ partial class HYJ_Player
         int _count = (int)_args[0];
 
         return Unit_waitUnits.HYJ_Data_GetUnitData(_count);
+    }
+
+    //
+    object Player_Unit_GetUnitDataBase(params object[] _args)
+    {
+        Debug.Log("PlayerDB.Count : " + Player_Unit_csv[0].Count);
+        return Player_Unit_csv;
     }
 
     //////////  Method          //////////
@@ -423,8 +464,6 @@ partial class HYJ_Player
                     return true;
             }
         }
-
-
 
         /*
         for (int y = 0; y < field_tiles.Count; y++)
@@ -696,27 +735,49 @@ partial class HYJ_Player
 
 
     //////////  Default Method  //////////
-    bool HYJ_Unit_Init()
+
+    object Player_DB_Update(params object [] _args)
     {
-        object count0 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X);
-        if (count0 == null)
+        Debug.Log("AAA");
+        Player_Unit_csv = new List<List<Dictionary<string, object>>>();
+        string csv_path = "DataBase/Player_Unit_DataBase";
+
+        for (int i = 0; i < 3; i++)
         {
-            return false;
-        }
-        else
-        {
-            if (Unit_waitUnits.HYJ_Data_GetUnitDataCount() == 0)
-                Unit_waitUnits = new HYJ_Player_Unit_Datas((int)count0);
+            List<Dictionary<string, object>> tmp = CSVReader.Read(csv_path + "_" + (i + 1).ToString());
+            Player_Unit_csv.Add(new List<Dictionary<string, object>>());
+
+            int len = tmp.Count;
+            for (int k = 0; k < len; k++)
+            {
+                Player_Unit_csv[i].Add(tmp[k]);
+            }
 
         }
 
-        Player_Unit_csv = (List<List<Dictionary<string, object>>>)
-            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
-
-        for(int _star=0; _star<3; _star++)
+        for (int i = 0; i < Player_Unit_csv[0].Count; i++)
         {
-            StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" 
-                + (_star+1).ToString() + ".csv");
+            Player_Unit_csv[0][i]["Index"] = i;
+            Player_Unit_csv[1][i]["Index"] = i;
+            Player_Unit_csv[2][i]["Index"] = i;
+        }
+
+
+
+
+        Debug.Log("Player_DB_Update.. cnt : " + Player_Unit_csv[0].Count);
+
+        return null;
+    }
+
+    void Player_DB_Init()
+    {
+        Player_Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+
+        for (int _star = 0; _star < 3; _star++)
+        {
+            StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_"
+                + (_star + 1).ToString() + ".csv");
             // 헤더 추가
             int row_cnt = Player_Unit_csv[_star][0].Keys.ToList().Count;
             for (int i = 0; i < row_cnt - 1; i++)
@@ -743,7 +804,22 @@ partial class HYJ_Player
 
         }
 
+        Debug.Log("Player_DB_Init.. cnt : " + Player_Unit_csv[0].Count);
+    }
 
+    bool HYJ_Unit_Init()
+    {
+        object count0 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X);
+        if (count0 == null)
+        {
+            return false;
+        }
+        else
+        {
+            if (Unit_waitUnits.HYJ_Data_GetUnitDataCount() == 0)
+                Unit_waitUnits = new HYJ_Player_Unit_Datas((int)count0);
+
+        }
 
 
         //
@@ -780,6 +856,7 @@ partial class HYJ_Player
         }
 
         //
+
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_BUY_UNIT_DATA,   HYJ_Unit_GetBuyUnitData     );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_BUY_UNIT_COUNT,  HYJ_Unit_GetBuyUnitCount    );
 

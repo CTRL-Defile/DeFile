@@ -24,6 +24,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     bool CharacterPool_isInitialized = false;
     bool Combat_isInitialized = false;
 
+    int Gold_win = 5, Gold_lose = 3;
+
     GameObject prefab;
     GameObjectPool<HYJ_Battle_Tile> m_TilePool;
     [SerializeField]
@@ -189,6 +191,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         // 필드 생성 후 그래프 셋업
 					    SetupGraph();
 
+
                         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, Basic_phase);
 
                         // Sound : 던전 입장
@@ -198,9 +201,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     {
                         Basic_phase = BATTLE_PHASE.PHASE_PREPARE;
                         End_Btn.SetActive(false);
+                        Battle_Synergy.gameObject.SetActive(true);
+                        Shop_panel.gameObject.SetActive(true);
 
                         if (UL_isInitialized)
+                        {
+                            // 처음엔 여기 접근 안함.
                             LSY_Shop_Reload(1);
+                        }
                     }
                 }
                 break;
@@ -282,13 +290,16 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             case BATTLE_PHASE.PHASE_COMBAT_OVER:
                 {
                     End_Btn.SetActive(true);
+                    Battle_Synergy.gameObject.SetActive(false);
+                    Shop_panel.gameObject.SetActive(false);
+
                     if (Enemy_Unit.Count == 0)
                     {
                         if (Combat_isInitialized)
                             // Sound : 게임 승리
                             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.GAME_VICTORY);
                         End_Btn.transform.GetChild(0).gameObject.SetActive(true);
-
+                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_INCREASE, Gold_win);
                     }
 
                     else
@@ -297,6 +308,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                             // Sound : 게임 패배
                             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.GAME_DEFEAT);
                         End_Btn.transform.GetChild(1).gameObject.SetActive(true);
+                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_INCREASE, Gold_lose);
                     }
 
                     DepthOfField dof;
@@ -518,9 +530,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     void Combat_Init()
     {
+        Debug.Log("###Combat_Init...");
+
         int _cnt = Player_Lv + 1 - Field_Unit.Count, std_cnt = Stand_Unit.Count;
         if (_cnt == 0)
         {
+            Debug.Log("Assign " + _cnt + " more..");
             Combat_isInitialized = true;
             return;
         }
@@ -561,13 +576,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 _obj.GetComponent<Character>().LSY_Character_OriPos = _tile.transform.position;
                 Stand_tiles.Tiles[n].HYJ_Basic_onUnit = null;
 
-
-
+                Debug.Log(_obj.name + " is auto assigned at " + _tile.name);
                 break;
             }
 
 
         }
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, BATTLE_PHASE.PHASE_PREPARE);
 
         Combat_isInitialized = true;
         return;
@@ -1126,14 +1142,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     [SerializeField]
     List<int> Cost_list;
 
-    List<List<Dictionary<string, object>>> Unit_DB;
+    List<List<Dictionary<string, object>>> Unit_DB, Player_Unit_DB;
 
     [SerializeField]
-    List<string> UnitName_list = new List<string>();
+    List<string> UnitName_list = new List<string>(), Player_UnitName_list = new List<string>();
     [SerializeField]
-    List<int> UnitID_list = new List<int>();
+    List<int> UnitID_list = new List<int>(), Player_UnitID_list = new List<int>();
     [SerializeField]
-    List<int> UnitIdx_list = new List<int>();
+    List<int> UnitIdx_list = new List<int>(), Player_UnitIdx_list = new List<int>();
     int Shop_Panel_cnt = 5;
     int Player_Lv = 1, cur_EXP = 0;
     List<int> Max_EXP_List = new List<int>() { 0, 2, 6, 10, 20, 36, 56, 80, 108, 140, 170, 190, 210 };
@@ -1153,11 +1169,19 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
         // Text, Image, Cost
         Unit_DB = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+        Player_Unit_DB = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_PLAYER_UNIT_DATABASE);
 
         for (int i = 0; i < Unit_DB[0].Count; i++)
         {
             UnitName_list.Add(Unit_DB[0][i]["NAME"].ToString());
             UnitID_list.Add((int)Unit_DB[0][i]["ID"]);
+        }
+
+        for (int i = 0; i < Player_Unit_DB[0].Count; i++)
+        {
+            Debug.Log("Player Unit .. " + Player_Unit_DB[0][i]["NAME"].ToString());
+            Player_UnitName_list.Add(Player_Unit_DB[0][i]["NAME"].ToString());
+            Player_UnitID_list.Add((int)Player_Unit_DB[0][i]["ID"]);
         }
 
         LSY_Shop_Reload(1);
@@ -1192,7 +1216,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 tmp = Instantiate(unitData, pos[i], Quaternion.identity, Enemy_parent);
             else if (m_CharacterPools.m_List[n].get_Count() > 0)
             {
-                Debug.Log("[BM]Pools.mList.getCount : " + m_CharacterPools.m_List[n].get_Count());
+                //Debug.Log("[BM]Pools.mList.getCount : " + m_CharacterPools.m_List[n].get_Count());
                 //tmp = m_CharacterPools.m_List[n].pop().gameObject;
                 tmp = m_CharacterPools.m_List[n].objects.PopStack().gameObject;
                 tmp.SetActive(true);
@@ -1227,14 +1251,21 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public void LSY_Shop_Reload(int n)
     {
-        for(int i=0; i<Shop_Panel_cnt; i++)
+        if (n != 1)
+        {
+            if (!(bool)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 2))
+            {
+                Debug.Log("Not Enough Gold... It spends " + 2 + " gold but you've got " + HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD));
+                return;
+            }
+        }
+
+        for (int i=0; i<Shop_Panel_cnt; i++)
         {
             Shop_UnitList[i].SetActive(true);
         }
 
         Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
-
-        if (n != 1) HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 2);
 
         // Before Reload, Clear Idx list
         UnitIdx_list.Clear();
@@ -1244,7 +1275,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         for (int i = 0; i < Shop_UnitList.Count; i++)  // 0~5
         {
             int idx = UnitIdx_list[i];
-            Shop_UnitList[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = UnitName_list[idx].ToString();
+            Shop_UnitList[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = Player_UnitName_list[idx].ToString();
             Shop_UnitList[i].transform.GetChild(1).GetChild(0).GetComponent<Image>().sprite = Shop_ImageList[idx];
         }
 
@@ -1316,10 +1347,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         for(int i = 0; i < Shop_Panel_cnt; i++)
         {
             List<int> Unit_Candi = new List<int>();
-            for(int j = 0; j < Unit_DB[0].Count - 1; j++)
+            for(int j = 0; j < Player_Unit_DB[0].Count - 1; j++)
             {
-                int unit_cost = (int)Unit_DB[0][j]["COST"];
-                int unit_idx = (int)Unit_DB[0][j]["Index"];
+                int unit_cost = (int)Player_Unit_DB[0][j]["COST"];
+                int unit_idx = (int)Player_Unit_DB[0][j]["Index"];
                 int unit_cnt = m_CharacterPools.m_List[unit_idx].get_Count();
 
                 if (unit_cost == Cost_list[i])
@@ -1537,7 +1568,16 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     public void Buy_Unit_byPhase(int unit_idx, int pos_num)
     {
         GameObject _onTile = Stand_tiles.HYJ_Data_Tile(pos_num).gameObject;
-       
+
+        GameObject _tmp = m_CharacterPools.m_List[unit_idx].objects.m_Stack.Peek().gameObject;
+        int cost = _tmp.GetComponent<Character>().Stat_Cost;
+        if (!(bool)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost))
+        {
+            Debug.Log("Not Enough Gold... It spends " + cost + " gold but you've got " + HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD));
+            return;
+        }
+        Debug.Log(_tmp.name + " is spawned");
+
         GameObject tmp;
         tmp = m_CharacterPools.m_List[unit_idx].objects.PopStack().gameObject;
         tmp.SetActive(true);
@@ -1559,9 +1599,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         if (Basic_phase == BATTLE_PHASE.PHASE_COMBAT)
             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, Basic_phase);
 
-        int cost = tmp_char.Stat_Cost;
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost);
-        Debug.Log(tmp.name + " is spawned");
+        //int cost = tmp_char.Stat_Cost;
 
         // 구매한 카드 사라지게.
         Clicked_Button.SetActive(false);
@@ -1578,7 +1616,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public void LSY_Buy_EXP()
     {
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 4);
+        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 4);
+
+        if (!(bool)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, 4))
+        {
+            Debug.Log("Not Enough Gold... It spends " + 4 + " gold but you've got " + HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD));
+            return;
+        }
+
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_INCREASE, 4);
         cur_EXP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_EXP);
 

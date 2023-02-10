@@ -412,15 +412,23 @@ partial class HYJ_BaseCamp_Manager {
 
         for (int i = 1; i <= 3; i++)
         {
+            Debug.Log("삭제중..........");
             // 유닛 데이터 읽어오기
             lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character_"+i.ToString()+".csv");
             // 유닛 데이터 쓰기
             StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_"+i.ToString()+".csv");
             // 삭제되는 유닛 라인은 가장 마지막 라인으로 대체
             lines[deleteLineNumber] = lines[lines.Length - 1];
-            for (int j = 0; j < lines.Length - 1; j++) { outStream.WriteLine(lines[j].ToString()); }
+            for (int j = 0; j < lines.Length - 1; j++)
+            {
+                outStream.WriteLine(lines[j].ToString());
+            }
+            Debug.Log(lines.Length);
             outStream.Close();
         }
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE);
+        Debug.Log("DDD");
     }
 
     public void DeleteCard(int deleteNumber)
