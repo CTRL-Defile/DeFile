@@ -49,7 +49,8 @@ public partial class Character : MonoBehaviour
 	protected HYJ_CharacterSkill m_Spell_1;
 
 	[SerializeField]
-	protected bool m_IsInRange = false;	
+	protected bool m_IsInRange = false;
+	protected bool m_IsOneShot = false;
 	//-------------------------------------------------------------------
 	// Property
 	//-------------------------------------------------------------------
@@ -206,7 +207,7 @@ public partial class Character
     {
 		if (Status_HP > 0.0f)
 			return;
-		else if(Status_HP <= 0.0f && State != STATE.DIE)
+		else if(Status_HP <= 0.0f && false == m_IsOneShot)
 		{
 			List<NODE> BattleGraph = (List<NODE>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH);
 			BattleGraph[on_Tile.GetComponent<HYJ_Battle_Tile>().GraphIndex].Marking = false;
@@ -214,6 +215,11 @@ public partial class Character
 			on_Tile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
 			State = STATE.DIE;
 			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT_DIE, this.gameObject);
+
+			// Sound : À¯´Ö »ç¸Á
+			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_DEATH);
+
+			m_IsOneShot = true;
 		}
 		
 		// Dissolve Shader Àû¿ë ¿¹Á¤
@@ -227,9 +233,6 @@ public partial class Character
 			// Dissolve ½¦ÀÌ´õ SetUp
 			if(IsDead == false)
 			{
-                // Sound : À¯´Ö »ç¸Á
-                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_DEATH);
-
                 gameObject.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_DISSOLVE);				
 			}				
 

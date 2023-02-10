@@ -302,10 +302,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     DepthOfField dof;
                     if (GameVolume.profile.TryGet<DepthOfField>(out dof))
                     {
-                        // dof.active = true;
+                        dof.active = true;
                         dof.focusDistance.value = Mathf.Lerp(dof.focusDistance.value, 0.95f, 3.0f * Time.deltaTime);
                     }
-                }
+
+                    Combat_isInitialized = false;
+				}
                 break;
         }
     }
@@ -391,7 +393,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         if (GameVolume.profile.TryGet<DepthOfField>(out dof))
         {
             dof.focusDistance.value = 10.0f;
-            //dof.active = false;
+            dof.active = false;
         }
 
         End_Btn.SetActive(false);
