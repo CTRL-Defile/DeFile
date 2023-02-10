@@ -177,7 +177,9 @@ MonoBehaviour:
   Basic_initialize: 0
   volume_BGM: 1
   volume_SFX: 1
-  BGM_datas: []
+  BGM_datas:
+  - bgm_name: 0
+    audio: {fileID: 8300000, guid: ad814197ad98e4d69ab3de57313a4bb0, type: 3}
   SFX_datas:
   - sfx_name: 0
     audio: {fileID: 8300000, guid: d1bcdb017c80b4893ae458698e00b268, type: 3}
@@ -244,7 +246,7 @@ MonoBehaviour:
   - sfx_name: 31
     audio: {fileID: 8300000, guid: eef05cc94f6be485eb3cb39a6554fc87, type: 3}
   - sfx_name: 32
-    audio: {fileID: 8300000, guid: 0438415543293438f9a42df5a21364a3, type: 3}
+    audio: {fileID: 8300000, guid: e86f36aeecef8463b844c484d65959ed, type: 3}
   - sfx_name: 33
     audio: {fileID: 8300000, guid: 2c4477431ffd74bdcad0aecf91e52fa8, type: 3}
   - sfx_name: 34
@@ -268,7 +270,7 @@ MonoBehaviour:
   - sfx_name: 43
     audio: {fileID: 8300000, guid: c2b180c56273f468197551fba20a082e, type: 3}
   - sfx_name: 44
-    audio: {fileID: 0}
+    audio: {fileID: 8300000, guid: 6a9cd44bb15574d75af9534049ea4997, type: 3}
   - sfx_name: 45
     audio: {fileID: 8300000, guid: 67e63f5af952e4258a06c629c31e7c44, type: 3}
   - sfx_name: 46
@@ -286,7 +288,7 @@ MonoBehaviour:
   - sfx_name: 52
     audio: {fileID: 0}
   - sfx_name: 53
-    audio: {fileID: 0}
+    audio: {fileID: 8300000, guid: 433a1c161a4b6473f9f8b4ddd9c7be60, type: 3}
   - sfx_name: 54
     audio: {fileID: 8300000, guid: e886fbb39ea124ad9ab4063562e6304e, type: 3}
   - sfx_name: 55
@@ -304,13 +306,13 @@ MonoBehaviour:
   - sfx_name: 61
     audio: {fileID: 8300000, guid: 51791a3b5d07e43c19e1218477d33ffd, type: 3}
   - sfx_name: 62
-    audio: {fileID: 0}
+    audio: {fileID: 8300000, guid: 20a8703152507469aaaf70acc7885721, type: 3}
   - sfx_name: 63
     audio: {fileID: 8300000, guid: 57592c1ed2637472f9dd6ee325d9b399, type: 3}
   - sfx_name: 64
     audio: {fileID: 0}
   - sfx_name: 65
-    audio: {fileID: 8300000, guid: 66d7a405833f248cdb851629dc72fc01, type: 3}
+    audio: {fileID: 8300000, guid: 3e46984c71c444ac2bdcfc054ce5c1af, type: 3}
   - sfx_name: 66
     audio: {fileID: 8300000, guid: f1afffac1422e4f78a63e3b042e9cd10, type: 3}
   - sfx_name: 67

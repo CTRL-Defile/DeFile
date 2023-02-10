@@ -9,7 +9,7 @@ public class Battle_Status_Script : MonoBehaviour
     public Canvas parentCanvas;
 
     [SerializeField]
-    List<Sprite> Imagelist;
+    public List<Sprite> Imagelist;
     [SerializeField]
     Transform unitImage;
     [SerializeField]

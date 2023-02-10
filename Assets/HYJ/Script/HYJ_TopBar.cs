@@ -16,6 +16,7 @@ public partial class HYJ_TopBar : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        HP_Start();
         HYJ_Level_Start();
         HYJ_Gold_Start();
         HYJ_Power_Start();
@@ -37,8 +38,33 @@ partial class HYJ_TopBar
 
     //////////  Default Method  //////////
 }
+# region HP
+partial class HYJ_TopBar
+{
+    [SerializeField] public Slider HP_bar;
+    [SerializeField] public Text HP_text;
 
-# region LEVEL
+    object HP_ViewHP(params object[] _args)
+    {
+        int curHP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__CURRENT_HP);
+        int maxHP = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__MAX_HP);
+
+        //
+        HP_text.text = curHP +" / "+ maxHP;
+        HP_bar.value = (float)curHP / maxHP;
+
+        //
+        return true;
+    }
+
+    void HP_Start()
+    {
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___HP__VIEW_HP, HP_ViewHP);
+    }
+}
+#endregion HP
+
+#region LEVEL
 partial class HYJ_TopBar
 {
     [SerializeField] Text Level_text;

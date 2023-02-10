@@ -20,6 +20,8 @@ public partial class HYJ_BaseCamp_Manager : MonoBehaviour
     [SerializeField] private int restStack = 0; // 휴식 시 다음 휴식에 필요한 행동개수 증가하기 위한 변수
     [SerializeField] private int removeStack = 0; // 유닛삭제 시 다음 휴식에 필요한 행동개수 증가하기 위한 변수
 
+
+
     int randomSelectUnitNumber1; // 선택된 유닛 인덱스 번호1
     int randomSelectUnitNumber2; // 선택된 유닛 인덱스 번호2
     int randomSelectUnitNumber3; // 선택된 유닛 인덱스 번호3
@@ -126,6 +128,9 @@ partial class HYJ_BaseCamp_Manager {
     // 정비
     public void JHW_BaseCamp_Maintanance()
     {
+        // reroll 버튼 비활성화
+        this.transform.GetChild(0).GetChild(3).GetChild(0).GetChild(4).GetChild(0).gameObject.SetActive(false);
+
         // 베이스캠프 유닛 선택하는 이미지 활성화
         this.transform.GetChild(0).GetChild(3).GetChild(0).transform.gameObject.SetActive(true);
 
@@ -316,13 +321,13 @@ partial class HYJ_BaseCamp_Manager {
         do { randomSelectUnitNumber3 = Random.Range(0, unitDatas.Count); } while (dataFlag[randomSelectUnitNumber3] == true);
         dataFlag[randomSelectUnitNumber3] = true;
 
-        //// 랜덤하게 선택된 유닛
-        //selectedUnit1 = unitDatas[randomSelectUnitNumber1];
-        //selectedUnit2 = unitDatas[randomSelectUnitNumber2];
-        //selectedUnit3 = unitDatas[randomSelectUnitNumber3];
+        // 랜덤하게 선택된 유닛
+        selectedUnit1 = unitDatas[randomSelectUnitNumber1];
+        selectedUnit2 = unitDatas[randomSelectUnitNumber2];
+        selectedUnit3 = unitDatas[randomSelectUnitNumber3];
 
         // 카드 내에 수치 및 이름 설정
-        ChangeCardUI();
+        Invoke("ChangeCardUI",0.5f);
 
         //삭제버튼 안보이게
         unitList1.transform.GetChild(1).transform.gameObject.SetActive(false);
@@ -357,40 +362,43 @@ partial class HYJ_BaseCamp_Manager {
     // 카드 내에 수치 및 이름 설정
     public void ChangeCardUI()
     {
-        
+
 
         //카드1
+        unitList1.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<UnitCardImage>().ChangeImage((int)selectedUnit1["ID"]);
         unitList1.transform.GetChild(0).GetChild(0).transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["NAME_KOR"].ToString(); // 챔피언 이름
-        unitList1.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["MAX_HP"].ToString(); // 최대HP
-        unitList1.transform.GetChild(0).GetChild(2).GetChild(2).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["MAX_MP"].ToString(); // 최대MP
-        unitList1.transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["ATK_PHYSICS"].ToString(); // 물리공격력
-        unitList1.transform.GetChild(0).GetChild(2).GetChild(4).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["DEFENCE"].ToString(); // 방어력
-        unitList1.transform.GetChild(0).GetChild(2).GetChild(5).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["ATK_SPELL"].ToString(); // 마법공격력
-        unitList1.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["SPELL_REGISTANCE"].ToString(); // 마법저항력
-        unitList1.transform.GetChild(0).GetChild(2).GetChild(7).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["CRIT_PERCENT"].ToString(); // 크리티컬확률
-        unitList1.transform.GetChild(0).GetChild(2).GetChild(8).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit1["CRIT_VALUE"].ToString(); // 크리티컬배율
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "최대 HP\n" + selectedUnit1["MAX_HP"].ToString(); // 최대HP
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(2).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "최대 MP\n" + selectedUnit1["MAX_MP"].ToString(); // 최대MP
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "물리공격력\n" + selectedUnit1["ATK_PHYSICS"].ToString(); // 물리공격력
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(4).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "방어력\n" + selectedUnit1["DEFENCE"].ToString(); // 방어력
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(5).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "마법공격력\n" + selectedUnit1["ATK_SPELL"].ToString(); // 마법공격력
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "주문저항력\n" + selectedUnit1["SPELL_REGISTANCE"].ToString(); // 마법저항력
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(7).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "치명타확률\n" + selectedUnit1["CRIT_PERCENT"].ToString(); // 크리티컬확률
+        unitList1.transform.GetChild(0).GetChild(2).GetChild(8).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "치명타배율\n" + selectedUnit1["CRIT_VALUE"].ToString(); // 크리티컬배율
 
         //카드2
+        unitList2.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<UnitCardImage>().ChangeImage((int)selectedUnit2["ID"]);
         unitList2.transform.GetChild(0).GetChild(0).transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["NAME_KOR"].ToString(); // 챔피언 이름
-        unitList2.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["MAX_HP"].ToString(); // 최대HP
-        unitList2.transform.GetChild(0).GetChild(2).GetChild(2).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["MAX_MP"].ToString(); // 최대MP
-        unitList2.transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["ATK_PHYSICS"].ToString(); // 물리공격력
-        unitList2.transform.GetChild(0).GetChild(2).GetChild(4).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["DEFENCE"].ToString(); // 방어력
-        unitList2.transform.GetChild(0).GetChild(2).GetChild(5).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["ATK_SPELL"].ToString(); // 마법공격력
-        unitList2.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["SPELL_REGISTANCE"].ToString(); // 마법저항력
-        unitList2.transform.GetChild(0).GetChild(2).GetChild(7).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["CRIT_PERCENT"].ToString(); // 크리티컬확률
-        unitList2.transform.GetChild(0).GetChild(2).GetChild(8).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit2["CRIT_VALUE"].ToString(); // 크리티컬배율
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "최대 HP\n" + selectedUnit2["MAX_HP"].ToString(); // 최대HP
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(2).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "최대 MP\n" + selectedUnit2["MAX_MP"].ToString(); // 최대MP
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "물리공격력\n" + selectedUnit2["ATK_PHYSICS"].ToString(); // 물리공격력
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(4).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "방어력\n" + selectedUnit2["DEFENCE"].ToString(); // 방어력
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(5).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "마법공격력\n" + selectedUnit2["ATK_SPELL"].ToString(); // 마법공격력
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "주문저항력\n" + selectedUnit2["SPELL_REGISTANCE"].ToString(); // 마법저항력
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(7).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "치명타확률\n" + selectedUnit2["CRIT_PERCENT"].ToString(); // 크리티컬확률
+        unitList2.transform.GetChild(0).GetChild(2).GetChild(8).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "치명타배율\n" + selectedUnit2["CRIT_VALUE"].ToString(); // 크리티컬배율
 
         //카드3
+        unitList3.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<UnitCardImage>().ChangeImage((int)selectedUnit3["ID"]);
         unitList3.transform.GetChild(0).GetChild(0).transform.GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["NAME_KOR"].ToString(); // 챔피언 이름
-        unitList3.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["MAX_HP"].ToString(); // 최대HP
-        unitList3.transform.GetChild(0).GetChild(2).GetChild(2).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["MAX_MP"].ToString(); // 최대MP
-        unitList3.transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["ATK_PHYSICS"].ToString(); // 물리공격력
-        unitList3.transform.GetChild(0).GetChild(2).GetChild(4).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["DEFENCE"].ToString(); // 방어력
-        unitList3.transform.GetChild(0).GetChild(2).GetChild(5).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["ATK_SPELL"].ToString(); // 마법공격력
-        unitList3.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["SPELL_REGISTANCE"].ToString(); // 마법저항력
-        unitList3.transform.GetChild(0).GetChild(2).GetChild(7).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["CRIT_PERCENT"].ToString(); // 크리티컬확률
-        unitList3.transform.GetChild(0).GetChild(2).GetChild(8).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = selectedUnit3["CRIT_VALUE"].ToString(); // 크리티컬배율
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "최대 HP\n" + selectedUnit3["MAX_HP"].ToString(); // 최대HP
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(2).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "최대 MP\n" + selectedUnit3["MAX_MP"].ToString(); // 최대MP
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "물리공격력\n" + selectedUnit3["ATK_PHYSICS"].ToString(); // 물리공격력
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(4).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "방어력\n" + selectedUnit3["DEFENCE"].ToString(); // 방어력
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(5).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "마법공격력\n" + selectedUnit3["ATK_SPELL"].ToString(); // 마법공격력
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(6).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "주문저항력\n" + selectedUnit3["SPELL_REGISTANCE"].ToString(); // 마법저항력
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(7).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "치명타확률\n" + selectedUnit3["CRIT_PERCENT"].ToString(); // 크리티컬확률
+        unitList3.transform.GetChild(0).GetChild(2).GetChild(8).GetChild(1).transform.gameObject.GetComponent<TMP_Text>().text = "치명타배율\n" + selectedUnit3["CRIT_VALUE"].ToString(); // 크리티컬배율
     }
 
     public void DeleteUnit(int number)
@@ -422,6 +430,9 @@ partial class HYJ_BaseCamp_Manager {
 
         // 유닛 삭제
         DeleteUnit(deleteNumber);
+
+        //카드 뒤집은횟수 0으로 초기화
+        CardBack_UX.checkBackCardCnt = 0;
 
         actionCnt -= minusActionCnt; // 행동개수 삭제
 
@@ -689,6 +700,7 @@ partial class HYJ_BaseCamp_Manager
     {
         g.transform.GetChild(1).gameObject.SetActive(true);
     }
+
 
     //// 점검 - 스탯정보
     //bool isStatusMouseOver = false;

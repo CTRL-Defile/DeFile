@@ -78,6 +78,8 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     PLAYER___BASIC__LEVEL_INCREASE,
     PLAYER___BASIC__GET_LEVEL,
 
+    PLAYER___BASIC__MAX_HP,
+    PLAYER___BASIC__CURRENT_HP,
     PLAYER___BASIC__HP_INCREASE,
 
     PLAYER___UNIT__GET_BUY_UNIT_DATA,
@@ -176,6 +178,7 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     DRAG___INIT,
 
     //
+    TOPBAR___HP__VIEW_HP,
     TOPBAR___LEVEL__VIEW_LEVEL,
     TOPBAR___GOLD__VIEW_GOLD,
     TOPBAR___BATTLE__VIEW_POWER,
@@ -184,6 +187,8 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     //
     SOUNDMANAGER___PLAY__BGM_NAME,
     SOUNDMANAGER___PLAY__SFX_NAME,
+    SOUNDMANAGER___PLAY__SFX_STOP,
+    SOUNDMANAGER___PLAY__SFX_ISPLAYING
 }
 
 public delegate object HYJ_ScriptBridge_Event(params object[] _args);
