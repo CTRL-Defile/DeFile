@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.UI.CanvasScaler;
 
 public class EffectPool : SingletonMonoBehaviour<EffectPool>
 {	
@@ -25,34 +26,34 @@ public class EffectPool : SingletonMonoBehaviour<EffectPool>
 			List<EffectPoolUnit> listObjectPool = new List<EffectPoolUnit>(); //인스턴스 이팩트하나당 1개의 풀
 			m_dicEffectPool[effect_type] = listObjectPool;
 				
-			GameObject obj = Instantiate(effects[i]);
-			obj.layer = LayerMask.NameToLayer("TransparentFX");
+			//GameObject obj = Instantiate(effects[i]);
+			//obj.layer = LayerMask.NameToLayer("TransparentFX");
 
-			EffectPoolUnit objectPoolUnit = obj.GetComponent<EffectPoolUnit>();
-			if (objectPoolUnit == null)
-			{
-				obj.AddComponent<EffectPoolUnit>();
-			}
+			//EffectPoolUnit objectPoolUnit = obj.GetComponent<EffectPoolUnit>();
+			//if (objectPoolUnit == null)
+			//{
+			//	obj.AddComponent<EffectPoolUnit>();
+			//}
 
-			if (obj.GetComponent<ParticleAutoDestroy>() == null)
-			{
-				obj.AddComponent<ParticleAutoDestroy>();
-			}
+			//if (obj.GetComponent<ParticleAutoDestroy>() == null)
+			//{
+			//	obj.AddComponent<ParticleAutoDestroy>();
+			//}
 
-			obj.transform.SetParent(transform);
+			//obj.transform.SetParent(transform);
 
-			EFFECT_TYPE type = obj.GetComponent<EffectPoolUnit>().EffectType;
+			//EFFECT_TYPE type = obj.GetComponent<EffectPoolUnit>().EffectType;
 
-			obj.GetComponent<EffectPoolUnit>().SetObjectPool(type, this);
-			if (obj.activeSelf)
-			{
-				//아직 이 이팩트는 풀에들어가있는 상태가아님 엑티브끄면 OnDisable 이벤트가 동작됨
-				obj.SetActive(false);
-			}
-			else
-			{
-				AddPoolUnit(type, obj.GetComponent<EffectPoolUnit>());
-			}
+			//obj.GetComponent<EffectPoolUnit>().SetObjectPool(type, this);
+			//if (obj.activeSelf)
+			//{
+			//	//아직 이 이팩트는 풀에들어가있는 상태가아님 엑티브끄면 OnDisable 이벤트가 동작됨
+			//	obj.SetActive(false);
+			//}
+			//else
+			//{
+			//	AddPoolUnit(type, obj.GetComponent<EffectPoolUnit>());
+			//}
 		}
 
 	}
@@ -99,6 +100,7 @@ public class EffectPool : SingletonMonoBehaviour<EffectPool>
 			obj.AddComponent<ParticleAutoDestroy>();
 		}
 		obj.GetComponent<EffectPoolUnit>().SetObjectPool(effectType, this);
+		obj.transform.position = position;
 		StartCoroutine(Coroutine_SetActive(obj));
 		return obj;
 	}

@@ -299,14 +299,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         End_Btn.transform.GetChild(1).gameObject.SetActive(true);
                     }
 
-                    Combat_isInitialized = false;
-
-                    //DepthOfField dof;
-                    //if (GameVolume.profile.TryGet<DepthOfField>(out dof))
-                    //{
-                    //                  // dof.active = true;
-                    //	dof.focusDistance.value = Mathf.Lerp(dof.focusDistance.value, 0.95f, 3.0f * Time.deltaTime);
-                    //}
+                    DepthOfField dof;
+                    if (GameVolume.profile.TryGet<DepthOfField>(out dof))
+                    {
+                        // dof.active = true;
+                        dof.focusDistance.value = Mathf.Lerp(dof.focusDistance.value, 0.95f, 3.0f * Time.deltaTime);
+                    }
                 }
                 break;
         }
@@ -389,14 +387,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
 	public void LSY_Battle_End()
     {
-		//DepthOfField dof;
-		//if (GameVolume.profile.TryGet<DepthOfField>(out dof))
-		//{
-  //          dof.focusDistance.value = 10.0f;
-		//	//dof.active = false;
-		//}
+        DepthOfField dof;
+        if (GameVolume.profile.TryGet<DepthOfField>(out dof))
+        {
+            dof.focusDistance.value = 10.0f;
+            //dof.active = false;
+        }
 
-		End_Btn.SetActive(false);
+        End_Btn.SetActive(false);
         End_Btn.transform.GetChild(0).gameObject.SetActive(false);
         End_Btn.transform.GetChild(1).gameObject.SetActive(false);
         HYJ_SetActive(false);

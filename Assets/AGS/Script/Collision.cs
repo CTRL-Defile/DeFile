@@ -15,13 +15,14 @@ public class Collision : MonoBehaviour
 	{
 		BATTLE_PHASE phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
 		if (phase == BATTLE_PHASE.PHASE_COMBAT)
-		{
-			if(HostObject.UnitType != other.GetComponentInParent<Transform>().GetComponentInParent<Transform>().GetComponentInParent<Character>().UnitType)
+		{			
+			if(null != other.GetComponentInParent<Character>() &&
+			   HostObject.UnitType != other.GetComponentInParent<Character>().UnitType)
 			{
-				if (other.gameObject.tag == "HitArea" && other.GetComponentInParent<Transform>().GetComponentInParent<Transform>().GetComponentInParent<Character>() != HostObject)
+				if (other.gameObject.tag == "HitArea" && other.GetComponentInParent<Character>() != HostObject)
 				{
 					Target = other.gameObject;
-					other.gameObject.GetComponentInParent<Transform>().GetComponentInParent<Transform>().gameObject.GetComponentInParent<Character>().HitProcess(HostObject.Stat_Attack);
+					other.GetComponentInParent<Character>().HitProcess(HostObject.Stat_Attack);
 				}
 			}
 		}

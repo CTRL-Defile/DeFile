@@ -65,7 +65,6 @@ public partial class Character : MonoBehaviour
 	public HYJ_CharacterSkill Spell_0 { get { return m_Spell_0; } }
 	public HYJ_CharacterSkill Spell_1 { get { return m_Spell_1; } }
 	public bool InRange { get { return m_IsInRange; } set { m_IsInRange = value; } }
-
 	//-------------------------------------------------------------------
 	// Method
 	//-------------------------------------------------------------------
@@ -425,27 +424,53 @@ public partial class Character
 	}
 
 	virtual protected void UpdateIdle()
-	{
+	{		
 		m_animator.SetBool("Skill", false);
+		m_animator.SetBool("Skill2", false);
 		m_animator.SetBool("Run Forward", false);
 	}
 
 	virtual protected void UpdateRun()
 	{
 		m_animator.SetBool("Skill", false);
-		m_animator.SetBool("Run Forward", true);
+		m_animator.SetBool("Skill2", false);
+
+
+		if (m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+		{
+			m_animator.SetBool("Run Forward", true);
+		}
+
 	}
 
 	virtual protected void UpdateDie()
 	{
 		m_animator.SetBool("Run Forward", false);
 		m_animator.SetBool("Skill", false);
+		m_animator.SetBool("Skill2", false);
 		m_animator.SetTrigger("Die");		
 	}
 
 	virtual protected void UpdateSkill()
 	{
-		m_animator.SetBool("Skill", true);
+		if (m_Modeltype == MODEL_TYPE.ORC || m_Modeltype == MODEL_TYPE.BEAR)
+		{
+			if (Status_MP >= Status_MaxMP)
+			{
+				m_animator.SetBool("Skill", false);
+				if (m_animator.GetBool("Skill2") == false)
+					m_animator.SetBool("Skill2", true);
+			}
+			else
+			{
+				if (m_animator.GetBool("Skill") == false)
+					m_animator.SetBool("Skill", true);
+				m_animator.SetBool("Skill2", false);
+			}
+		}
+		else
+			m_animator.SetBool("Skill", true);
+
 		m_animator.SetBool("Run Forward", false);
 	}
 
