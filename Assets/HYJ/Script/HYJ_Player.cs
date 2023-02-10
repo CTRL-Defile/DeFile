@@ -351,7 +351,7 @@ partial class HYJ_Player
     int field_cnt, stand_cnt;
 
 
-    bool Find_Unit_On_Tile(GameObject _obj)
+    bool Find_Unit_On_Tile(GameObject _obj, BATTLE_PHASE _phase)
     {
         int cnt = 0, sac_num = 3;
         Character _char = _obj.GetComponent<Character>();
@@ -361,21 +361,25 @@ partial class HYJ_Player
         _candidate_units.Clear();
         object[] param = new object[3];
 
-        for (int i = 0; i < field_cnt; i++)
+        if (_phase == BATTLE_PHASE.PHASE_PREPARE)
         {
-            GameObject obj = field_units[i];
-            Character obj_char = field_units[i].GetComponent<Character>();
-
-            if (obj_char.StarInt() == _star && obj_char.Character_Status_ID == _id && obj_char.UnitType == Character.Unit_Type.Ally)
+            for (int i = 0; i < field_cnt; i++)
             {
-                Debug.Log(obj.name + " Find it, star : " + obj_char.StarInt());
-                _Tile = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>();
-                _candidate_units.Add(obj);
-                param[cnt++] = obj;
+                GameObject obj = field_units[i];
+                Character obj_char = field_units[i].GetComponent<Character>();
 
-                if (cnt == sac_num)
-                    return true;
+                if (obj_char.StarInt() == _star && obj_char.Character_Status_ID == _id && obj_char.UnitType == Character.Unit_Type.Ally)
+                {
+                    Debug.Log(obj.name + " Find it, star : " + obj_char.StarInt());
+                    _Tile = obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>();
+                    _candidate_units.Add(obj);
+                    param[cnt++] = obj;
+
+                    if (cnt == sac_num)
+                        return true;
+                }
             }
+
         }
 
         for (int i=0; i<stand_cnt; i++)
@@ -529,11 +533,11 @@ partial class HYJ_Player
 
             synergy_list[obj_char.Stat_Cost - 1]++;
             id_list[_star].m_List[_id]++;
-            Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
+            //Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
 
             if (_star < 3 && id_list[_star].m_List[_id] == 3)
             {
-                if (Find_Unit_On_Tile(obj))
+                if (Find_Unit_On_Tile(obj, _PHASE))
                 {
                     Debug.Log("Candidate count " + _candidate_units.Count);
                     _candidate_units.Remove(obj);
@@ -631,11 +635,11 @@ partial class HYJ_Player
             int _star = obj_char.StarInt(), _id = obj_char.Character_Status_Index;
 
             id_list[_star].m_List[_id]++;
-            Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
+            //Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
 
             if (_star < 3 && id_list[_star].m_List[_id] == 3)
             {
-                if (Find_Unit_On_Tile(obj))
+                if (Find_Unit_On_Tile(obj, _PHASE))
                 {
                     Debug.Log("Candidate count " + _candidate_units.Count);
                     _candidate_units.Remove(obj);

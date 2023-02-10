@@ -22,6 +22,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     double Time_Acc = 0;
     bool StatusBar_isInitialized = false;
     bool CharacterPool_isInitialized = false;
+    bool Combat_isInitialized = false;
 
     GameObject prefab;
     GameObjectPool<HYJ_Battle_Tile> m_TilePool;
@@ -232,42 +233,50 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 						StatusBar_isInitialized = true;
 					}
 
-                    foreach (var OBJ in Stand_Unit)
-                    {
-                        OBJ.GetComponent<Character>().STATUS_HPBAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
-                    }
+                    //foreach (var OBJ in Stand_Unit)
+                    //{
+                    //    OBJ.GetComponent<Character>().STATUS_HPBAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
+                    //}
 
                 }
                 break;
 			// 전투 상태
 			case BATTLE_PHASE.PHASE_COMBAT:
-                {                    
-                    InitGraphNodes();
-					Find_Target();
-
-                    //여기 길찾기. 그러면 컨테이너돌면서 순서 정해줄수 있음. 정렬 -> 기준이 그래프상에서 우상단 좌하단에 가깝냐 정렬을 한번하고 순회하면서 StartPathFinding
-                    UnitSorting();
-                    FindingPath();
-
-					Phase_timer = 50.0;
-					Time_Acc += Time.deltaTime;
-					Battle_Timer();
-					//시간 체크 후 전투 상태로 Phase 전환
-					if (Phase_timer - Time_Acc <= 0.0)
-					{
-						Basic_phase = BATTLE_PHASE.PHASE_PREPARE;
-						Time_Acc = 0.0;
-					}
-                    if (Enemy_Unit.Count == 0 || Field_Unit.Count == 0)
+                {
+                    if (!Combat_isInitialized)
+                        Combat_Init();
+                    else
                     {
-                        Basic_phase = BATTLE_PHASE.PHASE_COMBAT_OVER;
-                        Time_Acc = 0.0;
+                        InitGraphNodes();
+					    Find_Target();
+
+                        //여기 길찾기. 그러면 컨테이너돌면서 순서 정해줄수 있음. 정렬 -> 기준이 그래프상에서 우상단 좌하단에 가깝냐 정렬을 한번하고 순회하면서 StartPathFinding
+                        UnitSorting();
+                        FindingPath();
+
+					    Phase_timer = 50.0;
+					    Time_Acc += Time.deltaTime;
+					    Battle_Timer();
+					    //시간 체크 후 전투 상태로 Phase 전환
+					    if (Phase_timer - Time_Acc <= 0.0)
+					    {
+						    Basic_phase = BATTLE_PHASE.PHASE_PREPARE;
+						    Time_Acc = 0.0;
+					    }
+                        if (Enemy_Unit.Count == 0 || Field_Unit.Count == 0)
+                        {
+                            Basic_phase = BATTLE_PHASE.PHASE_COMBAT_OVER;
+                            Time_Acc = 0.0;
+                        }
                     }
+
+                    //
                 }
                 break;
             // 전투 끝난 상태
             case BATTLE_PHASE.PHASE_COMBAT_OVER:
                 {
+                    Combat_isInitialized = false;
                     End_Btn.SetActive(true);
                     if (Enemy_Unit.Count == 0)
                         End_Btn.transform.GetChild(0).gameObject.SetActive(true);
@@ -486,6 +495,61 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             Char_tmp.CharacterInit();
 			unit_list[i].GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
 		}
+    }
+
+    void Combat_Init()
+    {
+        int _cnt = Player_Lv + 1 - Field_Unit.Count, std_cnt = Stand_Unit.Count;
+        if (_cnt == 0)
+        {
+            Combat_isInitialized = true;
+            return;
+        }
+
+
+        int num = _cnt <= std_cnt ? _cnt : std_cnt;
+        int _y = Field_y - 1, n = 0;
+        for (int i=0; i<num; i++)
+        {
+            //GameObject _obj = Stand_Unit[i - n];
+            GameObject _obj = Stand_tiles.Tiles[n++].HYJ_Basic_onUnit;
+            //Debug.Log(_obj.name + " adf");
+            while (_obj == null)
+            {
+                //Debug.Log(n + " adf");
+                _obj = Stand_tiles.Tiles[++n].HYJ_Basic_onUnit;
+            }
+
+            int _x = Field_tiles[_y].Tiles.Count;   // Data_GetCount와 동일
+            
+            for (int k=0; k<_x; k++)
+            {
+                HYJ_Battle_Tile _tile = Field_tiles[_y].Tiles[k];
+                if (_tile.HYJ_Basic_onUnit != null)
+                {
+                    if (k == _x - 1)
+                        _y--;
+                    continue;
+                }
+                // Move "_obj" to "Field_tiles[_y].Tiles[k]"
+                object[] param = new object[1];
+                param[0] = _obj;
+                Stand_to_Field(param);
+
+                _tile.HYJ_Basic_onUnit = _obj;
+                _obj.transform.position = _tile.transform.position;
+                _obj.GetComponent<Character>().LSY_Character_Set_OnTile(_tile.gameObject);
+                _obj.GetComponent<Character>().LSY_Character_OriPos = _tile.transform.position;
+
+                
+                break;
+            }
+
+
+        }
+
+        Combat_isInitialized = true;
+        return;
     }
 
 }
@@ -1034,7 +1098,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     //[SerializeField]
     GameObject End_Btn, Clicked_Button;
     [SerializeField]
-    List<Sprite> Shop_ImageList;
+    List<Sprite> Shop_ImageList;    // Inspector 연결
 
     [SerializeField]
     List<int> Prob_list = new List<int>();
@@ -1053,7 +1117,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     int Player_Lv = 1, cur_EXP = 0;
     List<int> Max_EXP_List = new List<int>() { 0, 2, 6, 10, 20, 36, 56, 80, 108, 140, 170, 190, 210 };
     float Max_EXP;
-    bool UL_isInitialized = false;
+    bool UL_isInitialized = false, Enemy_isInitialized = false;
 
     // Method
     public void LSY_UnitList_Init()
@@ -1081,7 +1145,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         UL_isInitialized = true;
     }
 
-    bool Enemy_isInitialized = false;
     public void LSY_Enemy_Init()
     {
         int enemy_num = 6;
@@ -1383,8 +1446,18 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
                     // 스탠드만 살피고 2/3성 각 보이면 구매 되도록
                     case BATTLE_PHASE.PHASE_COMBAT:
-
-
+                        stand_cnt = Stand_Unit.Count;
+                        for (int i = 0; i < stand_cnt; i++)
+                        {
+                            unit_char = Stand_Unit[i].GetComponent<Character>();
+                            if (_star == unit_char.StarInt() && _id == unit_char.Character_Status_ID)
+                            {
+                                _tile_idx = unit_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex * (-1) - 1;
+                                _num++;
+                            }
+                        }
+                        if (_num == 2)
+                            Buy_Unit_byPhase(unit_idx, _tile_idx);
                         break;
 
                 }
@@ -1454,12 +1527,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         tmp_char.UnitType = Character.Unit_Type.Ally;
         tmp_char.LSY_Character_OriPos = _onTile.transform.position;   // 처음 구매할 때 char_ori_Pos 초기화 필요함
         tmp_char.LSY_Character_Set_OnTile(_onTile);    // 처음 구매할 때 onTile 설정 필요.
+        tmp_char.STATUS_HPBAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
         Stand_Unit.Add(tmp);
 
-        //_onTile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = tmp;
-
-        // 구매할 때도 Player_Unit_Update 돌리면 되지.
-        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, Basic_phase);
+        // 전투 상태에서 유닛 구매 시 유닛 업데이트 돌리도록.. Tile은 전투 상태에선 업데이트 안 돌림
+        if (Basic_phase == BATTLE_PHASE.PHASE_COMBAT)
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, Basic_phase);
 
         int cost = tmp_char.Stat_Cost;
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS, cost);
@@ -1496,7 +1569,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     }
 
-    //Font JSong_Bold, JSong_Light, Chosun_Bold, Chosun_Light;
     public const string FONT_JSONG = "Assets/TextMesh Pro/Fonts/JSONGMYEONG SDF.asset";
     public const string FONT_CHOSUN = "Assets/TextMesh Pro/Fonts/CHOSUNCENTENNIAL_TTF SDF.asset";
     public void Battle_UI_Font()
