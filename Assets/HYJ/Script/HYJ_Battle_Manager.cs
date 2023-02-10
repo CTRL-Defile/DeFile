@@ -389,7 +389,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
 	public void LSY_Battle_End()
     {
-        DepthOfField dof;
+        //파티클 전부 Stop
+        EffectPool.Instance.EffecAllOff();
+
+		// 전투 종료 사운드 종료        
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_STOP, JHW_SoundManager.SFX_list.GAME_DEFEAT, 0.5f);
+
+		// End 버튼 눌를때 DOF 초기화
+		DepthOfField dof;
         if (GameVolume.profile.TryGet<DepthOfField>(out dof))
         {
             dof.focusDistance.value = 10.0f;
@@ -2032,6 +2039,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     List<Transform> Green_list = new List<Transform>();
     List<Transform> Gray_list = new List<Transform>();
 
+    int Presy_Cnt = 0;
+
     object LSY_Battle_Synergy_Update(params object[] _args)
     {
         Battle_Synergy_Init();
@@ -2046,11 +2055,15 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             int sy_cnt = synergy_dic.Values.ToList()[i];
             if (sy_cnt >= 4)
             {
-                // Sound : 시너지 맞춰 졌을 때 - 플래티넘
-                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.SYNERGY_FLATINUM);
+				// Sound : 시너지 맞춰 졌을 때 - 플래티넘
+				if (Presy_Cnt != sy_cnt && sy_cnt == 4)
+				{
+					HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.SYNERGY_FLATINUM);					
+				}
+				Presy_Cnt = sy_cnt;
 
-                //Transform red = Synergy_Red.GetChild(i);
-                Transform red = Red_list[i];
+				//Transform red = Synergy_Red.GetChild(i);
+				Transform red = Red_list[i];
                 red.SetParent(Synergy_Panel);
                 red.GetChild(0).GetComponent<TextMeshProUGUI>().text = synergy_dic.Keys.ToList()[i].ToString() + " Cost";
                 if (sy_cnt >= 6)
@@ -2073,11 +2086,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 }
 
                 // Sound : 시너지 맞춰 졌을 때 - 골드
-                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.SYNERGY_GOLD);
-
-
-                //Transform green = Synergy_Green.GetChild(i);
-                Transform green = Green_list[i];
+                if(Presy_Cnt != sy_cnt && sy_cnt == 2)
+                {
+					HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.SYNERGY_GOLD);                   
+				}
+				Presy_Cnt = sy_cnt;
+				//Transform green = Synergy_Green.GetChild(i);
+				Transform green = Green_list[i];
                 green.SetParent(Synergy_Panel);
 
                 green.GetChild(0).GetComponent<TextMeshProUGUI>().text = synergy_dic.Keys.ToList()[i].ToString() + " Cost";
@@ -2088,7 +2103,9 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             }
             else if(sy_cnt == 1)
             {
-                if (init_red)
+				Presy_Cnt = sy_cnt;
+
+				if (init_red)
                 {
                     int n = Synergy_Red.childCount;
                     Transform red_dot = Synergy_Red.GetChild(n - 1);
