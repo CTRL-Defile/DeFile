@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 using static HYJ_Battle_Tile;
 
 public enum BATTLE_PHASE { PHASE_UPDATE = -1, PHASE_INIT, PHASE_PREPARE, PHASE_COMBAT, PHASE_COMBAT_OVER, PHASE_END };
@@ -1032,7 +1033,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     UnityEngine.UI.Image Shop_Exp_Cur;
     //[SerializeField]
     GameObject End_Btn, Clicked_Button;
-
+    [SerializeField]
+    List<Sprite> Shop_ImageList;
 
     [SerializeField]
     List<int> Prob_list = new List<int>();
@@ -1159,6 +1161,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         {
             int idx = UnitIdx_list[i];
             Shop_UnitList[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = UnitName_list[idx].ToString();
+            Shop_UnitList[i].transform.GetChild(1).GetChild(0).GetComponent<Image>().sprite = Shop_ImageList[idx];
         }
     }
 
