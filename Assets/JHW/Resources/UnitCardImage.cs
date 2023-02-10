@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class UnitCardImage : MonoBehaviour
 {
+    [SerializeReference]
     [SerializeField] public GameObject StatRef;
 
     List<Sprite> Imagelist;
