@@ -20,6 +20,7 @@ public class JHW_SoundManager : MonoBehaviour
 
     // 멈출 효과음
     private SFX_list toStopSfx;
+    private BGM_list toStopBGM;
 
     private enum SoundType {
         BGM,
@@ -174,7 +175,8 @@ public class JHW_SoundManager : MonoBehaviour
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__BGM_NAME, PlayBGM);
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, PlaySFX);
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_STOP, SFX_stop);
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_ISPLAYING, SFX_isPlaying);
+					HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__BGM_STOP, BGM_stop);
+					HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_ISPLAYING, SFX_isPlaying);
 
                     Basic_initialize = -1;
                 }
@@ -405,8 +407,21 @@ public class JHW_SoundManager : MonoBehaviour
         GameObject.Find(toStopSfx.ToString() + "Pool").transform.GetChild(0).gameObject.SetActive(false);
     }
 
-    // 효과음 재생중인지 체크
-    public object SFX_isPlaying(params object[] _arg)
+	private void BgmStop()
+	{
+		GameObject.Find("Sound").transform.gameObject.SetActive(false);
+	}
+
+	public object BGM_stop(params object[] _arg)
+	{
+		toStopBGM = (BGM_list)_arg[0];
+		float playtime = 1.0f;
+		Invoke("BgmStop", playtime);
+		return true;
+	}
+
+	// 효과음 재생중인지 체크
+	public object SFX_isPlaying(params object[] _arg)
     {
         SFX_list toCheckSfx = (SFX_list)_arg[0];
         if (GameObject.Find(toCheckSfx.ToString() + "Pool").transform.GetChild(0).gameObject.activeSelf == true) return true;

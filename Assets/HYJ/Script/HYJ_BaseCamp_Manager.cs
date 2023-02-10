@@ -60,14 +60,15 @@ public partial class HYJ_BaseCamp_Manager : MonoBehaviour
 
         if (_isActive == false)
         {
-            // 사운드
-            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.BOOKSHELF_WHIP);
+			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__BGM_STOP, JHW_SoundManager.BGM_list.temp_BGM);
+			// 사운드
+			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.BOOKSHELF_WHIP);
             //BaseCamp_ExitButton_OnClick(); // 베이스캠프 나갈때 ux
         }
 
         //
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, !_isActive);
-    }
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, !_isActive);		
+	}
 
     //////////  Default Method  //////////
     // Start is called before the first frame update

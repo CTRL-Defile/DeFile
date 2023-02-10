@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.6757515, g: 0.77903193, b: 0.7893794, a: 1}
+  m_IndirectSpecularColor: {r: 0.67433286, g: 0.77783763, b: 0.78887975, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -696,6 +696,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3488920190679517182, guid: 1b977cfb2232a104fad4e2d6de1857b4,
+        type: 3}
+      propertyPath: BGM_datas.Array.data[0].audio
+      value: 
+      objectReference: {fileID: 8300000, guid: c6bc29c415691482286709d0c16f2214, type: 3}
+    - target: {fileID: 3488920190679517182, guid: 1b977cfb2232a104fad4e2d6de1857b4,
+        type: 3}
+      propertyPath: SFX_datas.Array.data[26].audio
+      value: 
+      objectReference: {fileID: 8300000, guid: 0438415543293438f9a42df5a21364a3, type: 3}
+    - target: {fileID: 3488920190679517182, guid: 1b977cfb2232a104fad4e2d6de1857b4,
+        type: 3}
+      propertyPath: SFX_datas.Array.data[52].audio
+      value: 
+      objectReference: {fileID: 8300000, guid: 20a8703152507469aaaf70acc7885721, type: 3}
     - target: {fileID: 3488920190679517183, guid: 1b977cfb2232a104fad4e2d6de1857b4,
         type: 3}
       propertyPath: m_Name

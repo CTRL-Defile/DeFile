@@ -120,6 +120,17 @@ public class EffectPool : SingletonMonoBehaviour<EffectPool>
 		}
 	}
 
+	public void EffecAllOff()
+	{
+		foreach( KeyValuePair<EFFECT_TYPE, List<EffectPoolUnit>> pair in m_dicEffectPool)
+		{
+			foreach(EffectPoolUnit unit in pair.Value )
+			{
+				unit.GetComponent<ParticleSystem>().Stop();
+			}
+		}
+	}
+
 	// Use this for initialization
 	protected override void OnStart()
 	{

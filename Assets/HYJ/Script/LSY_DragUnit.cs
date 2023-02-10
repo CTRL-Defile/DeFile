@@ -355,7 +355,9 @@ public class LSY_DragUnit : MonoBehaviour
         //Debug.Log("BtnDown collider : " + unit_hit.collider);
         if (selectedObject == null && unit_hit.collider != null)
         {
-            Character.Unit_Type _Type = unit_hit.collider.gameObject.GetComponent<Character>().UnitType;
+			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_HOLD);
+
+			Character.Unit_Type _Type = unit_hit.collider.gameObject.GetComponent<Character>().UnitType;
             switch (_Type)
             {
                 case Character.Unit_Type.Ally:
@@ -377,7 +379,8 @@ public class LSY_DragUnit : MonoBehaviour
         // 잡고 있는 유닛이 있는가
         if (selectedObject != null)
         {
-            Character selectedObject_Script = selectedObject.GetComponent<Character>();
+			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_ARRANGE);
+			Character selectedObject_Script = selectedObject.GetComponent<Character>();
             // 지정된 타일이 있는가
             if (selectedTile != null)
             {
@@ -442,7 +445,9 @@ public class LSY_DragUnit : MonoBehaviour
         // 잡고 있는 유닛이 있는가
         if (selectedObject != null)
         {
-            Character selectedObject_Script = selectedObject.GetComponent<Character>();
+			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_ARRANGE);
+
+			Character selectedObject_Script = selectedObject.GetComponent<Character>();
             // 지정된 타일이 있는가
             if (selectedTile != null)
             {
@@ -480,7 +485,6 @@ public class LSY_DragUnit : MonoBehaviour
                     Debug.Log("Go " + selectedObject.name + " to " + selectedTile.name);
                     selectedObject.transform.position = selectedTile.transform.position;
                     //selectedObject_Script.LSY_Character_Set_OnTile(selectedTile);
-
                 }
                 // 지정된 타일의 onUnit 이 비어있지 않으며 둘 수 없는 타일이다 -> 제자리로 가라 (처음 마우스를 집었던 자리)
                 else

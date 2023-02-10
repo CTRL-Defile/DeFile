@@ -188,7 +188,9 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     SOUNDMANAGER___PLAY__BGM_NAME,
     SOUNDMANAGER___PLAY__SFX_NAME,
     SOUNDMANAGER___PLAY__SFX_STOP,
-    SOUNDMANAGER___PLAY__SFX_ISPLAYING
+	SOUNDMANAGER___PLAY__BGM_STOP,
+
+	SOUNDMANAGER___PLAY__SFX_ISPLAYING
 }
 
 public delegate object HYJ_ScriptBridge_Event(params object[] _args);
