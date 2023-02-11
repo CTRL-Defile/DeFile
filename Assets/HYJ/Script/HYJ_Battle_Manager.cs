@@ -147,7 +147,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     {
         //Shop_Coin.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD).ToString();        
 
-        switch (Basic_phase)
+        if(Input.GetKeyDown(KeyCode.Q))
+			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_PLUS, 5);
+
+		switch (Basic_phase)
         {
             case BATTLE_PHASE.PHASE_UPDATE:
                 {
