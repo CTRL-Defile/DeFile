@@ -44,7 +44,11 @@ public partial class HYJ_Map_Stage : MonoBehaviour
         //parent.parent = _parent;
         parent.SetParent(_parent);
         parent.localScale = new Vector3(1, 1, 1);
-        parent.localPosition = new Vector3(_x * 150, _y * 150, 0);
+
+        // >> 현우 - 위치 랜덤조정
+        //parent.localPosition = new Vector3(_x * 150, _y * 150, 0); // < 원래 있던 스크립트
+        parent.localPosition = new Vector3(_x * 150 + Random.Range(-20f, 20f), _y * 150 + Random.Range(-20f, 20f), 0);
+        // >> 현우 - end
 
         HYJ_Stage_Init();
         HYJ_UI_Init();
@@ -58,6 +62,11 @@ partial class HYJ_Map_Stage
     [SerializeField] int Stage_power;
     [SerializeField] List<HYJ_Map_Stage> Stage_roots;
     [SerializeField] List<GameObject> Stage_icons;
+
+    // 맵에 보여지는 스테이지 위치
+    public int stage_x;
+    public int stage_y;
+    private bool isSelected = false; // 유저가 선택한 스테이지인지 저장하는 변수
 
     //////////  Getter & Setter //////////
     public HYJ_Map_Stage_TYPE HYJ_Stage_type
@@ -120,6 +129,18 @@ partial class HYJ_Map_Stage
             HYJ_ScriptBridge_EVENT_TYPE.MAP___CHEAPTER__MOVE_CENTER,
             parent.localPosition.x, parent.localPosition.y, parent.localPosition.z);
 
+        // 유저가 선택한 스테이지인지를 나타내는 변수 false -> true
+        isSelected = true;
+        // 플레이어가 선택한 버튼을 경유하는 길 얻어오기, ( 만약 시작점에 있을경우 찾지말자  (stage_y!=0) )
+        if (stage_y != 0) {
+            selectedRoad = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___GET__SELECTED_ROAD, stage_x, stage_y);
+            StartCoroutine(Road_ON_UX(selectedRoad.transform.childCount));
+        }
+        // 플레이어 위치 갱신 ( 만약 시작점이면 설정X, 매니저에서 시작점 설정 )
+        if (stage_y != 0) HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___CHANGE__PLAYER_POSITION, stage_x, stage_y);
+        // 아이콘 노란색으로
+        for (int i = 0; i < Stage_icons.Count; i++) if (Stage_icons[i].activeSelf) { Stage_icons[i].transform.GetChild(0).gameObject.SetActive(false); break; }
+
         //
         for (int i = 0; i < Stage_roots.Count; i++)
         {
@@ -137,7 +158,7 @@ partial class HYJ_Map_Stage
                 break;
             case HYJ_Map_Stage_TYPE.SHOP:
                 {
-                    HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
+                    //HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
 
                     //
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SHOP___ACTIVE__ACTIVE_ON,    true);
@@ -146,7 +167,7 @@ partial class HYJ_Map_Stage
                 break;
             case HYJ_Map_Stage_TYPE.EVENT:
                 {
-                    HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
+                    //HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
 
                     //
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.EVENT___ACTIVE__ACTIVE_ON,   true);
@@ -157,7 +178,7 @@ partial class HYJ_Map_Stage
             case HYJ_Map_Stage_TYPE.BATTLE_ELITE:
             case HYJ_Map_Stage_TYPE.BATTLE_BOSS:
                 {
-                    HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
+                    //HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
 
                     //
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON,  true);
@@ -191,5 +212,20 @@ partial class HYJ_Map_Stage
     {
         UI_btn = gameObject.GetComponent<Button>();
         UI_btn.interactable = false;
+    }
+}
+
+// UX
+partial class HYJ_Map_Stage
+{
+    GameObject selectedRoad = null;
+    IEnumerator Road_ON_UX(int _footPrintCnt)
+    {
+        for (int i = 0; i < _footPrintCnt * 3; i++)
+        {
+            selectedRoad.transform.GetChild(i / 3).GetChild(i % 3).GetChild(0).gameObject.SetActive(true);
+            //yield return new WaitForSeconds(0.5f);
+        }
+        yield return null;
     }
 }
