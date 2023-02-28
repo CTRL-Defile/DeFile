@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 [System.Serializable]
 public class GameObjectPool<T> where T : class
@@ -67,6 +68,10 @@ public class GameObjectPool<T> where T : class
 [System.Serializable]
 public class SerialStack<T>
 {
+    public Stack<T> m_Stack;
+    [SerializeField]
+    public List<T> m_ShowStack;
+
     public SerialStack()
     {
         m_Stack = new Stack<T>();
@@ -100,8 +105,46 @@ public class SerialStack<T>
         m_Stack.Push(val);
         m_ShowStack.Add(val);
     }
+}
 
-    public Stack<T> m_Stack;
+[System.Serializable]
+public class SerialDictionary<Tkey, Tvalue>
+{
     [SerializeField]
-    public List<T> m_ShowStack;
+    public List<Tkey> m_key;
+    [SerializeField]
+    public List<string> m_value;
+    
+    Dictionary<Tkey, Tvalue> m_dic;
+
+    public SerialDictionary()
+    {
+        m_key = new List<Tkey>();
+        m_value = new List<string>();
+        m_dic = new Dictionary<Tkey, Tvalue>();
+    }
+
+    public void Dic_Copy(List<Dictionary<Tkey, Tvalue>> dic, int idx)
+    {
+        int list_cnt = dic.Count;
+        int dic_cnt = dic[0].Count;
+
+        //for (int i = 0; i < list_cnt; i++)
+        {
+            m_dic = dic[idx];
+            List<Tkey> Key_list = dic[idx].Keys.ToList();
+            List<Tvalue> Value_list = dic[idx].Values.ToList();
+
+            for (int j = 0; j < dic_cnt; j++)
+            {
+                m_key.Add(Key_list[j]);
+                m_value.Add(Value_list[j].ToString());
+            }
+
+        }
+
+    }
+
+
+
 }

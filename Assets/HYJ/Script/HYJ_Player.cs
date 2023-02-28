@@ -223,6 +223,7 @@ partial class HYJ_Player
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_IS_ENOUGH, HYJ_Basic_GoldIsEnough);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_PLUS,       HYJ_Basic_GoldPlus      );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_MINUS,      HYJ_Basic_GoldMinus     );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_INTEREST, Basic_GoldInterest);
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_INCREASE, LSY_Basic_IncExp);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__EXP_DECREASE, LSY_Basic_DecExp);
@@ -289,6 +290,13 @@ partial class HYJ_Player
     List<HYJ_Battle_Manager_Line> field_tiles;
     HYJ_Battle_Manager_Line wait_tiles;
     int DB_cnt;
+
+    HYJ_Battle_Tile _Tile;
+    [SerializeField]
+    List<GameObject> field_units, stand_units, _candidate_units;
+    int field_cnt, stand_cnt;
+    [SerializeField]
+    List<SerialDictionary<string, object>> Serial_dic;
 
 
     //////////  Getter & Setter //////////
@@ -407,14 +415,6 @@ partial class HYJ_Player
         //
         return true;
     }
-
-    Vector3 pos = Vector3.zero;
-    HYJ_Battle_Tile _Tile;
-
-    [SerializeField]
-    List<GameObject> field_units, stand_units, _candidate_units;
-    int field_cnt, stand_cnt;
-
 
     bool Find_Unit_On_Tile(GameObject _obj, BATTLE_PHASE _phase)
     {
@@ -736,8 +736,10 @@ partial class HYJ_Player
 
     //////////  Default Method  //////////
 
+    // Battle_Manager.Unit_init(), BaseCamp_Manager_DeleteUnit() 에서 호출
     object Player_DB_Update(params object [] _args)
     {
+        // 1,2,3성 csv를 List로 처리. 
         Player_Unit_csv = new List<List<Dictionary<string, object>>>();
         string csv_path = "DataBase/Player_Unit_DataBase";
 
@@ -761,8 +763,13 @@ partial class HYJ_Player
             Player_Unit_csv[2][i]["Index"] = i;
         }
 
-
-        Debug.Log("Player_DB_Update.. cnt : " + Player_Unit_csv[0].Count);
+        Serial_dic = new List<SerialDictionary<string, object>>();
+        for (int i = 0; i < Player_Unit_csv[0].Count; i++)
+        {
+            SerialDictionary<string, object> tmp = new SerialDictionary<string, object>();
+            tmp.Dic_Copy(Player_Unit_csv[0], i);
+            Serial_dic.Add(tmp);
+        }
 
         return null;
     }
@@ -802,26 +809,24 @@ partial class HYJ_Player
 
         //}
 
-        string[] lines;
 
-        for (int i = 1; i <= 3; i++)
-        {
-            // 유닛 데이터 읽어오기
-            lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character_" + i.ToString() + ".csv");
-            // 유닛 데이터 쓰기
-            StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
-            for (int j = 0; j < lines.Length; j++)
-            {
-                outStream.WriteLine(lines[j].ToString());
-            }
-            outStream.Close();
-        }
+        //string[] lines;
+        //for (int i = 1; i <= 3; i++)
+        //{
+        //    // 유닛 데이터 읽어오기
+        //    lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character_" + i.ToString() + ".csv");
+        //    // 유닛 데이터 쓰기
+        //    StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
+        //    for (int j = 0; j < lines.Length; j++)
+        //    {
+        //        outStream.WriteLine(lines[j].ToString());
+        //    }
+        //    outStream.Close();
+        //}
 
-        Player_Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+        //Player_Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+        //Serial_dic = new List<SerialDictionary<string, object>>();
 
-        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE);
-
-        //Debug.Log("Player_DB_Init.. cnt : " + Player_Unit_csv[0].Count);
     }
 
     bool HYJ_Unit_Init()

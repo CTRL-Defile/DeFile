@@ -331,7 +331,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     }
 
                     Combat_isInitialized = false;
-				}
+
+                    // 이자 지급
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_INTEREST);
+
+                }
                 break;
         }
     }
@@ -525,7 +529,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             });
             m_CharacterPools.m_List.Add(m_CharacterPool);
         }
-
 
 
     }
@@ -2086,7 +2089,7 @@ partial class HYJ_Battle_Manager
 }
 #endregion
 
-
+// 시너지
 #region SYNERGY
 
 public partial class HYJ_Battle_Manager : MonoBehaviour
