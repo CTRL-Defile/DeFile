@@ -421,8 +421,8 @@ partial class HYJ_Map_Manager
             element.transform.localPosition = _destination.transform.parent.localPosition;
 
             //
-            vec2.x = _destination.stage_x - _start.stage_x;
-            vec2.y = _destination.stage_y - _start.stage_y;
+            vec2.x = _destination.transform.parent.localPosition.x - _start.transform.parent.localPosition.x;
+            vec2.y = _destination.transform.parent.localPosition.y - _start.transform.parent.localPosition.y;
             float rot = Mathf.Atan2(vec2.y, vec2.x) * Mathf.Rad2Deg;
             element.transform.eulerAngles = new Vector3(0, 0, rot + 90.0f);
 

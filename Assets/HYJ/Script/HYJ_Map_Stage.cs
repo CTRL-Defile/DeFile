@@ -47,7 +47,7 @@ public partial class HYJ_Map_Stage : MonoBehaviour
 
         // >> 현우 - 위치 랜덤조정
         //parent.localPosition = new Vector3(_x * 150, _y * 150, 0); // < 원래 있던 스크립트
-        parent.localPosition = new Vector3(_x * 150 + Random.Range(-20f, 20f), _y * 150 + Random.Range(-20f, 20f), 0);
+        parent.localPosition = new Vector3(_x * 150 + Random.Range(-40f,40f), _y * 170 + Random.Range(-30f,30f), 0);
         // >> 현우 - end
 
         HYJ_Stage_Init();
