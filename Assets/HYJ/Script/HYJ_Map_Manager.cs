@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public partial class HYJ_Map_Manager : MonoBehaviour
 {
@@ -89,6 +90,10 @@ partial class HYJ_Map_Manager
     const int Cheapter_x = 8;
     const int Cheapter_y = 14;
 
+    // 현재 플레이어 위치한 스테이지 위치
+    public int cur_x;
+    public int cur_y;
+
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
@@ -113,6 +118,10 @@ partial class HYJ_Map_Manager
             element = HYJ_Cheapter_Create_SettingStage(x, y);
             element.HYJ_Stage_type = HYJ_Map_Stage_TYPE.BASE_CAMP;
 
+            // 플레이어 위치
+            cur_x = x;
+            cur_y = y;
+
             // 무작위 생성
             for (int i = 0; i < Cheapter_settingRootCount; i++)
             {
@@ -132,6 +141,8 @@ partial class HYJ_Map_Manager
                         element.HYJ_Stage_SettingType(Cheapter_level);
                     }
                 }
+
+
             }
 
             // 상점으로 전환
@@ -252,6 +263,10 @@ partial class HYJ_Map_Manager
                 if(element.HYJ_Stage_type.Equals( HYJ_Map_Stage_TYPE.BASE_CAMP ))
                 {
                     element.HYJ_Stage_Select();
+
+                    // >> 혀누J 추가 - viewPort 처음위치
+                    Cheapter_viewPort.localPosition = new Vector3(200f, -Cheapter_viewPort.parent.GetComponent<RectTransform>().rect.height + 100f, 0);
+                    
                     break;
                 }
             }
@@ -273,6 +288,10 @@ partial class HYJ_Map_Manager
             Cheapter_stages[_x + (_y * Cheapter_x)] = res;
         }
 
+        // 스테이지 아이콘 좌표
+        res.stage_x = _x;
+        res.stage_y = _y;
+
         //
         return res;
     }
@@ -289,7 +308,8 @@ partial class HYJ_Map_Manager
             _stage.HYJ_Stage_AddRoot(element);
 
             //
-            HYJ_Road_Setting(element.transform.parent.localPosition, _stage.transform.parent.localPosition);
+            // HYJ_Road_Setting(element.transform.parent.localPosition, _stage.transform.parent.localPosition);
+            HYJ_Road_Setting(element, _stage);
         }
     }
 
@@ -310,9 +330,28 @@ partial class HYJ_Map_Manager
 
     object HYJ_Cheapter_MoveCenter(params object[] _args)
     {
-        Cheapter_viewPort.localPosition = new Vector3(-(float)_args[0], -(float)_args[1], -(float)_args[2]);
+        // 영재님께서 예전에 작성한 함수 > // Cheapter_viewPort.localPosition = new Vector3(-(float)_args[0], -(float)_args[1], -(float)_args[2]);
+
+        // 스크롤 뷰 화면 x중앙, 스크롤바 화면 y로 이동, 
+        this.transform.GetChild(0).GetChild(0).GetChild(2).GetComponent<Scrollbar>().value = (float)_args[1] / Cheapter_viewPort.parent.GetComponent<RectTransform>().rect.height;
+        Debug.Log(Cheapter_viewPort.parent.GetComponent<RectTransform>().rect.height + "," + _args[1] + ",");
 
         return null;
+    }
+
+    object ChangePlayerPos(params object[] _args) // 플레이어가 위치한 x,y좌표 변경
+    {
+        // _args[0] 은 클릭한 버튼 x좌표, _args[1]은 클릭한 버튼 y좌표
+        cur_x = (int)_args[0];
+        cur_y = (int)_args[1];
+        Debug.Log(cur_x+"+"+cur_y + " , " + (int)_args[0] +"+"+ (int)_args[1]);
+        return null;
+    }
+    object GetSelectedRoad(params object[] _args) // 플레이어가 선택한 버튼을 경유하는 도로 찾아서 리턴
+    {
+        // _args[0] 은 클릭한 버튼 x좌표, _args[1]은 클릭한 버튼 y좌표
+        Debug.Log("Road_" + cur_x + "," + cur_y + "to" + (int)_args[0] + "," + (int)_args[1]);
+        return (Road_parent.Find("Road_" + cur_x + "," + cur_y + "to" + (int)_args[0] + "," + (int)_args[1] )).gameObject;
     }
 
     //////////  Default Method  //////////
@@ -321,6 +360,8 @@ partial class HYJ_Map_Manager
         if (HYJ_ScriptBridge.HYJ_Static_instance == null) Debug.Log("AA");
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.MAP___CHEAPTER__SELECT_RESET,   HYJ_Cheapter_SelectReset    );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.MAP___CHEAPTER__MOVE_CENTER,    HYJ_Cheapter_MoveCenter     );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.MAP___CHANGE__PLAYER_POSITION, ChangePlayerPos);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.MAP___GET__SELECTED_ROAD, GetSelectedRoad);
 
         HYJ_Cheapter_Create(1);
     }
@@ -333,18 +374,21 @@ partial class HYJ_Map_Manager
     [Header("==================================================")]
     [Header("ROAD")]
     [SerializeField] Transform Road_parent;
+    [SerializeField] List<GameObject> Random_roads;
     [SerializeField] List<GameObject> Road_roads;
+
+    private int road_cnt = 1; // Road_roads 에 담긴 도로 수
 
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
-    void HYJ_Road_Setting(Vector3 _start, Vector3 _destination)
+    void HYJ_Road_Setting(HYJ_Map_Stage _start, HYJ_Map_Stage _destination)
     {
         int num = -1;
 
-        for(int i = 0; i < Road_roads.Count; i++)
+        for (int i = 0; i < Road_roads.Count; i++)
         {
-            if(!Road_roads[i].activeSelf)
+            if (!Road_roads[i].activeSelf)
             {
                 num = i;
                 break;
@@ -355,7 +399,8 @@ partial class HYJ_Map_Manager
         {
             for (int i = 0; i < 10; i++)
             {
-                GameObject element = Instantiate(Road_roads[0]);
+                GameObject element = Instantiate(Random_roads[Random.Range(0, Random_roads.Count)]);
+                //element = Random_roads[Random.Range(0, Random_roads.Count)];
                 element.SetActive(false);
                 //element.transform.parent = Road_parent;
                 element.transform.SetParent(Road_parent);
@@ -371,16 +416,31 @@ partial class HYJ_Map_Manager
 
             //
             GameObject element = Road_roads[num];
-            element.transform.localPosition = _destination;
+            // start to dest 해보니께 스테이지 시작점과 도착점 매개변수가 잘못된 것 같네요.. dest to start 이렇게 해야 오류안나네
+            element.name = "Road_" + _destination.stage_x + "," + _destination.stage_y + "to" + _start.stage_x + "," + _start.stage_y;
+            element.transform.localPosition = _destination.transform.parent.localPosition;
 
             //
-            vec2.x = _destination.x - _start.x;
-            vec2.y = _destination.y - _start.y;
+            vec2.x = _destination.transform.parent.localPosition.x - _start.transform.parent.localPosition.x;
+            vec2.y = _destination.transform.parent.localPosition.y - _start.transform.parent.localPosition.y;
             float rot = Mathf.Atan2(vec2.y, vec2.x) * Mathf.Rad2Deg;
             element.transform.eulerAngles = new Vector3(0, 0, rot + 90.0f);
 
             //
-            float length = Vector3.Distance(_start, _destination);
+            float length = Vector3.Distance(_start.transform.parent.localPosition, _destination.transform.parent.localPosition);
+
+            // >> 현우 - 정점 사이 거리에 따라 발자국 길이 수정 (발자국 길이 = 발자국 오브젝트 묶음)
+            int footCntPerLength = (int)length / 50; // 이때 50는 발자국 오브젝트 1개 길이
+            for(int i = 0; i < footCntPerLength-1; i++)
+            {
+                element.transform.GetChild(i).gameObject.SetActive(true);
+            }
+            for(int i = footCntPerLength - 1; i < element.transform.childCount; i++)
+            {
+                element.transform.GetChild(i).gameObject.SetActive(false);
+            }
+            // >> 현우 - end -
+
             RectTransform rt = element.GetComponent<RectTransform>();
             vec2.x = 5.0f;
             vec2.y = length;
