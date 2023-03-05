@@ -807,25 +807,25 @@ partial class HYJ_Player
         //    }
         //    outStream.Close();
 
-        //}
+        //} 이 코드는 딕셔너리를 읽어서 파일을 생성하는 형식임. 아래의 전체 파일 복사와는 다름.
 
 
-        //string[] lines;
-        //for (int i = 1; i <= 3; i++)
-        //{
-        //    // 유닛 데이터 읽어오기
-        //    lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character_" + i.ToString() + ".csv");
-        //    // 유닛 데이터 쓰기
-        //    StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
-        //    for (int j = 0; j < lines.Length; j++)
-        //    {
-        //        outStream.WriteLine(lines[j].ToString());
-        //    }
-        //    outStream.Close();
-        //}
+        string[] lines;
+        for (int i = 1; i <= 3; i++)
+        {
+            // UsingDB 읽어오기
+            lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character_" + i.ToString() + ".csv");
+            // PlayerDB 삭제 후 생성
+            System.IO.File.Delete("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
+            StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
+            for (int j = 0; j < lines.Length; j++)
+            {
+                outStream.WriteLine(lines[j].ToString());
+            }
+            outStream.Close();
+        }
 
-        //Player_Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
-        //Serial_dic = new List<SerialDictionary<string, object>>();
+        Debug.Log("PlayerDB 생성 완료");
 
     }
 

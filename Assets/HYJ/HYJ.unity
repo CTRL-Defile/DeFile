@@ -165,7 +165,7 @@ PrefabInstance:
     - target: {fileID: 3882560753407893450, guid: b9ff7d790b311644e800367cd361e5ef,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4569220604044919205, guid: b9ff7d790b311644e800367cd361e5ef,
         type: 3}
@@ -442,6 +442,7 @@ MonoBehaviour:
   field_units: []
   stand_units: []
   _candidate_units: []
+  Serial_dic: []
   Item_relics: []
   Item_relicsEquip: []
   Buff_buffs: []
