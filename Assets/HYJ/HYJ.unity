@@ -304,6 +304,24 @@ PrefabInstance:
       propertyPath: StatRef
       value: 
       objectReference: {fileID: 542461447}
+<<<<<<< HEAD
+=======
+    - target: {fileID: 2124063509337905779, guid: b9ff7d790b311644e800367cd361e5ef,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124063510365045568, guid: b9ff7d790b311644e800367cd361e5ef,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882560753407893450, guid: b9ff7d790b311644e800367cd361e5ef,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+>>>>>>> sourcetree_lsy
     - target: {fileID: 4569220604044919205, guid: b9ff7d790b311644e800367cd361e5ef,
         type: 3}
       propertyPath: m_RootOrder
@@ -1097,6 +1115,7 @@ MonoBehaviour:
   field_units: []
   stand_units: []
   _candidate_units: []
+  Serial_dic: []
   Item_relics: []
   Item_relicsEquip: []
   Buff_buffs: []
