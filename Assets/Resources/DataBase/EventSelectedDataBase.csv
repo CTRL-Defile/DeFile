@@ -1,5 +1,3 @@
 ID,NAME,NAME_KOR,SCRIPT_KOR,SCENE,CONDITION,VALUE_0,VALUE_1,SELECT,SELECT_PAY,SELECT_PAY_COUNT,SELECT_EFFECT,SELECT_EFFECT_COUNT
 Int,String,String,String,String,String,Int,Int,String,String,Int,String,String
 ID,이름,한글 이름,한글 스크립트,등장위치,등장조건,최소수치,최대수치,선택지,선택지 자원,지불할 수치,효과,효과 수치
-0,JoinHightElf,하이엘프 부족 조우,굶주리고 있는 하이엘프 종족 부족을 발견하였습니다.,EVENT,NONE,-1,-1,돕는다.,MANA,10,HIGH_ELF_PERCENTAGE,20
-1,JoinDarkElf,다크엘프 부족 조우,의뢰가 안들어와 장사가 안되는 다크엘프 종족 부족을 발견하였습니다.,EVENT,NONE,-1,-1,돕는다.,MANA,10,DARK_ELF_PERCENTAGE,20
