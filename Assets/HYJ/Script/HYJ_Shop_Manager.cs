@@ -293,7 +293,7 @@ partial class HYJ_Shop_Manager
     [Header("POTION")]
     [Header("INPUT")]
     [SerializeField] Transform Potion_parent;
-    [SerializeField] HYJ_Shop_Potion Potion_btn;
+    [SerializeField] HYJ_Shop_Potion    Potion_btn;
 
     [Header("SET")]
     [SerializeField] List<HYJ_Shop_Button> Potion_btns;
@@ -312,11 +312,12 @@ partial class HYJ_Shop_Manager
         bool isPossible = HYJ_Default_GoldCheck(10);
         if (isPossible)
         {
+            string[] names = name.Split('/');
             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                 //
                 HYJ_ScriptBridge_EVENT_TYPE.PLAYER___ITEM__INSERT,
                 //
-                "POTION", name, 0);
+                names[0], names[1], 0);
 
             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___BUFF__VIEW);
 
@@ -333,11 +334,11 @@ partial class HYJ_Shop_Manager
             Potion_btns,
             6, Potion_btn, Potion_parent);
 
-        List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Potion_csv");
+        List<Dictionary<string, object>> data       = CSVReader.Read("HYJ/Potion_csv");
+        List<Dictionary<string, object>> buffData   = CSVReader.Read("HYJ/Buff_Value_csv");
 
         //
         List<int> data_heal     = new List<int>();
-        List<int> data_buff     = new List<int>();
         List<int> data_undebuff = new List<int>();
         for (int i = 0; i < data.Count; i++)
         {
@@ -345,25 +346,44 @@ partial class HYJ_Shop_Manager
             {
                 case "HEAL":        { data_heal.Add(i);     }   break;
                     //
-                case "BUFF":        { data_buff.Add(i);     }   break;
-                case "FRIENDLY":    { data_buff.Add(i);     }   break;
+                //case "BUFF":        { data_buff.Add(i);     }   break;
+                //case "FRIENDLY":    { data_buff.Add(i);     }   break;
                     //
                 case "UNDEBUFF":    { data_undebuff.Add(i); }   break;
             }
         }
 
-        for(int i = 0; i < 2; i++)
+        // 버프 리스트 적용
+        List<int> data_buff = (List<int>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_KEYS);
+        int whileNum = 0;
+        while(whileNum < data_buff.Count)
+        {
+            CTRL_Buff whileData = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, data_buff[whileNum]);
+            if(whileData.Basic_isShop)
+            {
+                whileNum++;
+            }
+            else
+            {
+                data_buff.RemoveAt(whileNum);
+            }
+        }
+
+        // 2개씩이라 한 번에 처리
+        for (int i = 0; i < 2; i++)
         {
             int select = Random.Range(0, data_heal.Count);
-            Potion_btns[i * 3].HYJ_Info_DataSetting((string)data[data_heal[select]]["NAME"]);
+            Potion_btns[i * 3].HYJ_Info_DataSetting("POTION/" + (string)data[data_heal[select]]["NAME"]);
             data_heal.RemoveAt(select);
 
             select = Random.Range(0, data_buff.Count);
-            Potion_btns[1 + (i * 3)].HYJ_Info_DataSetting((string)data[data_buff[select]]["NAME"]);
+            Debug.Log(data_buff.Count);
+            Potion_btns[1 + (i * 3)].HYJ_Info_DataSetting("BUFF/" + data_buff[select]);
             data_buff.RemoveAt(select);
 
+            // 수정해야할 코드
             select = Random.Range(0, data_undebuff.Count);
-            Potion_btns[2 + (i * 3)].HYJ_Info_DataSetting((string)data[data_undebuff[select]]["NAME"]);
+            Potion_btns[2 + (i * 3)].HYJ_Info_DataSetting("DEBUFF/" + (string)data[data_undebuff[select]]["NAME"]);
             data_undebuff.RemoveAt(select);
         }
 

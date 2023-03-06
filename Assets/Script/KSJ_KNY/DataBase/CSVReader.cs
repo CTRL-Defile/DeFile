@@ -59,7 +59,16 @@ public class CSVReader
                         break;
 
                     default:
-                        entry[header[j]] = value;
+                        {
+                            switch (value)
+                            {
+                                // bool
+                                case "TRUE":    { entry[header[j]] = true;  }   break;
+                                case "FALSE":   { entry[header[j]] = false; }   break;
+                                // string
+                                default:        { entry[header[j]] = value; }   break;
+                            }
+                        }
                         break;
                 }
             }
@@ -111,7 +120,14 @@ public class CSVReader
                         break;
 
                     default:
-                        entry[header[j]] = value;
+                        switch (value)
+                        {
+                            // bool
+                            case "TRUE":    { entry[header[j]] = true;  }   break;
+                            case "FALSE":   { entry[header[j]] = false; }   break;
+                            // string
+                            default:        { entry[header[j]] = value; }   break;
+                        }
                         break;
                 }
             }
@@ -161,7 +177,14 @@ public class CSVReader
                         break;
 
                     default:
-                        entry[header[j]] = value;
+                        switch (value)
+                        {
+                            // bool
+                            case "TRUE":    { entry[header[j]] = true;  }   break;
+                            case "FALSE":   { entry[header[j]] = false; }   break;
+                            // string
+                            default:        { entry[header[j]] = value; }   break;
+                        }
                         break;
                 }
             }

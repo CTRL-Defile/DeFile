@@ -6,38 +6,41 @@ using UnityEngine;
 using System;
 
 
-public enum Buff_precondition_CLASS
+public partial class CTRL_Buff : IDisposable
 {
-    NONE,
-    HAVE_MORE
-}
+    public enum PRECONDITION_CLASS
+    {
+        NONE,
+        HAVE_MORE
+    }
 
-public enum Buff_precondition_TYPE
-{
-    NONE,
-    SYNERGY
-}
+    public enum PRECONDITION_TYPE
+    {
+        NONE,
+        SYNERGY
+    }
 
-public enum Buff_apply_CLASS
-{
-    SYNERGY_ELF
-}
+    public enum APPLY_CLASS
+    {
+        SYNERGY_ELF
+    }
 
-public enum Buff_apply_TYPE
-{
-    SPAWN_CHANGE,
-    ATTACK_POINT
-}
+    public enum APPLY_TYPE
+    {
+        SPAWN_CHANGE,
+        ATTACK_POINT
+    }
 
-public enum Buff_value_TYPE
-{
-    PERCENT,
-    FLAT
-}
+    public enum RATIO_TYPE
+    {
+        PERCENT,
+        FLAT
+    }
 
-public enum Buff_duration_TYPE
-{
-    STAGE
+    public enum DURATION_TYPE
+    {
+        STAGE
+    }
 }
 
 [Serializable]
@@ -62,18 +65,20 @@ public class CTRL_Buff_Save : IDisposable
         return res;
     }
 
+    public CTRL_Buff.DURATION_TYPE CTRL_Basic_durationType { get { return (CTRL_Buff.DURATION_TYPE)Enum.Parse(typeof(CTRL_Buff.DURATION_TYPE), Basic_durationType); } }
+
     //////////  Method          //////////
 
     //////////  Default Method  //////////
     public CTRL_Buff_Save(Dictionary<string, object> _data)
     {
-        Basic_index     = (int)_data[       "valueControlBuff_index"    ];
-        Basic_tag       = (string)_data[    "valueControlBuff_tag"      ];
-        Basic_name      = (string)_data[    "valueControlBuff_name"     ];
-        Basic_number    = (int)_data[       "valueControlBuff_num"      ];
+        Basic_index     = (int)_data[       "index" ];
+        Basic_tag       = (string)_data[    "tag"   ];
+        Basic_name      = (string)_data[    "name"  ];
+        Basic_number    = (int)_data[       "num"   ];
 
-        Basic_durationType  = (string)_data[    "valueControlBuff_duration_type"    ];
-        Basic_durationValue = (float)_data[     "valueControlBuff_duration_value"   ];
+        Basic_durationType  = (string)_data[    "duration_type" ];
+        Basic_durationValue = (float)_data[     "duration_value"];
     }
 
     public CTRL_Buff_Save(CTRL_Buff_Save _save)
@@ -82,6 +87,9 @@ public class CTRL_Buff_Save : IDisposable
         Basic_tag       = "" + _save.Basic_tag;
         Basic_name      = "" + _save.Basic_name;
         Basic_number    = _save.Basic_number;
+
+        Basic_durationType  = _save.Basic_durationType;
+        Basic_durationValue = _save.Basic_durationValue;
     }
 
     public void Dispose()
@@ -90,19 +98,21 @@ public class CTRL_Buff_Save : IDisposable
     }
 }
 
-public class CTRL_Buff : IDisposable
+partial class CTRL_Buff
 {
     public CTRL_Buff_Save Basic_data;
 
-    public Buff_precondition_CLASS  Basic_preconditionClass;
-    public Buff_precondition_TYPE   Basic_preconditionType;
-    public int                      Basic_preconditionValue;
+    public PRECONDITION_CLASS   Basic_preconditionClass;
+    public PRECONDITION_TYPE    Basic_preconditionType;
+    public int                  Basic_preconditionValue;
 
-    public Buff_apply_CLASS Basic_applyClass;
-    public Buff_apply_TYPE  Basic_applyType;
+    public APPLY_CLASS  Basic_applyClass;
+    public APPLY_TYPE   Basic_applyType;
 
-    public Buff_value_TYPE  Basic_valueType;
-    public int              Basic_valueValue;
+    public RATIO_TYPE   Basic_ratioType;
+    public int          Basic_ratioValue;
+
+    public bool         Basic_isShop;
 
     //////////  Getter & Setter //////////
 
@@ -113,15 +123,18 @@ public class CTRL_Buff : IDisposable
     {
         Basic_data = new CTRL_Buff_Save(_data);
 
-        Basic_preconditionClass = (Buff_precondition_CLASS)Enum.Parse(  typeof(Buff_precondition_CLASS),    (string)_data[    "valueControlBuff_precondition_class" ]);
-        Basic_preconditionType  = (Buff_precondition_TYPE)Enum.Parse(   typeof(Buff_precondition_TYPE),     (string)_data[    "valueControlBuff_precondition_type"  ]);
-        Basic_preconditionValue = (int)_data[   "valueControlBuff_precondition_value"];
+        Basic_preconditionClass = (PRECONDITION_CLASS)Enum.Parse(   typeof(PRECONDITION_CLASS), (string)_data[  "precondition_class"    ]);
+        Basic_preconditionType  = (PRECONDITION_TYPE)Enum.Parse(    typeof(PRECONDITION_TYPE),  (string)_data[  "precondition_type"     ]);
+        Basic_preconditionValue = (int)_data["precondition_value"];
 
-        Basic_applyClass    = (Buff_apply_CLASS)Enum.Parse( typeof(Buff_apply_CLASS),   (string)_data["valueControlBuff_applyTarget_applyClass" ]);
-        Basic_applyType     = (Buff_apply_TYPE)Enum.Parse(  typeof(Buff_apply_TYPE),    (string)_data["valueControlBuff_applyTarget_applyType"  ]);
+        Basic_applyClass    = (APPLY_CLASS)Enum.Parse( typeof(APPLY_CLASS),   (string)_data["applyTarget_class"]);
+        Basic_applyType     = (APPLY_TYPE)Enum.Parse(  typeof(APPLY_TYPE),    (string)_data["applyTarget_type"]);
 
-        Basic_valueType     = (Buff_value_TYPE)Enum.Parse(  typeof(Buff_value_TYPE),    (string)_data["valueControlBuff_valueType"]);
-        Basic_valueValue    = (int)_data["valueControlBuff_value"];
+        Basic_ratioType     = (RATIO_TYPE)Enum.Parse(  typeof(RATIO_TYPE),  (string)_data["ratio_type"]);
+        Basic_ratioValue    = (int)_data["ratio_value"];
+
+        Basic_isShop    = (bool)_data["isShop"];
+        Debug.Log((bool)_data["isShop"]);
     }
 
     public void Dispose()

@@ -5,4 +5,5 @@ ID,이름,한글명,영어명,스토리번호,종족,특성,소속,등급,코스
 006,고블린_002,Goblin_002,고블린_002,story_041,Goblin,Tanker,Goblin primitive tribe,3,2,Melee,2592,60,0,158,158,0.6,45,45,25,0,001,005
 009,정령_002,Spirit_002,정령_002,story_048,Spirit,poison,spirit world,3,6,Melee,3888,70,0,180,180,0.65,100,100,25,0,002,008
 012,고블린_004,Goblin_004,고블린_004,story_043,Goblin,Brutal,Goblin primitive tribe,3,2,Melee,2106,90,0,180,180,0.6,40,40,25,0,001,014
+015,고블린_003,Goblin_003,고블린_003,story_042,Goblin,Assasin,dwarf Autonomous Region,3,1,Melee,1620,65,0,162,162,0.7,25,25,25,0,001,011
 018,야수_003,Beast_003,야수_003,story_063,Beast,Assasin,none,3,3,Melee,2106,70,0,113,113,0.75,35,35,25,0,001,005

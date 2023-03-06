@@ -269,7 +269,7 @@ public class HYJ_CharacterSkill :IDisposable
         Data_delayPre   = (float)_data["DELAY_PRE"];
         Data_delayAfter = (float)_data["DELAY_AFTER"];
 
-        Data_isTargeting    = bool.Parse((string)_data["TARGETING"]);
+        Data_isTargeting    = bool.Parse(_data["TARGETING"].ToString());
         Data_duration       = (float)_data["DURATION"];
         Data_repeatCycle    = (float)_data["REPEAT_CYCLE"];
 

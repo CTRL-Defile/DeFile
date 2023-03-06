@@ -118,6 +118,8 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     SHOP___RELIC__BUY,
     SHOP___UNIT__BUY,
     SHOP___POTION__BUY,
+    SHOP___BUFF__BUY,
+    SHOP___DEBUFF__BUY,
 
     //
     BATTLE___BASIC__GET_PHASE,
@@ -173,6 +175,10 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     DATABASE___UNIT__GET_DATA_NAME,
 
     DATABASE___SKILL__GET_DATA,
+
+    DATABASE___BUFF__GET_DATA,
+    DATABASE___BUFF__GET_COUNT,
+    DATABASE___BUFF__GET_KEYS,
 
     //
     DRAG___UNIT__SET_POSITION,

@@ -40,6 +40,7 @@ public partial class HYJ_DataBase : MonoBehaviour
         HYJ_Relic_Start();
         HYJ_Unit_Start();
         HYJ_UnitSkill_Start();
+        HYJ_Buff_Start();
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BASIC__GET_IS_INITIALIZE, HYJ_Basic_GetIsInitialize);
     }
 
@@ -50,45 +51,12 @@ public partial class HYJ_DataBase : MonoBehaviour
     {
         switch(Basic_phase)
         {
-            case 0:
-                {
-                    if(HYJ_Relic_Init())
-                    {
-                        Basic_phase = 1;
-                    }
-                }
-                break;
-            case 1:
-                {
-                    if (HYJ_Potion_Init())
-                    {
-                        Basic_phase = 2;
-                    }
-                }
-                break;
-            case 2:
-                {
-                    if (HYJ_Unit_Init())
-                    {
-                        Basic_phase = 3;
-                    }
-                }
-                break;
-            case 3:
-                {
-                    if(HYJ_UnitSkill_Init())
-                    {
-                        Basic_phase = 4;
-                    }
-                }
-                break;
-            case 4:
-                {
-                    //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BASIC__GET_IS_INITIALIZE, HYJ_Basic_GetIsInitialize);
-
-                    Basic_phase = -1;
-                }
-                break;
+            case 0: { if (HYJ_Relic_Init()      )   { Basic_phase = 1;  } } break;
+            case 1: { if (HYJ_Potion_Init()     )   { Basic_phase = 2;  } } break;
+            case 2: { if (HYJ_Unit_Init()       )   { Basic_phase = 3;  } } break;
+            case 3: { if (HYJ_UnitSkill_Init()  )   { Basic_phase = 4;  } } break;
+            case 4: { if (HYJ_Buff_Init()       )   { Basic_phase = 5;  } } break;
+            case 5: {                               { Basic_phase = -1; } } break;
         }
     }
 }
@@ -471,6 +439,87 @@ partial class HYJ_DataBase
         }
 
         return (UnitSkill_phase == -1);
+    }
+}
+
+#endregion
+
+#region BUFF
+
+partial class HYJ_DataBase
+{
+    int Buff_phase;
+    Dictionary<int, CTRL_Buff> Buff_datas;
+
+    //////////  Getter & Setter //////////
+    object HYJ_Buff_GetData(params object[] _args)
+    {
+        int id = (int)_args[0];
+        return Buff_datas[id];
+    }
+
+    object HYJ_Buff_GetCount(params object[] _args)
+    {
+        return Buff_datas.Count;
+    }
+
+    object HYJ_Buff_GetKeys(params object[] _args)
+    {
+        List<int> res = new List<int>(Buff_datas.Keys);
+
+        return res;
+    }
+
+    //////////  Method          //////////
+
+    //////////  Default Method  //////////
+    void HYJ_Buff_Start()
+    {
+        Buff_phase = 0;
+    }
+
+    // 초기화
+    bool HYJ_Buff_Init()
+    {
+        switch (Buff_phase)
+        {
+            case 0:
+                {
+                    Buff_datas = new Dictionary<int, CTRL_Buff>();
+
+                    Buff_phase = 1;
+                }
+                break;
+            case 1:
+                {
+                    List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Buff_Value_csv");
+
+                    //
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        Buff_datas.Add((int)data[i]["num"], new CTRL_Buff(data[i]));
+                    }
+
+                    Buff_phase = 2;
+                }
+                break;
+            case 2:
+                {
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,  HYJ_Buff_GetData    );
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_COUNT, HYJ_Buff_GetCount   );
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_KEYS,  HYJ_Buff_GetKeys    );
+
+                    Buff_phase = 3;
+                }
+                break;
+            case 3:
+                {
+                    Buff_phase = -1;
+                }
+                break;
+        }
+
+        return (Buff_phase == -1);
     }
 }
 

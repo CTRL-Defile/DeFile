@@ -937,21 +937,11 @@ partial class HYJ_Player
         //
         switch(type)
         {
-            case "RELIC":
-                {
-                    Item_relics.Add(new HYJ_Player_Item(name, count));
-                }
-                break;
-            case "UNIT":
-                {
-                    HYJ_Unit_Insert(name, -1);
-                }
-                break;
-            case "POTION":
-                {
-                    HYJ_Buff_Insert(name);
-                }
-                break;
+            case "RELIC":   { Item_relics.Add(new HYJ_Player_Item(name, count));    }   break;
+            case "UNIT":    { HYJ_Unit_Insert(name, -1);                            }   break;
+            case "POTION":  { HYJ_Buff_PotionInsert(name);                          }   break;
+            case "BUFF":    { HYJ_Buff_BuffInsert(name);                            }   break;
+            //case "DEBUFF":  { HYJ_Buff_DeBuffInsert(name);                          }   break;
         }
 
         //
@@ -1032,7 +1022,8 @@ partial class HYJ_Player
     }
 
     //////////  Method          //////////
-    void HYJ_Buff_Insert(string _name)
+    // Potion
+    void HYJ_Buff_PotionInsert(string _name)
     {
 
         HYJ_Item element
@@ -1055,9 +1046,38 @@ partial class HYJ_Player
 
     object HYJ_Buff_Insert_Bridge(params object[] _args)
     {
-        HYJ_Buff_Insert("");
+        HYJ_Buff_PotionInsert("");
         //
         return true;
+    }
+
+    // Buff
+    void HYJ_Buff_BuffInsert(string _name)
+    {
+        CTRL_Buff element
+            = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,
+                _name);
+
+        int num = -1;
+        for(int i = 0; i < Buff_buffs.Count; i++)
+        {
+            if(Buff_buffs[i].CTRL_Basic_GetIsSame(element.Basic_data))
+            {
+                num = i;
+                break;
+            }
+        }
+
+        if (num == -1)
+        {
+            Buff_buffs.Add(new CTRL_Buff_Save(element.Basic_data));
+        }
+        else
+        {
+            Buff_buffs[num] = new CTRL_Buff_Save(element.Basic_data);
+        }
+
     }
 
     //////////  Default Method  //////////
