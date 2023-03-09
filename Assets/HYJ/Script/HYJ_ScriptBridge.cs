@@ -16,19 +16,6 @@ public partial class HYJ_ScriptBridge
         HYJ_Event_Start();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        HYJ_Static_Start();
-
-        HYJ_Event_Start();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
 
 // ╫л╠шео
@@ -52,10 +39,10 @@ partial class HYJ_ScriptBridge
     //////////  Method          //////////
 
     //////////  Default Method  //////////
-    void HYJ_Static_Start()
-    {
-        Static_instance = this;
-    }
+    //void HYJ_Static_Start()
+    //{
+    //    Static_instance = this;
+    //}
 
 }
 
