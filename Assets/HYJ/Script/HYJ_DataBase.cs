@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -251,9 +252,10 @@ partial class HYJ_DataBase
 
 partial class HYJ_DataBase
 {
-    [SerializeField] GameObject Unit_datas; // UnitData.prefab
-    [SerializeField] int Unit_phase;
-    [SerializeField] List<List<Dictionary<string, object>>> Unit_csv = new List<List<Dictionary<string, object>>>();
+    GameObject Unit_datas; // UnitData.prefab
+    int Unit_phase;
+    List<List<Dictionary<string, object>>> Unit_csv = new List<List<Dictionary<string, object>>>();
+    List<List<Dictionary<string, object>>> Player_Unit_csv = new List<List<Dictionary<string, object>>>();
 
     //////////  Getter & Setter //////////
 
@@ -263,9 +265,9 @@ partial class HYJ_DataBase
     }
     object LSY_GetPhase(params object[] _args)
     {
-        int a;
-        if (Unit_phase == -1)
-            a=0;
+        //int a;
+        //if (Unit_phase == -1)
+        //    a=0;
         return Unit_phase;
     }
     object HYJ_Unit_GetDataCount(params object[] _args)
@@ -308,6 +310,8 @@ partial class HYJ_DataBase
 
     bool HYJ_Unit_Init()
     {
+        string csv_path = "DataBase/DB_Using_Character";
+
         switch (Unit_phase)
         {
             case 0:
@@ -332,8 +336,7 @@ partial class HYJ_DataBase
                 break;
             case 2:
                 {
-                    string csv_path = "DataBase/DB_Using_Character";
-
+                    // 전체 DB 생성
                     for (int i=0; i<3; i++)
                     {
                         List<Dictionary<string, object>> tmp = CSVReader.Read(csv_path + "_" + (i+1).ToString());
@@ -347,10 +350,6 @@ partial class HYJ_DataBase
 
                     }
 
-
-
-
-
                     for (int i = 0; i < Unit_csv[0].Count; i++)
                     {
                         Unit_csv[0][i]["Index"] = i;
@@ -363,10 +362,36 @@ partial class HYJ_DataBase
                         else
                             Debug.Log((int)Unit_csv[0][i]["Index"] + " is NULL Unit object in ADDRESSABLE");
                     }
+
                     Unit_phase = 3;
                 }
                 break;
+
             case 3:
+                {
+                    // Player_DB 생성
+
+                    //string[] lines;
+
+                    //for (int i = 1; i <= 3; i++)
+                    //{
+                    //    // 유닛 데이터 읽어오기
+                    //    lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character_" + i.ToString() + ".csv");
+                    //    // 유닛 데이터 쓰기
+                    //    System.IO.File.Delete("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
+                    //    StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
+                    //    for (int j = 0; j < lines.Length; j++)
+                    //    {
+                    //        outStream.WriteLine(lines[j].ToString());
+                    //    }
+                    //    outStream.Close();
+                    //}
+
+
+                    Unit_phase = 4;
+                }
+                break;
+            case 4:
                 {
                     //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID, HYJ_Unit_GetDataFromID);
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_UNIT_PREFAB,   LSY_GetUnitPrefab       );
