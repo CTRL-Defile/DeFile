@@ -564,11 +564,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         int _cnt = Player_Lv + 1 - Field_Unit.Count, std_cnt = Stand_Unit.Count;
         if (_cnt == 0)
         {
-            Debug.Log("Assign " + _cnt + " more..");
             Combat_isInitialized = true;
             return;
         }
-
+        Debug.Log("Assign " + _cnt + " more..");
 
         int num = _cnt <= std_cnt ? _cnt : std_cnt;
         int _y = Field_y - 1, n = 0;
@@ -1198,10 +1197,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
         // Text, Image, Cost
 
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE);
+        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE);
 
         Unit_DB = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
-        Player_Unit_DB = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_PLAYER_UNIT_DATABASE);
+        //Player_Unit_DB = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_PLAYER_UNIT_DATABASE);
+        Player_Unit_DB = Player_DB.Instance.get_original;
 
         for (int i = 0; i < Unit_DB[0].Count; i++)
         {
