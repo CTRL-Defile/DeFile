@@ -377,7 +377,6 @@ partial class HYJ_Shop_Manager
             data_heal.RemoveAt(select);
 
             select = Random.Range(0, data_buff.Count);
-            Debug.Log(data_buff.Count);
             Potion_btns[1 + (i * 3)].HYJ_Info_DataSetting("BUFF/" + data_buff[select]);
             data_buff.RemoveAt(select);
 

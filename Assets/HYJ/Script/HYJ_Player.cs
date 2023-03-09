@@ -45,8 +45,10 @@ public partial class HYJ_Player : MonoBehaviour
                     }
                 } 
                 break;
+            case 2: { if (HYJ_Item_Init()   ) { Basic_phase = 3;    }    }   break;
+            case 3: { if (HYJ_Buff_Init()   ) { Basic_phase = 4;    }    }   break;
 
-            case 2:
+            case 4:
                 {
                     BATTLE_PHASE _phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
 
@@ -55,13 +57,11 @@ public partial class HYJ_Player : MonoBehaviour
                     {
                         if (HYJ_Unit_Init())
                         {
-                            Basic_phase = 3;
+                            Basic_phase = -1;
                         }
                     }
                 }
                 break;
-            case 3: { if (HYJ_Item_Init()) { Basic_phase = 4; } } break;
-            case 4: { if (HYJ_Buff_Init()) { Basic_phase = -1; } } break;
         }
     }
 }
@@ -934,8 +934,9 @@ partial class HYJ_Player
         string name = (string)_args[1];
         int count = (int)_args[2];
 
+        Debug.Log(type + " " + name);
         //
-        switch(type)
+        switch (type)
         {
             case "RELIC":   { Item_relics.Add(new HYJ_Player_Item(name, count));    }   break;
             case "UNIT":    { HYJ_Unit_Insert(name, -1);                            }   break;
@@ -1054,10 +1055,13 @@ partial class HYJ_Player
     // Buff
     void HYJ_Buff_BuffInsert(string _name)
     {
+        // 여기에 버프의 종류가 늘어남에 따라 추가합니다.
         CTRL_Buff element
             = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                 HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,
-                _name);
+                int.Parse(_name));
+
+        Debug.Log("HYJ_Buff_BuffInsert " + element.Basic_data.Basic_name);
 
         int num = -1;
         for(int i = 0; i < Buff_buffs.Count; i++)

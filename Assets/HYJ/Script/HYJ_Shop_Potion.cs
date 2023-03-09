@@ -12,8 +12,8 @@ public class HYJ_Shop_Potion : HYJ_Shop_Button
         this.gameObject.SetActive(true);
 
         //
-        int x = _num % 2;
-        int y = _num / 2;
+        int x = _num / 3;
+        int y = _num % 3;
 
         float posX = _trans.localPosition.x + this.transform.parent.parent.localPosition.x;
 
