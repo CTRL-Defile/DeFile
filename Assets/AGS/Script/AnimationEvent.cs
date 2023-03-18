@@ -58,6 +58,7 @@ public class AnimationEvent : MonoBehaviour
 
 	public void TargetSkillHit()
 	{
+		Debug.Log("[AnimEvent] " + this.transform.parent.name);
 		GameObject HostObj = transform.parent.gameObject;
 		GameObject Target = HostObj.GetComponent<Character>().Target;
 		if(HostObj != null && Target != null)

@@ -265,9 +265,6 @@ partial class HYJ_DataBase
     }
     object LSY_GetPhase(params object[] _args)
     {
-        //int a;
-        //if (Unit_phase == -1)
-        //    a=0;
         return Unit_phase;
     }
     object HYJ_Unit_GetDataCount(params object[] _args)
@@ -336,7 +333,6 @@ partial class HYJ_DataBase
                 break;
             case 2:
                 {
-                    // 전체 DB 생성
                     for (int i=0; i<3; i++)
                     {
                         List<Dictionary<string, object>> tmp = CSVReader.Read(csv_path + "_" + (i+1).ToString());
@@ -366,32 +362,7 @@ partial class HYJ_DataBase
                     Unit_phase = 3;
                 }
                 break;
-
             case 3:
-                {
-                    // Player_DB 생성
-
-                    //string[] lines;
-
-                    //for (int i = 1; i <= 3; i++)
-                    //{
-                    //    // 유닛 데이터 읽어오기
-                    //    lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character_" + i.ToString() + ".csv");
-                    //    // 유닛 데이터 쓰기
-                    //    System.IO.File.Delete("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
-                    //    StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
-                    //    for (int j = 0; j < lines.Length; j++)
-                    //    {
-                    //        outStream.WriteLine(lines[j].ToString());
-                    //    }
-                    //    outStream.Close();
-                    //}
-
-
-                    Unit_phase = 4;
-                }
-                break;
-            case 4:
                 {
                     //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID, HYJ_Unit_GetDataFromID);
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_UNIT_PREFAB,   LSY_GetUnitPrefab       );
@@ -456,7 +427,7 @@ partial class HYJ_DataBase
                 break;
             case 1:
                 {
-                    List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_Skill_csv");
+                    List<Dictionary<string, object>> data = CSVReader.Read("DataBase/DB_Skill");
 
                     //
                     for (int i = 0; i < data.Count; i++)
@@ -469,7 +440,7 @@ partial class HYJ_DataBase
                 break;
             case 2:
                 {
-                    List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_Skill_Effect_csv");
+                    //List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_Skill_Effect_csv");
 
                     //
                     //for (int i = 0; i < data.Count; i++)
@@ -500,3 +471,4 @@ partial class HYJ_DataBase
 }
 
 #endregion
+

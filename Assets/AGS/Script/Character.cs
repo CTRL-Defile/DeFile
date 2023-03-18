@@ -83,41 +83,47 @@ public partial class Character : MonoBehaviour
 
 		Status_HP = Status_MaxHP;
 
+#if false
 		// 스킬 넘버 얻어와야함
-		int Spell0_Idx = 1;
-		int Spell1_Idx = 3;
+		//int Spell0_Idx = 1;
+		//int Spell1_Idx = 3;
 
-		switch (m_Modeltype)
-		{
-			case MODEL_TYPE.BEAR:
-				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
-				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);				
-				break;
-			case MODEL_TYPE.ORC:
-				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
-				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
-				break;
-			case MODEL_TYPE.EVIL:
-				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, 2);
-				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
-				break;
-			case MODEL_TYPE.GOBLIN_N:
-				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
-				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
-				break;
-			case MODEL_TYPE.GOBLIN_T:
-				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
-				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
-				break;
-			case MODEL_TYPE.WERERAT:
-				m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
-				m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
-				break;
-			default:
-				break;
-		}
+		//switch (m_Modeltype)
+		//{
+		//	case MODEL_TYPE.BEAR:
+		//		m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
+		//		m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);				
+		//		break;
+		//	case MODEL_TYPE.ORC:
+		//		m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
+		//		m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
+		//		break;
+		//	case MODEL_TYPE.EVIL:
+		//		m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, 2);
+		//		m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
+		//		break;
+		//	case MODEL_TYPE.GOBLIN_N:
+		//		m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
+		//		m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
+		//		break;
+		//	case MODEL_TYPE.GOBLIN_T:
+		//		m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
+		//		m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
+		//		break;
+		//	case MODEL_TYPE.WERERAT:
+		//		m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell0_Idx);
+		//		m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Spell1_Idx);
+		//		break;
+		//	default:
+		//		break;
+		//}
+#endif
 
-		Status_moveSpeed = 5.0f;
+		m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Data_spell0);
+        m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Data_spell1);
+
+
+        Status_moveSpeed = 5.0f;
 		// Stat_MoveSpeed = UnityEngine.Random.Range(1.0f, 8.0f);
 		//CurPosIndex = 0;
 	}
@@ -165,13 +171,13 @@ public partial class Character
     //-------------------------------------------------------------------
     // Field
     //-------------------------------------------------------------------
-    [Header("======================================= STATUS =======================================")]
-	[Space (10f)]
-	[SerializeField] protected float Status_HP;     // 체력
-    [SerializeField] protected float Status_MP;     // 마나
+ //   [Header("======================================= STATUS =======================================")]
+	//[Space (10f)]
+	//[SerializeField] protected float Status_HP;     // 체력
+	//[SerializeField] protected float Status_MP;     // 마나
 
-	[Space(10f)]
-	[SerializeField] protected float Status_moveSpeed;   // 이속
+	//[Space(10f)]
+	//[SerializeField] protected float Status_moveSpeed;   // 이속
 
     //-------------------------------------------------------------------
     // Property
@@ -180,8 +186,8 @@ public partial class Character
 	public float Stat_MP { get { return Status_MP; } set { Status_MP = value; } }
 	public float Stat_MaxHP { get { return Status_MaxHP; } set { Status_MaxHP = value; } }
 	public float Stat_MaxMP { get { return Status_MaxMP; } set { Status_MaxMP = value; } }
-	public float Stat_Attack { get { return Status_atkPhysics; } set { Status_atkPhysics = value; } }
-    public float Stat_Attack_Spell { get { return Status_atkSpell; } set { Status_atkSpell = value; } }
+	//public float Stat_Attack { get { return Status_atkPhysics; } set { Status_atkPhysics = value; } }
+ //   public float Stat_Attack_Spell { get { return Status_atkSpell; } set { Status_atkSpell = value; } }
     public float Stat_MoveSpeed { get { return Status_moveSpeed; } set { Status_moveSpeed = value; } }
 	public int Stat_Cost { get { return Status_Cost; } set { Status_Cost = value; } }
 
@@ -499,7 +505,7 @@ public partial class Character
 
 #endregion
 
-
+#region STAR
 public partial class Character
 {
 	public enum Unit_Star
@@ -571,3 +577,13 @@ public partial class Character
     }
 }
 
+#endregion
+
+#region SKILL
+public partial class Character
+{
+	[Header("======================================= SKILL =======================================")]
+	[Space(10f)]
+	[SerializeField] protected int Skill_Name;
+}
+#endregion
