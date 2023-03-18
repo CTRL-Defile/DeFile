@@ -67,6 +67,8 @@ public partial class HYJ_Map_Manager : MonoBehaviour
             case 3:
                 {
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, HYJ_Active_ActiveOn);
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.MAP___GET__BLACKSCREEN, GetMapBlackScreen); 
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.MAP___GET__LOCATIONMARKER, GetMapLocationMarker);
 
                     this.gameObject.SetActive(false);
 
@@ -86,6 +88,8 @@ partial class HYJ_Map_Manager
     [SerializeField] GameObject Cheapter_stage;
     [SerializeField] int Cheapter_level;
     [SerializeField] List<HYJ_Map_Stage> Cheapter_stages;
+    [SerializeField] GameObject Map_BlackScreen; // 스테이지 선택 시 다른 스테이지 선택하는거 막기 위해 검은화면 오브젝트 이용
+    [SerializeField] GameObject Map_LocationMarker; // 플레이어의 현재 스테이지 위치 표시하는 오브젝트
 
     const int Cheapter_x = 8;
     const int Cheapter_y = 14;
@@ -266,6 +270,10 @@ partial class HYJ_Map_Manager
 
                     // >> 혀누J 추가 - viewPort 처음위치
                     Cheapter_viewPort.localPosition = new Vector3(200f, -Cheapter_viewPort.parent.GetComponent<RectTransform>().rect.height + 100f, 0);
+                    // 유저 위치 나타내는 별 아이콘 처음위치
+                    Map_LocationMarker.transform.parent = element.transform.parent;
+                    Map_LocationMarker.transform.SetAsFirstSibling();
+                    Map_LocationMarker.transform.localPosition = Vector3.zero;// new Vector3(Cheapter_viewPort.parent.GetComponent<RectTransform>().rect.width, Cheapter_viewPort.parent.GetComponent<RectTransform>().rect.height);
                     
                     break;
                 }
@@ -333,8 +341,7 @@ partial class HYJ_Map_Manager
         // 영재님께서 예전에 작성한 함수 > // Cheapter_viewPort.localPosition = new Vector3(-(float)_args[0], -(float)_args[1], -(float)_args[2]);
 
         // 스크롤 뷰 화면 x중앙, 스크롤바 화면 y로 이동, 
-        this.transform.GetChild(0).GetChild(0).GetChild(2).GetComponent<Scrollbar>().value = (float)_args[1] / Cheapter_viewPort.parent.GetComponent<RectTransform>().rect.height;
-        Debug.Log(Cheapter_viewPort.parent.GetComponent<RectTransform>().rect.height + "," + _args[1] + ",");
+        this.transform.GetChild(0).GetChild(0).GetChild(2).GetComponent<Scrollbar>().value = ((float)_args[1]-100f) / Cheapter_viewPort.parent.GetComponent<RectTransform>().rect.height;
 
         return null;
     }
@@ -344,14 +351,24 @@ partial class HYJ_Map_Manager
         // _args[0] 은 클릭한 버튼 x좌표, _args[1]은 클릭한 버튼 y좌표
         cur_x = (int)_args[0];
         cur_y = (int)_args[1];
-        Debug.Log(cur_x+"+"+cur_y + " , " + (int)_args[0] +"+"+ (int)_args[1]);
         return null;
     }
     object GetSelectedRoad(params object[] _args) // 플레이어가 선택한 버튼을 경유하는 도로 찾아서 리턴
     {
         // _args[0] 은 클릭한 버튼 x좌표, _args[1]은 클릭한 버튼 y좌표
-        Debug.Log("Road_" + cur_x + "," + cur_y + "to" + (int)_args[0] + "," + (int)_args[1]);
         return (Road_parent.Find("Road_" + cur_x + "," + cur_y + "to" + (int)_args[0] + "," + (int)_args[1] )).gameObject;
+    }
+
+    object GetMapBlackScreen(params object[] _args)
+    {
+        // 지도 검은화면
+        return Map_BlackScreen;
+    }
+
+    object GetMapLocationMarker(params object[] _args)
+    {
+        // 지도 유저위치 표시하는 마커
+        return Map_LocationMarker;
     }
 
     //////////  Default Method  //////////
@@ -365,6 +382,7 @@ partial class HYJ_Map_Manager
 
         HYJ_Cheapter_Create(1);
     }
+
 }
 
 #region ROAD
@@ -430,16 +448,15 @@ partial class HYJ_Map_Manager
             float length = Vector3.Distance(_start.transform.parent.localPosition, _destination.transform.parent.localPosition);
 
             // >> 현우 - 정점 사이 거리에 따라 발자국 길이 수정 (발자국 길이 = 발자국 오브젝트 묶음)
-            int footCntPerLength = (int)length / 50; // 이때 50는 발자국 오브젝트 1개 길이
+            int footCntPerLength = (int)(length-10) / 50; // 이때 50는 발자국 오브젝트 1개 길이
             for(int i = 0; i < footCntPerLength-1; i++)
             {
                 element.transform.GetChild(i).gameObject.SetActive(true);
             }
-            for(int i = footCntPerLength - 1; i < element.transform.childCount; i++)
+            for(int i = footCntPerLength-1; i < element.transform.childCount; i++)
             {
                 element.transform.GetChild(i).gameObject.SetActive(false);
             }
-            // >> 현우 - end -
 
             RectTransform rt = element.GetComponent<RectTransform>();
             vec2.x = 5.0f;
