@@ -184,6 +184,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         break;
                     }
 
+                    // 아예 처음 풀링 시작할 때만 접근, 이후엔 접근 X
                     if (CharacterPool_isInitialized == false)
                     {
                         Debug.Log("DB_phase : " + DB_phase);
@@ -194,11 +195,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         // 필드 생성 후 그래프 셋업
 					    SetupGraph();
 
-
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, Basic_phase);
-
-                        // Sound : 던전 입장
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.DUNGEON_ENTER);
                     }
                     else //(this.gameObject.activeSelf == true && CharacterPool_isInitialized == true)
                     {
@@ -213,6 +209,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                             LSY_Shop_Reload(1);
                         }
                     }
+
+                    // 필드 유닛 업데이트
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, Basic_phase);
+                    // Sound : 던전 입장
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.DUNGEON_ENTER);
+
+
                 }
                 break;
 			// 전투 준비
@@ -305,7 +308,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 							// 승리 골드 수급
 							HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_PLUS, Gold_win);
 						}
-
+                        // Victory
                         End_Btn.transform.GetChild(0).gameObject.SetActive(true);                        
                     }
 
@@ -318,7 +321,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                             // 패배 골드 수급
 							HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_PLUS, Gold_lose);
 						}
-
+                        // Defeat
                         End_Btn.transform.GetChild(1).gameObject.SetActive(true);
                         
                     }
@@ -331,7 +334,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     }
 
                     Combat_isInitialized = false;
-				}
+
+                }
                 break;
         }
     }
@@ -367,48 +371,48 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         //// 2. Enemy 유닛들은 그래프 우상단 기준으로 우선순위 정렬
         Enemy_Unit = Enemy_Unit.OrderBy(x => x.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex).ToList();
 
-  //      // 3. 맵에서 가운데 라인에 가까울수록인걸 체크해야하는데..
+        //      // 3. 맵에서 가운데 라인에 가까울수록인걸 체크해야하는데..
+        {
+            //      List<GameObject> TmpList = new List<GameObject>();
 
-  //      List<GameObject> TmpList = new List<GameObject>();
+            //      // 3.1 Line Count의 절반 만약 8줄이면 반 값 == 4
+            //      // 012(3 4)567 => -1 하고 반 값 사용
+            //      string LineCnt = (Field_tiles.Count).ToString();
+            //      int FieldHalfIdx = (int)Math.Round(float.Parse(LineCnt) / 2.0f);
 
-  //      // 3.1 Line Count의 절반 만약 8줄이면 반 값 == 4
-  //      // 012(3 4)567 => -1 하고 반 값 사용
-  //      string LineCnt = (Field_tiles.Count).ToString();
-  //      int FieldHalfIdx = (int)Math.Round(float.Parse(LineCnt) / 2.0f);
-        
-  //      for(int i = Field_tiles[FieldHalfIdx].Tiles[0].GraphIndex; i < m_Graph.Count; i++)
-  //      {
-            
-  //          if(null != m_Graph[i].Tile.HYJ_Basic_onUnit)
-  //          {
-  //              GameObject FindObj = m_Graph[i].Tile.HYJ_Basic_onUnit;
+            //      for(int i = Field_tiles[FieldHalfIdx].Tiles[0].GraphIndex; i < m_Graph.Count; i++)
+            //      {
 
-  //              FindObj = Field_Unit.Find(x => FindObj);
+            //          if(null != m_Graph[i].Tile.HYJ_Basic_onUnit)
+            //          {
+            //              GameObject FindObj = m_Graph[i].Tile.HYJ_Basic_onUnit;
 
-  //              if(FindObj == m_Graph[i].Tile.HYJ_Basic_onUnit)
-		//		    TmpList.Add(m_Graph[i].Tile.HYJ_Basic_onUnit);
-		//	}				
-  //      }
+            //              FindObj = Field_Unit.Find(x => FindObj);
 
-  //      Field_Unit = TmpList.ToList();
-  //      TmpList.Clear();
+            //              if(FindObj == m_Graph[i].Tile.HYJ_Basic_onUnit)
+            //		    TmpList.Add(m_Graph[i].Tile.HYJ_Basic_onUnit);
+            //	}				
+            //      }
 
-		//for (int i = Field_tiles[FieldHalfIdx-1].Tiles[Field_tiles[FieldHalfIdx - 1].Tiles.Count-1].GraphIndex; i > -1; i--)
-		//{
-		//	if (null != m_Graph[i].Tile.HYJ_Basic_onUnit)
-		//	{
-		//		GameObject FindObj = m_Graph[i].Tile.HYJ_Basic_onUnit;
+            //      Field_Unit = TmpList.ToList();
+            //      TmpList.Clear();
 
-		//		FindObj = Enemy_Unit.Find(x => FindObj);
+            //for (int i = Field_tiles[FieldHalfIdx-1].Tiles[Field_tiles[FieldHalfIdx - 1].Tiles.Count-1].GraphIndex; i > -1; i--)
+            //{
+            //	if (null != m_Graph[i].Tile.HYJ_Basic_onUnit)
+            //	{
+            //		GameObject FindObj = m_Graph[i].Tile.HYJ_Basic_onUnit;
 
-		//		if (FindObj == m_Graph[i].Tile.HYJ_Basic_onUnit)
-		//			TmpList.Add(m_Graph[i].Tile.HYJ_Basic_onUnit);
-		//	}
-		//}
+            //		FindObj = Enemy_Unit.Find(x => FindObj);
 
-		//Enemy_Unit = TmpList.ToList();
-		//TmpList.Clear();
+            //		if (FindObj == m_Graph[i].Tile.HYJ_Basic_onUnit)
+            //			TmpList.Add(m_Graph[i].Tile.HYJ_Basic_onUnit);
+            //	}
+            //}
 
+            //Enemy_Unit = TmpList.ToList();
+            //TmpList.Clear();
+        }
 	}
 
 	public void LSY_Battle_End()
@@ -419,8 +423,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 		// 전투 종료 사운드 종료        
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_STOP, JHW_SoundManager.SFX_list.GAME_DEFEAT, 0.5f);
 
-		// End 버튼 눌를때 DOF 초기화
-		DepthOfField dof;
+        // 이자 지급
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_INTEREST);
+
+        // End 버튼 눌를때 DOF 초기화
+        DepthOfField dof;
         if (GameVolume.profile.TryGet<DepthOfField>(out dof))
         {
             dof.focusDistance.value = 10.0f;
@@ -435,7 +442,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         StatusBar_isInitialized = false;
 
         Field_Unit.Clear();
-        Enemy_Unit.Clear();        
+        Enemy_Unit.Clear();
 
         int UnitParent_num = Unit_parent.childCount;
         int EnemyParent_num = Enemy_parent.childCount;
@@ -443,6 +450,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         foreach(var node in m_Graph)
         {
             node.Tile.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
+        }
+        foreach (var stand in Stand_tiles.Tiles)
+        {
+            stand.GetComponent<HYJ_Battle_Tile>().HYJ_Basic_onUnit = null;
         }
         
         for (int i = 0; i < UnitParent_num; i++)
@@ -527,7 +538,6 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         }
 
 
-
     }
 
     void LSY_Unit_Init(List<GameObject> unit_list)
@@ -554,11 +564,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         int _cnt = Player_Lv + 1 - Field_Unit.Count, std_cnt = Stand_Unit.Count;
         if (_cnt == 0)
         {
-            Debug.Log("Assign " + _cnt + " more..");
             Combat_isInitialized = true;
             return;
         }
-
+        Debug.Log("Assign " + _cnt + " more..");
 
         int num = _cnt <= std_cnt ? _cnt : std_cnt;
         int _y = Field_y - 1, n = 0;
@@ -1188,10 +1197,11 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
         // Text, Image, Cost
 
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE);
+        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE);
 
         Unit_DB = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
-        Player_Unit_DB = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_PLAYER_UNIT_DATABASE);
+        //Player_Unit_DB = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_PLAYER_UNIT_DATABASE);
+        Player_Unit_DB = Player_DB.Instance.get_original;
 
         for (int i = 0; i < Unit_DB[0].Count; i++)
         {
@@ -2086,7 +2096,7 @@ partial class HYJ_Battle_Manager
 }
 #endregion
 
-
+// 시너지
 #region SYNERGY
 
 public partial class HYJ_Battle_Manager : MonoBehaviour

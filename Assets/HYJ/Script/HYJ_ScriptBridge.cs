@@ -16,19 +16,6 @@ public partial class HYJ_ScriptBridge
         HYJ_Event_Start();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        HYJ_Static_Start();
-
-        HYJ_Event_Start();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
 
 // ╫л╠шео
@@ -52,10 +39,10 @@ partial class HYJ_ScriptBridge
     //////////  Method          //////////
 
     //////////  Default Method  //////////
-    void HYJ_Static_Start()
-    {
-        Static_instance = this;
-    }
+    //void HYJ_Static_Start()
+    //{
+    //    Static_instance = this;
+    //}
 
 }
 
@@ -71,6 +58,7 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     PLAYER___BASIC__GOLD_PLUS,
     PLAYER___BASIC__GOLD_MINUS,
     PLAYER___BASIC__GOLD_IS_ENOUGH,
+    PLAYER___BASIC__GOLD_INTEREST,
 
     PLAYER___BASIC__EXP_INCREASE,
     PLAYER___BASIC__EXP_DECREASE,
@@ -103,7 +91,11 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     //
     MAP___CHEAPTER__SELECT_RESET,
     MAP___CHEAPTER__MOVE_CENTER,
+    MAP___CHANGE__PLAYER_POSITION,
     MAP___ACTIVE__ACTIVE_ON,
+    MAP___GET__SELECTED_ROAD,
+    MAP___GET__BLACKSCREEN,
+    MAP___GET__LOCATIONMARKER,
 
     //
     BASE_CAMP___ACTIVE__ACTIVE_ON,

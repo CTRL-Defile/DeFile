@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -219,9 +220,10 @@ partial class HYJ_DataBase
 
 partial class HYJ_DataBase
 {
-    [SerializeField] GameObject Unit_datas; // UnitData.prefab
-    [SerializeField] int Unit_phase;
-    [SerializeField] List<List<Dictionary<string, object>>> Unit_csv = new List<List<Dictionary<string, object>>>();
+    GameObject Unit_datas; // UnitData.prefab
+    int Unit_phase;
+    List<List<Dictionary<string, object>>> Unit_csv = new List<List<Dictionary<string, object>>>();
+    List<List<Dictionary<string, object>>> Player_Unit_csv = new List<List<Dictionary<string, object>>>();
 
     //////////  Getter & Setter //////////
 
@@ -231,9 +233,6 @@ partial class HYJ_DataBase
     }
     object LSY_GetPhase(params object[] _args)
     {
-        int a;
-        if (Unit_phase == -1)
-            a=0;
         return Unit_phase;
     }
     object HYJ_Unit_GetDataCount(params object[] _args)
@@ -276,6 +275,8 @@ partial class HYJ_DataBase
 
     bool HYJ_Unit_Init()
     {
+        string csv_path = "DataBase/DB_Using_Character";
+
         switch (Unit_phase)
         {
             case 0:
@@ -300,8 +301,6 @@ partial class HYJ_DataBase
                 break;
             case 2:
                 {
-                    string csv_path = "DataBase/DB_Using_Character";
-
                     for (int i=0; i<3; i++)
                     {
                         List<Dictionary<string, object>> tmp = CSVReader.Read(csv_path + "_" + (i+1).ToString());
@@ -315,10 +314,6 @@ partial class HYJ_DataBase
 
                     }
 
-
-
-
-
                     for (int i = 0; i < Unit_csv[0].Count; i++)
                     {
                         Unit_csv[0][i]["Index"] = i;
@@ -331,6 +326,7 @@ partial class HYJ_DataBase
                         else
                             Debug.Log((int)Unit_csv[0][i]["Index"] + " is NULL Unit object in ADDRESSABLE");
                     }
+
                     Unit_phase = 3;
                 }
                 break;
@@ -399,7 +395,7 @@ partial class HYJ_DataBase
                 break;
             case 1:
                 {
-                    List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_Skill_csv");
+                    List<Dictionary<string, object>> data = CSVReader.Read("DataBase/DB_Skill");
 
                     //
                     for (int i = 0; i < data.Count; i++)
@@ -412,7 +408,7 @@ partial class HYJ_DataBase
                 break;
             case 2:
                 {
-                    List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_Skill_Effect_csv");
+                    //List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Unit_Skill_Effect_csv");
 
                     //
                     //for (int i = 0; i < data.Count; i++)

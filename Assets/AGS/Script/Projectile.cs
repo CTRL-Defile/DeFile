@@ -40,7 +40,7 @@ public class Projectile : MonoBehaviour
 
 			if(transform.position == TargetPos)
 			{
-				m_Target.GetComponentInParent<Character>().HitProcess(m_HostObject.GetComponent<Character>().Stat_Attack);
+				m_Target.GetComponentInParent<Character>().HitProcess(m_HostObject.GetComponent<Character>().Character_Status_atkPhysics);
 
 				ParticleSystem[] particles;
 				particles = GetComponentsInChildren<ParticleSystem>();

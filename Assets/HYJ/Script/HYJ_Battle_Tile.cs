@@ -228,14 +228,14 @@ partial class HYJ_Battle_Tile : MonoBehaviour
 
     private void Ally_Enter(Collider other)
     {
-        Debug.Log(this.name + " is enter " + other.name);
+        Debug.Log(this.name + " is entered by " + other.name);
         if (tile_Available == Tile_Available.Non_Available)
         {
             Debug.Log("[BattleTile] NonAvailable Tile Enter");
         }
         else
         {
-            HYJ_Battle_Tile.Tile_Type _Type;
+            HYJ_Battle_Tile.Tile_Type _Type;    // 들어온 유닛의 타일 정보
             if (other.GetComponent<Character>().LSY_Character_Get_OnTile() != null)
                 _Type = other.GetComponent<Character>().LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().TileType;
             else
