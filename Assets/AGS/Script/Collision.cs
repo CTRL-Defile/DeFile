@@ -22,7 +22,7 @@ public class Collision : MonoBehaviour
 				if (other.gameObject.tag == "HitArea" && other.GetComponentInParent<Character>() != HostObject)
 				{
 					Target = other.gameObject;
-					other.GetComponentInParent<Character>().HitProcess(HostObject.Stat_Attack);
+					other.GetComponentInParent<Character>().HitProcess(HostObject.Character_Status_atkPhysics);
 				}
 			}
 		}

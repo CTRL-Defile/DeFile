@@ -1987,7 +1987,7 @@ GameObject:
   - component: {fileID: 5252516957502783040}
   - component: {fileID: 9095976933219073545}
   m_Layer: 20
-  m_Name: Wererat Soldier-
+  m_Name: Wererat Soldier-Green
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2447,7 +2447,7 @@ GameObject:
   - component: {fileID: 5658379431844301720}
   - component: {fileID: 3791847811559930672}
   m_Layer: 20
-  m_Name: Treasure Goblin-
+  m_Name: Treasure Goblin-Blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14483,7 +14483,7 @@ GameObject:
   - component: {fileID: 3186843334151316255}
   - component: {fileID: 8062832280602244276}
   m_Layer: 0
-  m_Name: Evil Mushroom-
+  m_Name: Evil Mushroom-Blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28921,7 +28921,7 @@ GameObject:
   - component: {fileID: 2128957153010589155}
   - component: {fileID: 1874226073610588784}
   m_Layer: 20
-  m_Name: Goblin-
+  m_Name: Goblin Torch - Blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

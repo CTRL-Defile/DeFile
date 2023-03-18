@@ -27,9 +27,12 @@ partial class Character
     // 
     [SerializeField] protected string Status_atkType; // 공격방식
     [SerializeField] protected float Status_MaxHP;  // 최대체력
+    [SerializeField] protected float Status_HP;     // 현재체력
     [SerializeField] protected float Status_MaxMP;  // 최대마나
+    [SerializeField] protected float Status_MP;     // 현재마나
     [SerializeField] protected float Status_startMp;// 시작마나
 
+    [SerializeField] protected float Status_moveSpeed;   // 이속
 
     [SerializeField] protected float Status_atkPhysics;  // 물공
     [SerializeField] protected float Status_atkSpell;    // 마공

@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 using System.IO;
 using System.Linq;
 using UnityEngine.UIElements;
+using System.Data;
 
 public partial class HYJ_Player : MonoBehaviour
 {
@@ -40,7 +41,10 @@ public partial class HYJ_Player : MonoBehaviour
                     int DB_phase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_PHASE);
                     if (DB_phase == -1)
                     {
-                        Player_DB_Init();
+                        //Player_DB_Init();
+
+                        Player_DB.Instance.Init();
+
                         Basic_phase = 2;
                     }
                 } 
@@ -247,6 +251,97 @@ partial class HYJ_Player
 
 #endregion
 
+// Database
+#region Database
+public class Player_DB
+{
+    private Player_DB() { }
+
+    static List<List<Dictionary<string, object>>> _original;
+    static List<List<SerialDictionary<string, object>>> _serial;
+    private static Player_DB instance;
+    public static Player_DB Instance
+    {
+        get
+        {
+            Debug.Log("PlayerDB.Instance...");
+            if (instance == null)
+            {
+                instance = new Player_DB();
+                _original = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+            }
+            return instance;
+        }
+    }
+
+    public List<List<Dictionary<string, object>>> get_original { get { return _original; } }
+    public List<List<SerialDictionary<string, object>>> get_serial { get { return _serial; } }
+    public int unit_cnt { get { return _original[0].Count; } }
+
+    public void idx_delete(int idx)
+    {
+        int star_cnt = _original.Count;
+        int unit_cnt = _original[0].Count;
+        for (int star=0; star <star_cnt; star++)
+        {
+            for (int i=0; i<unit_cnt; i++)
+            {
+                int unit_idx = (int)_original[star][i]["Index"];
+
+                if (unit_idx == idx)
+                {
+                    _original[star].RemoveAt(i);
+                    _serial[star].RemoveAt(i);
+                    player_update();
+                    return;
+                }
+            }
+        }
+
+        Debug.Log("[WARNING] There is none of id " + idx + " is exist in DB");
+
+    }
+
+    public void Init()
+    {
+        //_original = new List<List<Dictionary<string, object>>>();
+        _serial = new List<List<SerialDictionary<string, object>>>();
+
+        Debug.Log("PlayerDB_Init....");
+
+        for (int i = 0; i < 3; i++)
+        {
+            //_original.Add(new List<Dictionary<string, object>>());
+            _serial.Add(new List<SerialDictionary<string, object>>());
+        }
+
+
+        int star_cnt = _original.Count;
+        int unit_cnt = _original[0].Count;
+
+        for (int star = 0; star < star_cnt; star++)
+        {
+            for (int n = 0; n < unit_cnt; n++)
+            {
+                SerialDictionary<string, object> tmp = new SerialDictionary<string, object>();
+                tmp.Dic_Copy(_original[star], n);
+                _serial[star].Add(tmp);
+            }
+        }
+
+        player_update();
+    }
+
+    public void player_update()
+    {
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE);
+    }
+
+
+}
+
+#endregion
+
 // 유닛(기물)에 대한 정보
 #region Unit
 
@@ -274,6 +369,8 @@ public class HYJ_Player_Unit_Datas
             unitDatas.Add(null);
         }
     }
+
+    //
 }
 
 partial class HYJ_Player
@@ -375,6 +472,8 @@ partial class HYJ_Player
     {
         BATTLE_PHASE _PHASE = (BATTLE_PHASE)_args[0];
 
+        Debug.Log("[Player.UnitDataUpdate] " +  _PHASE);
+
         field_tiles = (List<HYJ_Battle_Manager_Line>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES);
         wait_tiles  = (HYJ_Battle_Manager_Line)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_TILES);
 
@@ -383,7 +482,8 @@ partial class HYJ_Player
         field_cnt = field_units.Count;
         stand_cnt = stand_units.Count;
 
-        DB_cnt = Player_Unit_csv[0].Count;
+        //DB_cnt = Player_Unit_csv[0].Count;
+        DB_cnt = Player_DB.Instance.unit_cnt;
 
         for (int i=0; i<3; i++) id_list[i] = new SerialList<int>(DB_cnt);
         synergy_list = new List<int>(DB_cnt);
@@ -404,6 +504,7 @@ partial class HYJ_Player
         {
             case BATTLE_PHASE.PHASE_INIT:
             case BATTLE_PHASE.PHASE_PREPARE:
+            case BATTLE_PHASE.PHASE_COMBAT_OVER:
                 Update_Stand_Tiles(_PHASE);
                 Update_Field_Tiles(_PHASE);
                 break;
@@ -740,34 +841,38 @@ partial class HYJ_Player
     object Player_DB_Update(params object [] _args)
     {
         // 1,2,3성 csv를 List로 처리. 
-        Player_Unit_csv = new List<List<Dictionary<string, object>>>();
-        string csv_path = "DataBase/Player_Unit_DataBase";
+        //Player_Unit_csv = new List<List<Dictionary<string, object>>>();
+        //string csv_path = "DataBase/Player_Unit_DataBase";
 
-        for (int i = 0; i < 3; i++)
-        {
-            List<Dictionary<string, object>> tmp = CSVReader.Read(csv_path + "_" + (i + 1).ToString());
-            Player_Unit_csv.Add(new List<Dictionary<string, object>>());
+        //for (int i = 0; i < 3; i++)
+        //{
+        //    List<Dictionary<string, object>> tmp = CSVReader.Read(csv_path + "_" + (i + 1).ToString());
+        //    Player_Unit_csv.Add(new List<Dictionary<string, object>>());
 
-            int len = tmp.Count;
-            for (int k = 0; k < len; k++)
-            {
-                Player_Unit_csv[i].Add(tmp[k]);
-            }
+        //    int len = tmp.Count;
+        //    for (int k = 0; k < len; k++)
+        //    {
+        //        Player_Unit_csv[i].Add(tmp[k]);
+        //    }
 
-        }
+        //}
 
-        for (int i = 0; i < Player_Unit_csv[0].Count; i++)
-        {
-            Player_Unit_csv[0][i]["Index"] = i;
-            Player_Unit_csv[1][i]["Index"] = i;
-            Player_Unit_csv[2][i]["Index"] = i;
-        }
+        //int unit_cnt = Player_Unit_csv[0].Count;
+        //for (int i = 0; i < unit_cnt; i++)
+        //{
+        //    Player_Unit_csv[0][i]["Index"] = i;
+        //    Player_Unit_csv[1][i]["Index"] = i;
+        //    Player_Unit_csv[2][i]["Index"] = i;
+        //}
+
+        var _ori = Player_DB.Instance.get_original[0];
+        int unit_cnt = _ori.Count;
 
         Serial_dic = new List<SerialDictionary<string, object>>();
-        for (int i = 0; i < Player_Unit_csv[0].Count; i++)
+        for (int i = 0; i < unit_cnt; i++)
         {
             SerialDictionary<string, object> tmp = new SerialDictionary<string, object>();
-            tmp.Dic_Copy(Player_Unit_csv[0], i);
+            tmp.Dic_Copy(_ori, i);
             Serial_dic.Add(tmp);
         }
 
@@ -776,39 +881,40 @@ partial class HYJ_Player
 
     void Player_DB_Init()
     {
-        //Player_Unit_csv = new List<List<Dictionary<string, object>>>();
-        //Player_Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+        {
+            //Player_Unit_csv = new List<List<Dictionary<string, object>>>();
+            //Player_Unit_csv = (List<List<Dictionary<string, object>>>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
 
-        //for (int _star = 0; _star < 3; _star++)
-        //{
-        //    StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_"
-        //        + (_star + 1).ToString() + ".csv");
-        //    // 헤더 추가
-        //    int row_cnt = Player_Unit_csv[_star][0].Keys.ToList().Count;
-        //    for (int i = 0; i < row_cnt - 1; i++)
-        //    {
-        //        outStream.Write(Player_Unit_csv[_star][0].Keys.ToList()[i]);
-        //        outStream.Write(",");
-        //    }
-        //    outStream.Write(Player_Unit_csv[_star][0].Keys.ToList()[row_cnt - 1]);
-        //    outStream.Write("\n");
+            //for (int _star = 0; _star < 3; _star++)
+            //{
+            //    StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_"
+            //        + (_star + 1).ToString() + ".csv");
+            //    // 헤더 추가
+            //    int row_cnt = Player_Unit_csv[_star][0].Keys.ToList().Count;
+            //    for (int i = 0; i < row_cnt - 1; i++)
+            //    {
+            //        outStream.Write(Player_Unit_csv[_star][0].Keys.ToList()[i]);
+            //        outStream.Write(",");
+            //    }
+            //    outStream.Write(Player_Unit_csv[_star][0].Keys.ToList()[row_cnt - 1]);
+            //    outStream.Write("\n");
 
-        //    // 내용 추가
-        //    int col_cnt = Player_Unit_csv[0].Count;
-        //    for (int k = 0; k < col_cnt; k++)
-        //    {
-        //        for (int i = 0; i < row_cnt - 1; i++)
-        //        {
-        //            outStream.Write(Player_Unit_csv[_star][k].Values.ToList()[i]);
-        //            outStream.Write(",");
-        //        }
-        //        outStream.Write(Player_Unit_csv[_star][k].Values.ToList()[row_cnt - 1]);
-        //        outStream.Write("\n");
-        //    }
-        //    outStream.Close();
+            //    // 내용 추가
+            //    int col_cnt = Player_Unit_csv[0].Count;
+            //    for (int k = 0; k < col_cnt; k++)
+            //    {
+            //        for (int i = 0; i < row_cnt - 1; i++)
+            //        {
+            //            outStream.Write(Player_Unit_csv[_star][k].Values.ToList()[i]);
+            //            outStream.Write(",");
+            //        }
+            //        outStream.Write(Player_Unit_csv[_star][k].Values.ToList()[row_cnt - 1]);
+            //        outStream.Write("\n");
+            //    }
+            //    outStream.Close();
 
-        //} 이 코드는 딕셔너리를 읽어서 파일을 생성하는 형식임. 아래의 전체 파일 복사와는 다름.
-
+            //} 이 코드는 딕셔너리를 읽어서 파일을 생성하는 형식임. 아래의 전체 파일 복사와는 다름.
+        }
 
         string[] lines;
         for (int i = 1; i <= 3; i++)
@@ -825,7 +931,14 @@ partial class HYJ_Player
             outStream.Close();
         }
 
-        Debug.Log("PlayerDB 생성 완료");
+        Debug.Log("[PlayerDB] DB_Using_Character_#.csv 생성 완료");
+
+
+        object var = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
+        
+
+
+        Player_DB_Update();
 
     }
 

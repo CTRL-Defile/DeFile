@@ -404,12 +404,15 @@ partial class HYJ_BaseCamp_Manager {
 
     public void DeleteUnit(int number)
     {
-        Debug.Log(number);
         int deleteLineNumber=0; //삭제할 UnitDataBase 라인 인덱스
-        if (number == 1) deleteLineNumber = randomSelectUnitNumber1+3;
-        if (number == 2) deleteLineNumber = randomSelectUnitNumber2+3;
-        if (number == 3) deleteLineNumber = randomSelectUnitNumber3+3;
+        if (number == 1) deleteLineNumber = randomSelectUnitNumber1;
+        if (number == 2) deleteLineNumber = randomSelectUnitNumber2;
+        if (number == 3) deleteLineNumber = randomSelectUnitNumber3;
 
+        Debug.Log(number + "번 카드 id : " + deleteLineNumber + " 삭제!");
+        Player_DB.Instance.idx_delete(deleteLineNumber);
+
+#if false
         string[] lines;
 
         for (int i = 1; i <= 3; i++)
@@ -435,6 +438,8 @@ partial class HYJ_BaseCamp_Manager {
         }
         //Debug.Log("삭제.");
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE);
+#endif
+
     }
 
     public void DeleteCard(int deleteNumber)
