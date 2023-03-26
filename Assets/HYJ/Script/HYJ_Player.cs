@@ -1061,7 +1061,7 @@ partial class HYJ_Player
             case "UNIT":    { HYJ_Unit_Insert(name, -1);                            }   break;
             case "POTION":  { HYJ_Buff_PotionInsert(name);                          }   break;
             case "BUFF":    { HYJ_Buff_BuffInsert(name);                            }   break;
-            //case "DEBUFF":  { HYJ_Buff_DeBuffInsert(name);                          }   break;
+            case "DEBUFF":  { HYJ_Buff_DeBuffInsert(name);                          }   break;
         }
 
         //
@@ -1183,9 +1183,9 @@ partial class HYJ_Player
         //Debug.Log("HYJ_Buff_BuffInsert " + element.Basic_data.Basic_name);
 
         int num = -1;
-        for(int i = 0; i < Buff_buffs.Count; i++)
+        for (int i = 0; i < Buff_buffs.Count; i++)
         {
-            if(Buff_buffs[i].CTRL_Basic_GetIsSame(element.Basic_data))
+            if (Buff_buffs[i].CTRL_Basic_GetIsSame(element.Basic_data))
             {
                 num = i;
                 break;
@@ -1202,10 +1202,47 @@ partial class HYJ_Player
         }
 
         // 친밀도 관련 버프 갱신이 있다면 발동하라.
-        if(element.CTRL_Basic_applyType.ToString().Split('_')[1].Equals("change"))
+        if (element.CTRL_Basic_applyType.ToString().Split('_')[1].Equals("change"))
         {
             HYJ_Reputation_Setting();
         }
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___BUFF__VIEW);
+    }
+
+    // DeBuff
+    void HYJ_Buff_DeBuffInsert(string _name)
+    {
+        // 여기에 버프의 종류가 늘어남에 따라 추가합니다.
+        CTRL_Buff element
+            = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_DATA,
+                int.Parse(_name));
+
+        //Debug.Log("HYJ_Buff_BuffInsert " + element.Basic_data.Basic_name);
+
+        int num = -1;
+        for (int i = 0; i < Buff_debuffs.Count; i++)
+        {
+            if (Buff_buffs[i].CTRL_Basic_GetIsSame(element.Basic_data))
+            {
+                num = i;
+                break;
+            }
+        }
+
+        if (num != -1)
+        {
+            Buff_debuffs.RemoveAt(num);
+        }
+
+        // 친밀도 관련 버프 갱신이 있다면 발동하라.
+        if (element.CTRL_Basic_applyType.ToString().Split('_')[1].Equals("change"))
+        {
+            HYJ_Reputation_Setting();
+        }
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___BUFF__VIEW);
     }
 
     //////////  Default Method  //////////
