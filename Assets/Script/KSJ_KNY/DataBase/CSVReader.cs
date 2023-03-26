@@ -8,7 +8,7 @@ public class CSVReader
 {
     public enum DataType
     {
-        Int, Float, String 
+        Int, Float, String, Bool
     }
 
     static string[] header;

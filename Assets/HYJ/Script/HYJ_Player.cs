@@ -49,10 +49,11 @@ public partial class HYJ_Player : MonoBehaviour
                     }
                 } 
                 break;
-            case 2: { if (HYJ_Item_Init()   ) { Basic_phase = 3;    }    }   break;
-            case 3: { if (HYJ_Buff_Init()   ) { Basic_phase = 4;    }    }   break;
+            case 2: { if (HYJ_Item_Init()       ) { Basic_phase = 3;    }    }   break;
+            case 3: { if (HYJ_Buff_Init()       ) { Basic_phase = 4;    }    }   break;
+            case 4: { if (HYJ_Reputation_Init() ) { Basic_phase = 5;    }    }   break;
 
-            case 4:
+            case 5:
                 {
                     BATTLE_PHASE _phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
 
@@ -1179,7 +1180,7 @@ partial class HYJ_Player
                 HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,
                 int.Parse(_name));
 
-        Debug.Log("HYJ_Buff_BuffInsert " + element.Basic_data.Basic_name);
+        //Debug.Log("HYJ_Buff_BuffInsert " + element.Basic_data.Basic_name);
 
         int num = -1;
         for(int i = 0; i < Buff_buffs.Count; i++)
@@ -1200,6 +1201,11 @@ partial class HYJ_Player
             Buff_buffs[num] = new CTRL_Buff_Save(element.Basic_data);
         }
 
+        // 친밀도 관련 버프 갱신이 있다면 발동하라.
+        if(element.CTRL_Basic_applyType.ToString().Split('_')[1].Equals("change"))
+        {
+            HYJ_Reputation_Setting();
+        }
     }
 
     //////////  Default Method  //////////
@@ -1224,48 +1230,111 @@ partial class HYJ_Player
 
 public enum HYJ_Player_REPUTATION_RACE
 {
-    HIGH_ELF = 0
+    ELF = 0,
+    HUMAN,
+    DWARF,
+    GOBLIN,
 }
 
 partial class HYJ_Player
 {
-    [SerializeField] List<int> Reputation_races;
-    const int Reputation_defaultValue = 1000;
+    const float Reputation_defaultValue = 1000f;
+
+    [Header ("REPUTATION ==================================================")]
+    [SerializeField] List<float> Reputation_races;
 
     //////////  Getter & Setter //////////
-
-    //////////  Method          //////////
-    void HYJ_Reputation_ChangeValue(float _value)
+    object HYJ_Reputation_GetValue(params object[] _args)
     {
-    }
-
-    object HYJ_Reputation_ChangeValue_Bridge(params object[] _args)
-    {
-        float value = (float)_args[0];
-
-        HYJ_Reputation_ChangeValue(value);
+        float res = -1f;
 
         //
-        return true;
+        HYJ_Player_REPUTATION_RACE type = (HYJ_Player_REPUTATION_RACE)_args[0];
+
+        //
+        res = Reputation_races[(int)type];
+
+        //
+        return res;
     }
+
+    //////////  Method          //////////
+    void HYJ_Reputation_Setting()
+    {
+        // 초기화
+        for (int i = 0; i < 10; i++)
+        {
+            Reputation_races[i] = Reputation_defaultValue;
+        }
+
+        //
+        for (int i = 0; i < Buff_buffs.Count; i++)
+        {
+            CTRL_Buff element
+                = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                    HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,
+                    Buff_buffs[i].Basic_index);
+
+            string[] applyTypes = element.CTRL_Basic_applyType.ToString().Split('_');
+            if(applyTypes[1].Equals("change"))
+            {
+                float ratio = 1.0f;
+                if(element.Basic_ratioType == CTRL_Buff.RATIO_TYPE.percent)
+                {
+                    ratio = element.Basic_ratioValue * 0.01f;
+                }
+                float insertValue = Reputation_defaultValue * ratio;
+                Reputation_races[(int)Enum.Parse(typeof(HYJ_Player_REPUTATION_RACE), applyTypes[0])] += insertValue;
+            }
+        }
+    }
+    //// HYJ_Reputation_PlusValue
+    //void HYJ_Reputation_PlusValue(HYJ_Player_REPUTATION_RACE _type, float _value)
+    //{
+    //    Reputation_races[(int)_type] += _value;
+    //}
+    //
+    //object HYJ_Reputation_PlusValue_Bridge(params object[] _args)
+    //{
+    //    HYJ_Player_REPUTATION_RACE type = (HYJ_Player_REPUTATION_RACE)_args[0];
+    //    float value = (float)_args[1];
+    //
+    //    HYJ_Reputation_PlusValue(type, value);
+    //
+    //    //
+    //    return true;
+    //}
+    //
+    //// HYJ_Reputation_PlusValue
+    //void HYJ_Reputation_MinusValue(HYJ_Player_REPUTATION_RACE _type, float _value)
+    //{
+    //    Reputation_races[(int)_type] -= _value;
+    //}
+    //
+    //object HYJ_Reputation_MinusValue_Bridge(params object[] _args)
+    //{
+    //    HYJ_Player_REPUTATION_RACE type = (HYJ_Player_REPUTATION_RACE)_args[0];
+    //    float value = (float)_args[1];
+    //
+    //    HYJ_Reputation_MinusValue(type, value);
+    //
+    //    //
+    //    return true;
+    //}
 
     //////////  Default Method  //////////
     bool HYJ_Reputation_Init()
     {
-        Reputation_races = new List<int>();
+        Reputation_races = new List<float>();
 
         for (int i = 0; i < 10; i++)
         {
             Reputation_races.Add(Reputation_defaultValue);
         }
-
-        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__SETTING, HYJ_Buff_Insert_Bridge);
-        //
-        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_BUFF_FROM_COUNT, HYJ_Buff_GetBuffFromCount);
-        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_BUFF_COUNT, HYJ_Buff_GetBuffCount);
-        //
-        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_FROM_COUNT, HYJ_Buff_GetDeBuffFromCount);
-        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_COUNT, HYJ_Buff_GetDeBuffCount);
+        
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___REPUTATION__GET_VALUE, HYJ_Reputation_GetValue );
+        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___REPUTATION__PLUS_VALUE,    HYJ_Reputation_PlusValue_Bridge     );
+        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___REPUTATION__MINUS_VALUE,   HYJ_Reputation_MinusValue_Bridge    );
 
         return true;
     }

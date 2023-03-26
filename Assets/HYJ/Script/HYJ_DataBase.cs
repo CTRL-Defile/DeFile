@@ -481,7 +481,9 @@ partial class HYJ_DataBase
         {
             case 0:
                 {
-                    Buff_datas = new Dictionary<int, CTRL_Buff>();
+                    Buff_datas      = new Dictionary<int, CTRL_Buff>();
+
+                    HYJ_DeBuff_Init(Buff_phase);
 
                     Buff_phase = 1;
                 }
@@ -491,10 +493,21 @@ partial class HYJ_DataBase
                     List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Buff_Value_csv");
 
                     //
+                    List<int> debuffCounts = new List<int>();
                     for (int i = 0; i < data.Count; i++)
                     {
-                        Buff_datas.Add((int)data[i]["num"], new CTRL_Buff(data[i]));
+                        int dataIndex = (int)data[i]["index"];
+                        if ((int)data[i]["ratio_value"] < 0)
+                        {
+                            debuffCounts.Add(dataIndex);
+                        }
+                        else
+                        {
+                            Buff_datas.Add(dataIndex, new CTRL_Buff(data[i]));
+                        }
                     }
+
+                    HYJ_DeBuff_Init(Buff_phase, data, debuffCounts);
 
                     Buff_phase = 2;
                 }
@@ -504,6 +517,8 @@ partial class HYJ_DataBase
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,  HYJ_Buff_GetData    );
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_COUNT, HYJ_Buff_GetCount   );
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_KEYS,  HYJ_Buff_GetKeys    );
+
+                    HYJ_DeBuff_Init(Buff_phase);
 
                     Buff_phase = 3;
                 }
@@ -516,6 +531,78 @@ partial class HYJ_DataBase
         }
 
         return (Buff_phase == -1);
+    }
+}
+
+#endregion
+
+#region DEBUFF
+
+partial class HYJ_DataBase
+{
+    Dictionary<int, CTRL_Buff> DeBuff_datas;
+
+    //////////  Getter & Setter //////////
+    object HYJ_DeBuff_GetData(params object[] _args)
+    {
+        int id = (int)_args[0];
+        return DeBuff_datas[id];
+    }
+
+    object HYJ_DeBuff_GetCount(params object[] _args)
+    {
+        return DeBuff_datas.Count;
+    }
+
+    object HYJ_DeBuff_GetKeys(params object[] _args)
+    {
+        List<int> res = new List<int>(DeBuff_datas.Keys);
+
+        return res;
+    }
+
+    //////////  Method          //////////
+
+    //////////  Default Method  //////////
+
+    // 초기화
+    void HYJ_DeBuff_Init(params object[] _args)
+    {
+        int phase = (int)_args[0];
+        List<Dictionary<string, object>> data = null;
+        List<int> debuffCounts = null;
+        if (_args.Length > 1)
+        {
+            data            = (List<Dictionary<string, object>>)_args[1];
+            debuffCounts    = (List<int>)_args[2];
+        }
+
+
+        //
+        switch (phase)
+        {
+            case 0:
+                {
+                    DeBuff_datas    = new Dictionary<int, CTRL_Buff>();
+                }
+                break;
+            case 1:
+                {
+                    //
+                    for (int i = 0; i < debuffCounts.Count; i++)
+                    {
+                        DeBuff_datas.Add((int)data[debuffCounts[i]]["index"], new CTRL_Buff(data[debuffCounts[i]]));
+                    }
+                }
+                break;
+            case 2:
+                {
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_DATA,  HYJ_DeBuff_GetData    );
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_COUNT, HYJ_DeBuff_GetCount   );
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_KEYS,  HYJ_DeBuff_GetKeys    );
+                }
+                break;
+        }
     }
 }
 

@@ -1,6 +1,26 @@
-index,tag,name,num,precondition_class,precondition_type,precondition_value,applyTarget_class,applyTarget_type,ratio_type,ratio_value,duration_type,duration_value,isShop
-Int,String,String,Int,String,String,Int,String,String,String,Int,String,Float,String
-인덱스,태그,이름,번호,선행조건_조건분류,선행조건_조건종류,선행조건_조건값,적용대상_적용분류,적용대상_적용값,변동량_값형태,변동량_값,지속시간_기준,지속시간_값,상점 구매 가능 여부
-0,AA,엘프 등장 (소)확률 증가,1,NONE,NONE,0,SYNERGY_ELF,SPAWN_CHANGE,PERCENT,10,STAGE,5,TRUE
-1,AA,엘프 등장 (중)확률 증가,2,NONE,NONE,0,SYNERGY_ELF,SPAWN_CHANGE,PERCENT,30,STAGE,5,TRUE
-2,AA,엘프 공격력 (소)강화,3,HAVE_MORE,SYNERGY,3,SYNERGY_ELF,ATTACK_POINT,FLAT,20,STAGE,7,FALSE
+index,tag,name,precondition_class,precondition_type,precondition_value,applyTarget_class,ratio_type,ratio_value,duration_type,duration_value,isShop
+Int,String,String,String,String,Int,String,String,Int,String,Float,Bool
+인덱스,태그,이름,선행조건_조건분류,선행조건_조건종류,선행조건_조건값,적용대상_적용분류,변동량_값형태,변동량_값,지속시간_기준,지속시간_값,상점 구매 가능 여부
+001,None,ELF_chance_10up,NONE,NONE,-1,ELF_chance,percent,10,stage,5,TRUE
+002,None,HUMAN_chance_10up,NONE,NONE,-1,HUMAN_chance,percent,10,stage,5,TRUE
+003,None,DWARF_chance_10up,NONE,NONE,-1,DWARF_chance,percent,10,stage,5,TRUE
+004,None,GOBLIN_chance_10up,NONE,NONE,-1,GOBLIN_chance,percent,10,stage,5,TRUE
+005,None,ELF_chance_10down,NONE,NONE,-1,ELF_chance,percent,-10,stage,5,TRUE
+006,None,HUMAN_chance_10down,NONE,NONE,-1,HUMAN_chance,percent,-10,stage,5,TRUE
+007,None,DWARF_chance_10down,NONE,NONE,-1,DWARF_chance,percent,-10,stage,5,TRUE
+008,None,GOBLIN_chance_10down,NONE,NONE,-1,GOBLIN_chance,percent,-10,stage,5,TRUE
+009,None,ELF_physicAtk_10up,NONE,NONE,-1,ELF_physicAtk,plat,10,stage,5,TRUE
+010,None,HUMAN_physicAtk_10up,NONE,NONE,-1,HUMAN_physicAtk,plat,10,stage,5,TRUE
+011,None,DWARF_physicAtk_10up,NONE,NONE,-1,DWARF_physicAtk,plat,10,stage,5,TRUE
+012,None,GOBLIN_physicAtk_10up,NONE,NONE,-1,GOBLIN_physicAtk,plat,10,stage,5,TRUE
+013,None,ELF_physicAtk_10down,NONE,NONE,-1,ELF_physicAtk,plat,-10,stage,5,TRUE
+014,None,HUMAN_physicAtk_10down,NONE,NONE,-1,HUMAN_physicAtk,plat,-10,stage,5,TRUE
+015,None,DWARF_physicAtk_10down,NONE,NONE,-1,DWARF_physicAtk,plat,-10,stage,5,TRUE
+016,None,GOBLIN_physicAtk_10down,NONE,NONE,-1,GOBLIN_physicAtk,plat,-10,stage,5,TRUE
+017,None,Character_001_Atk_10up,NONE,NONE,-1,Character_001,plat,10,stage,100,TRUE
+018,None,Character_001_Atk_10up,NONE,NONE,-1,Character_001,percent,10,stage,100,TRUE
+019,None,Player_Moneygain_1up,GET_GOLD,NONE,-1,Player_moneygain,plat,1,stage,100,TRUE
+020,None,Player_Expbuy_3up,BUY_EXP,NONE,-1,Player_Expbuy,plat,3,stage,100,TRUE
+021,None,Player_Expgain_3up,GET_EXP,NONE,-1,Player_Expgain,plat,3,stage,100,TRUE
+022,None,Player_HighLv_Expbuy_1down,BUY_EXP,PLAYER_LEVEL_MIN,10,Player_Expgain,plat,-1,stage,100,TRUE
+023,None,Player_LowLv_Expbuy_3up,BUY_EXP,PLAYER_LEVEL_MAX,7,Player_Expgain,plat,3,stage,100,TRUE
