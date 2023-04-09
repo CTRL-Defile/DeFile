@@ -27,21 +27,32 @@ public partial class CTRL_Buff : IDisposable
 
     public enum APPLY_TYPE
     {
+        //
+        Player_moneygain,
+        Player_Expbuy,
+        Player_Expgain,
+        //
         ELF_chance,
         HUMAN_chance,
         DWARF_chance,
         GOBLIN_chance,
+        SPIRIT_chance,
+        DEMON_chance,
+        BEAST_chance,
+        //
+        health_currentHealth,
+
+        // Character
         //
         ELF_physicAtk,
         HUMAN_physicAtk,
         DWARF_physicAtk,
         GOBLIN_physicAtk,
         //
-        Character_001,
+        field_Unit_physicAtk,
+        field_Unit_magicAtk,
         //
-        Player_moneygain,
-        Player_Expbuy,
-        Player_Expgain
+        Character_001
     }
 
     public enum RATIO_TYPE

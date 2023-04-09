@@ -1,0 +1,5 @@
+index,tag,name,precondition_class,precondition_type,precondition_value,applyTarget_class,ratio_type,ratio_value,duration_type,duration_value,isShop,Ex
+Int,String,String,String,String,Int,String,String,Int,String,Float,Bool,String
+인덱스,태그,이름,선행조건_조건분류,선행조건_조건종류,선행조건_조건값,적용대상_적용분류,변동량_값형태,변동량_값,지속시간_기준,지속시간_값,상점 구매 가능 여부,설명
+011,None,Player_Moneygain_1up,001,-1,-1,Player_moneygain,plat,1,stage,-1,TRUE,플레이어가 골드를 획득할 시 1추가 획득
+019,None,Player_Moneygain_1down,001,-1,-1,Player_moneygain,plat,-1,chaper,1,TRUE,해당 챕터가 진행되는 동안 플레이어가 골드를 획득할 시 획득 골드 1감소

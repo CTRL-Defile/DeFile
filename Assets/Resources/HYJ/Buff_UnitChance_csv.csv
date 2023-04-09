@@ -1,0 +1,19 @@
+index,tag,name,precondition_class,precondition_type,precondition_value,applyTarget_class,ratio_type,ratio_value,duration_type,duration_value,isShop,Ex
+Int,String,String,String,String,Int,String,String,Int,String,Float,Bool,String
+인덱스,태그,이름,선행조건_조건분류,선행조건_조건종류,선행조건_조건값,적용대상_적용분류,변동량_값형태,변동량_값,지속시간_기준,지속시간_값,상점 구매 가능 여부,설명
+016,None,ELF_chance_10up,NONE,NONE,-1,ELF_chance,percent,10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 상점에 엘프종족 등장확률 10% 증가
+017,None,HUMAN_chance_10up,NONE,NONE,-1,HUMAN_chance,percent,10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 상점에 인간종족 등장확률 10% 증가
+022,None,DWARF_chance_10up,NONE,NONE,-1,DWARF_chance,percent,10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 상점에 드워프종족 등장확률 10% 증가
+023,None,GOBLIN_chance_10up,NONE,NONE,-1,GOBLIN_chance,percent,10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 상점에 고블린종족 등장확률 10% 증가
+024,None,ELF_chance_10down,NONE,NONE,-1,ELF_chance,percent,-10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 상점에 엘프종족 등장확률 10% 감소
+025,None,HUMAN_chance_10down,NONE,NONE,-1,HUMAN_chance,percent,-10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 상점에 인간종족 등장확률 10% 감소
+026,None,DWARF_chance_10down,NONE,NONE,-1,DWARF_chance,percent,-10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 상점에 드워프종족 등장확률 10%  감소
+027,None,GOBLIN_chance_10down,NONE,NONE,-1,GOBLIN_chance,percent,-10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 상점에 고블린종족 등장확률 10% 감소
+028,None,SPIRIT_chance_20down,NONE,NONE,-1,SPIRIT_chance,percent,-20,chaper,1,TRUE,해당 챕터가 진행되는 동안 상점에 정령종족 등장확률 20% 감소
+029,None,DEMON_chance_20up,NONE,NONE,-1,DEMON_chance,percent,20,chaper,1,TRUE,해당 챕터가 진행되는 동안 상점에 마족종족 등장확률 20% 증가
+030,None,BEAST_chance_20up,NONE,NONE,-1,BEAST_chance,percent,20,chaper,1,TRUE,해당 챕터가 진행되는 동안 상점에 야수종족 등장확률 20% 증가
+031,None,BEAST_chance_20down,NONE,NONE,-1,BEAST_chance,percent,-20,chaper,1,TRUE,해당 챕터가 진행되는 동안 상점에 야수종족 등장확률 20% 감소
+032,None,GOBLIN_chance_20up,NONE,NONE,-1,GOBLIN_chance,percent,20,chaper,1,TRUE,해당 챕터가 진행되는 동안 상점에 고블린종족 등장확률 20% 증가
+033,None,GOBLIN_chance_20down,NONE,NONE,-1,GOBLIN_chance,percent,-20,chaper,1,TRUE,해당 챕터가 진행되는 동안 상점에 고블린종족 등장확률 20% 감소
+034,None,DWARF_chance_10up,NONE,NONE,-1,DWARF_chance,percent,20,chaper,1,TRUE,해당 챕터가 진행되는 동안 상점에 드워프종족 등장확률 20% 증가
+035,None,DWARF_chance_20down,NONE,NONE,-1,DWARF_chance,percent,-20,chaper,1,TRUE,해당 챕터가 진행되는 동안 상점에 드워프종족 등장확률 20% 감소

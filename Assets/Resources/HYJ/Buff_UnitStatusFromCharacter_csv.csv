@@ -1,0 +1,5 @@
+index,tag,name,precondition_class,precondition_type,precondition_value,applyTarget_class,ratio_type,ratio_value,duration_type,duration_value,isShop,Ex
+Int,String,String,String,String,Int,String,String,Int,String,Float,Bool,String
+인덱스,태그,이름,선행조건_조건분류,선행조건_조건종류,선행조건_조건값,적용대상_적용분류,변동량_값형태,변동량_값,지속시간_기준,지속시간_값,상점 구매 가능 여부,설명
+009,None,Character_001_physicAtk_10up,-1,-1,-1,Character_001,plat,10,stage,-1,TRUE,캐릭터 001의 물리공격력 10증가
+010,None,Character_001_physicAtkpercent_10up,-1,-1,-1,Character_001,percent,10,stage,-1,TRUE,캐릭터 001의 물리공격력 10%증가

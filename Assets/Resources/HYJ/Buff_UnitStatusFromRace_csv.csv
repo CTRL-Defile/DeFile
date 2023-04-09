@@ -1,0 +1,11 @@
+index,tag,name,precondition_class,precondition_type,precondition_value,applyTarget_class,ratio_type,ratio_value,duration_type,duration_value,isShop,Ex
+Int,String,String,String,String,Int,String,String,Int,String,Float,Bool,String
+인덱스,태그,이름,선행조건_조건분류,선행조건_조건종류,선행조건_조건값,적용대상_적용분류,변동량_값형태,변동량_값,지속시간_기준,지속시간_값,상점 구매 가능 여부,설명
+001,None,ELF_physicAtk_10up,-1,-1,-1,ELF_physicAtk,plat,10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 엘프종족 유닛의 물리공격력 10증가
+002,None,HUMAN_physicAtk_10up,-1,-1,-1,HUMAN_physicAtk,plat,10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 인간종족 유닛의 물리공격력 10증가
+003,None,DWARF_physicAtk_10up,-1,-1,-1,DWARF_physicAtk,plat,10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 드워프종족 유닛의 물리공격력 10증가
+004,None,GOBLIN_physicAtk_10up,-1,-1,-1,GOBLIN_physicAtk,plat,10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 고블린종족 유닛의 물리공격력 10증가
+005,None,ELF_physicAtk_10down,-1,-1,-1,ELF_physicAtk,plat,-10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 엘프종족 유닛의 물리공격력 10감소
+006,None,HUMAN_physicAtk_10down,-1,-1,-1,HUMAN_physicAtk,plat,-10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 인간종족 유닛의 물리공격력 10감소
+007,None,DWARF_physicAtk_10down,-1,-1,-1,DWARF_physicAtk,plat,-10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 드워프종족 유닛의 물리공격력 10감소
+008,None,GOBLIN_physicAtk_10down,-1,-1,-1,GOBLIN_physicAtk,plat,-10,stage,5,TRUE,5개의 스테이지가 진행되는 동안 고블린종족 유닛의 물리공격력 10감소

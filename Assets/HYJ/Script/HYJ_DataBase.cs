@@ -490,24 +490,14 @@ partial class HYJ_DataBase
                 break;
             case 1:
                 {
-                    List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Buff_Value_csv");
+                    HYJ_Buff_Init_1_BuffSetting(    "Buff_PlayerExp_csv"    );
+                    HYJ_Buff_Init_1_BuffSetting(    "Buff_PlayerGold_csv"   );
+                    HYJ_Buff_Init_1_BuffSetting(    "Buff_PlayerHp_csv"     );
 
-                    //
-                    List<int> debuffCounts = new List<int>();
-                    for (int i = 0; i < data.Count; i++)
-                    {
-                        int dataIndex = (int)data[i]["index"];
-                        if ((int)data[i]["ratio_value"] < 0)
-                        {
-                            debuffCounts.Add(dataIndex);
-                        }
-                        else
-                        {
-                            Buff_datas.Add(dataIndex, new CTRL_Buff(data[i]));
-                        }
-                    }
-
-                    HYJ_DeBuff_Init(Buff_phase, data, debuffCounts);
+                    HYJ_Buff_Init_1_BuffSetting(    "Buff_UnitChance_csv"               );
+                    HYJ_Buff_Init_1_BuffSetting(    "Buff_UnitStatusFromCharacter_csv"  );
+                    HYJ_Buff_Init_1_BuffSetting(    "Buff_UnitStatusFromField_csv"      );
+                    HYJ_Buff_Init_1_BuffSetting(    "Buff_UnitStatusFromRace_csv"       );
 
                     Buff_phase = 2;
                 }
@@ -531,6 +521,28 @@ partial class HYJ_DataBase
         }
 
         return (Buff_phase == -1);
+    }
+
+    void HYJ_Buff_Init_1_BuffSetting(string _csv)
+    {
+        List<Dictionary<string, object>> data = CSVReader.Read("HYJ/" + _csv);
+
+        //
+        List<int> debuffCounts = new List<int>();
+        for (int i = 0; i < data.Count; i++)
+        {
+            if ((int)data[i]["ratio_value"] < 0)
+            {
+                debuffCounts.Add(i);
+            }
+            else
+            {
+                int dataIndex = (int)data[i]["index"];
+                Buff_datas.Add(dataIndex, new CTRL_Buff(data[i]));
+            }
+        }
+
+        HYJ_DeBuff_Init(Buff_phase, data, debuffCounts);
     }
 }
 
