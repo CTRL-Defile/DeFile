@@ -513,6 +513,9 @@ partial class HYJ_Event_Manager
         List<JHW_EventSelect> eventSelectResult = EventSelect_datas.FindAll(x => x.Data_EVENT_ID.Equals(randomEventID));// 이벤트셀렉트 선택지1,2
         SaveCSVFile(eventSelectResult[0]);
 
+        // 플레이어 버프에 추가
+        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__SETTING,eventSelectResult[0]);
+
         // 결과 선택 후 등장하는 스크립트로 변경
         resultScript = Event_datas[randomEventID].Data_SELECTED1_SCRIPT_KOR.Replace("n", "\n");
 
