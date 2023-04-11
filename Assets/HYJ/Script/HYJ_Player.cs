@@ -1202,6 +1202,13 @@ partial class HYJ_Player
 
     }
 
+    object BuffInsertByEvent(params object[] _args) // 이벤트에서 넘어온 버프 플레이어한테 추가
+    {
+        CTRL_Buff_Save data = (CTRL_Buff_Save)_args[0];
+        Buff_buffs.Add(data);
+        return true;
+    }
+
     //////////  Default Method  //////////
     bool HYJ_Buff_Init()
     {
@@ -1212,6 +1219,9 @@ partial class HYJ_Player
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_FROM_COUNT,   HYJ_Buff_GetDeBuffFromCount );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_COUNT,        HYJ_Buff_GetDeBuffCount     );
+
+        // JHW - Buff insert to player by event
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__INSERT_BY_EVENT,  BuffInsertByEvent);
 
         return true;
     }
