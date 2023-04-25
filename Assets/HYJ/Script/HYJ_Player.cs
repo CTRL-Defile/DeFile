@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -71,18 +71,18 @@ public partial class HYJ_Player : MonoBehaviour
     }
 }
 
-// ±âº» Á¤º¸¸¦ ºĞ·ù
+// ê¸°ë³¸ ì •ë³´ë¥¼ ë¶„ë¥˜
 #region Basic
 
 partial class HYJ_Player
 {
-    [SerializeField] int Basic_level;   // ·¹º§
-    [SerializeField] int Basic_exp;     // °æÇèÄ¡
+    [SerializeField] int Basic_level;   // ë ˆë²¨
+    [SerializeField] int Basic_exp;     // ê²½í—˜ì¹˜
 
-    [SerializeField] int Basic_hp;      // ÇöÀç ³²Àº Ã¼·Â
-    [SerializeField] int Basic_hpMax;   // ÃÖ´ë Ã¼·Â
+    [SerializeField] int Basic_hp;      // í˜„ì¬ ë‚¨ì€ ì²´ë ¥
+    [SerializeField] int Basic_hpMax;   // ìµœëŒ€ ì²´ë ¥
 
-    [SerializeField] int Basic_gold;    // º¸À¯ÇÏ°í ÀÖ´Â ±İÈ­
+    [SerializeField] int Basic_gold;    // ë³´ìœ í•˜ê³  ìˆëŠ” ê¸ˆí™”
 
     //////////  Getter & Setter //////////
 
@@ -121,7 +121,7 @@ partial class HYJ_Player
         return Basic_gold;
     }
 
-    // ±İÈ­°¡ ÃæºĞÈ÷ ÀÖ´ÂÁö Ã¼Å©
+    // ê¸ˆí™”ê°€ ì¶©ë¶„íˆ ìˆëŠ”ì§€ ì²´í¬
     object HYJ_Basic_GoldIsEnough(params object[] _args)
     {
         bool res = false;
@@ -136,7 +136,7 @@ partial class HYJ_Player
         return res;
     }
 
-    // ±İÈ­¸¦ Ãß°¡ÇÑ´Ù.
+    // ê¸ˆí™”ë¥¼ ì¶”ê°€í•œë‹¤.
     object HYJ_Basic_GoldPlus(params object[] _args)
     {
         //
@@ -150,7 +150,7 @@ partial class HYJ_Player
         return null;
     }
 
-    // ±İÈ­¸¦ ÁöºÒÇÑ´Ù.
+    // ê¸ˆí™”ë¥¼ ì§€ë¶ˆí•œë‹¤.
     object HYJ_Basic_GoldMinus(params object[] _args)
     {
         bool res = false;
@@ -171,7 +171,7 @@ partial class HYJ_Player
         return res;
     }
 
-    // ±İÈ­ ÀÌÀÚ
+    // ê¸ˆí™” ì´ì
     object Basic_GoldInterest(params object[] _args)
     {
         if (Basic_gold >= 50)
@@ -199,14 +199,14 @@ partial class HYJ_Player
         return Basic_hpMax;
     }
 
-    // ÇÃ·¹ÀÌ¾î Ã¼·Â È¸º¹
+    // í”Œë ˆì´ì–´ ì²´ë ¥ íšŒë³µ
     object JHW_Basic_hp_Increase(params object[] _args)
     {
         int value = (int)_args[0];
         if (Basic_hpMax < Basic_hp + value) Basic_hp = Basic_hpMax;
         else Basic_hp = Basic_hp + value;
 
-        // ÇÃ·¹ÀÌ¾î HP »ó´Ü¹Ù Á¶Á¤
+        // í”Œë ˆì´ì–´ HP ìƒë‹¨ë°” ì¡°ì •
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___HP__VIEW_HP);
 
         return true;
@@ -243,7 +243,7 @@ partial class HYJ_Player
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_PLAYER_UNIT_DATABASE, Player_Unit_GetUnitDataBase);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE, Player_DB_Update);
 
-        // ÇÃ·¹ÀÌ¾î HP »ó´Ü¹Ù Á¶Á¤
+        // í”Œë ˆì´ì–´ HP ìƒë‹¨ë°” ì¡°ì •
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___HP__VIEW_HP);
 
         return true;
@@ -343,7 +343,7 @@ public class Player_DB
 
 #endregion
 
-// À¯´Ö(±â¹°)¿¡ ´ëÇÑ Á¤º¸
+// ìœ ë‹›(ê¸°ë¬¼)ì— ëŒ€í•œ ì •ë³´
 #region Unit
 
 [Serializable]
@@ -427,8 +427,8 @@ partial class HYJ_Player
     }
 
     //////////  Method          //////////
-    // À¯´ÖÀ» Ãß°¡ÇÑ´Ù.
-    // -1ÀÌ¸é ºó Ä­¿¡ Ãß°¡ÇÑ´Ù.
+    // ìœ ë‹›ì„ ì¶”ê°€í•œë‹¤.
+    // -1ì´ë©´ ë¹ˆ ì¹¸ì— ì¶”ê°€í•œë‹¤.
     bool HYJ_Unit_Insert(string _name, int _count)
     {
         bool res = false;
@@ -623,7 +623,7 @@ partial class HYJ_Player
         }
         */
 
-        Debug.Log("¿©±â±îÁö¿È? " + _candidate_units.Count);
+        Debug.Log("ì—¬ê¸°ê¹Œì§€ì˜´? " + _candidate_units.Count);
         //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
 
         return false;
@@ -700,6 +700,7 @@ partial class HYJ_Player
             id_list[_star].m_List[_id]++;
             //Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
 
+            // 2,3ì„± ê°ì§€
             if (_star < 3 && id_list[_star].m_List[_id] == 3)
             {
                 if (Find_Unit_On_Tile(obj, _PHASE))
@@ -717,11 +718,18 @@ partial class HYJ_Player
 
                     _Tile = null;
 
+                    // ì‹œë„ˆì§€ ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™”
+                    synergy_list[obj_char.Stat_Cost - 1] = 0;
+                    synergy_list[obj_char.Stat_Cost]++;
+
+                    // ID ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™”
                     id_list[_star].m_List[_id] = 0;
                     id_list[_star + 1].m_List[_id]++;
                     Debug.Log(obj.name + " _star : " + obj_char.StarInt() + ", _cnt : " + id_list[obj_char.StarInt()].m_List[_id]);
                 }
-                if (id_list[_star + 1].m_List[_id] == 3 && _star < 2)
+
+                // 3ì„± ê°ì§€
+                if (_star < 2 && id_list[_star + 1].m_List[_id] == 3)
                 {
                     //Debug.Log("STAR: " + (_star + 1) + " is 3! candi num " + _candidate_units.Count);
                     //_candidate_units.Clear();
@@ -735,7 +743,7 @@ partial class HYJ_Player
         for (int i = 0; i < DB_cnt; i++)
             synergy_dic[i + 1] = synergy_list[i];
 
-        // Tile.Ally_Enter¿¡¼­ Player.UnitDataUpdate È£Ãâ, ÀÌÈÄ SynergyUpdate È£Ãâ
+        // Tile.Ally_Enterì—ì„œ Player.UnitDataUpdate í˜¸ì¶œ, ì´í›„ SynergyUpdate í˜¸ì¶œ
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, synergy_dic);
     }
 
@@ -838,10 +846,10 @@ partial class HYJ_Player
 
     //////////  Default Method  //////////
 
-    // Battle_Manager.Unit_init(), BaseCamp_Manager_DeleteUnit() ¿¡¼­ È£Ãâ
+    // Battle_Manager.Unit_init(), BaseCamp_Manager_DeleteUnit() ì—ì„œ í˜¸ì¶œ
     object Player_DB_Update(params object [] _args)
     {
-        // 1,2,3¼º csv¸¦ List·Î Ã³¸®. 
+        // 1,2,3ì„± csvë¥¼ Listë¡œ ì²˜ë¦¬. 
         //Player_Unit_csv = new List<List<Dictionary<string, object>>>();
         //string csv_path = "DataBase/Player_Unit_DataBase";
 
@@ -890,7 +898,7 @@ partial class HYJ_Player
             //{
             //    StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_"
             //        + (_star + 1).ToString() + ".csv");
-            //    // Çì´õ Ãß°¡
+            //    // í—¤ë” ì¶”ê°€
             //    int row_cnt = Player_Unit_csv[_star][0].Keys.ToList().Count;
             //    for (int i = 0; i < row_cnt - 1; i++)
             //    {
@@ -900,7 +908,7 @@ partial class HYJ_Player
             //    outStream.Write(Player_Unit_csv[_star][0].Keys.ToList()[row_cnt - 1]);
             //    outStream.Write("\n");
 
-            //    // ³»¿ë Ãß°¡
+            //    // ë‚´ìš© ì¶”ê°€
             //    int col_cnt = Player_Unit_csv[0].Count;
             //    for (int k = 0; k < col_cnt; k++)
             //    {
@@ -914,15 +922,15 @@ partial class HYJ_Player
             //    }
             //    outStream.Close();
 
-            //} ÀÌ ÄÚµå´Â µñ¼Å³Ê¸®¸¦ ÀĞ¾î¼­ ÆÄÀÏÀ» »ı¼ºÇÏ´Â Çü½ÄÀÓ. ¾Æ·¡ÀÇ ÀüÃ¼ ÆÄÀÏ º¹»ç¿Í´Â ´Ù¸§.
+            //} ì´ ì½”ë“œëŠ” ë”•ì…”ë„ˆë¦¬ë¥¼ ì½ì–´ì„œ íŒŒì¼ì„ ìƒì„±í•˜ëŠ” í˜•ì‹ì„. ì•„ë˜ì˜ ì „ì²´ íŒŒì¼ ë³µì‚¬ì™€ëŠ” ë‹¤ë¦„.
         }
 
         string[] lines;
         for (int i = 1; i <= 3; i++)
         {
-            // UsingDB ÀĞ¾î¿À±â
+            // UsingDB ì½ì–´ì˜¤ê¸°
             lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character_" + i.ToString() + ".csv");
-            // PlayerDB »èÁ¦ ÈÄ »ı¼º
+            // PlayerDB ì‚­ì œ í›„ ìƒì„±
             System.IO.File.Delete("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
             StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
             for (int j = 0; j < lines.Length; j++)
@@ -932,7 +940,7 @@ partial class HYJ_Player
             outStream.Close();
         }
 
-        Debug.Log("[PlayerDB] DB_Using_Character_#.csv »ı¼º ¿Ï·á");
+        Debug.Log("[PlayerDB] DB_Using_Character_#.csv ìƒì„± ì™„ë£Œ");
 
 
         object var = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
@@ -1008,15 +1016,15 @@ partial class HYJ_Player
 
 #endregion
 
-// ¾ÆÀÌÅÛ¿¡ ´ëÇÑ Á¤º¸
+// ì•„ì´í…œì— ëŒ€í•œ ì •ë³´
 #region Item
 
-// ¾ÆÀÌÅÛ Á¤º¸¸¦ ¸ğÀº Å¬·¡½º
+// ì•„ì´í…œ ì •ë³´ë¥¼ ëª¨ì€ í´ë˜ìŠ¤
 [Serializable]
 public class HYJ_Player_Item : IDisposable
 {
-    public string   Data_name;  // ¾ÆÀÌÅÛÀÇ DBÀÌ¸§
-    public int      Data_count; // ÇöÀç º¸À¯ÇÏ°í ÀÖ´Â °¹¼ö
+    public string   Data_name;  // ì•„ì´í…œì˜ DBì´ë¦„
+    public int      Data_count; // í˜„ì¬ ë³´ìœ í•˜ê³  ìˆëŠ” ê°¯ìˆ˜
 
     //////////  Getter & Setter //////////
 
@@ -1081,7 +1089,7 @@ partial class HYJ_Player
 
 #endregion
 
-// ¹öÇÁ Á¤º¸
+// ë²„í”„ ì •ë³´
 #region Buff
 
 partial class HYJ_Player
@@ -1174,7 +1182,7 @@ partial class HYJ_Player
     // Buff
     void HYJ_Buff_BuffInsert(string _name)
     {
-        // ¿©±â¿¡ ¹öÇÁÀÇ Á¾·ù°¡ ´Ã¾î³²¿¡ µû¶ó Ãß°¡ÇÕ´Ï´Ù.
+        // ì—¬ê¸°ì— ë²„í”„ì˜ ì¢…ë¥˜ê°€ ëŠ˜ì–´ë‚¨ì— ë”°ë¼ ì¶”ê°€í•©ë‹ˆë‹¤.
         CTRL_Buff element
             = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                 HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,
@@ -1201,7 +1209,7 @@ partial class HYJ_Player
             Buff_buffs[num] = new CTRL_Buff_Save(element.Basic_data);
         }
 
-        // Ä£¹Ğµµ °ü·Ã ¹öÇÁ °»½ÅÀÌ ÀÖ´Ù¸é ¹ßµ¿ÇÏ¶ó.
+        // ì¹œë°€ë„ ê´€ë ¨ ë²„í”„ ê°±ì‹ ì´ ìˆë‹¤ë©´ ë°œë™í•˜ë¼.
         if (element.CTRL_Basic_applyType.ToString().Split('_')[1].Equals("change"))
         {
             HYJ_Reputation_Setting();
@@ -1213,7 +1221,7 @@ partial class HYJ_Player
     // DeBuff
     void HYJ_Buff_DeBuffInsert(string _name)
     {
-        // ¿©±â¿¡ ¹öÇÁÀÇ Á¾·ù°¡ ´Ã¾î³²¿¡ µû¶ó Ãß°¡ÇÕ´Ï´Ù.
+        // ì—¬ê¸°ì— ë²„í”„ì˜ ì¢…ë¥˜ê°€ ëŠ˜ì–´ë‚¨ì— ë”°ë¼ ì¶”ê°€í•©ë‹ˆë‹¤.
         CTRL_Buff element
             = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                 HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_DATA,
@@ -1236,7 +1244,7 @@ partial class HYJ_Player
             Buff_debuffs.RemoveAt(num);
         }
 
-        // Ä£¹Ğµµ °ü·Ã ¹öÇÁ °»½ÅÀÌ ÀÖ´Ù¸é ¹ßµ¿ÇÏ¶ó.
+        // ì¹œë°€ë„ ê´€ë ¨ ë²„í”„ ê°±ì‹ ì´ ìˆë‹¤ë©´ ë°œë™í•˜ë¼.
         if (element.CTRL_Basic_applyType.ToString().Split('_')[1].Equals("change"))
         {
             HYJ_Reputation_Setting();
@@ -1245,7 +1253,7 @@ partial class HYJ_Player
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___BUFF__VIEW);
     }
 
-    object BuffInsertByEvent(params object[] _args) // ÀÌº¥Æ®¿¡¼­ ³Ñ¾î¿Â ¹öÇÁ ÇÃ·¹ÀÌ¾îÇÑÅ× Ãß°¡
+    object BuffInsertByEvent(params object[] _args) // ì´ë²¤íŠ¸ì—ì„œ ë„˜ì–´ì˜¨ ë²„í”„ í”Œë ˆì´ì–´í•œí…Œ ì¶”ê°€
     {
         CTRL_Buff_Save data = (CTRL_Buff_Save)_args[0];
         Buff_buffs.Add(data);
@@ -1272,7 +1280,7 @@ partial class HYJ_Player
 
 #endregion
 
-// ÆòÆÇ Á¤º¸
+// í‰íŒ ì •ë³´
 #region Reputation
 
 public enum HYJ_Player_REPUTATION_RACE
@@ -1308,7 +1316,7 @@ partial class HYJ_Player
     //////////  Method          //////////
     void HYJ_Reputation_Setting()
     {
-        // ÃÊ±âÈ­
+        // ì´ˆê¸°í™”
         for (int i = 0; i < 10; i++)
         {
             Reputation_races[i] = Reputation_defaultValue;
