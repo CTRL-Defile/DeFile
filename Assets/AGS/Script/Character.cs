@@ -190,10 +190,17 @@ public partial class Character
  //   public float Stat_Attack_Spell { get { return Status_atkSpell; } set { Status_atkSpell = value; } }
     public float Stat_MoveSpeed { get { return Status_moveSpeed; } set { Status_moveSpeed = value; } }
 	public int Stat_Cost { get { return Status_Cost; } set { Status_Cost = value; } }
+	public int Stat_Synergy1 { get { return Synergy_Stat1; } set { Synergy_Stat1 = value; } }
 
 	//-------------------------------------------------------------------
 	// Method
 	//-------------------------------------------------------------------
+
+	virtual public void Synergy_Atk()
+	{
+		Status_Damage = Status_atkPhysics + Synergy_Stat1;
+	}
+
 	virtual public void HitProcess(float Attack)
     {
 		//여기서 Hit Effect 발생
