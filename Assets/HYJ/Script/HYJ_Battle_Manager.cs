@@ -2116,10 +2116,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     object LSY_Battle_Synergy_Update(params object[] _args)
     {
+        Debug.Log("Synergy Update");
+
         Battle_Synergy_Init();
 
         var synergy_dic = (Dictionary<int, int>)_args[0];
-        synergy_dic = synergy_dic.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+        synergy_dic = synergy_dic.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);   // 내림차순 정렬
 
         bool init_red = false, init_green = false, init_gray = false;
 
@@ -2134,6 +2136,19 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 					HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.SYNERGY_FLATINUM);					
 				}
 				Presy_Cnt = sy_cnt;
+
+                // 효과 적용
+                for (int k=0; k<Field_Unit.Count; k++)
+                {
+                    if (Field_Unit[k].GetComponent<Character>().Stat_Cost == synergy_dic.Keys.ToList()[i])
+                    {
+                        Field_Unit[k].GetComponent<Character>().Stat_Synergy1 = 4;  // 시너지 스텟 설정
+                        Field_Unit[k].GetComponent<Character>().Synergy_Atk();
+                    }
+                }
+
+
+                // UI 수정
 
 				//Transform red = Synergy_Red.GetChild(i);
 				Transform red = Red_list[i];
@@ -2164,8 +2179,22 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 					HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.SYNERGY_GOLD);                   
 				}
 				Presy_Cnt = sy_cnt;
-				//Transform green = Synergy_Green.GetChild(i);
-				Transform green = Green_list[i];
+
+                // 효과 적용
+                for (int k = 0; k < Field_Unit.Count; k++)
+                {
+                    if (Field_Unit[k].GetComponent<Character>().Stat_Cost == synergy_dic.Keys.ToList()[i])
+                    {
+                        Field_Unit[k].GetComponent<Character>().Stat_Synergy1 = 2;  // 시너지 스텟 설정
+                        Field_Unit[k].GetComponent<Character>().Synergy_Atk();
+                    }
+                }
+
+
+                // UI 수정
+
+                //Transform green = Synergy_Green.GetChild(i);
+                Transform green = Green_list[i];
                 green.SetParent(Synergy_Panel);
 
                 green.GetChild(0).GetComponent<TextMeshProUGUI>().text = synergy_dic.Keys.ToList()[i].ToString() + " Cost";
@@ -2192,6 +2221,19 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     green_dot.SetParent(Synergy_Panel);
                     init_green = false;
                 }
+
+                // 효과 적용
+                for (int k = 0; k < Field_Unit.Count; k++)
+                {
+                    if (Field_Unit[k].GetComponent<Character>().Stat_Cost == synergy_dic.Keys.ToList()[i])
+                    {
+                        Field_Unit[k].GetComponent<Character>().Stat_Synergy1 = 0;  // 시너지 스텟 설정
+                        Field_Unit[k].GetComponent<Character>().Synergy_Atk();
+                    }
+                }
+
+
+                // UI 수정
 
                 //Transform gray = Synergy_Gray.GetChild(i);
                 Transform gray = Gray_list[i];

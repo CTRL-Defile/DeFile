@@ -34,6 +34,8 @@ partial class Character
 
     [SerializeField] protected float Status_moveSpeed;   // 이속
 
+    [SerializeField] protected float Status_Damage;  // 데미지
+
     [SerializeField] protected float Status_atkPhysics;  // 물공
     [SerializeField] protected float Status_atkSpell;    // 마공
     [SerializeField] protected float Status_atkSpeed;    // 공속
@@ -49,6 +51,10 @@ partial class Character
     [SerializeField] protected int Data_spell0; // 일반 공격 번호
     [SerializeField] protected int Data_spell1; // 스킬 번호
 
+    // 시너지 벨류
+    [SerializeField] protected int Synergy_Stat1; // 시너지 스텟_1
+
+
     //////////  Getter & Setter //////////
     public CTRL_Character_Data HYJ_Status_saveData
     {
@@ -62,6 +68,7 @@ partial class Character
 
     virtual public float Character_Status_maxHp { get { return Status_MaxHP; } }
     virtual public float Character_Status_startMp { get { return Status_startMp; } }
+    virtual public float Character_Status_Damage { get { return Status_Damage; } }
 
     virtual public float Character_Status_atkPhysics { get { return Status_atkPhysics;} }
     virtual public float Character_Status_atkSpell { get { return Status_atkSpell; } }
