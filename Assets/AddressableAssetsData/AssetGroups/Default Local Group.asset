@@ -21,6 +21,10 @@ MonoBehaviour:
     m_Address: Assets/CTRL_UNIT/UnitData.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 3ad62011e0ebd30449327dadb5274214
+    m_Address: Assets/CTRL_RELIC/RelicData.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0e02204aa164cd54daedab6e0df419a6, type: 2}
   m_SchemaSet:

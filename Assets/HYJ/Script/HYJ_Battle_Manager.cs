@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using UnityEditor;
+//using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
@@ -57,13 +57,20 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         //
         return null;
     }
+
     public void HYJ_SetActive(bool _isActive)
     {
-        Debug.Log(_isActive);
         this.gameObject.SetActive(_isActive);
         //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, !_isActive);
+
+        if(!_isActive)
+        {
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__END_STAGE);
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE);
+        }
     }
+
     object LSY_Set_ShopUI(params object[] _args)
     {
         bool _isActive = (bool)_args[0];
@@ -128,17 +135,16 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Enemy_parent = Battle_Units.GetChild(2).transform;
         Unit_Sacrificed = Battle_Units.GetChild(3).transform;
 
-
-
-        //
-        Basic_phase = BATTLE_PHASE.PHASE_INIT;		
-
 		//
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,   HYJ_Basic_GetPhase);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON,  HYJ_ActiveOn);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__SHOP_UI, LSY_Set_ShopUI);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, LSY_Battle_Synergy_Update);
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X,                HYJ_Field_GetFieldX             );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y,                HYJ_Field_GetFieldY             );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X,                HYJ_Field_GetStandX             );
 
+        //
         Battle_UI_Font();
     }
 
@@ -163,7 +169,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
       //              }
 
                     int DB_phase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_PHASE);
-                    if (DB_phase == -1)
+                    if (DB_phase != -1)
                     {
                         Basic_phase = BATTLE_PHASE.PHASE_INIT;
 						// battle active
@@ -176,11 +182,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             //
             case BATTLE_PHASE.PHASE_INIT:
                 {
-
                     int DB_phase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_PHASE);
                     if (DB_phase != -1)
                     {
-                        Basic_phase = BATTLE_PHASE.PHASE_UPDATE;
+                        //Basic_phase = BATTLE_PHASE.PHASE_UPDATE;
                         break;
                     }
 
@@ -210,12 +215,12 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         }
                     }
 
+                    HYJ_Field_CharacterFixed();
+
                     // 필드 유닛 업데이트
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, Basic_phase);
                     // Sound : 던전 입장
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.DUNGEON_ENTER);
-
-
                 }
                 break;
 			// 전투 준비
@@ -342,7 +347,13 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
 	private void LateUpdate()
 	{
-		Shop_Coin_Text.text = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD).ToString();
+        // 황영재 수정
+        // 널에러가 발생하는 경우가 있어 수정함.
+        object element = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD);
+        if (element != null)
+        {
+            Shop_Coin_Text.text = element.ToString();
+        }
 	}
 
 
@@ -594,9 +605,10 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     continue;
                 }
                 // Move "_obj" to "Field_tiles[_y].Tiles[k]"
-                object[] param = new object[1];
-                param[0] = _obj;
-                Stand_to_Field(param);
+                //object[] param = new object[1];
+                //param[0] = _obj;
+                //Stand_to_Field(param[0]);
+                Stand_to_Field(_obj);
 
                 _tile.HYJ_Basic_onUnit = _obj;
                 _obj.transform.position = _tile.transform.position;
@@ -818,6 +830,12 @@ partial class HYJ_Battle_Manager
     }
 
     //////////  Method          //////////
+    object HYJ_Field_CharacterFixed_bridge(params object[] _args)
+    {
+        HYJ_Field_CharacterFixed();
+        return true;
+    }
+
     void HYJ_Field_CharacterFixed()
     {
         Debug.Log("HYJ called");
@@ -867,18 +885,96 @@ partial class HYJ_Battle_Manager
 
                         Vector3 pos = Stand_tiles.HYJ_Data_Tile(i).transform.position;
 
-                        //GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+                        GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
                         //GameObject tmp = m_CharacterPools.m_List[idx].pop().gameObject;
-                        GameObject tmp = m_CharacterPools.m_List[idx].objects.PopStack().gameObject;
+                        //GameObject tmp = m_CharacterPools.m_List[idx].objects.PopStack().gameObject;
                         tmp.transform.localPosition = pos;
                         tmp.transform.rotation= Quaternion.identity;
                         tmp.GetComponent<Character>().HYJ_Status_saveData = element;
+                        tmp.GetComponent<Character>().m_UnitType = Character.Unit_Type.Ally;
+                        tmp.GetComponent<Character>().LSY_Character_Set_OnTile(Stand_tiles.HYJ_Data_Tile(i).gameObject);
+
+                        //
+                        Stand_tiles.HYJ_Data_Tile(i).HYJ_Basic_onUnit = tmp;
+
+                        Field_to_Stand(tmp);
                     }
                 }
             }
             else
             {
                 HYJ_Field_CharacterFixed_UnitDestroy(i);
+            }
+        }
+
+        //
+        for(int y = 0; y < Field_y; y++)
+        {
+            for (int x = 0; x < Field_x; x++)
+            {
+                // 플레이어에게 저장된 유닛데이터를 가져온다.
+                object data = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                    HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_FIELD_UNIT_DATA,
+                    //
+                    x, y);
+
+                // 빈칸인가?
+                if (data != null)
+                {
+                    CTRL_Character_Data element = (CTRL_Character_Data)data;
+                
+                    // 의미없는 데이터인가?
+                    if (element.Data_ID != null)
+                    {
+                        bool isCreate = true;
+                
+                        GameObject unit = Field_tiles[y].HYJ_Data_Tile(x).HYJ_Basic_onUnit;
+                
+                        if (unit != null)
+                        {
+                            // 유닛이 지금 가져온 데이터와 다르다면 날려준다.
+                            if (unit.GetComponent<Character>().HYJ_Status_saveData == element)
+                            {
+                                isCreate = false;
+                            }
+                            else
+                            {
+                                HYJ_Field_CharacterFixed_FieldUnitDestroy(x, y);
+                            }
+                        }
+                
+                        if (isCreate)
+                        {
+                            int idx = int.Parse(element.Data_ID);
+                            // DB에서 데이터를 불러온다.
+                            GameObject unitData
+                                = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                                    HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_FROM_ID,
+                                    idx);
+                            //int.Parse(element.Data_ID));
+                
+                            Vector3 pos = Field_tiles[y].HYJ_Data_Tile(x).transform.position;
+                
+                            GameObject tmp = Instantiate(unitData, pos, Quaternion.identity, Unit_parent);
+                            //GameObject tmp = m_CharacterPools.m_List[idx].pop().gameObject;
+                            //GameObject tmp = m_CharacterPools.m_List[idx].objects.PopStack().gameObject;
+                            tmp.transform.localPosition = pos;
+                            tmp.transform.rotation = Quaternion.identity;
+                            tmp.GetComponent<Character>().HYJ_Status_saveData = element;
+                            tmp.GetComponent<Character>().m_UnitType = Character.Unit_Type.Ally;
+                            tmp.GetComponent<Character>().LSY_Character_Set_OnTile(Field_tiles[y].HYJ_Data_Tile(x).gameObject);
+
+                            //
+                            Field_tiles[y].HYJ_Data_Tile(x).HYJ_Basic_onUnit = tmp;
+
+                            Stand_to_Field(tmp);
+                        }
+                    }
+                }
+                else
+                {
+                    HYJ_Field_CharacterFixed_FieldUnitDestroy(x, y);
+                }
             }
         }
     }
@@ -893,7 +989,21 @@ partial class HYJ_Battle_Manager
         }
     }
 
-	object InitGraphNodes(params object[] _args)
+    void HYJ_Field_CharacterFixed_FieldUnitDestroy(int _x, int _y)
+    {
+        GameObject unit = Field_tiles[_y].HYJ_Data_Tile(_x).HYJ_Basic_onUnit;
+        if (unit != null)
+        {
+            if (unit.GetComponent<Character>().m_UnitType == Character.Unit_Type.Ally)
+            {
+                Field_tiles[_y].HYJ_Data_Tile(_x).HYJ_Basic_onUnit = null;
+                Destroy(unit);
+            }
+        }
+    }
+
+    // InitGraphNodes
+    object InitGraphNodes(params object[] _args)
 	{
         int size = m_Graph.Count;
         for(int i = 0; i < size; i++)
@@ -1105,13 +1215,11 @@ partial class HYJ_Battle_Manager
 
 
 		//
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__CHARACTER_FIXED,             HYJ_Field_CharacterFixed_bridge );
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GRAPH_NODE_INIT,          InitGraphNodes              );
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_GRAPH,                    GetGraph                    );
 		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD_GET_TILES,                    Get_Field_tiles                );
-		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X,                HYJ_Field_GetFieldX             );
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y,                HYJ_Field_GetFieldY             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_TILES,            HYJ_Field_GetStandtiles         );
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X,                HYJ_Field_GetStandX             );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE,                   HYJ_Field_GetTile               );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILE_FROM_CHARACTER,    HYJ_Field_GetTileFromCharacter  );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_CHARACTER,              HYJ_Field_GetCharacter          );
@@ -1119,7 +1227,7 @@ partial class HYJ_Battle_Manager
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_TILES_GET_COUNT,        HYJ_Field_GetTilesGetCount      );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_XY_FROM_CHARACTER,      HYJ_Field_GetXYFromCharacter    );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__COUNT_ALLY_ONTILE,          LSY_Count_Ally_OnTile           );
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD,              Stand_to_Field                  );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__STAND_TO_FIELD,              Stand_to_Field_bridge           );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIELD_TO_STAND,              Field_to_Stand                  );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_TRASH,                     Unit_to_Trash                   );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED,                Unit_to_Sacrificed              );
@@ -1291,14 +1399,14 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 return;
             }
         }
-
+        
         for (int i=0; i<Shop_Panel_cnt; i++)
         {
             Shop_UnitList[i].SetActive(true);
         }
-
+        
         Player_Lv = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_LEVEL);
-
+        
         // Before Reload, Clear Idx list
         UnitIdx_list.Clear();
         // 유닛 초기화 성공할 때 까지 리롤
@@ -1310,7 +1418,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             Shop_UnitList[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = Player_UnitName_list[idx].ToString();
             Shop_UnitList[i].transform.GetChild(1).GetChild(0).GetComponent<Image>().sprite = Shop_ImageList[idx];
         }
-
+        
         // Sound : 리롤
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.LEVELUP_PURCHASE_CLICK);
 
@@ -1433,125 +1541,125 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
     public void LSY_Buy_Unit()
     {
 
-        if (true)
+        if (false)
         {
-            // Detect clicked btn -> getName -> Calc pos -> Instant
-            Clicked_Button = EventSystem.current.currentSelectedGameObject;
-            string Btn_name = Clicked_Button.name.ToString();
-            Btn_name = Btn_name.Substring(Btn_name.Length - 1);
-            Debug.Log("Btn " + Btn_name + " is clicked");
-
-            int unit_idx = UnitIdx_list[int.Parse(Btn_name)];
-            int cnt = Stand_tiles.LSY_Count_GetUnitOnTile(), pos_num = -1;
-
-            Character obj_char;
-
-            if (m_CharacterPools.m_List[unit_idx] == null)
-            {
-                Debug.Log("Unit " + unit_idx + " is NULL");
-                return;
-            }
-            else if (m_CharacterPools.m_List[unit_idx].get_Count() == 0)
-            {
-                Debug.Log("[BM] Allocate " + unit_idx + " one more.");
-                // TODO : Getchild로 접근하는걸, ID로 접근하게 바꿔야하나? 그러면 prefab 데이터들은 처음에 뭘로 구분해주나.?
-                var obj = Instantiate(prefab.transform.GetChild(unit_idx).gameObject);
-                obj.SetActive(false);
-                obj.transform.SetParent(Unit_pool);
-                obj.transform.localScale = Vector3.one;
-                obj_char = obj.GetComponent<Character>();
-                obj_char.m_UnitType = Character.Unit_Type.Ally;
-                obj_char.STATUS_HPBAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
-                obj_char.HYJ_Status_saveData = new CTRL_Character_Data(unit_idx.ToString());
-                string obj_name;
-                obj_name = obj_char.Character_Status_name_eng;
-                obj.name = obj_name + "_#" + m_CharacterPools.m_List[unit_idx].get_tot_count();
-
-                m_CharacterPools.m_List[unit_idx].allocate_onemore(obj_char);
-            }
-            else
-                obj_char = m_CharacterPools.m_List[unit_idx].objects.m_Stack.Peek();
-
-
-            if (cnt < Stand_x)  // Stand가 Full 인지 아닌지,
-            {
-                for (int idx = 0; idx < Stand_x; idx++)
-                {
-                    if (Stand_tiles.HYJ_Data_GetUnitOnTile(idx) == null)
-                    {
-                        pos_num = idx;
-                        break;
-                    }
-                }
-                if (pos_num == -1) pos_num = cnt;
-                
-                Buy_Unit_byPhase(unit_idx, pos_num);
-            }
-            else
-            {
-                Debug.Log("Stand Tile is full..");
-
-                Character unit_char;
-
-                int _star = obj_char.StarInt();
-                int _id = obj_char.Character_Status_ID;
-                int _num = 0;
-                int _tile_idx = -1;
-
-                switch (Basic_phase)
-                {
-                    //  필드, 스탠드 살피고 2/3성 각 보이면 구매 되도록
-                    case BATTLE_PHASE.PHASE_PREPARE:
-
-                        //m_CharacterPools.m_List[unit_idx].objects.m_Stack.TryPeek(Character);
-
-                        int stand_cnt = Stand_Unit.Count;
-                        for (int i = 0; i < stand_cnt; i++)
-                        {
-                            unit_char = Stand_Unit[i].GetComponent<Character>();
-                            if (_star == unit_char.StarInt() && _id == unit_char.Character_Status_ID)
-                            {
-                                _tile_idx = unit_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex * (-1) - 1;
-                                _num++;
-                            }
-                        }
-                        
-                        int field_cnt = Field_Unit.Count;
-                        for (int i=0; i<field_cnt; i++)
-                        {
-                            unit_char = Field_Unit[i].GetComponent<Character>();
-                            if (_star == unit_char.StarInt() && _id == unit_char.Character_Status_ID)
-                            {
-                                _tile_idx = unit_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex * (-1) - 1;
-                                _num++;
-                            }
-                        }
-                        
-                        if (_num == 2)
-                            Buy_Unit_byPhase(unit_idx, _tile_idx);
-
-                        break;
-
-                    // 스탠드만 살피고 2/3성 각 보이면 구매 되도록
-                    case BATTLE_PHASE.PHASE_COMBAT:
-                        stand_cnt = Stand_Unit.Count;
-                        for (int i = 0; i < stand_cnt; i++)
-                        {
-                            unit_char = Stand_Unit[i].GetComponent<Character>();
-                            if (_star == unit_char.StarInt() && _id == unit_char.Character_Status_ID)
-                            {
-                                _tile_idx = unit_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex * (-1) - 1;
-                                _num++;
-                            }
-                        }
-                        if (_num == 2)
-                            Buy_Unit_byPhase(unit_idx, _tile_idx);
-                        break;
-
-                }
-
-
-            }
+            //// Detect clicked btn -> getName -> Calc pos -> Instant
+            //Clicked_Button = EventSystem.current.currentSelectedGameObject;
+            //string Btn_name = Clicked_Button.name.ToString();
+            //Btn_name = Btn_name.Substring(Btn_name.Length - 1);
+            //Debug.Log("Btn " + Btn_name + " is clicked");
+            //
+            //int unit_idx = UnitIdx_list[int.Parse(Btn_name)];
+            //int cnt = Stand_tiles.LSY_Count_GetUnitOnTile(), pos_num = -1;
+            //
+            //Character obj_char;
+            //
+            //if (m_CharacterPools.m_List[unit_idx] == null)
+            //{
+            //    Debug.Log("Unit " + unit_idx + " is NULL");
+            //    return;
+            //}
+            //else if (m_CharacterPools.m_List[unit_idx].get_Count() == 0)
+            //{
+            //    Debug.Log("[BM] Allocate " + unit_idx + " one more.");
+            //    // TODO : Getchild로 접근하는걸, ID로 접근하게 바꿔야하나? 그러면 prefab 데이터들은 처음에 뭘로 구분해주나.?
+            //    var obj = Instantiate(prefab.transform.GetChild(unit_idx).gameObject);
+            //    obj.SetActive(false);
+            //    obj.transform.SetParent(Unit_pool);
+            //    obj.transform.localScale = Vector3.one;
+            //    obj_char = obj.GetComponent<Character>();
+            //    obj_char.m_UnitType = Character.Unit_Type.Ally;
+            //    obj_char.STATUS_HPBAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
+            //    obj_char.HYJ_Status_saveData = new CTRL_Character_Data(unit_idx.ToString());
+            //    string obj_name;
+            //    obj_name = obj_char.Character_Status_name_eng;
+            //    obj.name = obj_name + "_#" + m_CharacterPools.m_List[unit_idx].get_tot_count();
+            //
+            //    m_CharacterPools.m_List[unit_idx].allocate_onemore(obj_char);
+            //}
+            //else
+            //    obj_char = m_CharacterPools.m_List[unit_idx].objects.m_Stack.Peek();
+            //
+            //
+            //if (cnt < Stand_x)  // Stand가 Full 인지 아닌지,
+            //{
+            //    for (int idx = 0; idx < Stand_x; idx++)
+            //    {
+            //        if (Stand_tiles.HYJ_Data_GetUnitOnTile(idx) == null)
+            //        {
+            //            pos_num = idx;
+            //            break;
+            //        }
+            //    }
+            //    if (pos_num == -1) pos_num = cnt;
+            //    
+            //    Buy_Unit_byPhase(unit_idx, pos_num);
+            //}
+            //else
+            //{
+            //    Debug.Log("Stand Tile is full..");
+            //
+            //    Character unit_char;
+            //
+            //    int _star = obj_char.StarInt();
+            //    int _id = obj_char.Character_Status_ID;
+            //    int _num = 0;
+            //    int _tile_idx = -1;
+            //
+            //    switch (Basic_phase)
+            //    {
+            //        //  필드, 스탠드 살피고 2/3성 각 보이면 구매 되도록
+            //        case BATTLE_PHASE.PHASE_PREPARE:
+            //
+            //            //m_CharacterPools.m_List[unit_idx].objects.m_Stack.TryPeek(Character);
+            //
+            //            int stand_cnt = Stand_Unit.Count;
+            //            for (int i = 0; i < stand_cnt; i++)
+            //            {
+            //                unit_char = Stand_Unit[i].GetComponent<Character>();
+            //                if (_star == unit_char.StarInt() && _id == unit_char.Character_Status_ID)
+            //                {
+            //                    _tile_idx = unit_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex * (-1) - 1;
+            //                    _num++;
+            //                }
+            //            }
+            //            
+            //            int field_cnt = Field_Unit.Count;
+            //            for (int i=0; i<field_cnt; i++)
+            //            {
+            //                unit_char = Field_Unit[i].GetComponent<Character>();
+            //                if (_star == unit_char.StarInt() && _id == unit_char.Character_Status_ID)
+            //                {
+            //                    _tile_idx = unit_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex * (-1) - 1;
+            //                    _num++;
+            //                }
+            //            }
+            //            
+            //            if (_num == 2)
+            //                Buy_Unit_byPhase(unit_idx, _tile_idx);
+            //
+            //            break;
+            //
+            //        // 스탠드만 살피고 2/3성 각 보이면 구매 되도록
+            //        case BATTLE_PHASE.PHASE_COMBAT:
+            //            stand_cnt = Stand_Unit.Count;
+            //            for (int i = 0; i < stand_cnt; i++)
+            //            {
+            //                unit_char = Stand_Unit[i].GetComponent<Character>();
+            //                if (_star == unit_char.StarInt() && _id == unit_char.Character_Status_ID)
+            //                {
+            //                    _tile_idx = unit_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>().GraphIndex * (-1) - 1;
+            //                    _num++;
+            //                }
+            //            }
+            //            if (_num == 2)
+            //                Buy_Unit_byPhase(unit_idx, _tile_idx);
+            //            break;
+            //
+            //    }
+            //
+            //
+            //}
 
         }
         else
@@ -1571,7 +1679,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             if (unitData != null)
             {
                 object success = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
-                    HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__INSERT,
+                    HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__BUY_FROM_BATTLE,
                     //
                     unitData.name, -1);
 
@@ -1682,17 +1790,28 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public const string FONT_JSONG = "Assets/TextMesh Pro/Fonts/JSONGMYEONG SDF.asset";
     public const string FONT_CHOSUN = "Assets/TextMesh Pro/Fonts/CHOSUNCENTENNIAL_TTF SDF.asset";
+    [SerializeField] TMP_FontAsset Font_JSONG;
     public void Battle_UI_Font()
     {
+        // 황영재 수정.
+        // 에디트 클래스를 사용한 기능들을 지우고 다시 작성.
         int _cnt = Shop_UnitList.Count;
         for (int i=0; i<_cnt; i++)
         {
-            Shop_UnitList[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().font =
-                AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+            Shop_UnitList[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().font = Font_JSONG;
         }
-        Shop_Coin_Text.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
-        Battle_Ally_OnTile.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
-        Battle_Timer_TMP.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+        Shop_Coin_Text.font = Font_JSONG;
+        Battle_Ally_OnTile.font = Font_JSONG;
+        Battle_Timer_TMP.font = Font_JSONG;
+
+        //for (int i=0; i<_cnt; i++)
+        //{
+        //    Shop_UnitList[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().font =
+        //        AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+        //}
+        //Shop_Coin_Text.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+        //Battle_Ally_OnTile.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
+        //Battle_Timer_TMP.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FONT_JSONG);
 
     }
 
@@ -1728,18 +1847,26 @@ partial class HYJ_Battle_Manager
     public object Get_Sacrificed_Units(params object[] _args) { return Sacrificed_Unit; }
 
     /// Method
-    object Stand_to_Field(params object[] _args)
+    //
+    object Stand_to_Field_bridge(params object[] _args)
     {
         GameObject obj = (GameObject)_args[0];
 
-        Debug.Log("Move " + obj.name + "stand to field");
-        Stand_Unit.Remove(obj);
-        Field_Unit.Add(obj);
+        Stand_to_Field(obj);
+
+        return true;
+    }
+
+    void Stand_to_Field(GameObject _obj)
+    {
+        Debug.Log("Move " + _obj.name + "stand to field");
+        Stand_Unit.Remove(_obj);
+        Field_Unit.Add(_obj);
 
         Show_Ally_OnTile();
-
-        return null;
     }
+
+    //
     object Field_to_Stand(params object[] _args)
     {
         GameObject obj = (GameObject)_args[0];
@@ -1752,6 +1879,8 @@ partial class HYJ_Battle_Manager
 
         return null;
     }
+
+    //
     object Unit_to_Trash(params object[] _args)
     {
 		// 유닛 판매 sound

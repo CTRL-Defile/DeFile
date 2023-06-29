@@ -8,6 +8,7 @@ using UnityEngine;
 //
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.UI;
 
 public partial class HYJ_DataBase : MonoBehaviour
 {
@@ -82,6 +83,27 @@ partial class HYJ_DataBase
         return Relic_datas[count].HYJ_Data_name;
     }
 
+    object HYJ_Relic_GetDataFromName(params object[] _args)
+    {
+        HYJ_Item res = null;
+
+        //
+        string strName = (string)_args[0];
+
+        //
+        for (int i = 0; i < Relic_datas.Count; i++)
+        {
+            if(Relic_datas[i].HYJ_Data_name.Equals(strName))
+            {
+                res = Relic_datas[i];
+                break;
+            }
+        }
+
+        //
+        return res;
+    }
+
     //////////  Method          //////////
 
     //////////  Default Method  //////////
@@ -117,13 +139,42 @@ partial class HYJ_DataBase
                 break;
             case 2:
                 {
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___RELIC__GET_DATA_COUNT,   HYJ_Relic_GetDataCount  );
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___RELIC__GET_DATA_NAME,    HYJ_Relic_GetDataName   );
-
                     Relic_phase = 3;
+
+                    Addressables.LoadAssetAsync<GameObject>("Assets/CTRL_RELIC/RelicData.prefab").Completed +=
+                        (_handle) =>
+                        {
+                            Transform elements = _handle.Result.transform;
+
+                            for(int i = 0; i < Relic_datas.Count; i++)
+                            {
+                                Transform target = elements.Find(Relic_datas[i].HYJ_Data_name);
+                                if(target != null)
+                                {
+                                    Relic_datas[i].HYJ_Data_sprite = target.Find("Image").GetComponent<Image>().sprite;
+                                }
+                            }
+
+                            //
+                            Relic_phase = 4;
+                        };
                 }
                 break;
             case 3:
+                {
+
+                }
+                break;
+            case 4:
+                {
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___RELIC__GET_DATA_COUNT,   HYJ_Relic_GetDataCount  );
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___RELIC__GET_DATA_NAME,    HYJ_Relic_GetDataName   );
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.DATABASE___RELIC__GET_DATA_FROM_NAME,   HYJ_Relic_GetDataFromName   );
+
+                    Relic_phase = 5;
+                }
+                break;
+            case 5:
                 {
                     Relic_phase = -1;
                 }

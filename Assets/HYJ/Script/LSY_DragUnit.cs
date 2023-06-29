@@ -353,7 +353,7 @@ public class LSY_DragUnit : MonoBehaviour
     {
         //isHeld = true;
 
-        //Debug.Log("BtnDown collider : " + unit_hit.collider);
+        Debug.Log("BtnDown collider : " + unit_hit.collider);
         if (selectedObject == null && unit_hit.collider != null)
         {
 			HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_HOLD);
@@ -497,6 +497,8 @@ public class LSY_DragUnit : MonoBehaviour
                 selectedObject.transform.position = oriPos;
             }
             selectedObject_Script.LSY_Character_OriPos = selectedObject.transform.position;
+
+            
         }
 
         selectedObject = null;

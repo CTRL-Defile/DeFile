@@ -137,6 +137,10 @@ partial class HYJ_Event_Manager
     [SerializeField] int Event_phase;
 
     //////////  Getter & Setter //////////
+    object HYJ_Event_GetList(params object[] _args)
+    {
+        return Event_datas;
+    }
 
     //////////  Method          //////////
 
@@ -191,6 +195,9 @@ partial class HYJ_Event_Manager
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.EVENT___DATA__GET_ALL_SELECTED_EVENT, JHW_GetAllSelectedData);
                     // 이벤트이펙트db 초기화 메서드
                     // HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.EVENT___DATA__EVENT_DB_INIT, JHW_EventDatabaseInit);
+
+                    // 황영재 추가
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.EVENT___DATA__GET_LIST, HYJ_Event_GetList);
 
                     Event_phase = 3;
                 }
@@ -372,7 +379,18 @@ public class JHW_Event
         Data_VALUE_1 = (int)_data["VALUE_1"];
         Data_SELECTED1_SCRIPT_KOR = (string)_data["SELECTED1_SCRIPT_KOR"];
         Data_SELECTED2_SCRIPT_KOR = (string)_data["SELECTED2_SCRIPT_KOR"];
+
+        HYJ_Select_Reset();
     }
+
+    ////////// 황영재 추가
+    [SerializeField] int Select_point;
+    const int Select_DEFAULT = 1000;
+    ////////// Getter && Setter //////////
+    public int HYJ_Select_point { get { return Select_point;    } }
+
+    ////////// Method           //////////
+    public void HYJ_Select_Reset() { Select_point = Select_DEFAULT; }
 }
 #endregion
 
@@ -455,17 +473,38 @@ partial class HYJ_Event_Manager
     // 랜덤 이벤트ID 발생 메서드
     private int JHW_setRandomEventID()
     {
-        int randomID = Random.Range(0, 3); // 중간 발표 때문에 0~3으로 임시조정
-        while (randomEventID == randomID) // 이미 선택된 이벤트면 다시뽑는다
+        int randomPointTotal = 0;
+        for(int i = 0; i < Event_datas.Count; i++)
         {
-            randomID = Random.Range(0, 3);
+            randomPointTotal += Event_datas[i].HYJ_Select_point;
         }
 
-        /*int randomID = Random.Range(0, Event_datas.Count);
+        int randomPoint = Random.Range(0, randomPointTotal);
+
+        int randomID = 0;
+        while(true)
+        {
+            if(randomPoint < Event_datas[randomID].HYJ_Select_point)
+            {
+                break;
+            }
+            else
+            {
+                randomPoint -= Event_datas[randomID].HYJ_Select_point;
+                randomID++;
+            }
+        }
+
         while (randomEventID == randomID) // 이미 선택된 이벤트면 다시뽑는다
         {
-            randomID = Random.Range(0, Event_datas.Count);
-        }*/
+            randomID = JHW_setRandomEventID();
+        }
+
+        //int randomID = Random.Range(0, 3); // 중간 발표 때문에 0~3으로 임시조정
+        //while (randomEventID == randomID) // 이미 선택된 이벤트면 다시뽑는다
+        //{
+        //    randomID = Random.Range(0, 3);
+        //}
         return randomID;
     }
 
@@ -587,6 +626,9 @@ partial class HYJ_Event_Manager
 
         // 사운드
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_SELECT_CHOICE);
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__END_STAGE);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE);
     }
 
     public object JHW_GetSelectedData(params object[] _args) // EventSelectedDataBase.csv의 가장 최근 데이터 리턴

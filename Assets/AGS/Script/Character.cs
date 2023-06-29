@@ -312,7 +312,7 @@ public partial class Character
 					case STATE.SKILL:	
 						if(true == m_IsInRange)
 						{
-
+							//Debug.Log("AAAAA");
 						}
 						else
 						{
