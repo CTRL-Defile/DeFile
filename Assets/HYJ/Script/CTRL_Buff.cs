@@ -90,6 +90,12 @@ public class CTRL_Buff_Save : IDisposable
     public CTRL_Buff.DURATION_TYPE CTRL_Basic_durationType { get { return (CTRL_Buff.DURATION_TYPE)Enum.Parse(typeof(CTRL_Buff.DURATION_TYPE), Basic_durationType); } }
 
     //////////  Method          //////////
+    public bool CTRL_Basic_EndStage()
+    {
+        Basic_durationValue -= 1f;
+
+        return (Basic_durationValue > 0f);
+    }
 
     //////////  Default Method  //////////
     public CTRL_Buff_Save(Dictionary<string, object> _data)

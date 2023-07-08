@@ -58,8 +58,20 @@ public partial class HYJ_Map_Stage : MonoBehaviour
 
 partial class HYJ_Map_Stage
 {
-    [SerializeField] HYJ_Map_Stage_TYPE Stage_type;
-    [SerializeField] string Stage_reward;
+    [System.Serializable]
+    public class SaveData
+    {
+        public HYJ_Map_Stage_TYPE Stage_type;
+        public string Stage_reward;
+        public bool isSelected = false; // 유저가 선택한 스테이지인지 저장하는 변수
+
+        //////////  Getter & Setter //////////
+
+        //////////  Method          //////////
+
+        //////////  Default Method  //////////
+    }
+    [SerializeField] SaveData Stage_data;
     [SerializeField] int Stage_power;
     [SerializeField] List<HYJ_Map_Stage> Stage_roots;
     [SerializeField] List<GameObject> Stage_icons;
@@ -67,15 +79,16 @@ partial class HYJ_Map_Stage
     // 맵에 보여지는 스테이지 위치
     public int stage_x;
     public int stage_y;
-    private bool isSelected = false; // 유저가 선택한 스테이지인지 저장하는 변수
 
     //////////  Getter & Setter //////////
+    public SaveData HYJ_Stage_saveData { get { return Stage_data;   }   set { Stage_data = value;   }   }
+
     public HYJ_Map_Stage_TYPE HYJ_Stage_type
     {
-        get { return Stage_type; }
+        get { return Stage_data.Stage_type; }
         set
         {
-            Stage_type = value;
+            Stage_data.Stage_type = value;
 
             //
             for(int i = 0; i < Stage_icons.Count; i++)
@@ -83,9 +96,11 @@ partial class HYJ_Map_Stage
                 Stage_icons[i].SetActive(false);
             }
 
-            Stage_icons[(int)Stage_type].SetActive(true);
+            Stage_icons[(int)Stage_data.Stage_type].SetActive(true);
         }
     }
+
+    public List<HYJ_Map_Stage> HYJ_Stage_roots { get { return Stage_roots;  }   }
 
     //////////  Method          //////////
     public void HYJ_Stage_SettingType(int _level)
@@ -122,10 +137,17 @@ partial class HYJ_Map_Stage
 
     public void HYJ_Stage_Select()
     {
+        bool isSelected = Stage_data.isSelected;
 
         // 유저가 선택한 스테이지인지를 나타내는 변수 false -> true
-        isSelected = true;
+        Stage_data.isSelected = true;
 
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+            HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__SET_PLAYER_POS,
+            //
+            stage_x, stage_y);
+
+        //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
             HYJ_ScriptBridge_EVENT_TYPE.MAP___CHEAPTER__SELECT_RESET);
 
@@ -207,7 +229,12 @@ partial class HYJ_Map_Stage
         //        }
         //        break;
         //}
-        StartCoroutine(Delay_ChangeStage());
+        StartCoroutine(Delay_ChangeStage(!isSelected));
+
+    }
+
+    public void HYJ_Stage_Select_0(bool _isStage)
+    {
 
     }
 
@@ -229,7 +256,7 @@ partial class HYJ_Map_Stage
     {
         // 비활성화된 버튼은 반투명하게, 활성화된 버튼은 선명하게
         int stageIdx = 0;
-        switch (this.Stage_type)
+        switch (this.Stage_data.Stage_type)
         {
             case HYJ_Map_Stage_TYPE.BASE_CAMP:
                 stageIdx = 1;
@@ -256,7 +283,7 @@ partial class HYJ_Map_Stage
             Stage_icons[stageIdx].GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
 
             // 유저가 이미 선택한 버튼일경우 투명도 유지 및 크기 조정
-            if (isSelected)
+            if (Stage_data.isSelected)
             {
                 Stage_icons[stageIdx].GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
                 // 버튼 활성화/비활성화 여부 저장
@@ -324,102 +351,111 @@ partial class HYJ_Map_Stage
         }
     }
 
-    IEnumerator Delay_ChangeStage()
+    IEnumerator Delay_ChangeStage(bool _isStage)
     {
         if (selectedRoad != null && curFootPrintCnt==0)
         {
-
             // 다른 스테이지를 선택하는거 막기 위해 화면에 검은 화면 active
-            GameObject blackScreen = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___GET__BLACKSCREEN);
-            blackScreen.SetActive(true);
+            GameObject blackScreen = null;
+            if (_isStage)
+            {
+                blackScreen = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___GET__BLACKSCREEN);
+                blackScreen.SetActive(true);
+            }
 
             // active되어있는 발자국 수만큼 발자국 노란색으로 되는 UX 적용
             while (selectedRoad.transform.GetChild(footPrintCnt/3).gameObject.activeSelf == true)
             {
                 footPrintCnt+=3;
             }
+
             curFootPrintCnt = 0;
             Road_UX();
 
-            // 플레이어 위치 표시하는 마커 UX
-            GameObject StageLightMarker = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___GET__LOCATIONMARKER);
-            StageLightMarker.transform.parent.DOScale(0.8f, RoadUX_Duration).SetEase(Ease.OutQuart);
-            if (pathLightMarker == null)
+            if (_isStage)
             {
-                pathLightMarker = Instantiate(StageLightMarker);
-                pathLightMarker.transform.SetParent(StageLightMarker.transform.parent);
-                pathLightMarker.transform.localPosition = Vector3.zero;
-                pathLightMarker.transform.localScale = new Vector3(0.3f, 0.3f);
-                pathLightMarker.transform.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.6f);
-                pathLightMarker.transform.DOMove(new Vector3(this.transform.position.x, this.transform.position.y), RoadUX_Duration+0.5f).SetEase(Ease.OutCubic);
-                pathLightMarker.GetComponent<Image>().DOFade(0f, RoadUX_Duration).SetEase(Ease.InExpo);
+                // 플레이어 위치 표시하는 마커 UX
+                GameObject StageLightMarker = (GameObject)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___GET__LOCATIONMARKER);
+                StageLightMarker.transform.parent.DOScale(0.8f, RoadUX_Duration).SetEase(Ease.OutQuart);
+                if (pathLightMarker == null)
+                {
+                    pathLightMarker = Instantiate(StageLightMarker);
+                    pathLightMarker.transform.SetParent(StageLightMarker.transform.parent);
+                    pathLightMarker.transform.localPosition = Vector3.zero;
+                    pathLightMarker.transform.localScale = new Vector3(0.3f, 0.3f);
+                    pathLightMarker.transform.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.6f);
+                    pathLightMarker.transform.DOMove(new Vector3(this.transform.position.x, this.transform.position.y), RoadUX_Duration+0.5f).SetEase(Ease.OutCubic);
+                    pathLightMarker.GetComponent<Image>().DOFade(0f, RoadUX_Duration).SetEase(Ease.InExpo);
+                }
+                Sequence IconSequence;
+                IconSequence = DOTween.Sequence();
+                IconSequence.OnStart(() => { StageLightMarker.transform.localPosition = Vector3.zero; StageLightMarker.transform.localScale = Vector3.one; })
+                    .Join(StageLightMarker.transform.DORotate(new Vector3(0, 0, 360), RoadUX_Duration, RotateMode.FastBeyond360).SetEase(Ease.InCubic))
+                    .Join(StageLightMarker.transform.DOScale(0f,RoadUX_Duration-0.5f).SetEase(Ease.InBack));
+
+                //pathLightMarker.transform.DOLocalMove(new Vector3(this.transform.localPosition.x, this.transform.localPosition.y), RoadUX_Duration);//.OnComplete(()=>Destroy(newLightMarker));
+
+
+                // UX 딜레이
+                yield return new WaitForSeconds(RoadUX_Duration+0.5f); // 길 UX 지속시간+0.5 만큼 기다린 후에 스테이지 변경
+
+                // 다음에 누를 스테이지와 연결된 발자국 UX 적용 위해 ux변수 초기화
+                footPrintCnt = 0;
+                curFootPrintCnt = 0;
+                curFootPrintCnt = 0;
+
+                // 다른 스테이지를 선택하는거 막기 위해 화면에 검은 화면 해제
+                if (blackScreen != null)
+                {
+                    blackScreen.SetActive(false);
+                }
+
+                // 현재 플레이어의 스테이지 위치 체크하는 아이콘(마커) 이동 
+                StageLightMarker.transform.parent = this.transform.parent;
+                StageLightMarker.transform.SetAsFirstSibling();
+                StageLightMarker.transform.localPosition = Vector3.zero;
+                StageLightMarker.transform.localScale = Vector3.one;
+
+                switch (Stage_data.Stage_type)
+                {
+                    case HYJ_Map_Stage_TYPE.BASE_CAMP:
+                        {
+                            //
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BASE_CAMP___ACTIVE__ACTIVE_ON, true);
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, false);
+                        }
+                        break;
+                    case HYJ_Map_Stage_TYPE.SHOP:
+                        {
+                            //HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
+
+                            //
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SHOP___ACTIVE__ACTIVE_ON, true);
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, false);
+                        }
+                        break;
+                    case HYJ_Map_Stage_TYPE.EVENT:
+                        {
+                            //HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
+
+                            //
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.EVENT___ACTIVE__ACTIVE_ON, true);
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, false);
+                        }
+                        break;
+                    case HYJ_Map_Stage_TYPE.BATTLE_NORMAL:
+                    case HYJ_Map_Stage_TYPE.BATTLE_ELITE:
+                    case HYJ_Map_Stage_TYPE.BATTLE_BOSS:
+                        {
+                            //HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
+
+                            //
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON, true);
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, false);
+                        }
+                        break;
+                }
             }
-            Sequence IconSequence;
-            IconSequence = DOTween.Sequence();
-            IconSequence.OnStart(() => { StageLightMarker.transform.localPosition = Vector3.zero; StageLightMarker.transform.localScale = Vector3.one; })
-                .Join(StageLightMarker.transform.DORotate(new Vector3(0, 0, 360), RoadUX_Duration, RotateMode.FastBeyond360).SetEase(Ease.InCubic))
-                .Join(StageLightMarker.transform.DOScale(0f,RoadUX_Duration-0.5f).SetEase(Ease.InBack));
-
-            //pathLightMarker.transform.DOLocalMove(new Vector3(this.transform.localPosition.x, this.transform.localPosition.y), RoadUX_Duration);//.OnComplete(()=>Destroy(newLightMarker));
-
-
-            // UX 딜레이
-            yield return new WaitForSeconds(RoadUX_Duration+0.5f); // 길 UX 지속시간+0.5 만큼 기다린 후에 스테이지 변경
-
-            // 다음에 누를 스테이지와 연결된 발자국 UX 적용 위해 ux변수 초기화
-            footPrintCnt = 0;
-            curFootPrintCnt = 0;
-
-            // 다른 스테이지를 선택하는거 막기 위해 화면에 검은 화면 해제
-            blackScreen.SetActive(false);
-
-            // 현재 플레이어의 스테이지 위치 체크하는 아이콘(마커) 이동 
-            StageLightMarker.transform.parent = this.transform.parent;
-            StageLightMarker.transform.SetAsFirstSibling();
-            StageLightMarker.transform.localPosition = Vector3.zero;
-            StageLightMarker.transform.localScale = Vector3.one;
-
-
-            switch (Stage_type)
-            {
-                case HYJ_Map_Stage_TYPE.BASE_CAMP:
-                    {
-                        //
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BASE_CAMP___ACTIVE__ACTIVE_ON, true);
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, false);
-                    }
-                    break;
-                case HYJ_Map_Stage_TYPE.SHOP:
-                    {
-                        //HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
-
-                        //
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SHOP___ACTIVE__ACTIVE_ON, true);
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, false);
-                    }
-                    break;
-                case HYJ_Map_Stage_TYPE.EVENT:
-                    {
-                        //HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
-
-                        //
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.EVENT___ACTIVE__ACTIVE_ON, true);
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, false);
-                    }
-                    break;
-                case HYJ_Map_Stage_TYPE.BATTLE_NORMAL:
-                case HYJ_Map_Stage_TYPE.BATTLE_ELITE:
-                case HYJ_Map_Stage_TYPE.BATTLE_BOSS:
-                    {
-                        //HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
-
-                        //
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON, true);
-                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, false);
-                    }
-                    break;
-            }
-
         }
     }
 }

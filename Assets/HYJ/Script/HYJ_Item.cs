@@ -4,6 +4,7 @@ using UnityEngine;
 
 //
 using System;
+using UnityEngine.UI;
 
 // 아이템의 정보를 csv파일에서 가져와 DB에 적재하기 위해 사용하는 클래스
 // 플레이어가 이 정보 전체를 가지고 있는 것이 아니고, DB이름이나 번호를 가지고 필요할 때마다 이곳에서 정보를 가져와서 활용합니다.
@@ -17,6 +18,7 @@ public class HYJ_Item : IDisposable
     [SerializeField] int Data_valueMax;
     [SerializeField] int Data_limit;
     [SerializeField] int Data_tier;
+    [SerializeField] Sprite Data_sprite;
 
     //////////  Getter & Setter //////////
     //
@@ -32,6 +34,9 @@ public class HYJ_Item : IDisposable
 
     //
     public int HYJ_Data_limit { get { return Data_limit; } }
+
+    //
+    public Sprite HYJ_Data_sprite { get { return Data_sprite;   } set { Data_sprite = value;    } }
 
     //////////  Method          //////////
     public void Dispose()

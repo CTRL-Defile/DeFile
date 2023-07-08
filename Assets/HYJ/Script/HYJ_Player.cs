@@ -12,17 +12,36 @@ using System.Data;
 
 public partial class HYJ_Player : MonoBehaviour
 {
-    [SerializeField] int Basic_phase;
+    public enum UPDATE_PHASE
+    {
+        FILE,
+        BASIC,
+        DB,
+        ITEM,
+        BUFF,
+        REPUTATION,
+        UNIT,
+        MAP,
+
+        UPDATE
+    }
+    [SerializeField] UPDATE_PHASE Basic_phase;
 
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
+    object CTRL_Basic_GetUpdatePhase(params object[] _args)
+    {
+        return Basic_phase;
+    }
 
     //////////  Default Method  //////////
     // Start is called before the first frame update
     void Start()
     {
-        Basic_phase = 0;
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_UPDATE_PHASE, CTRL_Basic_GetUpdatePhase);
+
+        Basic_phase = UPDATE_PHASE.FILE;
     }
 
     // Update is called once per frame
@@ -30,11 +49,12 @@ public partial class HYJ_Player : MonoBehaviour
     {
         switch (Basic_phase)
         {
-            case -1: break;
+            case UPDATE_PHASE.UPDATE: break;
             //
-            case 0: { if (HYJ_Basic_Init()) { Basic_phase = 1; } } break;
+            case UPDATE_PHASE.FILE:     { if (CTRL_File_Init()  ) { Basic_phase = UPDATE_PHASE.BASIC;   }   }   break;
+            case UPDATE_PHASE.BASIC:    { if (HYJ_Basic_Init()  ) { Basic_phase = UPDATE_PHASE.DB;      }   }   break;
 
-            case 1:
+            case UPDATE_PHASE.DB:
                 {
                     //Debug.Log("Player : " + Basic_phase);
 
@@ -45,44 +65,54 @@ public partial class HYJ_Player : MonoBehaviour
 
                         Player_DB.Instance.Init();
 
-                        Basic_phase = 2;
+                        Basic_phase = UPDATE_PHASE.ITEM;
                     }
                 } 
                 break;
-            case 2: { if (HYJ_Item_Init()       ) { Basic_phase = 3;    }    }   break;
-            case 3: { if (HYJ_Buff_Init()       ) { Basic_phase = 4;    }    }   break;
-            case 4: { if (HYJ_Reputation_Init() ) { Basic_phase = 5;    }    }   break;
-
-            case 5:
-                {
-                    BATTLE_PHASE _phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
-
-                    //Debug.Log("Player : " + Basic_phase);
-                    if (_phase == BATTLE_PHASE.PHASE_PREPARE)
-                    {
-                        if (HYJ_Unit_Init())
-                        {
-                            Basic_phase = -1;
-                        }
-                    }
-                }
-                break;
+            case UPDATE_PHASE.ITEM:         { if (HYJ_Item_Init()       ) { Basic_phase = UPDATE_PHASE.BUFF;        }   }   break;
+            case UPDATE_PHASE.BUFF:         { if (HYJ_Buff_Init()       ) { Basic_phase = UPDATE_PHASE.REPUTATION;  }   }   break;
+            case UPDATE_PHASE.REPUTATION:   { if (HYJ_Reputation_Init() ) { Basic_phase = UPDATE_PHASE.UNIT;        }   }   break;
+            case UPDATE_PHASE.UNIT:         { if (HYJ_Unit_Init()       ) { Basic_phase = UPDATE_PHASE.MAP;         }   }   break;
+                //{
+                //    BATTLE_PHASE _phase = (BATTLE_PHASE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE);
+                //
+                //    //Debug.Log("Player : " + Basic_phase);
+                //    if (_phase == BATTLE_PHASE.PHASE_PREPARE)
+                //    {
+                //        if (HYJ_Unit_Init())
+                //        {
+                //            Basic_phase = UPDATE_PHASE.UPDATE;
+                //        }
+                //    }
+                //}
+                //break;
+            case UPDATE_PHASE.MAP:          { if (CTRL_Map_Init()       ) { Basic_phase = UPDATE_PHASE.UPDATE;      }   }   break;
         }
     }
 }
 
-// 기본 정보를 분류
+// �⺻ ������ �з�
 #region Basic
 
 partial class HYJ_Player
 {
-    [SerializeField] int Basic_level;   // 레벨
-    [SerializeField] int Basic_exp;     // 경험치
+    [Serializable]
+    public class Basic_Data : CTRL_File
+    {
+        public int Basic_level;   // ����
+        public int Basic_exp;     // ����ġ
 
-    [SerializeField] int Basic_hp;      // 현재 남은 체력
-    [SerializeField] int Basic_hpMax;   // 최대 체력
+        public int Basic_hp;      // ���� ���� ü��
+        public int Basic_hpMax;   // �ִ� ü��
 
-    [SerializeField] int Basic_gold;    // 보유하고 있는 금화
+        public int Basic_gold;    // �����ϰ� �ִ� ��ȭ
+
+        //////////  Getter & Setter //////////
+
+        //////////  Method          //////////
+
+        //////////  Default Method  //////////
+    }
 
     //////////  Getter & Setter //////////
 
@@ -90,27 +120,49 @@ partial class HYJ_Player
 
     object LSY_Basic_IncExp(params object[] _args)
     {
-        Basic_exp += (int)_args[0];
+        File_saveData.File_basic.Basic_exp = HYJ_Basic_IncExpAddBuff((int)_args[0]);
         return null;
     }
+
+    int HYJ_Basic_IncExpAddBuff(int _exp)
+    {
+        int res = _exp;
+        for(int i = 0; i < File_saveData.File_buff.Buff_buffs.Count; i++)
+        {
+            CTRL_Buff data = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, File_saveData.File_buff.Buff_buffs[i].Basic_index);
+            switch(data.CTRL_Basic_applyType)
+            {
+                case CTRL_Buff.APPLY_TYPE.Player_Expbuy:
+                case CTRL_Buff.APPLY_TYPE.Player_Expgain:
+                    {
+                        res += data.Basic_ratioValue;
+                    }
+                    break;
+            }
+        }
+
+        return res;
+    }
+
+    // LSY_Basic_DecExp
     object LSY_Basic_DecExp(params object[] _args)
     {
-        Basic_exp -= (int)_args[0];
+        File_saveData.File_basic.Basic_exp -= (int)_args[0];
         return null;
     }
     object LSY_Basic_getExp(params object[] _args)
     {
-        return Basic_exp;
+        return File_saveData.File_basic.Basic_exp;
     }
     object LSY_Basic_IncLevel(params object[] _args)
     {
-        Basic_level += (int)_args[0];
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___LEVEL__VIEW_LEVEL, Basic_level);
+        File_saveData.File_basic.Basic_level += (int)_args[0];
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___LEVEL__VIEW_LEVEL, File_saveData.File_basic.Basic_level);
         return null;
     }
     object LSY_Basic_getLevel(params object[] _args)
     {
-        return Basic_level;
+        return File_saveData.File_basic.Basic_level;
     }
 
 
@@ -118,17 +170,17 @@ partial class HYJ_Player
 
     object LSY_Basic_getGold(params object[] _args)
     {
-        return Basic_gold;
+        return File_saveData.File_basic.Basic_gold;
     }
 
-    // 금화가 충분히 있는지 체크
+    // ��ȭ�� ����� �ִ��� üũ
     object HYJ_Basic_GoldIsEnough(params object[] _args)
     {
         bool res = false;
 
         //
         int pay = (int)_args[0];
-        if (Basic_gold >= pay)
+        if (File_saveData.File_basic.Basic_gold >= pay)
         {
             res = true;
         }
@@ -136,21 +188,40 @@ partial class HYJ_Player
         return res;
     }
 
-    // 금화를 추가한다.
+    // ��ȭ�� �߰��Ѵ�.
     object HYJ_Basic_GoldPlus(params object[] _args)
     {
         //
-        int value = (int)_args[0];
+        int value = HYJ_Basic_GoldPlusAddBuff((int)_args[0]);
 
-        Basic_gold += value;
+        File_saveData.File_basic.Basic_gold += value;
 
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___GOLD__VIEW_GOLD, Basic_gold);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___GOLD__VIEW_GOLD, File_saveData.File_basic.Basic_gold);
 
         //
         return null;
     }
 
-    // 금화를 지불한다.
+    int HYJ_Basic_GoldPlusAddBuff(int _gold)
+    {
+        int res = _gold;
+        for (int i = 0; i < File_saveData.File_buff.Buff_buffs.Count; i++)
+        {
+            CTRL_Buff data = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, File_saveData.File_buff.Buff_buffs[i].Basic_index);
+            switch (data.CTRL_Basic_applyType)
+            {
+                case CTRL_Buff.APPLY_TYPE.Player_moneygain:
+                    {
+                        res += data.Basic_ratioValue;
+                    }
+                    break;
+            }
+        }
+
+        return res;
+    }
+
+    // ��ȭ�� �����Ѵ�.
     object HYJ_Basic_GoldMinus(params object[] _args)
     {
         bool res = false;
@@ -158,11 +229,11 @@ partial class HYJ_Player
         //
         int value = (int)_args[0];
 
-        if (Basic_gold >= value)
+        if (File_saveData.File_basic.Basic_gold >= value)
         {
-            Basic_gold -= value;
+            File_saveData.File_basic.Basic_gold -= value;
 
-            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___GOLD__VIEW_GOLD, Basic_gold);
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___GOLD__VIEW_GOLD, File_saveData.File_basic.Basic_gold);
 
             res = true;
         }
@@ -171,19 +242,19 @@ partial class HYJ_Player
         return res;
     }
 
-    // 금화 이자
+    // ��ȭ ����
     object Basic_GoldInterest(params object[] _args)
     {
-        if (Basic_gold >= 50)
-            Basic_gold += 5;
-        else if (Basic_gold >= 40)
-            Basic_gold += 4;
-        else if (Basic_gold >= 30)
-            Basic_gold += 3;
-        else if (Basic_gold >= 20)
-            Basic_gold += 2;
-        else if (Basic_gold >= 10)
-            Basic_gold += 1;
+        if (File_saveData.File_basic.Basic_gold >= 50)
+            File_saveData.File_basic.Basic_gold += 5;
+        else if (File_saveData.File_basic.Basic_gold >= 40)
+            File_saveData.File_basic.Basic_gold += 4;
+        else if (File_saveData.File_basic.Basic_gold >= 30)
+            File_saveData.File_basic.Basic_gold += 3;
+        else if (File_saveData.File_basic.Basic_gold >= 20)
+            File_saveData.File_basic.Basic_gold += 2;
+        else if (File_saveData.File_basic.Basic_gold >= 10)
+            File_saveData.File_basic.Basic_gold += 1;
         else
             ;
 
@@ -191,22 +262,22 @@ partial class HYJ_Player
     }
     object Basic_getCurHP(params object[] _args)
     {
-        return Basic_hp;
+        return File_saveData.File_basic.Basic_hp;
     }
 
     object Basic_getMaxHP(params object[] _args)
     {
-        return Basic_hpMax;
+        return File_saveData.File_basic.Basic_hpMax;
     }
 
-    // 플레이어 체력 회복
+    // �÷��̾� ü�� ȸ��
     object JHW_Basic_hp_Increase(params object[] _args)
     {
         int value = (int)_args[0];
-        if (Basic_hpMax < Basic_hp + value) Basic_hp = Basic_hpMax;
-        else Basic_hp = Basic_hp + value;
+        if (File_saveData.File_basic.Basic_hpMax < File_saveData.File_basic.Basic_hp + value) File_saveData.File_basic.Basic_hp = File_saveData.File_basic.Basic_hpMax;
+        else File_saveData.File_basic.Basic_hp = File_saveData.File_basic.Basic_hp + value;
 
-        // 플레이어 HP 상단바 조정
+        // �÷��̾� HP ��ܹ� ����
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___HP__VIEW_HP);
 
         return true;
@@ -215,14 +286,19 @@ partial class HYJ_Player
     //////////  Default Method  //////////
     bool HYJ_Basic_Init()
     {
-        Basic_gold = 10;
-        Basic_level = 1;
-        Basic_exp = 0;
+        if(File_saveData != null)
+        {
+            if (File_saveData.File_basic.Basic_level == 0)
+            {
+                File_saveData.File_basic.Basic_gold = 10;
+                File_saveData.File_basic.Basic_level = 1;
+                File_saveData.File_basic.Basic_exp = 0;
 
-        //
-        Basic_hpMax = 99;
-        Basic_hp = 80;
-
+                //
+                File_saveData.File_basic.Basic_hpMax = 99;
+                File_saveData.File_basic.Basic_hp = 80;
+            }
+        }
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_GOLD, LSY_Basic_getGold);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_IS_ENOUGH, HYJ_Basic_GoldIsEnough);
@@ -243,7 +319,7 @@ partial class HYJ_Player
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_PLAYER_UNIT_DATABASE, Player_Unit_GetUnitDataBase);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE, Player_DB_Update);
 
-        // 플레이어 HP 상단바 조정
+        // �÷��̾� HP ��ܹ� ����
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___HP__VIEW_HP);
 
         return true;
@@ -343,22 +419,36 @@ public class Player_DB
 
 #endregion
 
-// 유닛(기물)에 대한 정보
+// ����(�⹰)�� ���� ����
 #region Unit
 
 [Serializable]
 public class HYJ_Player_Unit_Datas
 {
-    [SerializeField] List<CTRL_Character_Data> unitDatas;
+    public List<CTRL_Character_Data> unitDatas;
 
     //////////  Getter & Setter //////////
-
-    //////////  Method          //////////
     public CTRL_Character_Data HYJ_Data_GetUnitData(int _count) { return unitDatas[_count]; }
     public void HYJ_Data_SetUnitData(CTRL_Character_Data _data, int _count) { unitDatas[_count] = _data; }
     public void HYJ_Data_SetUnitData(CTRL_Character_Data _data) { unitDatas.Add(_data); }
 
     public int HYJ_Data_GetUnitDataCount() { return unitDatas.Count; }
+
+    //////////  Method          //////////
+    // �����δ� ��������� ä���� �ִ� ��츦 ���� ������ ó���ϴ� �޼���.
+    public void HYJ_Data_SaveSetting()
+    {
+        for(int i = 0; i < unitDatas.Count; i++)
+        {
+            if(unitDatas[i] != null)
+            {
+                if((unitDatas[i].Data_ID == null) || (unitDatas[i].Data_ID.Equals("")))
+                {
+                    unitDatas[i] = null;
+                }
+            }
+        }
+    }
 
     //////////  Default Method  //////////
     public HYJ_Player_Unit_Datas(int _count)
@@ -376,9 +466,33 @@ public class HYJ_Player_Unit_Datas
 
 partial class HYJ_Player
 {
-    [SerializeField] HYJ_Player_Unit_Datas Unit_buyUnits;
-    [SerializeField] HYJ_Player_Unit_Datas Unit_waitUnits;
-    [SerializeField] List<HYJ_Player_Unit_Datas> Unit_fieldUnits;
+    [Serializable]
+    class Unit_Data : CTRL_File
+    {
+        public HYJ_Player_Unit_Datas Unit_buyUnits;
+        public HYJ_Player_Unit_Datas Unit_waitUnits;
+        public List<HYJ_Player_Unit_Datas> Unit_fieldUnits;
+
+        //////////  Getter & Setter //////////
+
+        //////////  Method          //////////
+        // �����δ� ��������� ä���� �ִ� ��츦 ���� ������ ó���ϴ� �޼���.
+        public void HYJ_Data_SaveSetting()
+        {
+            Unit_buyUnits.HYJ_Data_SaveSetting();
+            Unit_waitUnits.HYJ_Data_SaveSetting();
+            for(int i = 0; i < Unit_fieldUnits.Count; i++)
+            {
+                Unit_fieldUnits[i].HYJ_Data_SaveSetting();
+            }
+        }
+
+        //////////  Default Method  //////////
+    }
+
+    //[SerializeField] HYJ_Player_Unit_Datas Unit_buyUnits;
+    //[SerializeField] HYJ_Player_Unit_Datas Unit_waitUnits;
+    //[SerializeField] List<HYJ_Player_Unit_Datas> Unit_fieldUnits;
     [SerializeField] List<int> synergy_list;
     [SerializeField] SerialList<int>[] id_list = new SerialList<int>[3];
     //[SerializeField] int[] id_array, synergy_array;
@@ -396,6 +510,8 @@ partial class HYJ_Player
     [SerializeField]
     List<SerialDictionary<string, object>> Serial_dic;
 
+    // Ȳ���� �߰�
+    Dictionary<string, List<GameObject>> Unit_starCheck;
 
     //////////  Getter & Setter //////////
     //
@@ -403,12 +519,12 @@ partial class HYJ_Player
     {
         int _count = (int)_args[0];
 
-        return Unit_buyUnits.HYJ_Data_GetUnitData(_count);
+        return File_saveData.File_unit.Unit_buyUnits.HYJ_Data_GetUnitData(_count);
     }
 
     object HYJ_Unit_GetBuyUnitCount(params object[] _args)
     {
-        return Unit_buyUnits.HYJ_Data_GetUnitDataCount();
+        return File_saveData.File_unit.Unit_buyUnits.HYJ_Data_GetUnitDataCount();
     }
 
     //
@@ -416,7 +532,16 @@ partial class HYJ_Player
     {
         int _count = (int)_args[0];
 
-        return Unit_waitUnits.HYJ_Data_GetUnitData(_count);
+        return File_saveData.File_unit.Unit_waitUnits.HYJ_Data_GetUnitData(_count);
+    }
+
+    //
+    object HYJ_Unit_GetFieldUnitData(params object[] _args)
+    {
+        int _x = (int)_args[0];
+        int _y = (int)_args[1];
+
+        return File_saveData.File_unit.Unit_fieldUnits[_y].HYJ_Data_GetUnitData(_x);
     }
 
     //
@@ -427,46 +552,57 @@ partial class HYJ_Player
     }
 
     //////////  Method          //////////
-    // 유닛을 추가한다.
-    // -1이면 빈 칸에 추가한다.
+    // ������ �߰��Ѵ�.(����)
+    // -1�̸� �� ĭ�� �߰��Ѵ�.
     bool HYJ_Unit_Insert(string _name, int _count)
     {
         bool res = false;
 
         CTRL_Character_Data element = new CTRL_Character_Data(_name);
-        Unit_buyUnits.HYJ_Data_SetUnitData(element);
-        //if (_count == -1)
-        //{
-        //    for (int i = 0; i < Unit_waitUnits.HYJ_Data_GetUnitDataCount(); i++)
-        //    {
-        //        if ((Unit_waitUnits.HYJ_Data_GetUnitData(i) == null) || (Unit_waitUnits.HYJ_Data_GetUnitData(i).Data_ID == null))
-        //        {
-        //            Unit_waitUnits.HYJ_Data_SetUnitData(element, i);
-        //            res = true;
-        //            break;
-        //        }
-        //    }
-        //}
-        //else
-        //{
-        //    Unit_waitUnits.HYJ_Data_SetUnitData(element, _count);
-        //    res = true;
-        //}
+        File_saveData.File_unit.Unit_buyUnits.HYJ_Data_SetUnitData(element);
 
         return res;
     }
 
-    object HYJ_Unit_Insert_Bridge(params object[] _args)
+    // ������ �߰��Ѵ�.(����)
+    object HYJ_Unit_BuyFromBattle_bridge(params object[] _args)
     {
         string name = (string)_args[0];
         int count = (int)_args[1];
 
         //
-        HYJ_Unit_Insert(name, count);
+        HYJ_Unit_BuyFromBattle(name, count);
 
         //
         return true;
     }
+
+    bool HYJ_Unit_BuyFromBattle(string _name, int _count)
+    {
+        bool res = false;
+
+        CTRL_Character_Data element = new CTRL_Character_Data(_name);
+        if (_count == -1)
+        {
+            for (int i = 0; i < File_saveData.File_unit.Unit_waitUnits.HYJ_Data_GetUnitDataCount(); i++)
+            {
+                if ((File_saveData.File_unit.Unit_waitUnits.HYJ_Data_GetUnitData(i) == null) || (File_saveData.File_unit.Unit_waitUnits.HYJ_Data_GetUnitData(i).Data_ID == null))
+                {
+                    File_saveData.File_unit.Unit_waitUnits.HYJ_Data_SetUnitData(element, i);
+                    res = true;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            File_saveData.File_unit.Unit_waitUnits.HYJ_Data_SetUnitData(element, _count);
+            res = true;
+        }
+
+        return res;
+    }
+
 
     //
     object HYJ_Unit_Data_Update_Bridge(params object[] _args)
@@ -506,11 +642,16 @@ partial class HYJ_Player
             case BATTLE_PHASE.PHASE_INIT:
             case BATTLE_PHASE.PHASE_PREPARE:
             case BATTLE_PHASE.PHASE_COMBAT_OVER:
-                Update_Stand_Tiles(_PHASE);
-                Update_Field_Tiles(_PHASE);
+                {
+                    Update_StarCheck();
+                    Update_Stand_Tiles(_PHASE);
+                    Update_Field_Tiles(_PHASE);
+                }
                 break;
             case BATTLE_PHASE.PHASE_COMBAT:
-                Update_Stand_Tiles(_PHASE);
+                {
+                    Update_Stand_Tiles(_PHASE);
+                }
                 break;
         }
 
@@ -623,221 +764,289 @@ partial class HYJ_Player
         }
         */
 
-        Debug.Log("여기까지옴? " + _candidate_units.Count);
+        Debug.Log("���������? " + _candidate_units.Count);
         //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
 
         return false;
     }
 
-    void Update_Field_Tiles(BATTLE_PHASE _PHASE)
+    /// <summary>
+    /// ���ֵ��� üũ�ϰ� ���� ���� 3���� ã�� ����.
+    /// </summary>
+    void Update_StarCheck()
     {
-        if (false)
+        if (Unit_starCheck == null)
         {
-            //for (int y = 0; y < field_tiles.Count; y++)
-            //{
-            //    for (int x = 0; x < field_tiles[y].HYJ_Data_GetCount(); x++)
-            //    {
-            //        //
-            //        CTRL_Character_Data data = null;
-
-            //        GameObject obj = field_tiles[y].HYJ_Data_GetUnitOnTile(x);
-            //        if (obj != null)
-            //        {
-            //            Character obj_char = obj.GetComponent<Character>();
-            //            if (obj_char.UnitType == Character.Unit_Type.Ally)
-            //            {
-            //                data = obj_char.HYJ_Status_saveData;
-            //                // Synergy Update
-            //                //Debug.Log("[Synergy] COST : " + obj_char.Stat_Cost);
-            //                synergy_list[obj_char.Stat_Cost - 1]++;
-
-            //                int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
-            //                int starint = obj_char.StarInt();
-            //                id_list[starint].m_List[id]++;
-            //                Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
-
-            //                if (starint < 3 && id_list[starint].m_List[id] == 3)
-            //                {
-            //                    if (Find_Unit_On_Tile(obj))
-            //                    //if ((int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIND_FIELD, starint, id) == 2)
-            //                    {
-            //                        obj_char.StarUp(_Tile);
-            //                        obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
-            //                        _Tile = null;
-            //                    }
-
-            //                    id_list[starint].m_List[id] = 0;
-            //                    id_list[starint + 1].m_List[id]++;
-            //                    Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
-
-            //                    if (id_list[starint + 1].m_List[id] == 3 && starint < 2)
-            //                    {
-            //                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, _PHASE);
-            //                    }
-            //                }
-
-            //            }
-            //        }
-
-            //        //
-            //        Unit_fieldUnits[y].HYJ_Data_SetUnitData(data, x);
-            //    }
-            //}
+            Unit_starCheck = new Dictionary<string, List<GameObject>>();
         }
 
-        GameObject obj = null;
-        Character obj_char = null;
-        CTRL_Character_Data _data = null;
-
-        for (int i = 0; i < field_cnt; i++)
+        while(Unit_starCheck.Count > 0)
         {
-            obj = field_units[i];
-            obj_char = obj.GetComponent<Character>();
-            _data = obj_char.HYJ_Status_saveData;
-            int _star = obj_char.StarInt(), _id = obj_char.Character_Status_Index;
-
-            synergy_list[obj_char.Stat_Cost - 1]++;
-            id_list[_star].m_List[_id]++;
-            //Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
-
-            // 2,3성 감지
-            if (_star < 3 && id_list[_star].m_List[_id] == 3)
+            foreach(List<GameObject> element in Unit_starCheck.Values)
             {
-                if (Find_Unit_On_Tile(obj, _PHASE))
+                element.Clear();
+            }
+            Unit_starCheck.Clear();
+        }
+
+        for (int y = 0; y < field_tiles.Count; y++)
+        {
+            for (int x = 0; x < field_tiles[y].HYJ_Data_GetCount(); x++)
+            {
+                GameObject obj = field_tiles[y].HYJ_Data_GetUnitOnTile(x);
+                if (obj != null)
                 {
-                    Debug.Log("Candidate count " + _candidate_units.Count);
-                    _candidate_units.Remove(obj);
-                    object[] param = new object[2];
-                    param[0] = _candidate_units[0];
-                    param[1] = _candidate_units[1];
+                    Character obj_char = obj.GetComponent<Character>();
 
-                    obj_char.StarUp(_Tile);
-                    obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
-
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
-
-                    _Tile = null;
-
-                    // 시너지 리스트 초기화
-                    synergy_list[obj_char.Stat_Cost - 1] = 0;
-                    synergy_list[obj_char.Stat_Cost]++;
-
-                    // ID 리스트 초기화
-                    id_list[_star].m_List[_id] = 0;
-                    id_list[_star + 1].m_List[_id]++;
-                    Debug.Log(obj.name + " _star : " + obj_char.StarInt() + ", _cnt : " + id_list[obj_char.StarInt()].m_List[_id]);
-                }
-
-                // 3성 감지
-                if (_star < 2 && id_list[_star + 1].m_List[_id] == 3)
-                {
-                    //Debug.Log("STAR: " + (_star + 1) + " is 3! candi num " + _candidate_units.Count);
-                    //_candidate_units.Clear();
-                    //Debug.Log("STAR: " + (_star + 1) + " is 3! candi num " + _candidate_units.Count);
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, _PHASE);
+                    if (obj_char.m_UnitType == Character.Unit_Type.Ally)
+                    {
+                        if (!Unit_starCheck.ContainsKey(obj_char.HYJ_Status_saveData.Data_ID))
+                        {
+                            Unit_starCheck.Add(obj_char.HYJ_Status_saveData.Data_ID, new List<GameObject>());
+                        }
+                        Unit_starCheck[obj_char.HYJ_Status_saveData.Data_ID].Add(obj);
+                    }
                 }
             }
-
         }
 
-        for (int i = 0; i < DB_cnt; i++)
-            synergy_dic[i + 1] = synergy_list[i];
+        for (int x = 0; x < wait_tiles.HYJ_Data_GetCount(); x++)
+        {
+            GameObject obj = wait_tiles.HYJ_Data_GetUnitOnTile(x);
+            if (obj != null)
+            {
+                Character obj_char = obj.GetComponent<Character>();
 
-        // Tile.Ally_Enter에서 Player.UnitDataUpdate 호출, 이후 SynergyUpdate 호출
+                if (!Unit_starCheck.ContainsKey(obj_char.HYJ_Status_saveData.Data_ID))
+                {
+                    Unit_starCheck.Add(obj_char.HYJ_Status_saveData.Data_ID, new List<GameObject>());
+                }
+                Unit_starCheck[obj_char.HYJ_Status_saveData.Data_ID].Add(obj);
+            }
+        }
+
+        foreach (string key in Unit_starCheck.Keys)
+        {
+            List<GameObject> units = Unit_starCheck[key];
+            if (units.Count >= 3)
+            {
+                Character obj_char = units[0].GetComponent<Character>();
+                obj_char.StarUp(obj_char.LSY_Character_Get_OnTile().GetComponent<HYJ_Battle_Tile>());
+                obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
+
+                units.RemoveAt(0);
+
+                object[] param = new object[2];
+                param[0] = units[0];
+                param[1] = units[1];
+
+                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
+            }
+        }
+    }
+
+    void Update_Field_Tiles(BATTLE_PHASE _PHASE)
+    {
+        for (int y = 0; y < field_tiles.Count; y++)
+        {
+            for (int x = 0; x < field_tiles[y].HYJ_Data_GetCount(); x++)
+            {
+                //
+                CTRL_Character_Data data = null;
+
+                GameObject obj = field_tiles[y].HYJ_Data_GetUnitOnTile(x);
+                if (obj != null)
+                {
+                    Character obj_char = obj.GetComponent<Character>();
+                    if (obj_char.UnitType == Character.Unit_Type.Ally)
+                    {
+                        data = obj_char.HYJ_Status_saveData;
+
+        //                // Synergy Update
+        //                //Debug.Log("[Synergy] COST : " + obj_char.Stat_Cost);
+        //                synergy_list[obj_char.Stat_Cost - 1]++;
+
+        //                int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
+        //                int starint = obj_char.StarInt();
+        //                id_list[starint].m_List[id]++;
+        //                Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
+
+        //                if (starint < 3 && id_list[starint].m_List[id] == 3)
+        //                {
+        //                    if (Find_Unit_On_Tile(obj))
+        //                    //if ((int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIND_FIELD, starint, id) == 2)
+        //                    {
+        //                        obj_char.StarUp(_Tile);
+        //                        obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
+        //                        _Tile = null;
+        //                    }
+
+        //                    id_list[starint].m_List[id] = 0;
+        //                    id_list[starint + 1].m_List[id]++;
+        //                    Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
+
+        //                    if (id_list[starint + 1].m_List[id] == 3 && starint < 2)
+        //                    {
+        //                        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, _PHASE);
+        //                    }
+        //                }
+                    }
+                }
+
+                //
+                File_saveData.File_unit.Unit_fieldUnits[y].HYJ_Data_SetUnitData(data, x);
+            }
+        }
+
+        {
+            //GameObject obj = null;
+            //Character obj_char = null;
+            //CTRL_Character_Data _data = null;
+            //
+            //for (int i = 0; i < field_cnt; i++)
+            //{
+            //    obj = field_units[i];
+            //    obj_char = obj.GetComponent<Character>();
+            //    _data = obj_char.HYJ_Status_saveData;
+            //    int _star = obj_char.StarInt(), _id = obj_char.Character_Status_Index;
+            //
+            //    synergy_list[obj_char.Stat_Cost - 1]++;
+            //    id_list[_star].m_List[_id]++;
+            //    //Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
+            //
+            //    if (_star < 3 && id_list[_star].m_List[_id] == 3)
+            //    {
+            //        if (Find_Unit_On_Tile(obj, _PHASE))
+            //        {
+            //            Debug.Log("Candidate count " + _candidate_units.Count);
+            //            _candidate_units.Remove(obj);
+            //            object[] param = new object[2];
+            //            param[0] = _candidate_units[0];
+            //            param[1] = _candidate_units[1];
+            //
+            //            obj_char.StarUp(_Tile);
+            //            obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
+            //
+            //            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
+            //
+            //            _Tile = null;
+            //
+            //            id_list[_star].m_List[_id] = 0;
+            //            id_list[_star + 1].m_List[_id]++;
+            //            Debug.Log(obj.name + " _star : " + obj_char.StarInt() + ", _cnt : " + id_list[obj_char.StarInt()].m_List[_id]);
+            //        }
+            //        if (id_list[_star + 1].m_List[_id] == 3 && _star < 2)
+            //        {
+            //            //Debug.Log("STAR: " + (_star + 1) + " is 3! candi num " + _candidate_units.Count);
+            //            //_candidate_units.Clear();
+            //            //Debug.Log("STAR: " + (_star + 1) + " is 3! candi num " + _candidate_units.Count);
+            //            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, _PHASE);
+            //        }
+            //    }
+            //
+            //}
+            //
+            //for (int i = 0; i < DB_cnt; i++)
+            //    synergy_dic[i + 1] = synergy_list[i];
+        }
+
+        // Tile.Ally_Enter���� Player.UnitDataUpdate ȣ��, ���� SynergyUpdate ȣ��
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, synergy_dic);
     }
 
     void Update_Stand_Tiles(BATTLE_PHASE _PHASE)
     {
-        if (false)
+        for (int x = 0; x < wait_tiles.HYJ_Data_GetCount(); x++)
         {
-            //for (int x = 0; x < wait_tiles.HYJ_Data_GetCount(); x++)
-            //{
-            //    //
-            //    CTRL_Character_Data data = null;
+            //
+            CTRL_Character_Data data = null;
 
-            //    GameObject obj = wait_tiles.HYJ_Data_GetUnitOnTile(x);
-            //    if (obj != null)
-            //    {
-            //        Character obj_char = obj.GetComponent<Character>();
-            //        data = wait_tiles.HYJ_Data_GetUnitOnTile(x).GetComponent<Character>().HYJ_Status_saveData;
-
-            //        int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
-            //        int starint = obj_char.StarInt();
-            //        id_list[starint].m_List[id]++;
-            //        Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
-
-            //        if (starint < 3 && id_list[starint].m_List[id] == 3)
-            //        {
-            //            Debug.Log("STARUP " + obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
-            //            if (Find_Unit_On_Tile(obj))
-            //            //if ((int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIND_STAND, starint, id) == 2)
-            //            {
-            //                Debug.Log("ASDF");
-            //                obj_char.StarUp(_Tile);
-            //                obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
-            //                _Tile = null;
-            //            }
-
-            //            id_list[starint].m_List[id] = 0;
-            //            id_list[starint + 1].m_List[id]++;
-            //            Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
-
-
-            //            if (id_list[starint + 1].m_List[id] == 3 && starint < 2)
-            //            {
-            //                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, _PHASE);
-            //            }
-
-
-            //        }
-            //    }
-            //    //
-            //    Unit_waitUnits.HYJ_Data_SetUnitData(data, x);
-            //}
-        }
-        GameObject obj = null;
-        Character obj_char = null;
-        CTRL_Character_Data _data = null;
-
-        for (int i = 0; i < stand_cnt; i++)
-        {
-            obj = stand_units[i];
-            obj_char = obj.GetComponent<Character>();
-            _data = obj_char.HYJ_Status_saveData;
-            int _star = obj_char.StarInt(), _id = obj_char.Character_Status_Index;
-
-            id_list[_star].m_List[_id]++;
-            //Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
-
-            if (_star < 3 && id_list[_star].m_List[_id] == 3)
+            GameObject obj = wait_tiles.HYJ_Data_GetUnitOnTile(x);
+            if (obj != null)
             {
-                if (Find_Unit_On_Tile(obj, _PHASE))
-                {
-                    Debug.Log("Candidate count " + _candidate_units.Count);
-                    _candidate_units.Remove(obj);
-                    object[] param = new object[2];
-                    param[0] = _candidate_units[0];
-                    param[1] = _candidate_units[1];
+                data = wait_tiles.HYJ_Data_GetUnitOnTile(x).GetComponent<Character>().HYJ_Status_saveData;
+        //        Character obj_char = obj.GetComponent<Character>();
 
-                    obj_char.StarUp(_Tile);
-                    obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
+        //        int id = Int32.Parse(obj_char.HYJ_Status_saveData.Data_ID);
+        //        int starint = obj_char.StarInt();
+        //        id_list[starint].m_List[id]++;
+        //        Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
 
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
+        //        if (starint < 3 && id_list[starint].m_List[id] == 3)
+        //        {
+        //            Debug.Log("STARUP " + obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
+        //            if (Find_Unit_On_Tile(obj))
+        //            //if ((int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__FIND_STAND, starint, id) == 2)
+        //            {
+        //                Debug.Log("ASDF");
+        //                obj_char.StarUp(_Tile);
+        //                obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
+        //                _Tile = null;
+        //            }
 
-                    _Tile = null;
+        //            id_list[starint].m_List[id] = 0;
+        //            id_list[starint + 1].m_List[id]++;
+        //            Debug.Log(obj.name + " _star : " + starint + ", _cnt : " + id_list[starint].m_List[id]);
 
-                    id_list[_star].m_List[_id] = 0;
-                    id_list[_star + 1].m_List[_id]++;
-                    Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[obj_char.StarInt()].m_List[_id]);
-                }
-                if (id_list[_star + 1].m_List[_id] == 3 && _star < 2)
-                {
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, _PHASE);
-                }
 
+        //            if (id_list[starint + 1].m_List[id] == 3 && starint < 2)
+        //            {
+        //                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, _PHASE);
+        //            }
+
+
+        //        }
             }
 
+            //
+            File_saveData.File_unit.Unit_waitUnits.HYJ_Data_SetUnitData(data, x);
+        }
+
+        {
+            //
+            //GameObject obj = null;
+            //Character obj_char = null;
+            //CTRL_Character_Data _data = null;
+            //
+            //for (int i = 0; i < stand_cnt; i++)
+            //{
+            //    obj = stand_units[i];
+            //    obj_char = obj.GetComponent<Character>();
+            //    _data = obj_char.HYJ_Status_saveData;
+            //    int _star = obj_char.StarInt(), _id = obj_char.Character_Status_Index;
+            //
+            //    id_list[_star].m_List[_id]++;
+            //    //Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
+            //
+            //    if (_star < 3 && id_list[_star].m_List[_id] == 3)
+            //    {
+            //        if (Find_Unit_On_Tile(obj, _PHASE))
+            //        {
+            //            Debug.Log("Candidate count " + _candidate_units.Count);
+            //            _candidate_units.Remove(obj);
+            //            object[] param = new object[2];
+            //            param[0] = _candidate_units[0];
+            //            param[1] = _candidate_units[1];
+            //
+            //            obj_char.StarUp(_Tile);
+            //            obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
+            //
+            //            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
+            //
+            //            _Tile = null;
+            //
+            //            id_list[_star].m_List[_id] = 0;
+            //            id_list[_star + 1].m_List[_id]++;
+            //            Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[obj_char.StarInt()].m_List[_id]);
+            //        }
+            //        if (id_list[_star + 1].m_List[_id] == 3 && _star < 2)
+            //        {
+            //            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, _PHASE);
+            //        }
+            //
+            //    }
+            //
+            //}
         }
 
         //
@@ -846,10 +1055,10 @@ partial class HYJ_Player
 
     //////////  Default Method  //////////
 
-    // Battle_Manager.Unit_init(), BaseCamp_Manager_DeleteUnit() 에서 호출
+    // Battle_Manager.Unit_init(), BaseCamp_Manager_DeleteUnit() ���� ȣ��
     object Player_DB_Update(params object [] _args)
     {
-        // 1,2,3성 csv를 List로 처리. 
+        // 1,2,3�� csv�� List�� ó��. 
         //Player_Unit_csv = new List<List<Dictionary<string, object>>>();
         //string csv_path = "DataBase/Player_Unit_DataBase";
 
@@ -898,7 +1107,7 @@ partial class HYJ_Player
             //{
             //    StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_"
             //        + (_star + 1).ToString() + ".csv");
-            //    // 헤더 추가
+            //    // ��� �߰�
             //    int row_cnt = Player_Unit_csv[_star][0].Keys.ToList().Count;
             //    for (int i = 0; i < row_cnt - 1; i++)
             //    {
@@ -908,7 +1117,7 @@ partial class HYJ_Player
             //    outStream.Write(Player_Unit_csv[_star][0].Keys.ToList()[row_cnt - 1]);
             //    outStream.Write("\n");
 
-            //    // 내용 추가
+            //    // ���� �߰�
             //    int col_cnt = Player_Unit_csv[0].Count;
             //    for (int k = 0; k < col_cnt; k++)
             //    {
@@ -922,15 +1131,15 @@ partial class HYJ_Player
             //    }
             //    outStream.Close();
 
-            //} 이 코드는 딕셔너리를 읽어서 파일을 생성하는 형식임. 아래의 전체 파일 복사와는 다름.
+            //} �� �ڵ�� ��ųʸ��� �о ������ �����ϴ� ������. �Ʒ��� ��ü ���� ����ʹ� �ٸ�.
         }
 
         string[] lines;
         for (int i = 1; i <= 3; i++)
         {
-            // UsingDB 읽어오기
+            // UsingDB �о����
             lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character_" + i.ToString() + ".csv");
-            // PlayerDB 삭제 후 생성
+            // PlayerDB ���� �� ����
             System.IO.File.Delete("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
             StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
             for (int j = 0; j < lines.Length; j++)
@@ -940,7 +1149,7 @@ partial class HYJ_Player
             outStream.Close();
         }
 
-        Debug.Log("[PlayerDB] DB_Using_Character_#.csv 생성 완료");
+        Debug.Log("[PlayerDB] DB_Using_Character_#.csv ���� �Ϸ�");
 
 
         object var = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
@@ -953,62 +1162,77 @@ partial class HYJ_Player
 
     bool HYJ_Unit_Init()
     {
-        object count0 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X);
-        if (count0 == null)
+        if (File_saveData.File_unit.Unit_waitUnits.HYJ_Data_GetUnitDataCount() != 0)
         {
-            return false;
+            Debug.Log("HYJ_Unit_Init 0");
         }
         else
         {
-            if (Unit_waitUnits.HYJ_Data_GetUnitDataCount() == 0)
-                Unit_waitUnits = new HYJ_Player_Unit_Datas((int)count0);
-
-        }
-
-
-        //
-        if (true)
-        {
-                    count0 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X);
-            object  count1 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y);
-            if (Unit_fieldUnits == null)
-                Unit_fieldUnits = new List<HYJ_Player_Unit_Datas>();
-
-            if((count0 != null) && (count1 != null))
+            if (File_saveData.File_unit == null)
             {
-                for (int forY = 0; forY < (int)count1; forY++)
-                {
-                    Unit_fieldUnits.Add(null);
-                }
+                File_saveData.File_unit = new Unit_Data();
+            }
 
-                for (int forY = 0; forY < (int)count1; forY++)
-                {
-                    int countX = (int)count0;
-                    if ((forY % 2) == 1)
-                    {
-                        countX += 1;
-                    }
-
-                    Unit_fieldUnits[forY] = new HYJ_Player_Unit_Datas(countX);
-                }
+            object count0 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X);
+            if (count0 == null)
+            {
+                Debug.Log("HYJ_Unit_Init 1");
+                return false;
             }
             else
             {
-                //res = false;
-                return false;
+                if (File_saveData.File_unit.Unit_waitUnits.HYJ_Data_GetUnitDataCount() == 0)
+                    File_saveData.File_unit.Unit_waitUnits = new HYJ_Player_Unit_Datas((int)count0);
+
+            }
+
+            //
+            if (true)
+            {
+                //
+                count0 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X);
+                object count1 = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y);
+                if (File_saveData.File_unit.Unit_fieldUnits == null)
+                    File_saveData.File_unit.Unit_fieldUnits = new List<HYJ_Player_Unit_Datas>();
+
+                if ((count0 != null) && (count1 != null))
+                {
+                    for (int forY = 0; forY < (int)count1; forY++)
+                    {
+                        File_saveData.File_unit.Unit_fieldUnits.Add(null);
+                    }
+
+                    for (int forY = 0; forY < (int)count1; forY++)
+                    {
+                        int countX = (int)count0;
+                        if ((forY % 2) == 1)
+                        {
+                            countX += 1;
+                        }
+
+                        File_saveData.File_unit.Unit_fieldUnits[forY] = new HYJ_Player_Unit_Datas(countX);
+                    }
+                }
+                else
+                {
+                    Debug.Log("HYJ_Unit_Init 2");
+                    //res = false;
+                    return false;
+                }
             }
         }
 
         //
 
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_BUY_UNIT_DATA,   HYJ_Unit_GetBuyUnitData     );
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_BUY_UNIT_COUNT,  HYJ_Unit_GetBuyUnitCount    );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_BUY_UNIT_DATA,   HYJ_Unit_GetBuyUnitData         );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_BUY_UNIT_COUNT,  HYJ_Unit_GetBuyUnitCount        );
+        
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_WAIT_UNIT_DATA,  HYJ_Unit_GetWaitUnitData        );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_FIELD_UNIT_DATA, HYJ_Unit_GetFieldUnitData       );
 
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_WAIT_UNIT_DATA,  HYJ_Unit_GetWaitUnitData    );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__BUY_FROM_BATTLE,     HYJ_Unit_BuyFromBattle_bridge   );
 
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__INSERT,              HYJ_Unit_Insert_Bridge      );
-
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE,         HYJ_Unit_Data_Update_Bridge );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE,         HYJ_Unit_Data_Update_Bridge     );
 
         return true;
     }
@@ -1016,15 +1240,15 @@ partial class HYJ_Player
 
 #endregion
 
-// 아이템에 대한 정보
+// �����ۿ� ���� ����
 #region Item
 
-// 아이템 정보를 모은 클래스
+// ������ ������ ���� Ŭ����
 [Serializable]
 public class HYJ_Player_Item : IDisposable
 {
-    public string   Data_name;  // 아이템의 DB이름
-    public int      Data_count; // 현재 보유하고 있는 갯수
+    public string   Data_name;  // �������� DB�̸�
+    public int      Data_count; // ���� �����ϰ� �ִ� ����
 
     //////////  Getter & Setter //////////
 
@@ -1053,35 +1277,96 @@ partial class HYJ_Player
     [SerializeField] List<HYJ_Player_Item> Item_relicsEquip;
 
     //////////  Getter & Setter //////////
+    object HYJ_Item_GetRelics(params object[] _args) { return Item_relics; }
+
+    object HYJ_Item_GetRelicsEquip(params object[] _args) { return Item_relicsEquip; }
 
     //////////  Method          //////////
+    // HYJ_Item_Insert
     object HYJ_Item_Insert(params object[] _args)
     {
         string type = (string)_args[0];
         string name = (string)_args[1];
         int count = (int)_args[2];
 
-        Debug.Log(type + " " + name);
         //
         switch (type)
         {
-            case "RELIC":   { Item_relics.Add(new HYJ_Player_Item(name, count));    }   break;
-            case "UNIT":    { HYJ_Unit_Insert(name, -1);                            }   break;
-            case "POTION":  { HYJ_Buff_PotionInsert(name);                          }   break;
-            case "BUFF":    { HYJ_Buff_BuffInsert(name);                            }   break;
-            case "DEBUFF":  { HYJ_Buff_DeBuffInsert(name);                          }   break;
+            case "RELIC":   { HYJ_Item_Insert__Relic(name, count);  }   break;
+            case "UNIT":    { HYJ_Unit_Insert(name, -1);            }   break;
+            case "POTION":  { HYJ_Buff_PotionInsert(name);          }   break;
+            case "BUFF":    { HYJ_Buff_BuffInsert(name);            }   break;
+            case "DEBUFF":  { HYJ_Buff_DeBuffInsert(name);          }   break;
         }
 
         //
-        return null;
+        return true;
+    }
+
+    void HYJ_Item_Insert__Relic(string _name, int _count)
+    {
+        bool isContinue = true;
+
+        // ������ ����ִ� ���� �ִٸ� �ű⿡ �־�����.
+        for (int i = 0; i < Item_relicsEquip.Count; i++)
+        {
+            if(Item_relicsEquip[i] == null)
+            {
+                Item_relicsEquip[i] = new HYJ_Player_Item(_name, _count);
+                isContinue = false;
+                break;
+            }
+        }
+
+        // �� ĭ�� �ִٸ� �ű⿡ �־�����. ���ٸ� �׳� ����.
+        if(isContinue)
+        {
+            for (int i = 0; i < Item_relics.Count; i++)
+            {
+                if (Item_relics[i] == null)
+                {
+                    Item_relics[i] = new HYJ_Player_Item(_name, _count);
+                    isContinue = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    // HYJ_Item_Equip
+    object HYJ_Item_Equip(params object[] _args)
+    {
+        int equipCount      = (int)_args[0];
+        int inventoryCount  = (int)_args[1];
+
+        HYJ_Player_Item item = Item_relics[inventoryCount];
+        Item_relics[inventoryCount] = Item_relicsEquip[equipCount];
+        Item_relicsEquip[equipCount] = item;
+
+        //
+        return true;
     }
 
     //////////  Default Method  //////////
     bool HYJ_Item_Init()
     {
         Item_relics = new List<HYJ_Player_Item>();
+        for (int i = 0; i < 20; i++)
+        {
+            Item_relics.Add(null);
+        }
+
+        Item_relicsEquip = new List<HYJ_Player_Item>();
+        for(int i = 0; i < 4; i++)
+        {
+            Item_relicsEquip.Add(null);
+        }
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___ITEM__GET_RELICS,          HYJ_Item_GetRelics      );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___ITEM__GET_RELICS_EQUIP,    HYJ_Item_GetRelicsEquip );
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___ITEM__INSERT,  HYJ_Item_Insert );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___ITEM__EQUIP,   HYJ_Item_Equip  );
 
         return true;
     }
@@ -1089,13 +1374,35 @@ partial class HYJ_Player
 
 #endregion
 
-// 버프 정보
+// ���� ����
 #region Buff
 
 partial class HYJ_Player
 {
-    [SerializeField] List<CTRL_Buff_Save> Buff_buffs;
-    [SerializeField] List<CTRL_Buff_Save> Buff_debuffs;
+    [Serializable]
+    class Buff_Data : CTRL_File
+    {
+        public List<CTRL_Buff_Save> Buff_buffs;
+        public List<CTRL_Buff_Save> Buff_debuffs;
+
+        //////////  Getter & Setter //////////
+
+        //////////  Method          //////////
+
+        //////////  Default Method  //////////
+        public Buff_Data()
+        {
+            if (Buff_buffs == null)
+            {
+                Buff_buffs = new List<CTRL_Buff_Save>();
+            }
+
+            if (Buff_debuffs == null)
+            {
+                Buff_debuffs = new List<CTRL_Buff_Save>();
+            }
+        }
+    }
 
     //////////  Getter & Setter //////////
 
@@ -1107,7 +1414,7 @@ partial class HYJ_Player
         //
         int count = (int)_args[0];
 
-        res = Buff_buffs[count];
+        res = File_saveData.File_buff.Buff_buffs[count];
 
         //
         return null;
@@ -1118,7 +1425,7 @@ partial class HYJ_Player
         int res = -1;
 
         //
-        res = Buff_buffs.Count;
+        res = File_saveData.File_buff.Buff_buffs.Count;
 
         //
         return res;
@@ -1132,7 +1439,7 @@ partial class HYJ_Player
         //
         int count = (int)_args[0];
 
-        res = Buff_debuffs[count];
+        res = File_saveData.File_buff.Buff_debuffs[count];
 
         //
         return null;
@@ -1143,7 +1450,7 @@ partial class HYJ_Player
         int res = -1;
 
         //
-        res = Buff_debuffs.Count;
+        res = File_saveData.File_buff.Buff_debuffs.Count;
 
         //
         return res;
@@ -1182,7 +1489,7 @@ partial class HYJ_Player
     // Buff
     void HYJ_Buff_BuffInsert(string _name)
     {
-        // 여기에 버프의 종류가 늘어남에 따라 추가합니다.
+        // ���⿡ ������ ������ �þ�� ���� �߰��մϴ�.
         CTRL_Buff element
             = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                 HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,
@@ -1191,9 +1498,9 @@ partial class HYJ_Player
         //Debug.Log("HYJ_Buff_BuffInsert " + element.Basic_data.Basic_name);
 
         int num = -1;
-        for (int i = 0; i < Buff_buffs.Count; i++)
+        for (int i = 0; i < File_saveData.File_buff.Buff_buffs.Count; i++)
         {
-            if (Buff_buffs[i].CTRL_Basic_GetIsSame(element.Basic_data))
+            if (File_saveData.File_buff.Buff_buffs[i].CTRL_Basic_GetIsSame(element.Basic_data))
             {
                 num = i;
                 break;
@@ -1202,14 +1509,14 @@ partial class HYJ_Player
 
         if (num == -1)
         {
-            Buff_buffs.Add(new CTRL_Buff_Save(element.Basic_data));
+            File_saveData.File_buff.Buff_buffs.Add(new CTRL_Buff_Save(element.Basic_data));
         }
         else
         {
-            Buff_buffs[num] = new CTRL_Buff_Save(element.Basic_data);
+            File_saveData.File_buff.Buff_buffs[num] = new CTRL_Buff_Save(element.Basic_data);
         }
 
-        // 친밀도 관련 버프 갱신이 있다면 발동하라.
+        // ģ�е� ���� ���� ������ �ִٸ� �ߵ��϶�.
         if (element.CTRL_Basic_applyType.ToString().Split('_')[1].Equals("change"))
         {
             HYJ_Reputation_Setting();
@@ -1221,7 +1528,7 @@ partial class HYJ_Player
     // DeBuff
     void HYJ_Buff_DeBuffInsert(string _name)
     {
-        // 여기에 버프의 종류가 늘어남에 따라 추가합니다.
+        // ���⿡ ������ ������ �þ�� ���� �߰��մϴ�.
         CTRL_Buff element
             = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                 HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_DATA,
@@ -1230,9 +1537,9 @@ partial class HYJ_Player
         //Debug.Log("HYJ_Buff_BuffInsert " + element.Basic_data.Basic_name);
 
         int num = -1;
-        for (int i = 0; i < Buff_debuffs.Count; i++)
+        for (int i = 0; i < File_saveData.File_buff.Buff_debuffs.Count; i++)
         {
-            if (Buff_buffs[i].CTRL_Basic_GetIsSame(element.Basic_data))
+            if (File_saveData.File_buff.Buff_buffs[i].CTRL_Basic_GetIsSame(element.Basic_data))
             {
                 num = i;
                 break;
@@ -1241,10 +1548,10 @@ partial class HYJ_Player
 
         if (num != -1)
         {
-            Buff_debuffs.RemoveAt(num);
+            File_saveData.File_buff.Buff_debuffs.RemoveAt(num);
         }
 
-        // 친밀도 관련 버프 갱신이 있다면 발동하라.
+        // ģ�е� ���� ���� ������ �ִٸ� �ߵ��϶�.
         if (element.CTRL_Basic_applyType.ToString().Split('_')[1].Equals("change"))
         {
             HYJ_Reputation_Setting();
@@ -1253,16 +1560,62 @@ partial class HYJ_Player
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___BUFF__VIEW);
     }
 
-    object BuffInsertByEvent(params object[] _args) // 이벤트에서 넘어온 버프 플레이어한테 추가
+    object BuffInsertByEvent(params object[] _args) // �̺�Ʈ���� �Ѿ�� ���� �÷��̾����� �߰�
     {
         CTRL_Buff_Save data = (CTRL_Buff_Save)_args[0];
-        Buff_buffs.Add(data);
+        File_saveData.File_buff.Buff_buffs.Add(data);
+        return true;
+    }
+
+    //
+    object HYJ_Buff_EndStage(params object[] _args)
+    {
+        int whileNum = 0;
+        while (whileNum < File_saveData.File_buff.Buff_buffs.Count)
+        {
+            if(File_saveData.File_buff.Buff_buffs[whileNum].CTRL_Basic_EndStage())
+            {
+                whileNum++;
+            }
+            else
+            {
+                File_saveData.File_buff.Buff_buffs.RemoveAt(whileNum);
+            }
+        }
+
+        whileNum = 0;
+        while (whileNum < File_saveData.File_buff.Buff_debuffs.Count)
+        {
+            if (File_saveData.File_buff.Buff_debuffs[whileNum].CTRL_Basic_EndStage())
+            {
+                whileNum++;
+            }
+            else
+            {
+                File_saveData.File_buff.Buff_debuffs.RemoveAt(whileNum);
+            }
+        }
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___BUFF__VIEW);
+
         return true;
     }
 
     //////////  Default Method  //////////
     bool HYJ_Buff_Init()
     {
+        if (File_saveData != null)
+        {
+        }
+        else
+        {
+            if (File_saveData.File_buff == null)
+            {
+                File_saveData.File_buff = new Buff_Data();
+            }
+        }
+
+        //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__SETTING,         HYJ_Buff_Insert_Bridge  );
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_BUFF_FROM_COUNT, HYJ_Buff_GetBuffFromCount   );
@@ -1270,6 +1623,8 @@ partial class HYJ_Player
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_FROM_COUNT,   HYJ_Buff_GetDeBuffFromCount );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_COUNT,        HYJ_Buff_GetDeBuffCount     );
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__END_STAGE,   HYJ_Buff_EndStage   );
 
         // JHW - Buff insert to player by event
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__INSERT_BY_EVENT,  BuffInsertByEvent);
@@ -1280,7 +1635,7 @@ partial class HYJ_Player
 
 #endregion
 
-// 평판 정보
+// ���� ����
 #region Reputation
 
 public enum HYJ_Player_REPUTATION_RACE
@@ -1316,19 +1671,19 @@ partial class HYJ_Player
     //////////  Method          //////////
     void HYJ_Reputation_Setting()
     {
-        // 초기화
+        // �ʱ�ȭ
         for (int i = 0; i < 10; i++)
         {
             Reputation_races[i] = Reputation_defaultValue;
         }
 
         //
-        for (int i = 0; i < Buff_buffs.Count; i++)
+        for (int i = 0; i < File_saveData.File_buff.Buff_buffs.Count; i++)
         {
             CTRL_Buff element
                 = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                     HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,
-                    Buff_buffs[i].Basic_index);
+                    File_saveData.File_buff.Buff_buffs[i].Basic_index);
 
             string[] applyTypes = element.CTRL_Basic_applyType.ToString().Split('_');
             if(applyTypes[1].Equals("change"))
@@ -1392,6 +1747,200 @@ partial class HYJ_Player
         //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___REPUTATION__MINUS_VALUE,   HYJ_Reputation_MinusValue_Bridge    );
 
         return true;
+    }
+}
+
+#endregion
+
+#region MAP
+
+partial class HYJ_Player
+{
+    [Serializable]
+    class Map_Data
+    {
+        public int Data_level;
+        public int Data_playerPos;
+        public List<HYJ_Map_Stage.SaveData> Data_mapDatas;
+
+        //////////  Getter & Setter //////////
+
+        //////////  Method          //////////
+        public void Data_MapSetting(bool _isDelete)
+        {
+            if (_isDelete)
+            {
+                Data_level = -1;
+                Data_mapDatas.Clear();
+            }
+            else
+            {
+                Data_level = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___CHEAPTER__GET_LEVEL);
+
+                List<HYJ_Map_Stage> mapData = (List<HYJ_Map_Stage>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___CHEAPTER__GET_STAGES);
+                while(Data_mapDatas.Count < mapData.Count)
+                {
+                    Data_mapDatas.Add(null);
+                }
+
+                for (int i = 0; i < mapData.Count; i++)
+                {
+                    HYJ_Map_Stage.SaveData saveData = null;
+                    if (mapData[i] != null)
+                    {
+                        saveData = mapData[i].HYJ_Stage_saveData;
+                    }
+
+                    Data_mapDatas[i] = saveData;
+                }
+            }
+        }
+
+        //////////  Default Method  //////////
+    }
+
+    //////////  Getter & Setter //////////
+    object CTRL_Map_GetLevel(params object[] _args)
+    {
+        return File_saveData.File_map.Data_level;
+    }
+
+    //
+    object CTRL_Map_GetPlayerPos(params object[] _args)
+    {
+        return File_saveData.File_map.Data_playerPos;
+    }
+
+    object CTRL_Map_SetPlayerPos(params object[] _args)
+    {
+        int x = (int)_args[0];
+        int y = (int)_args[1];
+
+        File_saveData.File_map.Data_playerPos = x + (HYJ_Map_Manager.Cheapter_x * y);
+
+        return true;
+    }
+
+    //
+    object CTRL_Map_GetMapDatas(params object[] _args)
+    {
+        return File_saveData.File_map.Data_mapDatas;
+    }
+
+    //////////  Method          //////////
+    object CTRL_Map_MapSetting(params object[] _args)
+    {
+        bool isDelete = (bool)_args[0];
+
+        File_saveData.File_map.Data_MapSetting(isDelete);
+
+        return true;
+    }
+
+    //////////  Default Method  //////////
+    bool CTRL_Map_Init()
+    {
+        bool res = true;
+        
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_LEVEL,        CTRL_Map_GetLevel       );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_PLAYER_POS,   CTRL_Map_GetPlayerPos   );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__SET_PLAYER_POS,   CTRL_Map_SetPlayerPos   );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_MAP_DATAS,    CTRL_Map_GetMapDatas    );
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__MAP_SETTING,      CTRL_Map_MapSetting     );
+
+        return res;
+    }
+}
+
+#endregion
+
+#region File
+
+partial class HYJ_Player
+{
+    [Serializable]
+    class File_Data : IDisposable
+    {
+        public Basic_Data   File_basic;
+        public Unit_Data    File_unit;
+        public Buff_Data    File_buff;
+        public Map_Data     File_map;
+
+        //////////  Getter & Setter //////////
+
+        //////////  Method          //////////
+        public void HYJ_Data_SaveSetting()
+        {
+            File_unit.HYJ_Data_SaveSetting();
+        }
+
+        //////////  Default Method  //////////
+        public File_Data()
+        {
+            File_basic  = new Basic_Data();
+            File_unit   = new Unit_Data();
+            File_buff   = new Buff_Data();
+            File_map    = new Map_Data();
+        }
+
+        public void Dispose()
+        {
+
+        }
+    }
+    [SerializeField] File_Data File_saveData;
+
+    //////////  Getter & Setter //////////
+
+    //////////  Method          //////////
+    // CTRL_File_Save
+    object CTRL_File_Save_bridge(params object[] _args)
+    {
+        CTRL_File_Save();
+
+        return true;
+    }
+
+    void CTRL_File_Save()
+    {
+        if(File_saveData == null)
+        {
+            File_saveData = new File_Data();
+        }
+
+        if(File_saveData.File_basic.Basic_level == 0)
+        {
+            Debug.Log("CTRL_File_Save " + Application.dataPath);
+        }
+
+        File_saveData.HYJ_Data_SaveSetting();
+        File.WriteAllText(Application.dataPath + "/Player.save", JsonUtility.ToJson(File_saveData));
+    }
+
+    //////////  Default Method  //////////
+    bool CTRL_File_Init()
+    {
+        bool res = true;
+
+        try
+        {
+            string data = File.ReadAllText(Application.dataPath + "/Player.save");
+            File_saveData = JsonUtility.FromJson<File_Data>(data);
+        }
+        catch(FileNotFoundException _e)
+        {
+            Debug.Log("CTRL_File_Init ANG!!");
+        }
+
+        if(File_saveData == null)
+        {
+            File_saveData = new File_Data();
+        }
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE, CTRL_File_Save_bridge);
+
+        return res;
     }
 }
 
