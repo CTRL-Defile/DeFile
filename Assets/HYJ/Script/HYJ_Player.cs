@@ -91,11 +91,20 @@ public partial class HYJ_Player : MonoBehaviour
     }
 }
 
-// �⺻ ������ �з�
+// 기본 정보를 분류
 #region Basic
 
 partial class HYJ_Player
 {
+//<<<<<<< HEAD
+//    [SerializeField] int Basic_level;   // 레벨
+//    [SerializeField] int Basic_exp;     // 경험치
+
+//    [SerializeField] int Basic_hp;      // 현재 남은 체력
+//    [SerializeField] int Basic_hpMax;   // 최대 체력
+
+//    [SerializeField] int Basic_gold;    // 보유하고 있는 금화
+//=======
     [Serializable]
     public class Basic_Data : CTRL_File
     {
@@ -113,6 +122,7 @@ partial class HYJ_Player
 
         //////////  Default Method  //////////
     }
+//>>>>>>> origin/develop_hyj
 
     //////////  Getter & Setter //////////
 
@@ -173,7 +183,7 @@ partial class HYJ_Player
         return File_saveData.File_basic.Basic_gold;
     }
 
-    // ��ȭ�� ����� �ִ��� üũ
+    // 금화가 충분히 있는지 체크
     object HYJ_Basic_GoldIsEnough(params object[] _args)
     {
         bool res = false;
@@ -188,7 +198,7 @@ partial class HYJ_Player
         return res;
     }
 
-    // ��ȭ�� �߰��Ѵ�.
+    // 금화를 추가한다.
     object HYJ_Basic_GoldPlus(params object[] _args)
     {
         //
@@ -202,6 +212,9 @@ partial class HYJ_Player
         return null;
     }
 
+//<<<<<<< HEAD
+//    // 금화를 지불한다.
+//=======
     int HYJ_Basic_GoldPlusAddBuff(int _gold)
     {
         int res = _gold;
@@ -221,7 +234,8 @@ partial class HYJ_Player
         return res;
     }
 
-    // ��ȭ�� �����Ѵ�.
+//    // ��ȭ�� �����Ѵ�.
+//>>>>>>> origin/develop_hyj
     object HYJ_Basic_GoldMinus(params object[] _args)
     {
         bool res = false;
@@ -242,7 +256,7 @@ partial class HYJ_Player
         return res;
     }
 
-    // ��ȭ ����
+    // 금화 이자
     object Basic_GoldInterest(params object[] _args)
     {
         if (File_saveData.File_basic.Basic_gold >= 50)
@@ -270,14 +284,14 @@ partial class HYJ_Player
         return File_saveData.File_basic.Basic_hpMax;
     }
 
-    // �÷��̾� ü�� ȸ��
+    // 플레이어 체력 회복
     object JHW_Basic_hp_Increase(params object[] _args)
     {
         int value = (int)_args[0];
         if (File_saveData.File_basic.Basic_hpMax < File_saveData.File_basic.Basic_hp + value) File_saveData.File_basic.Basic_hp = File_saveData.File_basic.Basic_hpMax;
         else File_saveData.File_basic.Basic_hp = File_saveData.File_basic.Basic_hp + value;
 
-        // �÷��̾� HP ��ܹ� ����
+        // 플레이어 HP 상단바 조정
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___HP__VIEW_HP);
 
         return true;
@@ -319,7 +333,7 @@ partial class HYJ_Player
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__GET_PLAYER_UNIT_DATABASE, Player_Unit_GetUnitDataBase);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__UPDATE_PLAYER_UNIT_DATABASE, Player_DB_Update);
 
-        // �÷��̾� HP ��ܹ� ����
+        // 플레이어 HP 상단바 조정
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___HP__VIEW_HP);
 
         return true;
@@ -419,7 +433,7 @@ public class Player_DB
 
 #endregion
 
-// ����(�⹰)�� ���� ����
+// 유닛(기물)에 대한 정보
 #region Unit
 
 [Serializable]
@@ -552,8 +566,9 @@ partial class HYJ_Player
     }
 
     //////////  Method          //////////
-    // ������ �߰��Ѵ�.(����)
-    // -1�̸� �� ĭ�� �߰��Ѵ�.
+    // 유닛을 추가한다.
+    // -1이면 빈 칸에 추가한다.
+
     bool HYJ_Unit_Insert(string _name, int _count)
     {
         bool res = false;
@@ -764,7 +779,7 @@ partial class HYJ_Player
         }
         */
 
-        Debug.Log("���������? " + _candidate_units.Count);
+        Debug.Log("여기까지옴? " + _candidate_units.Count);
         //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
 
         return false;
@@ -782,7 +797,21 @@ partial class HYJ_Player
 
         while(Unit_starCheck.Count > 0)
         {
+//<<<<<<< HEAD
+//            obj = field_units[i];
+//            obj_char = obj.GetComponent<Character>();
+//            _data = obj_char.HYJ_Status_saveData;
+//            int _star = obj_char.StarInt(), _id = obj_char.Character_Status_Index;
+
+//            synergy_list[obj_char.Stat_Cost - 1]++;
+//            id_list[_star].m_List[_id]++;
+//            //Debug.Log(obj.name + " _star : " + _star + ", _cnt : " + id_list[_star].m_List[_id]);
+
+//            // 2,3성 감지
+//            if (_star < 3 && id_list[_star].m_List[_id] == 3)
+//=======
             foreach(List<GameObject> element in Unit_starCheck.Values)
+//>>>>>>> origin/develop_hyj
             {
                 element.Clear();
             }
@@ -798,6 +827,32 @@ partial class HYJ_Player
                 {
                     Character obj_char = obj.GetComponent<Character>();
 
+//<<<<<<< HEAD
+//                    obj_char.StarUp(_Tile);
+//                    obj_char.GetComponent<Shader_Effect>().Set_EffectMode(Shader_Effect.EFFECT_MODE.MODE_PHASE);
+
+//                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___UNIT__TO_SACRIFICED, param);
+
+//                    _Tile = null;
+
+//                    // 시너지 리스트 초기화
+//                    synergy_list[obj_char.Stat_Cost - 1] = 0;
+//                    synergy_list[obj_char.Stat_Cost]++;
+
+//                    // ID 리스트 초기화
+//                    id_list[_star].m_List[_id] = 0;
+//                    id_list[_star + 1].m_List[_id]++;
+//                    Debug.Log(obj.name + " _star : " + obj_char.StarInt() + ", _cnt : " + id_list[obj_char.StarInt()].m_List[_id]);
+//                }
+
+//                // 3성 감지
+//                if (_star < 2 && id_list[_star + 1].m_List[_id] == 3)
+//                {
+//                    //Debug.Log("STAR: " + (_star + 1) + " is 3! candi num " + _candidate_units.Count);
+//                    //_candidate_units.Clear();
+//                    //Debug.Log("STAR: " + (_star + 1) + " is 3! candi num " + _candidate_units.Count);
+//                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___UNIT__DATA_UPDATE, _PHASE);
+//=======
                     if (obj_char.m_UnitType == Character.Unit_Type.Ally)
                     {
                         if (!Unit_starCheck.ContainsKey(obj_char.HYJ_Status_saveData.Data_ID))
@@ -806,6 +861,7 @@ partial class HYJ_Player
                         }
                         Unit_starCheck[obj_char.HYJ_Status_saveData.Data_ID].Add(obj);
                     }
+//>>>>>>> origin/develop_hyj
                 }
             }
         }
@@ -950,7 +1006,7 @@ partial class HYJ_Player
             //    synergy_dic[i + 1] = synergy_list[i];
         }
 
-        // Tile.Ally_Enter���� Player.UnitDataUpdate ȣ��, ���� SynergyUpdate ȣ��
+        // Tile.Ally_Enter에서 Player.UnitDataUpdate 호출, 이후 SynergyUpdate 호출
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, synergy_dic);
     }
 
@@ -1055,10 +1111,10 @@ partial class HYJ_Player
 
     //////////  Default Method  //////////
 
-    // Battle_Manager.Unit_init(), BaseCamp_Manager_DeleteUnit() ���� ȣ��
+    // Battle_Manager.Unit_init(), BaseCamp_Manager_DeleteUnit() 에서 호출
     object Player_DB_Update(params object [] _args)
     {
-        // 1,2,3�� csv�� List�� ó��. 
+        // 1,2,3성 csv를 List로 처리. 
         //Player_Unit_csv = new List<List<Dictionary<string, object>>>();
         //string csv_path = "DataBase/Player_Unit_DataBase";
 
@@ -1107,7 +1163,7 @@ partial class HYJ_Player
             //{
             //    StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_"
             //        + (_star + 1).ToString() + ".csv");
-            //    // ��� �߰�
+            //    // 헤더 추가
             //    int row_cnt = Player_Unit_csv[_star][0].Keys.ToList().Count;
             //    for (int i = 0; i < row_cnt - 1; i++)
             //    {
@@ -1117,7 +1173,7 @@ partial class HYJ_Player
             //    outStream.Write(Player_Unit_csv[_star][0].Keys.ToList()[row_cnt - 1]);
             //    outStream.Write("\n");
 
-            //    // ���� �߰�
+            //    // 내용 추가
             //    int col_cnt = Player_Unit_csv[0].Count;
             //    for (int k = 0; k < col_cnt; k++)
             //    {
@@ -1131,15 +1187,15 @@ partial class HYJ_Player
             //    }
             //    outStream.Close();
 
-            //} �� �ڵ�� ��ųʸ��� �о ������ �����ϴ� ������. �Ʒ��� ��ü ���� ����ʹ� �ٸ�.
+            //} 이 코드는 딕셔너리를 읽어서 파일을 생성하는 형식임. 아래의 전체 파일 복사와는 다름.
         }
 
         string[] lines;
         for (int i = 1; i <= 3; i++)
         {
-            // UsingDB �о����
+            // UsingDB 읽어오기
             lines = File.ReadAllLines("Assets/Resources/DataBase/DB_Using_Character_" + i.ToString() + ".csv");
-            // PlayerDB ���� �� ����
+            // PlayerDB 삭제 후 생성
             System.IO.File.Delete("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
             StreamWriter outStream = System.IO.File.CreateText("Assets/Resources/DataBase/Player_Unit_DataBase_" + i.ToString() + ".csv");
             for (int j = 0; j < lines.Length; j++)
@@ -1149,7 +1205,7 @@ partial class HYJ_Player
             outStream.Close();
         }
 
-        Debug.Log("[PlayerDB] DB_Using_Character_#.csv ���� �Ϸ�");
+        Debug.Log("[PlayerDB] DB_Using_Character_#.csv 생성 완료");
 
 
         object var = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATABASE_CSV);
@@ -1240,15 +1296,15 @@ partial class HYJ_Player
 
 #endregion
 
-// �����ۿ� ���� ����
+// 아이템에 대한 정보
 #region Item
 
-// ������ ������ ���� Ŭ����
+// 아이템 정보를 모은 클래스
 [Serializable]
 public class HYJ_Player_Item : IDisposable
 {
-    public string   Data_name;  // �������� DB�̸�
-    public int      Data_count; // ���� �����ϰ� �ִ� ����
+    public string   Data_name;  // 아이템의 DB이름
+    public int      Data_count; // 현재 보유하고 있는 갯수
 
     //////////  Getter & Setter //////////
 
@@ -1374,7 +1430,7 @@ partial class HYJ_Player
 
 #endregion
 
-// ���� ����
+// 버프 정보
 #region Buff
 
 partial class HYJ_Player
@@ -1489,7 +1545,7 @@ partial class HYJ_Player
     // Buff
     void HYJ_Buff_BuffInsert(string _name)
     {
-        // ���⿡ ������ ������ �þ�� ���� �߰��մϴ�.
+        // 여기에 버프의 종류가 늘어남에 따라 추가합니다.
         CTRL_Buff element
             = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                 HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,
@@ -1516,7 +1572,7 @@ partial class HYJ_Player
             File_saveData.File_buff.Buff_buffs[num] = new CTRL_Buff_Save(element.Basic_data);
         }
 
-        // ģ�е� ���� ���� ������ �ִٸ� �ߵ��϶�.
+        // 친밀도 관련 버프 갱신이 있다면 발동하라.
         if (element.CTRL_Basic_applyType.ToString().Split('_')[1].Equals("change"))
         {
             HYJ_Reputation_Setting();
@@ -1528,7 +1584,7 @@ partial class HYJ_Player
     // DeBuff
     void HYJ_Buff_DeBuffInsert(string _name)
     {
-        // ���⿡ ������ ������ �þ�� ���� �߰��մϴ�.
+        // 여기에 버프의 종류가 늘어남에 따라 추가합니다.
         CTRL_Buff element
             = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                 HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_DATA,
@@ -1551,7 +1607,7 @@ partial class HYJ_Player
             File_saveData.File_buff.Buff_debuffs.RemoveAt(num);
         }
 
-        // ģ�е� ���� ���� ������ �ִٸ� �ߵ��϶�.
+        // 친밀도 관련 버프 갱신이 있다면 발동하라.
         if (element.CTRL_Basic_applyType.ToString().Split('_')[1].Equals("change"))
         {
             HYJ_Reputation_Setting();
@@ -1560,7 +1616,7 @@ partial class HYJ_Player
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___BUFF__VIEW);
     }
 
-    object BuffInsertByEvent(params object[] _args) // �̺�Ʈ���� �Ѿ�� ���� �÷��̾����� �߰�
+    object BuffInsertByEvent(params object[] _args) // 이벤트에서 넘어온 버프 플레이어한테 추가
     {
         CTRL_Buff_Save data = (CTRL_Buff_Save)_args[0];
         File_saveData.File_buff.Buff_buffs.Add(data);
@@ -1635,7 +1691,7 @@ partial class HYJ_Player
 
 #endregion
 
-// ���� ����
+// 평판 정보
 #region Reputation
 
 public enum HYJ_Player_REPUTATION_RACE
@@ -1671,7 +1727,7 @@ partial class HYJ_Player
     //////////  Method          //////////
     void HYJ_Reputation_Setting()
     {
-        // �ʱ�ȭ
+        // 초기화
         for (int i = 0; i < 10; i++)
         {
             Reputation_races[i] = Reputation_defaultValue;
