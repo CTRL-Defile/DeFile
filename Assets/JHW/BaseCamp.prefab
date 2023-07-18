@@ -13431,6 +13431,13 @@ MonoBehaviour:
   gaugeImgs: {fileID: 5776520046642888598}
   restStack: 0
   removeStack: 0
+  FONT_JSONG: {fileID: 0}
+  FONT_CHOSUN: {fileID: 11400000, guid: 82129b2c91da49644afcfc22d1fc8a1d, type: 2}
+  BaseCampTextList_JSONG: []
+  BaseCampTextList_CHOSUN:
+  - {fileID: 2124063510372732262}
+  - {fileID: 2124063509526250071}
+  - {fileID: 2124063511142189321}
 --- !u!222 &6742986851048275432
 CanvasRenderer:
   m_ObjectHideFlags: 0

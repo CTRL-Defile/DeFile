@@ -654,6 +654,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d026b2e9e24b60644883f5adf23f7474, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FONT_JSONG: {fileID: 11400000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
+  FONT_CHOSUN: {fileID: 11400000, guid: 82129b2c91da49644afcfc22d1fc8a1d, type: 2}
+  EventTextList_JSONG: []
+  EventTextList_CHOSUN:
+  - {fileID: 8263374078862551883}
+  - {fileID: 8263374080563369449}
 --- !u!1 &8263374080116283105
 GameObject:
   m_ObjectHideFlags: 0

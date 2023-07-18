@@ -758,8 +758,24 @@ partial class HYJ_Event_Manager
                 _data["duration_type"] = "";
                 _data["duration_value"] = -1.0f;
                 break;
+            default:
+                //Buff
+                _data["precondition_class"] = PRECONDITION_CLASS.NONE.ToString();
+                _data["precondition_type"] = PRECONDITION_TYPE.NONE.ToString();
+                _data["precondition_value"] = -1;
+                _data["applyTarget_class"] = APPLY_TYPE.BEAST_chance.ToString();
+                _data["ratio_type"] = RATIO_TYPE.percent.ToString();
+                _data["ratio_value"] = 20;
+                _data["isShop"] = false;
+                //Buff_Save
+                _data["index"] = 23;
+                _data["tag"] = "None";
+                _data["name"] = "BEAST_chance_20down";
+                _data["duration_type"] = "";
+                _data["duration_value"] = -1.0f;
+                break;
         }
-        CTRL_Buff buff = new CTRL_Buff(_data);
+        CTRL_Buff_Save buff = new CTRL_Buff_Save(_data);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__INSERT_BY_EVENT, buff);
     }
 
