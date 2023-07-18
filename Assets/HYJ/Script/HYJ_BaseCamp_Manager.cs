@@ -81,6 +81,7 @@ public partial class HYJ_BaseCamp_Manager : MonoBehaviour
     void Start()
     {
         Basic_initialize = 0;
+        InitText();
         DOTween.Init();
     }
 
@@ -135,14 +136,20 @@ partial class HYJ_BaseCamp_Manager {
     // 정비
     public void JHW_BaseCamp_Maintanance()
     {
+
+        
         // reroll 버튼 비활성화
         this.transform.GetChild(0).GetChild(3).GetChild(0).GetChild(4).GetChild(0).gameObject.SetActive(false);
 
         // 베이스캠프 유닛 선택하는 이미지 활성화
         this.transform.GetChild(0).GetChild(3).GetChild(0).transform.gameObject.SetActive(true);
 
-        // 베이스캠프 선택지 고르는거 비활성화
-        this.transform.GetChild(0).transform.GetChild(1).transform.gameObject.SetActive(false);
+        // 행동포인트 이미지
+        this.transform.GetChild(0).transform.GetChild(1).transform.gameObject.SetActive(true);
+
+        // 베이스캠프 나가기 이미지 비활성화
+        this.transform.GetChild(0).transform.GetChild(2).transform.gameObject.SetActive(false);
+
         int _lv = 1;
         List<Dictionary<string, object>> unitDatas = CSVReader.Read("DataBase/DB_Using_Character_" + _lv.ToString());
 
@@ -236,6 +243,8 @@ partial class HYJ_BaseCamp_Manager {
     // 삭제버튼 on/off
     public void OnOffDeleteButton(GameObject gameObject)
     {
+        if (isRerolling) return;
+
         unitList1.transform.GetChild(1).gameObject.SetActive(false);
         unitList2.transform.GetChild(1).gameObject.SetActive(false);
         unitList3.transform.GetChild(1).gameObject.SetActive(false);
@@ -295,10 +304,12 @@ partial class HYJ_BaseCamp_Manager {
         }
     }
 
-
+    private bool isRerolling;
     // 리롤
     public void Reroll()
     {
+        // reroll하고있는중인지 여부
+        isRerolling = true;
         // 사운드
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.REROLL);
 
@@ -353,7 +364,7 @@ partial class HYJ_BaseCamp_Manager {
             .Join(unitList2.transform.GetChild(2).DOLocalRotate(new Vector3(0, 0, 0), 0.3f, RotateMode.Fast).SetDelay(0.3f))
             .Insert(0.4f, unitList3.transform.GetChild(0).DOLocalRotate(new Vector3(0, -90, 0), 0.3f, RotateMode.Fast))
             .Join(unitList3.transform.GetChild(2).DOLocalRotate(new Vector3(0, 0, 0), 0.3f, RotateMode.Fast).SetDelay(0.3f)
-            );
+            ).OnComplete(()=> { isRerolling = false; });
 
         // 카드1
         unitList1.transform.DOScale(1f, .5f);
@@ -450,6 +461,8 @@ partial class HYJ_BaseCamp_Manager {
 
     public void DeleteCard(int deleteNumber)
     {
+        if (isRerolling) return; // 리롤중이면 실행X
+
         int minusActionCnt = 1+(this.removeStack++); // 감소시킬 행동개수
         if (this.actionCnt < minusActionCnt) { ActionCntAlert(); return; } // 행동개수 부족하면 실행X 
 
@@ -490,7 +503,8 @@ partial class HYJ_BaseCamp_Manager {
         g.transform.parent.GetChild(3).gameObject.transform.GetComponent<Image>().DOFade(0.5f, 0.8f);
         g.transform.parent.GetChild(4).gameObject.transform.GetComponent<Image>().DOFade(0.5f, 0.8f);
 
-
+        // 베이스캠프 나가기 이미지 활성화
+        this.transform.GetChild(0).transform.GetChild(2).transform.gameObject.SetActive(true);
     }
 }
 
@@ -514,7 +528,7 @@ partial class HYJ_BaseCamp_Manager
         // 눌러진상태면 실행x
         if (isClicked) return;
         // 실행할 수 없으면 실행x
-        if (g == GameObject.Find("RestButton") && isRestAble == false)
+        if (g.name=="RestButton" && isRestAble == false)
         {
             return;
         }
@@ -538,8 +552,8 @@ partial class HYJ_BaseCamp_Manager
         newPos.y += 1f;
         info.transform.transform.position = newPos;
 
-        // 휴식일 경우
-        if (g == GameObject.Find("RestButton") && actionCnt >= rest_minusActionCnt + restStack)
+        // 휴식일 경우 정보창
+        if (g.name=="RestButton" && actionCnt >= rest_minusActionCnt + restStack)
         {
             if (actionCnt > 0)
             {
@@ -554,10 +568,10 @@ partial class HYJ_BaseCamp_Manager
                 }
             }
         }
-        // 정비일 경우
+        // 정비일 경우 정보창
         if (g == GameObject.Find("MaintananceButton"))
         {
-            GameObject.Find("InfoText").transform.GetComponent<Text>().text = "가진 유닛 3개 중\n1개를 버립니다.";
+            info.transform.GetChild(0).transform.GetComponent<Text>().text = "가진 유닛 3개 중\n1개를 버립니다.";
         }
 
         //// 마우스 올려져있을때 실행하는거
@@ -597,6 +611,7 @@ partial class HYJ_BaseCamp_Manager
         g.transform.DOScale(new Vector3(1f, 1f,1f), 0.2f);
         isMouseEntered = false;
 
+        // 정보창 페이드
         info.transform.GetComponent<Image>().DOFade(0, 0.2f);
         info.transform.GetChild(0).gameObject.transform.GetComponent<Text>().DOFade(0, 0.2f);
         //g.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1f), 0.2f).SetDelay(0.001f);
@@ -631,10 +646,10 @@ partial class HYJ_BaseCamp_Manager
         Invoke("clickFlagChange", 1f);
 
         // 점검 할 수 없으면 리턴
-        if (g == GameObject.Find("MaintananceButton") && isMaintananceAble == false) return;
+        if (g.name=="MaintananceButton" && isMaintananceAble == false) return;
 
         // 휴식 클릭시
-        if (g == GameObject.Find("RestButton"))
+        if (g.name == "RestButton")
         {
             // ux 오브젝트
             GameObject uxObject = Instantiate(g, g.transform.position, g.transform.rotation);
@@ -781,5 +796,30 @@ partial class HYJ_BaseCamp_Manager
     //    StopCoroutine("Maintanance_Status_OnOver");
     //}
 
+    
+}
+
+// 폰트 초기화
+partial class HYJ_BaseCamp_Manager
+{
+    [Header("=== Font ===")]
+    [SerializeField] public TMPro.TMP_FontAsset FONT_JSONG;
+    [SerializeField] public TMPro.TMP_FontAsset FONT_CHOSUN;
+
+    [SerializeField] List<TextMeshProUGUI> BaseCampTextList_JSONG;
+    [SerializeField] List<TextMeshProUGUI> BaseCampTextList_CHOSUN;
+
+    private void InitText()
+    {
+        for (int i = 0; i < BaseCampTextList_JSONG.Count; i++)
+        {
+            BaseCampTextList_JSONG[i].font = FONT_JSONG;
+        }
+
+        for (int i = 0; i < BaseCampTextList_CHOSUN.Count; i++)
+        {
+            BaseCampTextList_CHOSUN[i].font = FONT_CHOSUN;
+        }
+    }
     
 }

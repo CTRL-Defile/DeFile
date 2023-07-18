@@ -5,7 +5,7 @@ using DG.Tweening;
 using UnityEngine.UI;
 using TMPro;
 
-public class TitleScreen : MonoBehaviour
+partial class TitleScreen : MonoBehaviour
 {
     // 타이틀화면
 
@@ -17,6 +17,8 @@ public class TitleScreen : MonoBehaviour
         this.transform.GetChild(0).GetChild(1).GetComponent<Image>().DOFade(0f, 1f).SetDelay(1f);
         // 까만 화면 2초뒤 비활성화
         Invoke("blackScreenOff", 2f);
+        // 폰트
+        InitText();
     }
 
 
@@ -54,4 +56,29 @@ public class TitleScreen : MonoBehaviour
     {
         this.gameObject.SetActive(false);
     }
+}
+
+partial class TitleScreen
+{
+    // 폰트
+    [Header("=== Font ===")]
+    [SerializeField] public TMPro.TMP_FontAsset FONT_JSONG;
+    [SerializeField] public TMPro.TMP_FontAsset FONT_CHOSUN;
+
+    [SerializeField] List<TextMeshProUGUI> EventTextList_JSONG;
+    [SerializeField] List<TextMeshProUGUI> EventTextList_CHOSUN;
+
+    private void InitText()
+    {
+        for (int i = 0; i < EventTextList_JSONG.Count; i++)
+        {
+            EventTextList_JSONG[i].font = FONT_JSONG;
+        }
+
+        for (int i = 0; i < EventTextList_CHOSUN.Count; i++)
+        {
+            EventTextList_CHOSUN[i].font = FONT_CHOSUN;
+        }
+    }
+
 }
