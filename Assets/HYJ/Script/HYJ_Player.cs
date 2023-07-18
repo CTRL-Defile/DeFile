@@ -1255,8 +1255,8 @@ partial class HYJ_Player
 
     object BuffInsertByEvent(params object[] _args) // 이벤트에서 넘어온 버프 플레이어한테 추가
     {
-        CTRL_Buff_Save data = (CTRL_Buff_Save)_args[0];
-        Buff_buffs.Add(data);
+        CTRL_Buff data = (CTRL_Buff)_args[0];
+        Buff_buffs.Add(data.Basic_data);
         return true;
     }
 

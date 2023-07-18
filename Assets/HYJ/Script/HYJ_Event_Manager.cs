@@ -4,9 +4,9 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 using TMPro;
 using DG.Tweening;
+using static CTRL_Buff;
 
 public partial class HYJ_Event_Manager : MonoBehaviour
 {   
@@ -83,6 +83,9 @@ public partial class HYJ_Event_Manager : MonoBehaviour
         eventButton1 = this.transform.GetChild(0).GetChild(3).GetChild(3).gameObject;
         eventButton2 = this.transform.GetChild(0).GetChild(3).GetChild(4).gameObject;
         eventResultButton = this.transform.GetChild(0).GetChild(3).GetChild(5).gameObject;
+
+        // 폰트
+        InitText();
 
         JHW_Event_start();
     }
@@ -511,10 +514,7 @@ partial class HYJ_Event_Manager
 
         // 이벤트 효과
         List<JHW_EventSelect> eventSelectResult = EventSelect_datas.FindAll(x => x.Data_EVENT_ID.Equals(randomEventID));// 이벤트셀렉트 선택지1,2
-        SaveCSVFile(eventSelectResult[0]);
-
-        // 플레이어 버프에 추가
-        //HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__SETTING,eventSelectResult[0]);
+        SaveCSVFile(eventSelectResult[0]); // csv 에 저장
 
         // 결과 선택 후 등장하는 스크립트로 변경
         resultScript = Event_datas[randomEventID].Data_SELECTED1_SCRIPT_KOR.Replace("n", "\n");
@@ -537,6 +537,9 @@ partial class HYJ_Event_Manager
 
         // 사운드
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_SELECT_CHOICE);
+
+        // 플레이어 버프에 추가
+        AddBuffToPlayer(eventSelectResult[0]);
     }
 
     // 두번째 선택지 버튼 누를 때 
@@ -570,6 +573,9 @@ partial class HYJ_Event_Manager
 
         // 사운드
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_SELECT_CHOICE);
+
+        // 플레이어 버프에 추가
+        AddBuffToPlayer(eventSelectResult[1]);
     }
 
     // 결과창 버튼
@@ -606,6 +612,113 @@ partial class HYJ_Event_Manager
             EventSelectedDataList.Add(new JHW_EventSelectedData(eventSelectedData[i]));
         }
         return EventSelectedDataList;
+    }
+
+    void AddBuffToPlayer(JHW_EventSelect _buff)
+    {
+        Dictionary<string, object> _data = new Dictionary<string, object>();
+        Debug.Log(_buff.Data_ID);
+        switch (_buff.Data_ID)
+        {
+            case 0:
+                //Buff
+                _data["precondition_class"] = PRECONDITION_CLASS.NONE.ToString();
+                _data["precondition_type"] = PRECONDITION_TYPE.NONE.ToString();
+                _data["precondition_value"] = -1;
+                _data["applyTarget_class"] = APPLY_TYPE.ELF_chance.ToString();
+                _data["ratio_type"] = RATIO_TYPE.percent.ToString();
+                _data["ratio_value"] = 20;
+                _data["isShop"] = false;
+                //Buff_Save
+                _data["index"] = 28;
+                _data["tag"] = "None";
+                _data["name"] = "ELF_chance_10up";
+                _data["duration_type"] = "";
+                _data["duration_value"] = -1.0f;
+                break;
+            case 1:
+                //Buff
+                _data["precondition_class"] = PRECONDITION_CLASS.NONE.ToString();
+                _data["precondition_type"] = PRECONDITION_TYPE.NONE.ToString();
+                _data["precondition_value"] = -1;
+                _data["applyTarget_class"] = APPLY_TYPE.BEAST_chance.ToString();
+                _data["ratio_type"] = RATIO_TYPE.percent.ToString();
+                _data["ratio_value"] = 20;
+                _data["isShop"] = false;
+                //Buff_Save
+                _data["index"] = 32;
+                _data["tag"] = "None";
+                _data["name"] = "ELF_chance_10down";
+                _data["duration_type"] = "";
+                _data["duration_value"] = -1.0f;
+                break;
+            case 2:
+                //Buff
+                _data["precondition_class"] = PRECONDITION_CLASS.NONE.ToString();
+                _data["precondition_type"] = PRECONDITION_TYPE.NONE.ToString();
+                _data["precondition_value"] = -1;
+                _data["applyTarget_class"] = APPLY_TYPE.ELF_chance.ToString();
+                _data["ratio_type"] = RATIO_TYPE.percent.ToString();
+                _data["ratio_value"] = 20;
+                _data["isShop"] = false;
+                //Buff_Save
+                _data["index"] = 28;
+                _data["tag"] = "None";
+                _data["name"] = "ELF_chance_10up";
+                _data["duration_type"] = "";
+                _data["duration_value"] = -1.0f;
+                break;
+            case 3:
+                //Buff
+                _data["precondition_class"] = PRECONDITION_CLASS.NONE.ToString();
+                _data["precondition_type"] = PRECONDITION_TYPE.NONE.ToString();
+                _data["precondition_value"] = -1;
+                _data["applyTarget_class"] = APPLY_TYPE.BEAST_chance.ToString();
+                _data["ratio_type"] = RATIO_TYPE.percent.ToString();
+                _data["ratio_value"] = 20;
+                _data["isShop"] = false;
+                //Buff_Save
+                _data["index"] = 32;
+                _data["tag"] = "None";
+                _data["name"] = "ELF_chance_10down";
+                _data["duration_type"] = "";
+                _data["duration_value"] = -1.0f;
+                break;
+            case 4:
+                //Buff
+                _data["precondition_class"] = PRECONDITION_CLASS.NONE.ToString();
+                _data["precondition_type"] = PRECONDITION_TYPE.NONE.ToString();
+                _data["precondition_value"] = -1;
+                _data["applyTarget_class"] = APPLY_TYPE.BEAST_chance.ToString();
+                _data["ratio_type"] = RATIO_TYPE.percent.ToString();
+                _data["ratio_value"] = 20;
+                _data["isShop"] = false;
+                //Buff_Save
+                _data["index"] = 22;
+                _data["tag"] = "None";
+                _data["name"] = "BEAST_chance_20up";
+                _data["duration_type"] = "";
+                _data["duration_value"] = -1.0f;
+                break;
+            case 5:
+                //Buff
+                _data["precondition_class"] = PRECONDITION_CLASS.NONE.ToString();
+                _data["precondition_type"] = PRECONDITION_TYPE.NONE.ToString();
+                _data["precondition_value"] = -1;
+                _data["applyTarget_class"] = APPLY_TYPE.BEAST_chance.ToString();
+                _data["ratio_type"] = RATIO_TYPE.percent.ToString();
+                _data["ratio_value"] = 20;
+                _data["isShop"] = false;
+                //Buff_Save
+                _data["index"] = 23;
+                _data["tag"] = "None";
+                _data["name"] = "BEAST_chance_20down";
+                _data["duration_type"] = "";
+                _data["duration_value"] = -1.0f;
+                break;
+        }
+        CTRL_Buff buff = new CTRL_Buff(_data);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__INSERT_BY_EVENT, buff);
     }
 
     // csv 초기화
@@ -674,3 +787,29 @@ partial class HYJ_Event_Manager
 
 
 #endregion
+
+
+partial class HYJ_Event_Manager
+{
+    // 폰트
+    [Header("=== Font ===")]
+    [SerializeField] public TMPro.TMP_FontAsset FONT_JSONG;
+    [SerializeField] public TMPro.TMP_FontAsset FONT_CHOSUN;
+
+    [SerializeField] List<TextMeshProUGUI> EventTextList_JSONG;
+    [SerializeField] List<TextMeshProUGUI> EventTextList_CHOSUN;
+
+    private void InitText()
+    {
+        for (int i = 0; i < EventTextList_JSONG.Count; i++)
+        {
+            EventTextList_JSONG[i].font = FONT_JSONG;
+        }
+
+        for (int i = 0; i < EventTextList_CHOSUN.Count; i++)
+        {
+            EventTextList_CHOSUN[i].font = FONT_CHOSUN;
+        }
+    }
+
+}
