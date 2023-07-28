@@ -447,11 +447,11 @@ partial class HYJ_Map_Stage
                     case HYJ_Map_Stage_TYPE.BATTLE_ELITE:
                     case HYJ_Map_Stage_TYPE.BATTLE_BOSS:
                         {
-                            //HYJ_Stage_type = HYJ_Map_Stage_TYPE.NONE;
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__SET_STAGE_TYPE, Stage_data.Stage_type   );
 
                             //
-                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON, true);
-                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, false);
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON, true    );
+                            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get( HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON,    false   );
                         }
                         break;
                 }

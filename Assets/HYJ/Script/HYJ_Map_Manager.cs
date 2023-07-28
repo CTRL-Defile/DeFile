@@ -11,6 +11,7 @@ public partial class HYJ_Map_Manager : MonoBehaviour
         ROAD,
         CAMERA,
         BRIDGE,
+        ACTIVE_CHECK,
 
         //
         UPDATE
@@ -20,15 +21,47 @@ public partial class HYJ_Map_Manager : MonoBehaviour
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
-    object HYJ_Active_ActiveOn(params object[] _args)
+    object HYJ_Active_ActiveOn_script(params object[] _args)
     {
         bool isActive = (bool)_args[0];
 
         //
-        this.gameObject.SetActive(isActive);
+        HYJ_Active_ActiveOn(isActive);
+
+        object script_obj = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_STAGE_TYPE);
+        if(script_obj != null)
+        {
+            HYJ_Map_Stage_TYPE battleStage = (HYJ_Map_Stage_TYPE)script_obj;
+            if (battleStage.Equals(HYJ_Map_Stage_TYPE.BATTLE_BOSS))
+            {
+                script_obj = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_IS_WIN);
+                if(script_obj != null)
+                {
+                    bool isWin = (bool)script_obj;
+
+                    if(isWin)
+                    {
+                        Result_Clear.SetActive(true);
+                    }
+                    else
+                    {
+                        Result_GameOver.SetActive(true);
+                    }
+                }
+            }
+        }
 
         //
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__SET_STAGE,    HYJ_Map_Stage_TYPE.NONE );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE                                 );
+        //
         return null;
+    }
+
+    void HYJ_Active_ActiveOn(bool _isActive)
+    {
+        //
+        this.gameObject.SetActive(_isActive);
     }
 
     //////////  Default Method  //////////
@@ -73,7 +106,16 @@ public partial class HYJ_Map_Manager : MonoBehaviour
 
                     if (camera != null)
                     {
-                        this.transform.Find("Canvas").GetComponent<Canvas>().worldCamera = camera;
+                        //this.transform.Find("Canvas").GetComponent<Canvas>().worldCamera = camera;
+
+                        for(int i = 0; i < this.transform.childCount; i++)
+                        {
+                            Transform child = this.transform.GetChild(i);
+                            if(child.GetComponent<Canvas>() != null)
+                            {
+                                child.GetComponent<Canvas>().worldCamera = camera;
+                            }
+                        }
 
                         Basic_initialize = UPDATE_PHASE.BRIDGE;
                     }
@@ -81,12 +123,34 @@ public partial class HYJ_Map_Manager : MonoBehaviour
                 break;
             case UPDATE_PHASE.BRIDGE:
                 {
-                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, HYJ_Active_ActiveOn);
-
-                    this.gameObject.SetActive(false);
+                    HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.MAP___ACTIVE__ACTIVE_ON, HYJ_Active_ActiveOn_script);
 
                     //
-                    Basic_initialize = UPDATE_PHASE.UPDATE;
+                    Basic_initialize = UPDATE_PHASE.ACTIVE_CHECK;
+                }
+                break;
+            case UPDATE_PHASE.ACTIVE_CHECK:
+                {
+                    object playerPhase = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_UPDATE_PHASE);
+                    if (playerPhase != null)
+                    {
+                        if(((HYJ_Player.UPDATE_PHASE)playerPhase).Equals(HYJ_Player.UPDATE_PHASE.UPDATE))
+                        {
+                            HYJ_Map_Stage_TYPE stageType = (HYJ_Map_Stage_TYPE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE);
+
+                            if(stageType.Equals(HYJ_Map_Stage_TYPE.NONE))
+                            {
+                                HYJ_Active_ActiveOn(true);
+                            }
+                            else
+                            {
+                                HYJ_Active_ActiveOn(false);
+                            }
+
+                            //
+                            Basic_initialize = UPDATE_PHASE.UPDATE;
+                        }
+                    }
                 }
                 break;
         }
@@ -443,6 +507,9 @@ partial class HYJ_Map_Manager
             HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__MAP_SETTING,
             //
             false);
+
+        //
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.BASE_CAMP___ACTIVE__ACTIVE_ON, true);
     }
 
     HYJ_Map_Stage HYJ_Cheapter_Create_SettingStage(int _x, int _y)
@@ -660,6 +727,29 @@ partial class HYJ_Map_Manager
     void HYJ_Road_Start()
     {
     }
+}
+
+#endregion
+
+#region RESULT
+
+partial class HYJ_Map_Manager
+{
+    [Header("==================================================")]
+    [Header("RESULT")]
+    [SerializeField] GameObject Result_Clear;
+    [SerializeField] GameObject Result_GameOver;
+
+    //////////  Getter & Setter //////////
+
+    //////////  Method          //////////
+    public void HYJ_Result_BtnExit()
+    {
+        HYJ_Active_ActiveOn(false);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.LOBBY___BASIC__ACTIVE_ON, true);
+    }
+
+    //////////  Default Method  //////////
 }
 
 #endregion

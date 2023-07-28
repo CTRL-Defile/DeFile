@@ -40,22 +40,50 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 	[SerializeField]
     private Volume GameVolume;
 
-	//////////  Getter & Setter //////////
-	object HYJ_Basic_GetPhase(params object[] _args)
+    //
+    // 무슨 전투인지 저장할 변수
+    [SerializeField] HYJ_Map_Stage_TYPE Basic_stageType;
+    [SerializeField] bool Basic_isWin;
+
+    //////////  Getter & Setter //////////
+    object HYJ_Basic_GetPhase(params object[] _args)
     {
         return Basic_phase;
+    }
+
+    //
+    object HYJ_Basic_GetStageType(params object[] _args)
+    {
+        return Basic_stageType;
+    }
+
+    object HYJ_Basic_SetStageType(params object[] _args)
+    {
+        Basic_stageType = (HYJ_Map_Stage_TYPE)_args[0];
+        return true;
+    }
+
+    //
+    object HYJ_Basic_GetIsWin(params object[] _args)
+    {
+        return Basic_isWin;
     }
 
     //////////  Method          //////////
     object HYJ_ActiveOn(params object[] _args)
     {
-        bool aa = (bool)_args[0];
+        bool isAction = (bool)_args[0];
 
         //
-        this.gameObject.SetActive(aa);
+        this.gameObject.SetActive(isAction);
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__SET_STAGE, Basic_stageType);
+        List<string> playerStageDatas = (List<string>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS);
+        playerStageDatas.Clear();
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE);
 
         //
-        return null;
+        return true;
     }
 
     public void HYJ_SetActive(bool _isActive)
@@ -135,14 +163,20 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
         Enemy_parent = Battle_Units.GetChild(2).transform;
         Unit_Sacrificed = Battle_Units.GetChild(3).transform;
 
-		//
-		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,   HYJ_Basic_GetPhase);
+        //
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_PHASE,      HYJ_Basic_GetPhase      );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_STAGE_TYPE, HYJ_Basic_GetStageType  );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__SET_STAGE_TYPE, HYJ_Basic_SetStageType  );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___BASIC__GET_IS_WIN,     HYJ_Basic_GetIsWin      );
+
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__ACTIVE_ON,  HYJ_ActiveOn);
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE___ACTIVE__SHOP_UI, LSY_Set_ShopUI);
+
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BATTLE__SYNERGY_UPDATE, LSY_Battle_Synergy_Update);
-		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X,                HYJ_Field_GetFieldX             );
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y,                HYJ_Field_GetFieldY             );
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X,                HYJ_Field_GetStandX             );
+
+		HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_X,    HYJ_Field_GetFieldX );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_FIELD_Y,    HYJ_Field_GetFieldY );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.BATTLE___FIELD__GET_STAND_X,    HYJ_Field_GetStandX );
 
         //
         Battle_UI_Font();
@@ -169,14 +203,33 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
       //              }
 
                     int DB_phase = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_PHASE);
-                    if (DB_phase != -1)
+                    if (DB_phase == -1)
                     {
-                        Basic_phase = BATTLE_PHASE.PHASE_INIT;
-						// battle active
-						this.gameObject.SetActive(false);
-						//Basic_phase = BATTLE_PHASE.PHASE_UPDATE; // 여기는 -1 업데이트내용 다 여기서 실행해야하는 부분 //받았다고 체크가 되야함                 
+                        object playerPhase = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_UPDATE_PHASE);
+                        if (playerPhase != null)
+                        {
+                            if (((HYJ_Player.UPDATE_PHASE)playerPhase).Equals(HYJ_Player.UPDATE_PHASE.UPDATE))
+                            {
+                                Basic_phase = BATTLE_PHASE.PHASE_INIT;
+
+                                HYJ_Map_Stage_TYPE stageType = (HYJ_Map_Stage_TYPE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE);
+                                if( stageType.Equals(HYJ_Map_Stage_TYPE.BATTLE_NORMAL)  ||
+                                    stageType.Equals(HYJ_Map_Stage_TYPE.BATTLE_ELITE)   ||
+                                    stageType.Equals(HYJ_Map_Stage_TYPE.BATTLE_BOSS)    )
+                                {
+                                    this.HYJ_SetActive(true);
+                                }
+                                else
+                                {
+                                    this.HYJ_SetActive(false);
+                                }
+
+                                // battle active
+                                //this.gameObject.SetActive(false);
+                                //Basic_phase = BATTLE_PHASE.PHASE_UPDATE; // 여기는 -1 업데이트내용 다 여기서 실행해야하는 부분 //받았다고 체크가 되야함                 
+                            }
+                        }
                     }
-                
                 }
                 break;
             //
@@ -239,7 +292,18 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                         Basic_phase = BATTLE_PHASE.PHASE_COMBAT;
 
                     if (!Enemy_isInitialized)
-                        LSY_Enemy_Init();
+                    {
+                        List<string> playerStageDatas = (List<string>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS);
+
+                        if (playerStageDatas.Count.Equals(0))
+                        {
+                            LSY_Enemy_Init();
+                        }
+                        else
+                        {
+                            HYJ_Enemy_Load();
+                        }
+                    }
 
                     if (!UL_isInitialized)
                     {
@@ -261,6 +325,18 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                     //{
                     //    OBJ.GetComponent<Character>().STATUS_HPBAR.SetHPColor(UI_StatusBar.STATUS_HP_COLOR.GREEN);
                     //}
+
+                    // 플레이어 유닛 버프적용
+                    List<CTRL_Buff> buffs = (List<CTRL_Buff>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__UNIT_BUFFS);
+                    for (int i = 0; i < Field_Unit.Count; i++)
+                    {
+                        Field_Unit[i].GetComponent<Character>().HYJ_Status_SettingBuff(buffs);
+                    }
+
+                    for (int i = 0; i < Stand_Unit.Count; i++)
+                    {
+                        Stand_Unit[i].GetComponent<Character>().HYJ_Status_SettingBuff(buffs);
+                    }
 
                 }
                 break;
@@ -312,6 +388,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 							HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.GAME_VICTORY);
 							// 승리 골드 수급
 							HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_PLUS, Gold_win);
+
+                            Basic_isWin = true;
 						}
                         // Victory
                         End_Btn.transform.GetChild(0).gameObject.SetActive(true);                        
@@ -325,6 +403,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 							HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.GAME_DEFEAT);
                             // 패배 골드 수급
 							HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GOLD_PLUS, Gold_lose);
+
+                            Basic_isWin = false;
 						}
                         // Defeat
                         End_Btn.transform.GetChild(1).gameObject.SetActive(true);
@@ -893,6 +973,12 @@ partial class HYJ_Battle_Manager
                         tmp.GetComponent<Character>().HYJ_Status_saveData = element;
                         tmp.GetComponent<Character>().m_UnitType = Character.Unit_Type.Ally;
                         tmp.GetComponent<Character>().LSY_Character_Set_OnTile(Stand_tiles.HYJ_Data_Tile(i).gameObject);
+                        // 별 등급 적용
+                        if(!element.Data_star.Equals(Character.Unit_Star.ONE))
+                        {
+                            tmp.GetComponent<Character>().UnitStar = (element.Data_star - 1);
+                            tmp.GetComponent<Character>().StarUp(Stand_tiles.HYJ_Data_Tile(i));
+                        }
 
                         //
                         Stand_tiles.HYJ_Data_Tile(i).HYJ_Basic_onUnit = tmp;
@@ -963,6 +1049,15 @@ partial class HYJ_Battle_Manager
                             tmp.GetComponent<Character>().HYJ_Status_saveData = element;
                             tmp.GetComponent<Character>().m_UnitType = Character.Unit_Type.Ally;
                             tmp.GetComponent<Character>().LSY_Character_Set_OnTile(Field_tiles[y].HYJ_Data_Tile(x).gameObject);
+                            // 별 등급 적용
+                            if (!element.Data_star.Equals(Character.Unit_Star.ONE))
+                            {
+                                tmp.GetComponent<Character>().UnitStar = (element.Data_star - 1);
+                                tmp.GetComponent<Character>().StarUp(Stand_tiles.HYJ_Data_Tile(x));
+                            }
+                            // 버프적용
+                            List<CTRL_Buff> buffs = (List<CTRL_Buff>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__UNIT_BUFFS);
+                            tmp.GetComponent<Character>().HYJ_Status_SettingBuff(buffs);
 
                             //
                             Field_tiles[y].HYJ_Data_Tile(x).HYJ_Basic_onUnit = tmp;
@@ -1332,6 +1427,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
     public void LSY_Enemy_Init()
     {
+        //
         int enemy_num = 6;
         List<Vector3> pos = new List<Vector3>();
         for (int i = 0; i < enemy_num; i++)
@@ -1339,6 +1435,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
             pos.Add(new Vector3(i*2, 0, 0));
         }
 
+        //
+        List<string> playerStageDatas = (List<string>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS);
 
         for (int i=0; i<enemy_num; i++)
         {
@@ -1363,6 +1461,8 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
                 tmp.transform.localPosition = pos[i];
                 tmp.transform.rotation = Quaternion.identity;
                 tmp.transform.SetParent(Enemy_parent);
+
+                playerStageDatas.Add(n + "/" + pos[i].x + "/" + pos[i].y + "/" + pos[i].z);
             }
             else
             {
@@ -1386,9 +1486,34 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
         }
 
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE);
+
         Enemy_isInitialized = true;
     }
 
+    void HYJ_Enemy_Load()
+    {
+        List<string> playerStageDatas = (List<string>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS);
+
+        for(int i = 0; i < playerStageDatas.Count; i++)
+        {
+            string[] strs = playerStageDatas[i].Split('/');
+            GameObject tmp = null;
+            tmp = m_CharacterPools.m_List[int.Parse(strs[0])].objects.PopStack().gameObject;
+            tmp.SetActive(true);
+            tmp.transform.localPosition = new Vector3(float.Parse(strs[1]), float.Parse(strs[2]), float.Parse(strs[3]));
+            tmp.transform.rotation = Quaternion.identity;
+            tmp.transform.SetParent(Enemy_parent);
+
+            tmp.transform.Rotate(0f, 180f, 0f);
+            tmp.tag = "Enemy";
+            tmp.GetComponent<Character>().m_UnitType = Character.Unit_Type.Enemy;
+
+            Enemy_Unit.Add(tmp);
+        }
+    }
+
+    //
     public void LSY_Shop_Reload(int n)
     {
         if (n != 1)

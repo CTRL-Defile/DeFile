@@ -137,17 +137,20 @@ partial class HYJ_Player
     int HYJ_Basic_IncExpAddBuff(int _exp)
     {
         int res = _exp;
-        for(int i = 0; i < File_saveData.File_buff.Buff_buffs.Count; i++)
+        for(int i = 0; i < Buff_totalBuffs.Count; i++)
         {
-            CTRL_Buff data = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, File_saveData.File_buff.Buff_buffs[i].Basic_index);
-            switch(data.CTRL_Basic_applyType)
+            if ((Buff_totalBuffs[i].Basic_index / 10000).Equals(6))
             {
-                case CTRL_Buff.APPLY_TYPE.Player_Expbuy:
-                case CTRL_Buff.APPLY_TYPE.Player_Expgain:
-                    {
-                        res += data.Basic_ratioValue;
-                    }
-                    break;
+                CTRL_Buff data = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, Buff_totalBuffs[i].Basic_index);
+                switch (data.CTRL_Basic_applyType)
+                {
+                    case "Player_Expbuy":
+                    case "Player_Expgain":
+                        {
+                            res += data.Basic_ratioValue;
+                        }
+                        break;
+                }
             }
         }
 
@@ -205,6 +208,21 @@ partial class HYJ_Player
         int value = HYJ_Basic_GoldPlusAddBuff((int)_args[0]);
 
         File_saveData.File_basic.Basic_gold += value;
+        for (int i = 0; i < Buff_totalBuffs.Count; i++)
+        {
+            if ((Buff_totalBuffs[i].Basic_index / 10000).Equals(4))
+            {
+                CTRL_Buff data = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, Buff_totalBuffs[i].Basic_index);
+                switch (data.CTRL_Basic_applyType)
+                {
+                    case "Player_moneygain":
+                        {
+                            File_saveData.File_basic.Basic_gold += data.Basic_ratioValue;
+                        }
+                        break;
+                }
+            }
+        }
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___GOLD__VIEW_GOLD, File_saveData.File_basic.Basic_gold);
 
@@ -218,12 +236,12 @@ partial class HYJ_Player
     int HYJ_Basic_GoldPlusAddBuff(int _gold)
     {
         int res = _gold;
-        for (int i = 0; i < File_saveData.File_buff.Buff_buffs.Count; i++)
+        for (int i = 0; i < Buff_totalBuffs.Count; i++)
         {
-            CTRL_Buff data = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, File_saveData.File_buff.Buff_buffs[i].Basic_index);
+            CTRL_Buff data = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, Buff_totalBuffs[i].Basic_index);
             switch (data.CTRL_Basic_applyType)
             {
-                case CTRL_Buff.APPLY_TYPE.Player_moneygain:
+                case "Player_moneygain":
                     {
                         res += data.Basic_ratioValue;
                     }
@@ -290,6 +308,24 @@ partial class HYJ_Player
         int value = (int)_args[0];
         if (File_saveData.File_basic.Basic_hpMax < File_saveData.File_basic.Basic_hp + value) File_saveData.File_basic.Basic_hp = File_saveData.File_basic.Basic_hpMax;
         else File_saveData.File_basic.Basic_hp = File_saveData.File_basic.Basic_hp + value;
+
+        for (int i = 0; i < Buff_totalBuffs.Count; i++)
+        {
+            if ((Buff_totalBuffs[i].Basic_index / 10000).Equals(5))
+            {
+                CTRL_Buff data = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, Buff_totalBuffs[i].Basic_index);
+                switch (data.CTRL_Basic_applyType)
+                {
+                    case "health_currentHealth":
+                        {
+                            File_saveData.File_basic.Basic_hp += data.Basic_ratioValue;
+                            if(File_saveData.File_basic.Basic_hp > File_saveData.File_basic.Basic_hpMax)
+                                File_saveData.File_basic.Basic_hp = File_saveData.File_basic.Basic_hpMax;
+                        }
+                        break;
+                }
+            }
+        }
 
         // 플레이어 HP 상단바 조정
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.TOPBAR___HP__VIEW_HP);
@@ -1108,7 +1144,6 @@ partial class HYJ_Player
         //
     }
 
-
     //////////  Default Method  //////////
 
     // Battle_Manager.Unit_init(), BaseCamp_Manager_DeleteUnit() 에서 호출
@@ -1329,13 +1364,33 @@ public class HYJ_Player_Item : IDisposable
 
 partial class HYJ_Player
 {
-    [SerializeField] List<HYJ_Player_Item> Item_relics;
-    [SerializeField] List<HYJ_Player_Item> Item_relicsEquip;
+    [Serializable]
+    class Item_Data : IDisposable
+    {
+        public List<HYJ_Player_Item> Item_relics;
+        public List<HYJ_Player_Item> Item_relicsEquip;
+
+        //////////  Getter & Setter //////////
+
+        //////////  Method          //////////
+
+        //////////  Default Method  //////////
+        public Item_Data()
+        {
+            Item_relics = new List<HYJ_Player_Item>();
+            Item_relicsEquip = new List<HYJ_Player_Item>();
+        }
+
+        public void Dispose()
+        {
+
+        }
+    }
 
     //////////  Getter & Setter //////////
-    object HYJ_Item_GetRelics(params object[] _args) { return Item_relics; }
+    object HYJ_Item_GetRelics(params object[] _args) { return File_saveData.File_item.Item_relics; }
 
-    object HYJ_Item_GetRelicsEquip(params object[] _args) { return Item_relicsEquip; }
+    object HYJ_Item_GetRelicsEquip(params object[] _args) { return File_saveData.File_item.Item_relicsEquip; }
 
     //////////  Method          //////////
     // HYJ_Item_Insert
@@ -1364,11 +1419,11 @@ partial class HYJ_Player
         bool isContinue = true;
 
         // ������ ����ִ� ���� �ִٸ� �ű⿡ �־�����.
-        for (int i = 0; i < Item_relicsEquip.Count; i++)
+        for (int i = 0; i < File_saveData.File_item.Item_relicsEquip.Count; i++)
         {
-            if(Item_relicsEquip[i] == null)
+            if(File_saveData.File_item.Item_relicsEquip[i] == null)
             {
-                Item_relicsEquip[i] = new HYJ_Player_Item(_name, _count);
+                File_saveData.File_item.Item_relicsEquip[i] = new HYJ_Player_Item(_name, _count);
                 isContinue = false;
                 break;
             }
@@ -1377,11 +1432,11 @@ partial class HYJ_Player
         // �� ĭ�� �ִٸ� �ű⿡ �־�����. ���ٸ� �׳� ����.
         if(isContinue)
         {
-            for (int i = 0; i < Item_relics.Count; i++)
+            for (int i = 0; i < File_saveData.File_item.Item_relics.Count; i++)
             {
-                if (Item_relics[i] == null)
+                if (File_saveData.File_item.Item_relics[i] == null)
                 {
-                    Item_relics[i] = new HYJ_Player_Item(_name, _count);
+                    File_saveData.File_item.Item_relics[i] = new HYJ_Player_Item(_name, _count);
                     isContinue = false;
                     break;
                 }
@@ -1395,27 +1450,88 @@ partial class HYJ_Player
         int equipCount      = (int)_args[0];
         int inventoryCount  = (int)_args[1];
 
-        HYJ_Player_Item item = Item_relics[inventoryCount];
-        Item_relics[inventoryCount] = Item_relicsEquip[equipCount];
-        Item_relicsEquip[equipCount] = item;
+        HYJ_Player_Item item = File_saveData.File_item.Item_relics[inventoryCount];
+        File_saveData.File_item.Item_relics[inventoryCount] = File_saveData.File_item.Item_relicsEquip[equipCount];
+        File_saveData.File_item.Item_relicsEquip[equipCount] = item;
 
         //
         return true;
     }
 
+    void HYJ_Item_SettingSkills()
+    {
+        bool isBuff = false;
+
+        for(int i = 0; i < File_saveData.File_item.Item_relicsEquip.Count; i++)
+        {
+            HYJ_Item element
+                = (HYJ_Item)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                    HYJ_ScriptBridge_EVENT_TYPE.DATABASE___RELIC__GET_DATA_FROM_NAME,
+                    //
+                    File_saveData.File_item.Item_relicsEquip[i].Data_name);
+            string[] strs = element.HYJ_Data_valueEffect.Split('/');
+            switch(strs[0])
+            {
+                case "BUFF":
+                    {
+                        if(!isBuff)
+                        {
+                            isBuff = true;
+                            Buff_itemBuffs.Clear();
+                        }
+
+                        bool isContinue = true;
+                        for(int i1 = 0; i1 < Buff_itemBuffs.Count; i1++)
+                        {
+                            if(Buff_itemBuffs[i1].Basic_index.Equals(int.Parse(strs[1])))
+                            {
+                                Buff_itemBuffs[i1].Basic_durationValue += element.HYJ_Data_valueMax;
+
+                                isContinue = false;
+                                break;
+                            }
+                        }
+
+                        if(isContinue)
+                        {
+                            CTRL_Buff buffData = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, int.Parse(strs[1]));
+                            CTRL_Buff_Save data = new CTRL_Buff_Save(buffData.Basic_data);
+
+                            data.Basic_durationValue = element.HYJ_Data_valueMax;
+
+                            Buff_itemBuffs.Add(data);
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
     //////////  Default Method  //////////
     bool HYJ_Item_Init()
     {
-        Item_relics = new List<HYJ_Player_Item>();
-        for (int i = 0; i < 20; i++)
+        if(File_saveData != null)
         {
-            Item_relics.Add(null);
+            HYJ_Item_SettingSkills();
         }
-
-        Item_relicsEquip = new List<HYJ_Player_Item>();
-        for(int i = 0; i < 4; i++)
+        else
         {
-            Item_relicsEquip.Add(null);
+            if (File_saveData.File_item == null)
+            {
+                File_saveData.File_item = new Item_Data();
+            }
+
+            File_saveData.File_item.Item_relics = new List<HYJ_Player_Item>();
+            for (int i = 0; i < 20; i++)
+            {
+                File_saveData.File_item.Item_relics.Add(null);
+            }
+
+            File_saveData.File_item.Item_relicsEquip = new List<HYJ_Player_Item>();
+            for (int i = 0; i < 4; i++)
+            {
+                File_saveData.File_item.Item_relicsEquip.Add(null);
+            }
         }
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___ITEM__GET_RELICS,          HYJ_Item_GetRelics      );
@@ -1460,31 +1576,16 @@ partial class HYJ_Player
         }
     }
 
+    [SerializeField] List<CTRL_Buff_Save> Buff_itemBuffs;
+
+    [SerializeField] List<CTRL_Buff_Save> Buff_totalBuffs;
+
     //////////  Getter & Setter //////////
 
-    //
-    object HYJ_Buff_GetBuffFromCount(params object[] _args)
+    object HYJ_Buff_GetTotalBuffs(params object[] _args)
     {
-        CTRL_Buff_Save res = null;
-
         //
-        int count = (int)_args[0];
-
-        res = File_saveData.File_buff.Buff_buffs[count];
-
-        //
-        return null;
-    }
-
-    object HYJ_Buff_GetBuffCount(params object[] _args)
-    {
-        int res = -1;
-
-        //
-        res = File_saveData.File_buff.Buff_buffs.Count;
-
-        //
-        return res;
+        return Buff_totalBuffs;
     }
 
     //
@@ -1516,14 +1617,13 @@ partial class HYJ_Player
     // Potion
     void HYJ_Buff_PotionInsert(string _name)
     {
-
         HYJ_Item element
             = (HYJ_Item)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
                 HYJ_ScriptBridge_EVENT_TYPE.DATABASE___POTION__GET_DATA_FROM_NAME,
                 _name);
         Debug.Log("HYJ_Buff_Insert " + element.HYJ_Data_type);
 
-        switch(element.HYJ_Data_type)
+        switch (element.HYJ_Data_type)
         {
             case "BUFF":
             case "FRIENDLY":
@@ -1572,6 +1672,9 @@ partial class HYJ_Player
             File_saveData.File_buff.Buff_buffs[num] = new CTRL_Buff_Save(element.Basic_data);
         }
 
+        //
+        HYJ_Buff_SettingTotalBuffs();
+
         // 친밀도 관련 버프 갱신이 있다면 발동하라.
         if (element.CTRL_Basic_applyType.ToString().Split('_')[1].Equals("change"))
         {
@@ -1595,7 +1698,7 @@ partial class HYJ_Player
         int num = -1;
         for (int i = 0; i < File_saveData.File_buff.Buff_debuffs.Count; i++)
         {
-            if (File_saveData.File_buff.Buff_buffs[i].CTRL_Basic_GetIsSame(element.Basic_data))
+            if (File_saveData.File_buff.Buff_debuffs[i].CTRL_Basic_GetIsSame(element.Basic_data))
             {
                 num = i;
                 break;
@@ -1620,7 +1723,24 @@ partial class HYJ_Player
     {
         CTRL_Buff_Save data = (CTRL_Buff_Save)_args[0];
         File_saveData.File_buff.Buff_buffs.Add(data);
+        HYJ_Buff_SettingTotalBuffs();
         return true;
+    }
+
+    //
+    void HYJ_Buff_SettingTotalBuffs()
+    {
+        Buff_totalBuffs.Clear();
+
+        for (int i = 0; i < File_saveData.File_buff.Buff_buffs.Count; i++)
+        {
+            Buff_totalBuffs.Add(File_saveData.File_buff.Buff_buffs[i]);
+        }
+
+        for (int i = 0; i < Buff_itemBuffs.Count; i++)
+        {
+            Buff_totalBuffs.Add(Buff_itemBuffs[i]);
+        }
     }
 
     //
@@ -1629,7 +1749,7 @@ partial class HYJ_Player
         int whileNum = 0;
         while (whileNum < File_saveData.File_buff.Buff_buffs.Count)
         {
-            if(File_saveData.File_buff.Buff_buffs[whileNum].CTRL_Basic_EndStage())
+            if (File_saveData.File_buff.Buff_buffs[whileNum].CTRL_Basic_EndStage())
             {
                 whileNum++;
             }
@@ -1657,6 +1777,66 @@ partial class HYJ_Player
         return true;
     }
 
+    //
+    object HYJ_Buff_UnitBuffs(params object[] _args)
+    {
+        List<CTRL_Buff> res = new List<CTRL_Buff>();
+
+        //
+        HYJ_Buff_SettingTotalBuffs();
+
+        for (int i = 0; i < Buff_totalBuffs.Count; i++)
+        {
+            if ((Buff_totalBuffs[i].Basic_index / 10000).Equals(1) |
+                (Buff_totalBuffs[i].Basic_index / 10000).Equals(2))
+            {
+                CTRL_Buff element
+                    = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                        HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,
+                        Buff_totalBuffs[i].Basic_index);
+                res.Add(element);
+            }
+        }
+
+        for (int i = 0; i < File_saveData.File_buff.Buff_debuffs.Count; i++)
+        {
+            if ((File_saveData.File_buff.Buff_debuffs[i].Basic_index / 10000).Equals(1))
+            {
+                CTRL_Buff element
+                    = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                        HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_DATA,
+                        File_saveData.File_buff.Buff_debuffs[i].Basic_index);
+                res.Add(element);
+            }
+        }
+
+        //
+        return res;
+    }
+
+    //
+    List<CTRL_Buff> HYJ_Buff_RaceReputation()
+    {
+        List<CTRL_Buff> res = new List<CTRL_Buff>();
+
+        //
+        HYJ_Buff_SettingTotalBuffs();
+
+        for (int i = 0; i < Buff_totalBuffs.Count; i++)
+        {
+            if ((Buff_totalBuffs[i].Basic_index / 10000).Equals(0))
+            {
+                CTRL_Buff element
+                    = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                        HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,
+                        Buff_totalBuffs[i].Basic_index);
+                res.Add(element);
+            }
+        }
+
+        return res;
+    }
+
     //////////  Default Method  //////////
     bool HYJ_Buff_Init()
     {
@@ -1671,16 +1851,19 @@ partial class HYJ_Player
             }
         }
 
+        Buff_totalBuffs = new List<CTRL_Buff_Save>();
+
         //
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__SETTING,         HYJ_Buff_Insert_Bridge  );
 
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_BUFF_FROM_COUNT, HYJ_Buff_GetBuffFromCount   );
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_BUFF_COUNT,      HYJ_Buff_GetBuffCount       );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_TOTAL_BUFFS,  HYJ_Buff_GetTotalBuffs );
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_FROM_COUNT,   HYJ_Buff_GetDeBuffFromCount );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__GET_DEBUFF_COUNT,        HYJ_Buff_GetDeBuffCount     );
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__END_STAGE,   HYJ_Buff_EndStage   );
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__UNIT_BUFFS,  HYJ_Buff_UnitBuffs  );
 
         // JHW - Buff insert to player by event
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__INSERT_BY_EVENT,  BuffInsertByEvent);
@@ -1734,20 +1917,16 @@ partial class HYJ_Player
         }
 
         //
-        for (int i = 0; i < File_saveData.File_buff.Buff_buffs.Count; i++)
+        List<CTRL_Buff> buffs = HYJ_Buff_RaceReputation();
+        for (int i = 0; i < buffs.Count; i++)
         {
-            CTRL_Buff element
-                = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
-                    HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA,
-                    File_saveData.File_buff.Buff_buffs[i].Basic_index);
-
-            string[] applyTypes = element.CTRL_Basic_applyType.ToString().Split('_');
+            string[] applyTypes = buffs[i].CTRL_Basic_applyType.ToString().Split('_');
             if(applyTypes[1].Equals("change"))
             {
                 float ratio = 1.0f;
-                if(element.Basic_ratioType == CTRL_Buff.RATIO_TYPE.percent)
+                if(buffs[i].Basic_ratioType == CTRL_Buff.RATIO_TYPE.percent)
                 {
-                    ratio = element.Basic_ratioValue * 0.01f;
+                    ratio = buffs[i].Basic_ratioValue * 0.01f;
                 }
                 float insertValue = Reputation_defaultValue * ratio;
                 Reputation_races[(int)Enum.Parse(typeof(HYJ_Player_REPUTATION_RACE), applyTypes[0])] += insertValue;
@@ -1819,6 +1998,9 @@ partial class HYJ_Player
         public int Data_playerPos;
         public List<HYJ_Map_Stage.SaveData> Data_mapDatas;
 
+        public HYJ_Map_Stage_TYPE Data_stage;
+        public List<string> Data_stageDatas;
+
         //////////  Getter & Setter //////////
 
         //////////  Method          //////////
@@ -1853,6 +2035,10 @@ partial class HYJ_Player
         }
 
         //////////  Default Method  //////////
+        public Map_Data()
+        {
+            Data_stage = HYJ_Map_Stage_TYPE.BASE_CAMP;
+        }
     }
 
     //////////  Getter & Setter //////////
@@ -1883,6 +2069,26 @@ partial class HYJ_Player
         return File_saveData.File_map.Data_mapDatas;
     }
 
+    //
+    object CTRL_Map_GetStage(params object[] _args)
+    {
+        return File_saveData.File_map.Data_stage;
+    }
+    object CTRL_Map_SetStage(params object[] _args)
+    {
+        HYJ_Map_Stage_TYPE stageType = (HYJ_Map_Stage_TYPE)_args[0];
+
+        File_saveData.File_map.Data_stage = stageType;
+
+        return true;
+    }
+
+    //
+    object CTRL_Map_GetStageDatas(params object[] _args)
+    {
+        return File_saveData.File_map.Data_stageDatas;
+    }
+
     //////////  Method          //////////
     object CTRL_Map_MapSetting(params object[] _args)
     {
@@ -1902,6 +2108,9 @@ partial class HYJ_Player
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_PLAYER_POS,   CTRL_Map_GetPlayerPos   );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__SET_PLAYER_POS,   CTRL_Map_SetPlayerPos   );
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_MAP_DATAS,    CTRL_Map_GetMapDatas    );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE,        CTRL_Map_GetStage       );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__SET_STAGE,        CTRL_Map_SetStage       );
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS,  CTRL_Map_GetStageDatas  );
 
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__MAP_SETTING,      CTRL_Map_MapSetting     );
 
@@ -1920,6 +2129,7 @@ partial class HYJ_Player
     {
         public Basic_Data   File_basic;
         public Unit_Data    File_unit;
+        public Item_Data    File_item;
         public Buff_Data    File_buff;
         public Map_Data     File_map;
 

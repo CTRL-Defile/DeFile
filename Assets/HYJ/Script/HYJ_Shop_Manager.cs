@@ -18,9 +18,21 @@ public partial class HYJ_Shop_Manager : MonoBehaviour
 
         if(aa)
         {
-            HYJ_Relic_SettingBtns();
-            HYJ_Unit_SettingBtns();
-            HYJ_Potion_SettingBtns();
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__SET_STAGE,
+                //
+                HYJ_Map_Stage_TYPE.SHOP);
+
+            List<string> stageDatas
+                = (List<string>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                    HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS);
+            stageDatas.Clear();
+            HYJ_Relic_SettingBtns(  false,  stageDatas  );
+            HYJ_Unit_SettingBtns(   false,  stageDatas  );
+            HYJ_Potion_SettingBtns( false,  stageDatas  );
+
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE);
         }
 
         //
@@ -138,8 +150,6 @@ public partial class HYJ_Shop_Manager : MonoBehaviour
                 break;
             case 1:
                 {
-                    Basic_phase = -1;
-
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.SHOP___ACTIVE__ACTIVE_ON, HYJ_ActiveOn);
 
                     this.transform.Find("Canvas").GetComponent<Canvas>().worldCamera
@@ -147,7 +157,41 @@ public partial class HYJ_Shop_Manager : MonoBehaviour
                             HYJ_ScriptBridge_EVENT_TYPE.MASTER___UI__GET_CAMERA,
                             0);
 
-                    this.gameObject.SetActive(false);
+                    Basic_phase += 1;
+                }
+                break;
+            case 2:
+                {
+                    object playerPhase
+                        = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                            HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_UPDATE_PHASE);
+                    if(playerPhase != null)
+                    {
+                        if(((HYJ_Player.UPDATE_PHASE)playerPhase).Equals(HYJ_Player.UPDATE_PHASE.UPDATE))
+                        {
+                            HYJ_Map_Stage_TYPE stageType
+                                = (HYJ_Map_Stage_TYPE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                                    HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE);
+                            if(stageType.Equals(HYJ_Map_Stage_TYPE.SHOP))
+                            {
+                                List<string> playerStageDatas
+                                    = (List<string>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                                        HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS);
+                                
+                                HYJ_Relic_SettingBtns(  true,   playerStageDatas    );
+                                HYJ_Unit_SettingBtns(   true,   playerStageDatas    );
+                                HYJ_Potion_SettingBtns( true,   playerStageDatas    );
+
+                                this.gameObject.SetActive(true);
+                            }
+                            else
+                            {
+                                this.gameObject.SetActive(false);
+                            }
+
+                            Basic_phase = -1;
+                        }
+                    }
                 }
                 break;
         }
@@ -193,24 +237,41 @@ partial class HYJ_Shop_Manager
         return res;
     }
 
-    void HYJ_Relic_SettingBtns()
+    void HYJ_Relic_SettingBtns( bool _isLoad, List<string> _stageDatas )
     {
         HYJ_SettingBtns(
             Relic_btns,
             4, Relic_btn, Relic_parent);
 
         //
-        int dataCount = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___RELIC__GET_DATA_COUNT);
-
-        for (int i = 0; i < Relic_btns.Count; i++)
+        if(_isLoad)
         {
-            string name
-                = (string)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
-                    HYJ_ScriptBridge_EVENT_TYPE.DATABASE___RELIC__GET_DATA_NAME,
-                    Random.Range(0, dataCount));
+            for(int i = 0; i < Relic_btns.Count; i++)
+            {
+                string[] strs = _stageDatas[i].Split('/');
 
-            Relic_btns[i].HYJ_Info_DataSetting(name);
-            Relic_btns[i].gameObject.SetActive(true);
+                Relic_btns[i].HYJ_Info_DataSetting(strs[0]);
+                Relic_btns[i].gameObject.SetActive(bool.Parse(strs[1]));
+            }
+        }
+        else
+        {
+            int dataCount
+                = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                    HYJ_ScriptBridge_EVENT_TYPE.DATABASE___RELIC__GET_DATA_COUNT);
+
+            for (int i = 0; i < Relic_btns.Count; i++)
+            {
+                string name
+                    = (string)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                        HYJ_ScriptBridge_EVENT_TYPE.DATABASE___RELIC__GET_DATA_NAME,
+                        Random.Range(0, dataCount));
+
+                Relic_btns[i].HYJ_Info_DataSetting(name);
+                Relic_btns[i].gameObject.SetActive(true);
+
+                _stageDatas.Add(name + "/" + true);
+            }
         }
     }
 
@@ -262,24 +323,41 @@ partial class HYJ_Shop_Manager
         return res;
     }
 
-    void HYJ_Unit_SettingBtns()
+    void HYJ_Unit_SettingBtns( bool _isLoad, List<string> _stageDatas )
     {
         HYJ_SettingBtns(
             Unit_btns,
             6, Unit_btn, Unit_parent);
 
         //
-        int dataCount = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_COUNT);
-
-        for (int i = 0; i < Unit_btns.Count; i++)
+        if(_isLoad)
         {
-            string name
-                = (string)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
-                    HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_NAME,
-                    Random.Range(0, dataCount));
+            for(int i = 0; i < Unit_btns.Count; i++)
+            {
+                string[] strs = _stageDatas[i + 4].Split('/');
 
-            Unit_btns[i].HYJ_Info_DataSetting(name);
-            Unit_btns[i].gameObject.SetActive(true);
+                Unit_btns[i].HYJ_Info_DataSetting(strs[0]);
+                Unit_btns[i].gameObject.SetActive(bool.Parse(strs[1]));
+            }
+        }
+        else
+        {
+            int dataCount
+                    = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                        HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_COUNT);
+
+            for (int i = 0; i < Unit_btns.Count; i++)
+            {
+                string name
+                    = (string)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                        HYJ_ScriptBridge_EVENT_TYPE.DATABASE___UNIT__GET_DATA_NAME,
+                        Random.Range(0, dataCount));
+
+                Unit_btns[i].HYJ_Info_DataSetting(name);
+                Unit_btns[i].gameObject.SetActive(true);
+
+                _stageDatas.Add(name + "/" + true);
+            }
         }
     }
 
@@ -332,80 +410,103 @@ partial class HYJ_Shop_Manager
         return res;
     }
 
-    void HYJ_Potion_SettingBtns()
+    void HYJ_Potion_SettingBtns( bool _isLoad, List<string> _stageDatas )
     {
         HYJ_SettingBtns(
             Potion_btns,
             6, Potion_btn, Potion_parent);
 
-        List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Potion_csv");
-
-        //
-        List<int> data_heal     = new List<int>();
-        for (int i = 0; i < data.Count; i++)
+        if(_isLoad)
         {
-            switch((string)data[i]["TYPE"])
+            for(int i = 0; i < 2; i++)
             {
-                case "HEAL":        { data_heal.Add(i);     }   break;
-                    //
-                //case "BUFF":        { data_buff.Add(i);     }   break;
-                //case "FRIENDLY":    { data_buff.Add(i);     }   break;
-                    //
-                //case "UNDEBUFF":    { data_undebuff.Add(i); }   break;
+                string[] strs = _stageDatas[(i * 3) + 10].Split('%');
+                Potion_btns[(i * 3)     ].HYJ_Info_DataSetting(strs[0]);
+                Potion_btns[(i * 3)     ].gameObject.SetActive(bool.Parse(strs[1]));
+
+                strs = _stageDatas[(i * 3) + 11].Split('%');
+                Potion_btns[(i * 3) + 1 ].HYJ_Info_DataSetting(strs[0]);
+                Potion_btns[(i * 3) + 1 ].gameObject.SetActive(bool.Parse(strs[1]));
+
+                strs = _stageDatas[(i * 3) + 12].Split('%');
+                Potion_btns[(i * 3) + 2 ].HYJ_Info_DataSetting(strs[0]);
+                Potion_btns[(i * 3) + 2 ].gameObject.SetActive(bool.Parse(strs[1]));
             }
         }
-
-        // 버프 리스트 적용
-        List<int> data_buff = (List<int>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_KEYS);
-        int whileNum = 0;
-        while(whileNum < data_buff.Count)
+        else
         {
-            CTRL_Buff whileData = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, data_buff[whileNum]);
-            if(whileData.Basic_isShop)
+            List<Dictionary<string, object>> data = CSVReader.Read("HYJ/Potion_csv");
+
+            //
+            List<int> data_heal = new List<int>();
+            for (int i = 0; i < data.Count; i++)
             {
-                whileNum++;
+                switch ((string)data[i]["TYPE"])
+                {
+                    case "HEAL": { data_heal.Add(i); } break;
+                        //
+                        //case "BUFF":        { data_buff.Add(i);     }   break;
+                        //case "FRIENDLY":    { data_buff.Add(i);     }   break;
+                        //
+                        //case "UNDEBUFF":    { data_undebuff.Add(i); }   break;
+                }
             }
-            else
+
+            // 버프 리스트 적용
+            List<int> data_buff = (List<int>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_KEYS);
+            int whileNum = 0;
+            while (whileNum < data_buff.Count)
             {
-                data_buff.RemoveAt(whileNum);
+                CTRL_Buff whileData = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___BUFF__GET_DATA, data_buff[whileNum]);
+                if (whileData.Basic_isShop)
+                {
+                    whileNum++;
+                }
+                else
+                {
+                    data_buff.RemoveAt(whileNum);
+                }
             }
-        }
 
-        List<int> data_debuff = (List<int>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_KEYS);
-        whileNum = 0;
-        while (whileNum < data_debuff.Count)
-        {
-            CTRL_Buff whileData = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_DATA, data_debuff[whileNum]);
-            if (whileData.Basic_isShop)
+            List<int> data_debuff = (List<int>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_KEYS);
+            whileNum = 0;
+            while (whileNum < data_debuff.Count)
             {
-                whileNum++;
+                CTRL_Buff whileData = (CTRL_Buff)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___DEBUFF__GET_DATA, data_debuff[whileNum]);
+                if (whileData.Basic_isShop)
+                {
+                    whileNum++;
+                }
+                else
+                {
+                    data_debuff.RemoveAt(whileNum);
+                }
             }
-            else
+
+            // 2개씩이라 한 번에 처리
+            for (int i = 0; i < 2; i++)
             {
-                data_debuff.RemoveAt(whileNum);
+                int select = Random.Range(0, data_heal.Count);
+                Potion_btns[i * 3].HYJ_Info_DataSetting("POTION/" + (string)data[data_heal[select]]["NAME"]);
+                _stageDatas.Add("POTION/" + (string)data[data_heal[select]]["NAME"] + "%" + true);
+                data_heal.RemoveAt(select);
+
+                select = Random.Range(0, data_buff.Count);
+                Potion_btns[1 + (i * 3)].HYJ_Info_DataSetting("BUFF/" + data_buff[select]);
+                _stageDatas.Add("BUFF/" + data_buff[select] + "%" + true);
+                data_buff.RemoveAt(select);
+
+                // 수정해야할 코드
+                select = Random.Range(0, data_debuff.Count);
+                Potion_btns[2 + (i * 3)].HYJ_Info_DataSetting("DEBUFF/" + data_debuff[select]);
+                _stageDatas.Add("BUFF/" + data_debuff[select] + "%" + true);
+                data_debuff.RemoveAt(select);
             }
-        }
 
-        // 2개씩이라 한 번에 처리
-        for (int i = 0; i < 2; i++)
-        {
-            int select = Random.Range(0, data_heal.Count);
-            Potion_btns[i * 3].HYJ_Info_DataSetting("POTION/" + (string)data[data_heal[select]]["NAME"]);
-            data_heal.RemoveAt(select);
-
-            select = Random.Range(0, data_buff.Count);
-            Potion_btns[1 + (i * 3)].HYJ_Info_DataSetting("BUFF/" + data_buff[select]);
-            data_buff.RemoveAt(select);
-
-            // 수정해야할 코드
-            select = Random.Range(0, data_debuff.Count);
-            Potion_btns[2 + (i * 3)].HYJ_Info_DataSetting("DEBUFF/" + data_debuff[select]);
-            data_debuff.RemoveAt(select);
-        }
-
-        for (int i = 0; i < Potion_btns.Count; i++)
-        {
-            Potion_btns[i].gameObject.SetActive(true);
+            for (int i = 0; i < Potion_btns.Count; i++)
+            {
+                Potion_btns[i].gameObject.SetActive(true);
+            }
         }
     }
 

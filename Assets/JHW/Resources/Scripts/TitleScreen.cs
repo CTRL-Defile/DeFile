@@ -40,8 +40,8 @@ public class TitleScreen : MonoBehaviour
         
 
         // 베이스캠프 입장 UX,
-        GameObject.Find("BaseCampBackgroundCanvas").GetComponent<Basecamp_background>().StartBaseCamp_BackGround_UX();
-        GameObject.Find("BasecampUI").GetComponent<Basecamp_ux>().StartBaseCamp_Button_UX();
+        //GameObject.Find("BaseCampBackgroundCanvas").GetComponent<Basecamp_background>().StartBaseCamp_BackGround_UX();
+        //GameObject.Find("BasecampUI").GetComponent<Basecamp_ux>().StartBaseCamp_Button_UX();
         //2초 뒤 타이틀화면 OFF
         Invoke("Basecamp_disable", 2f);
 

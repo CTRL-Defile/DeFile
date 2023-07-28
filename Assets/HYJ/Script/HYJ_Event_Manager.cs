@@ -55,6 +55,13 @@ public partial class HYJ_Event_Manager : MonoBehaviour
             JHW_displayEventText();
             // 사운드
             HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_OPEN);
+
+            // 저장
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get( HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__SET_STAGE,    HYJ_Map_Stage_TYPE.EVENT    );
+            List<string> stageDatas = (List<string>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS);
+            stageDatas.Clear();
+            stageDatas.Add(randomEventID.ToString());
+            HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE);
         }
         //
         this.gameObject.SetActive(aa);
@@ -115,12 +122,39 @@ public partial class HYJ_Event_Manager : MonoBehaviour
                 {
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.EVENT___ACTIVE__ACTIVE_ON, HYJ_ActiveOn);
 
-                    this.HYJ_SetActive(false);
-
-                    Basic_initialize = -1;
-
                     // 결과버튼비활성화
                     eventResultButton.SetActive(false);
+
+                    Basic_initialize = 2;
+                }
+                break;
+            case 2:
+                {
+                    object playerPhase = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_UPDATE_PHASE);
+                    if (playerPhase != null)
+                    {
+                        if (((HYJ_Player.UPDATE_PHASE)playerPhase).Equals(HYJ_Player.UPDATE_PHASE.UPDATE))
+                        {
+                            HYJ_Map_Stage_TYPE stageType = (HYJ_Map_Stage_TYPE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE);
+                            if (stageType.Equals(HYJ_Map_Stage_TYPE.EVENT))
+                            {
+                                List<string> playerStageDatas = (List<string>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS);
+                                randomEventID = int.Parse(playerStageDatas[0]);
+                                JHW_displayEventText();
+                                // 사운드
+                                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_OPEN);
+
+                                this.HYJ_SetActive(true);
+                            }
+                            else
+                            {
+                                this.HYJ_SetActive(false);
+                            }
+
+                            //
+                            Basic_initialize = -1;
+                        }
+                    }
                 }
                 break;
         }
@@ -219,19 +253,31 @@ partial class HYJ_Event_Manager
 #region EventSelectedDataBase.csv
 partial class HYJ_Event_Manager
 {
-    string filepath = Path.GetFullPath("Assets/Resources/DataBase");
-    string fileName = "EventSelectedDataBase.csv";
-
     List<string[]> data = new List<string[]>();
     public string[] csvDataLine;
+
+    // 황영재 추가.
+    // 파일 경로 일원화용 메서드.
+    string HYJ_CSV_SettingPath()
+    {
+        string res = "";
+#if UNITY_EDITOR
+        res = Path.GetFullPath("Assets/Resources/DataBase");
+#else
+        res = Application.dataPath;
+#endif
+
+        return res;
+    }
 
     // CSV 초기화
     public void InitCSVFile()
     {
-        string filepath = Path.GetFullPath("Assets/Resources/DataBase");
+        //string filepath = Path.GetFullPath("Assets/Resources/DataBase");
+        string filepath = HYJ_CSV_SettingPath();
         string fileName = "EventSelectedDataBase.csv";
 
-        System.IO.File.Delete(filepath + "\\" + fileName);
+        System.IO.File.Delete(filepath + "/" + fileName);
 
         csvDataLine = new string[13];
         csvDataLine[0] = "ID";
@@ -301,9 +347,10 @@ partial class HYJ_Event_Manager
         outStream.Write(sb.ToString(), Encoding.UTF8);
         outStream.Close();
     }
+
     public void SaveCSVFile(JHW_EventSelect eventSelectResult)
     {
-        string filepath = Path.GetFullPath("Assets/Resources/DataBase");
+        string filepath = HYJ_CSV_SettingPath();
         string fileName = "EventSelectedDataBase.csv";
 
         data.Clear();
@@ -352,7 +399,7 @@ partial class HYJ_Event_Manager
 
 #region 타입 모음
 // Event_csv 타입
-# region Event_generic
+#region Event_generic
 public class JHW_Event
 {
     public int Data_ID; // 이벤트 아이디
@@ -576,6 +623,10 @@ partial class HYJ_Event_Manager
 
         // 사운드
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_SELECT_CHOICE);
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__SET_STAGE, HYJ_Map_Stage_TYPE.NONE);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__END_STAGE);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE);
     }
 
     // 두번째 선택지 버튼 누를 때 
@@ -609,6 +660,10 @@ partial class HYJ_Event_Manager
 
         // 사운드
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_SELECT_CHOICE);
+
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__SET_STAGE, HYJ_Map_Stage_TYPE.NONE);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__END_STAGE);
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE);
     }
 
     // 결과창 버튼
@@ -626,9 +681,6 @@ partial class HYJ_Event_Manager
 
         // 사운드
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.EVENT_SELECT_CHOICE);
-
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BUFF__END_STAGE);
-        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE);
     }
 
     public object JHW_GetSelectedData(params object[] _args) // EventSelectedDataBase.csv의 가장 최근 데이터 리턴

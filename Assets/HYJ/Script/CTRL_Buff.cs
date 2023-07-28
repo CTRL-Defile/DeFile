@@ -25,36 +25,6 @@ public partial class CTRL_Buff : IDisposable
         PLAYER_LEVEL_MAX
     }
 
-    public enum APPLY_TYPE
-    {
-        //
-        Player_moneygain,
-        Player_Expbuy,
-        Player_Expgain,
-        //
-        ELF_chance,
-        HUMAN_chance,
-        DWARF_chance,
-        GOBLIN_chance,
-        SPIRIT_chance,
-        DEMON_chance,
-        BEAST_chance,
-        //
-        health_currentHealth,
-
-        // Character
-        //
-        ELF_physicAtk,
-        HUMAN_physicAtk,
-        DWARF_physicAtk,
-        GOBLIN_physicAtk,
-        //
-        field_Unit_physicAtk,
-        field_Unit_magicAtk,
-        //
-        Character_001
-    }
-
     public enum RATIO_TYPE
     {
         percent,
@@ -87,7 +57,7 @@ public class CTRL_Buff_Save : IDisposable
         return res;
     }
 
-    public CTRL_Buff.DURATION_TYPE CTRL_Basic_durationType { get { return (CTRL_Buff.DURATION_TYPE)Enum.Parse(typeof(CTRL_Buff.DURATION_TYPE), Basic_durationType); } }
+    public CTRL_Buff.DURATION_TYPE CTRL_Basic_durationType  { get { return (CTRL_Buff.DURATION_TYPE)Enum.Parse(typeof(CTRL_Buff.DURATION_TYPE), Basic_durationType); } }
 
     //////////  Method          //////////
     public bool CTRL_Basic_EndStage()
@@ -132,7 +102,7 @@ partial class CTRL_Buff
     public PRECONDITION_TYPE    Basic_preconditionType;
     public int                  Basic_preconditionValue;
 
-    [SerializeField] APPLY_TYPE Basic_applyType;
+    [SerializeField] string Basic_applyType;
 
     public RATIO_TYPE   Basic_ratioType;
     public int          Basic_ratioValue;
@@ -142,7 +112,9 @@ partial class CTRL_Buff
     //////////  Getter & Setter //////////
 
     //////////  Method          //////////
-    public APPLY_TYPE CTRL_Basic_applyType  { get { return Basic_applyType; }   }
+    public string CTRL_Basic_applyType  { get { return Basic_applyType; }   }
+
+    public int  CTRL_Basic_ratioValue   { get { return Basic_ratioValue;    }   }
 
     //////////  Default Method  //////////
     public CTRL_Buff(Dictionary<string, object> _data)
@@ -153,7 +125,7 @@ partial class CTRL_Buff
         Basic_preconditionType  = (PRECONDITION_TYPE)Enum.Parse(    typeof(PRECONDITION_TYPE),  (string)_data[  "precondition_type"     ]);
         Basic_preconditionValue = (int)_data["precondition_value"];
 
-        Basic_applyType     = (APPLY_TYPE)Enum.Parse(  typeof(APPLY_TYPE),    (string)_data["applyTarget_class"]);
+        Basic_applyType     = (string)_data["applyTarget_class"];
 
         Basic_ratioType     = (RATIO_TYPE)Enum.Parse(  typeof(RATIO_TYPE),  (string)_data["ratio_type"]);
         Basic_ratioValue    = (int)_data["ratio_value"];

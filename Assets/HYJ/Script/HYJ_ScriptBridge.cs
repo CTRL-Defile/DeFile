@@ -101,8 +101,7 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
 
     PLAYER___BUFF__SETTING,
 
-    PLAYER___BUFF__GET_BUFF_FROM_COUNT,
-    PLAYER___BUFF__GET_BUFF_COUNT,
+    PLAYER___BUFF__GET_TOTAL_BUFFS,
 
     PLAYER___BUFF__GET_DEBUFF_FROM_COUNT,
     PLAYER___BUFF__GET_DEBUFF_COUNT,
@@ -111,6 +110,7 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     /// 스테이지가 종료될 때마다, 버프/디버프의 타이머를 1 줄이고 타이머가 끝난 버프를 날려준다.
     /// </summary>
     PLAYER___BUFF__END_STAGE,
+    PLAYER___BUFF__UNIT_BUFFS,
     PLAYER___BUFF__INSERT_BY_EVENT,
 
     PLAYER___REPUTATION__GET_VALUE,
@@ -121,6 +121,9 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     PLAYER___MAP__GET_PLAYER_POS,
     PLAYER___MAP__SET_PLAYER_POS,
     PLAYER___MAP__GET_MAP_DATAS,
+    PLAYER___MAP__GET_STAGE,
+    PLAYER___MAP__SET_STAGE,
+    PLAYER___MAP__GET_STAGE_DATAS,
     /// <summary>
     /// 지도 저장정보를 갱신.<br/>
     /// 매개변수 : bool - 정보 삭제 여부
@@ -171,6 +174,9 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
 
     //
     BATTLE___BASIC__GET_PHASE,
+    BATTLE___BASIC__GET_STAGE_TYPE,
+    BATTLE___BASIC__SET_STAGE_TYPE,
+    BATTLE___BASIC__GET_IS_WIN,
     BATTLE___ACTIVE__ACTIVE_ON,
     BATTLE___ACTIVE__SHOP_UI,
 
@@ -255,7 +261,14 @@ public enum HYJ_ScriptBridge_EVENT_TYPE
     SOUNDMANAGER___PLAY__SFX_STOP,
 	SOUNDMANAGER___PLAY__BGM_STOP,
 
-	SOUNDMANAGER___PLAY__SFX_ISPLAYING
+	SOUNDMANAGER___PLAY__SFX_ISPLAYING,
+
+    //
+    /// <summary>
+    /// 로비를 활성화한다.<b/r>
+    /// 매개변수 : bool - 활성화 여부
+    /// </summary>
+    LOBBY___BASIC__ACTIVE_ON
 }
 
 public delegate object HYJ_ScriptBridge_Event(params object[] _args);
