@@ -83,6 +83,8 @@ public partial class Character : MonoBehaviour
 
 		Status_HP = Status_MaxHP;
 
+		HYJ_Status_Start();
+
 #if false
 		// 스킬 넘버 얻어와야함
 		//int Spell0_Idx = 1;
@@ -122,8 +124,7 @@ public partial class Character : MonoBehaviour
 		m_Spell_0 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Data_spell0);
         m_Spell_1 = (HYJ_CharacterSkill)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.DATABASE___SKILL__GET_DATA, Data_spell1);
 
-
-        Status_moveSpeed = 5.0f;
+		Status_DB.Character_Status_moveSpeed = 5.0f;
 		// Stat_MoveSpeed = UnityEngine.Random.Range(1.0f, 8.0f);
 		//CurPosIndex = 0;
 	}
@@ -188,7 +189,6 @@ public partial class Character
 	public float Stat_MaxMP { get { return Status_MaxMP; } set { Status_MaxMP = value; } }
 	//public float Stat_Attack { get { return Status_atkPhysics; } set { Status_atkPhysics = value; } }
  //   public float Stat_Attack_Spell { get { return Status_atkSpell; } set { Status_atkSpell = value; } }
-    public float Stat_MoveSpeed { get { return Status_moveSpeed; } set { Status_moveSpeed = value; } }
 	public int Stat_Cost { get { return Status_Cost; } set { Status_Cost = value; } }
 	public int Stat_Synergy1 { get { return Synergy_Stat1; } set { Synergy_Stat1 = value; } }
 
@@ -198,7 +198,7 @@ public partial class Character
 
 	virtual public void Synergy_Atk()
 	{
-		Status_Damage = Status_atkPhysics + Synergy_Stat1;
+		Status_Damage = Character_Status_moveSpeed + Synergy_Stat1;
 	}
 
 	virtual public void HitProcess(float Attack)
@@ -562,22 +562,24 @@ public partial class Character
         switch (m_star)
 		{
 			case Unit_Star.ONE:
-				m_star = Unit_Star.TWO;
-				this.transform.localScale *= 1.05f;
-                HYJ_Status_SettingData(Unit_csv[1][Status_idx]);
+				{
+					m_star = Unit_Star.TWO;
+					this.transform.localScale *= 1.05f;
+					HYJ_Status_SettingData(Unit_csv[1][Status_idx]);
 
-                // Sound : 기물 2성
-                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_2STAR);
-
+					// Sound : 기물 2성
+					HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_2STAR);
+				}
                 break;
             case Unit_Star.TWO:
-                m_star = Unit_Star.THREE;
-                this.transform.localScale *= 1.05f;
-                HYJ_Status_SettingData(Unit_csv[2][Status_idx]);
+				{
+					m_star = Unit_Star.THREE;
+					this.transform.localScale *= 1.05f;
+					HYJ_Status_SettingData(Unit_csv[2][Status_idx]);
 
-                // Sound : 기물 2성
-                HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_3STAR);
-
+					// Sound : 기물 2성
+					HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.UNIT_3STAR);
+				}
                 break;
         }
 
