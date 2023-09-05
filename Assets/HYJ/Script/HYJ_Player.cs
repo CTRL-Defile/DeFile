@@ -1877,14 +1877,6 @@ partial class HYJ_Player
 // 평판 정보
 #region Reputation
 
-public enum HYJ_Player_REPUTATION_RACE
-{
-    ELF = 0,
-    HUMAN,
-    DWARF,
-    GOBLIN,
-}
-
 partial class HYJ_Player
 {
     const float Reputation_defaultValue = 1000f;
@@ -1895,13 +1887,13 @@ partial class HYJ_Player
     //////////  Getter & Setter //////////
     object HYJ_Reputation_GetValue(params object[] _args)
     {
-        float res = -1f;
+        int res = -1;
 
         //
-        HYJ_Player_REPUTATION_RACE type = (HYJ_Player_REPUTATION_RACE)_args[0];
+        HYJ_Character_REPUTATION_RACE type = (HYJ_Character_REPUTATION_RACE)_args[0];
 
         //
-        res = Reputation_races[(int)type];
+        res = (int)Reputation_races[(int)type];
 
         //
         return res;
@@ -1929,7 +1921,7 @@ partial class HYJ_Player
                     ratio = buffs[i].Basic_ratioValue * 0.01f;
                 }
                 float insertValue = Reputation_defaultValue * ratio;
-                Reputation_races[(int)Enum.Parse(typeof(HYJ_Player_REPUTATION_RACE), applyTypes[0])] += insertValue;
+                Reputation_races[(int)Enum.Parse(typeof(HYJ_Character_REPUTATION_RACE), applyTypes[0])] += insertValue;
             }
         }
     }
