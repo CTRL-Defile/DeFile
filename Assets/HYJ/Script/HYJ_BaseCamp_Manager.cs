@@ -50,6 +50,12 @@ public partial class HYJ_BaseCamp_Manager : MonoBehaviour
         //
         this.gameObject.SetActive(aa);
 
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__SET_STAGE, HYJ_Map_Stage_TYPE.BASE_CAMP);
+        List<string> playerStageDatas = (List<string>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS);
+        playerStageDatas.Clear();
+        playerStageDatas.Add(actionCnt.ToString());
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE);
+
         //
         return null;
     }
@@ -122,7 +128,32 @@ public partial class HYJ_BaseCamp_Manager : MonoBehaviour
                 {
                     HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Set(HYJ_ScriptBridge_EVENT_TYPE.BASE_CAMP___ACTIVE__ACTIVE_ON, HYJ_ActiveOn);
 
-                    this.HYJ_SetActive(true);
+                    Basic_initialize = 2;
+                }
+                break;
+            case 2:
+                {
+                    object playerPhase = HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___BASIC__GET_UPDATE_PHASE);
+                    if(playerPhase != null)
+                    {
+                        if(((HYJ_Player.UPDATE_PHASE)playerPhase).Equals(HYJ_Player.UPDATE_PHASE.UPDATE))
+                        {
+                            HYJ_Map_Stage_TYPE stageType = (HYJ_Map_Stage_TYPE)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE);
+
+                            if(stageType.Equals(HYJ_Map_Stage_TYPE.BASE_CAMP))
+                            {
+                                List<string> playerStageDatas = (List<string>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS);
+                                actionCnt = int.Parse(playerStageDatas[0]);
+                                ChangeGaugeUI();
+
+                                this.HYJ_SetActive(true);
+                            }
+                            else
+                            {
+                                this.HYJ_SetActive(false);
+                            }
+                        }
+                    }
 
                     Basic_initialize = -1;
                 }
@@ -238,6 +269,12 @@ partial class HYJ_BaseCamp_Manager {
 
         // 사운드
         HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.SOUNDMANAGER___PLAY__SFX_NAME, JHW_SoundManager.SFX_list.RECOVER);
+
+        //
+        List<string> playerStageDatas = (List<string>)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___MAP__GET_STAGE_DATAS);
+        playerStageDatas.Clear();
+        playerStageDatas.Add(actionCnt.ToString());
+        HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(HYJ_ScriptBridge_EVENT_TYPE.PLAYER___FILE__SAVE);
     }
 
     // 삭제버튼 on/off

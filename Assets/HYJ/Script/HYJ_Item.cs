@@ -28,6 +28,8 @@ public class HYJ_Item : IDisposable
     public string HYJ_Data_type { get { return Data_type; } }
 
     //
+    public string HYJ_Data_valueEffect { get { return Data_effect; } }
+
     public int HYJ_Data_valueMin { get { return Data_valueMin; } }
 
     public int HYJ_Data_valueMax { get { return Data_valueMax; } }

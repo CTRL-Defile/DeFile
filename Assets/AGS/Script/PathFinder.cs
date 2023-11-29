@@ -122,7 +122,7 @@ public class PathFinder : MonoBehaviour
 		m_IsArrived = false;
 		m_DestNode = BattleGraph[DestIdx];
 		gameObject.GetComponent<Character>().State = Character.STATE.RUN;
-		transform.position = Vector3.MoveTowards(transform.position, m_DestTile.Tile_Position, gameObject.GetComponent<Character>().Stat_MoveSpeed * Time.deltaTime);
+		transform.position = Vector3.MoveTowards(transform.position, m_DestTile.Tile_Position, gameObject.GetComponent<Character>().Character_Status_moveSpeed * Time.deltaTime);
 
 	}
 
