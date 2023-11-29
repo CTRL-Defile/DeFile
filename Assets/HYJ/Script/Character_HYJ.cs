@@ -80,7 +80,7 @@ public class Character_Status
         for (int i = 0; i < _buffs.Count; i++)
         {
             string[] strs = _buffs[i].CTRL_Basic_applyType.ToString().Split('/');
-            if (    strs[0].Equals(_character.Character_Status_race) ||
+            if (    strs[0].Equals(_character.Character_Status_race.ToString()) ||
                     strs[0].Equals(_character.Character_Status_name))
             {
                 switch (strs[1])
@@ -111,6 +111,15 @@ public class Character_Status
     }
 }
 
+public enum HYJ_Character_REPUTATION_RACE
+{
+    ELF = 0,
+    HUMAN,
+    DWARF,
+    GOBLIN,
+    WILD
+}
+
 partial class Character
 {
     [Header("======================================= STATUS =======================================")]
@@ -124,9 +133,9 @@ partial class Character
     [SerializeField] protected string Status_name_eng;
 
     // 속성
-    [SerializeField] protected string Status_script;    // 스토리 번호
-    [SerializeField] protected string Status_race;      // 종족
-    [SerializeField] protected string Status_job;       // 특성
+    [SerializeField] protected string                           Status_script;  // 스토리 번호
+    [SerializeField] protected HYJ_Character_REPUTATION_RACE    Status_race;    // 종족
+    [SerializeField] protected string                           Status_job;     // 특성
 
     // 조합
     [SerializeField] protected int Status_mix;  // 등급
@@ -167,7 +176,7 @@ partial class Character
     virtual public string Character_Status_name     { get { return Status_name; } }
     virtual public string Character_Status_name_eng { get { return Status_name_eng; } }
 
-    virtual public string Character_Status_race { get { return Status_race; } }
+    virtual public HYJ_Character_REPUTATION_RACE    Character_Status_race   { get { return Status_race; } }
 
     virtual public float Character_Status_maxHp     { get { return Status_MaxHP; } }
     virtual public float Character_Status_startMp   { get { return Status_startMp; } }
@@ -216,7 +225,7 @@ partial class Character
 
         // 속성
         Status_script = (string)_data["SCRIPT_KOR"];
-        Status_race = (string)_data["RACE"];
+        Status_race = (HYJ_Character_REPUTATION_RACE)Enum.Parse(typeof(HYJ_Character_REPUTATION_RACE), (string)_data["RACE"]);
         Status_job = (string)_data["JOB"];
 
         // 조합

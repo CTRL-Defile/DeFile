@@ -1620,6 +1620,7 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
                 if (unit_cost == Cost_list[i])
                 {
+                    // 유닛이 풀에 없을 때 생성하는 코드인 듯?
                     if (unit_cnt == 0)
                     {
                         Debug.Log("[BM] Allocate " + unit_idx + " one more.");
@@ -1646,11 +1647,49 @@ public partial class HYJ_Battle_Manager : MonoBehaviour
 
             if (Unit_Candi.Count > 0)
             {
+                // 황영재 변경.
+                // 평판에 따른 범위설정.
+                int unitTotal = 0;
+                List<int> unitSeveral = new List<int>();
+
+                for (int j = 0; j > Unit_Candi.Count; j++)
+                {
+                    Transform obj = prefab.transform.GetChild(Unit_Candi[j]);
+                    Character characterData = obj.GetComponent<Character>();
+                    int num = (int)HYJ_ScriptBridge.HYJ_Static_instance.HYJ_Event_Get(
+                        HYJ_ScriptBridge_EVENT_TYPE.PLAYER___REPUTATION__GET_VALUE,
+                        characterData.Character_Status_race);
+                    unitTotal += num;
+                    unitSeveral.Add(num);
+                }
+
+                // 유닛선택
                 System.Random r = new System.Random();
-                int n = r.Next(Unit_Candi.Count);
-                //Debug.Log(Unit_Candi.Count + "<-unitcandi.count || n->" + n);
-                UnitIdx_list.Add(Unit_Candi[n]);
-                Unit_Candi.RemoveAt(n);
+                int n = r.Next(unitTotal);
+                int whileCount = 0;
+                while(whileCount < unitSeveral.Count)
+                {
+                    if(n > unitSeveral[whileCount])
+                    {
+                        n -= unitSeveral[whileCount];
+                        whileCount++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                UnitIdx_list.Add(Unit_Candi[whileCount]);
+                Unit_Candi.RemoveAt(whileCount);
+
+                //////////////////////////////////////////////////
+                
+                //
+                //System.Random r = new System.Random();
+                //int n = r.Next(Unit_Candi.Count);
+                ////Debug.Log(Unit_Candi.Count + "<-unitcandi.count || n->" + n);
+                //UnitIdx_list.Add(Unit_Candi[n]);
+                //Unit_Candi.RemoveAt(n);
             }
             else
             {
